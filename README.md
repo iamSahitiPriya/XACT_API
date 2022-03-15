@@ -15,8 +15,8 @@
 
 ## Verify server response
 
--  Hit open endpoint : [Health](http://localhost:8000/health)
--  Secure endpoint works only when you pass Access Token in header : [SecuredEndpoint] (http://localhost:8000/v1/assessments/123)
+-  Hit an open health endpoint : [Health](http://localhost:8000/health)
+-  Secure endpoint works only when you pass Access Token in header : [SecuredEndpoint](http://localhost:8000/v1/assessments/123)
 
 
 

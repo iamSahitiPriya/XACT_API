@@ -7,7 +7,7 @@ custom:
 provider:
   name: aws
   runtime: java11
-  region: us-east-1
+  region: ap-south-1
   versionFunctions: false
   stage: dev
   timeout: 30

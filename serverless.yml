@@ -11,6 +11,7 @@ provider:
   versionFunctions: false
   stage: dev
   timeout: 30
+  memorySize: 256
 
 package:
   artifact: ./build/libs/XAct_Assessment_API-0.1-all.jar

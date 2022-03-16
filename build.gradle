@@ -66,6 +66,19 @@ tasks.named("assemble") {
     dependsOn(":shadowJar")
 }
 
+task deploy(dependsOn: [shadowJar], type: Exec) {
+    description "Deploys code to AWS"
+    commandLine "bash", "-c", "npx serverless deploy"
+
+}
+
+
+task destroy(type: Exec) {
+    description "Destroys resources in AWS"
+    commandLine "bash", "-c", "npx serverless remove"
+}
+
+
 
 mainClassName = "com.xact.assessment.Application"
 

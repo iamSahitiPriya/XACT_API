@@ -12,3 +12,6 @@ out/
 .settings
 .classpath
 .factorypath
+.serverless/
+node_modules/
+

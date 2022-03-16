@@ -1,0 +1,10 @@
+{
+  "name": "XAct_Assessment_API",
+  "version": "1.0.0",
+  "description": "Assessment Service",
+  "dependencies": {
+    "serverless": "^3.7.5"
+  },
+  "devDependencies": {
+  }
+}

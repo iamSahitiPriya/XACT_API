@@ -17,9 +17,12 @@ package:
 
 functions:
 
-  inventory-data:
+  assessment-function:
     handler: com.xact.assessment.functions.AssessmentHandler
     events:
       - http:
           path: /${self:custom.apiVersion}/{proxy+}
           method: any
+      - http:
+          path: /health
+          method: GET

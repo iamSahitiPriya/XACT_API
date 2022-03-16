@@ -4,7 +4,6 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_SESSION_TOKEN = credentials('AWS_SESSION_TOKEN')
     }
 
     tools { nodejs "nodejs" }
@@ -19,7 +18,7 @@ pipeline {
         stage('Deploy To Dev') {
             steps {
                 sh 'npm install'
-                // sh './gradlew deploy -Pstage=dev  '
+                sh './gradlew deploy -Pstage=dev  '
             }
         }
     }

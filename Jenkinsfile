@@ -18,7 +18,7 @@ pipeline {
         stage('Deploy To Dev') {
             steps {
                 sh 'npm install'
-                sh './gradlew deploy -Pstage=dev  '
+                sh './gradlew deploy -Pstage=dev'
             }
         }
     }

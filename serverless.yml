@@ -1,15 +1,19 @@
 service: xact-assessment-api
 
-custom:
-  apiVersion: v1
+plugins:
+  - serverless-domain-manager
 
+custom:
+  customDomain:
+    domainName: api.project-xact.in
+    createRoute53Record: true
+  apiVersion: v1
 
 provider:
   name: aws
   runtime: java11
   region: ap-south-1
   versionFunctions: false
-  stage: dev
   timeout: 30
   memorySize: 1024
 

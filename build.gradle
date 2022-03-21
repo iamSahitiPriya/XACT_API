@@ -68,14 +68,14 @@ tasks.named("assemble") {
 
 task deploy(dependsOn: [shadowJar], type: Exec) {
     description "Deploys code to AWS"
-    commandLine "bash", "-c", "npx serverless deploy"
+    commandLine "bash", "-c", "npx serverless deploy --stage ${stage}"
 
 }
 
 
 task destroy(type: Exec) {
     description "Destroys resources in AWS"
-    commandLine "bash", "-c", "npx serverless remove"
+    commandLine "bash", "-c", "npx serverless remove --stage ${stage}"
 }
 
 

@@ -3,9 +3,19 @@ service: xact-assessment-api
 plugins:
   - serverless-domain-manager
 
+
+params:
+  default:
+    domain: api-${sls:stage}.project-xact.in
+  prod:
+    domain: api.project-xact.in
+  dev:
+    domain: api-dev.project-xact.in
+
 custom:
   customDomain:
-    domainName: api.project-xact.in
+    domainName: ${param:domain}
+    basePath: ''
     createRoute53Record: true
   apiVersion: v1
 
@@ -16,6 +26,7 @@ provider:
   versionFunctions: false
   timeout: 30
   memorySize: 1024
+
 
 package:
   artifact: ./build/libs/XAct_Assessment_API-0.1-all.jar

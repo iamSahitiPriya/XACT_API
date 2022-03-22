@@ -1,8 +1,10 @@
 plugins {
-    id("io.micronaut.library") version "3.2.2"
-    id("com.github.johnrengelman.shadow") version "7.1.1"
+    id("io.micronaut.library") version "3.3.0"
+    id("com.github.johnrengelman.shadow") version "7.1.2"
     id "java"
     id "application"
+    id "org.owasp.dependencycheck" version "7.0.0"
+    id "com.github.ben-manes.versions" version "0.42.0"
 }
 
 apply plugin: "java"
@@ -21,25 +23,21 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:1.18.22"
     annotationProcessor "io.micronaut:micronaut-inject-java"
 
-    implementation("io.micronaut:micronaut-management")
-
     implementation("io.micronaut:micronaut-inject")
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut:micronaut-http-server-netty")
-    implementation("jakarta.annotation:jakarta.annotation-api")
-    runtimeOnly("ch.qos.logback:logback-classic")
 
     implementation("io.micronaut:micronaut-function-aws:1.4.1")
     implementation("io.micronaut.aws:micronaut-function-aws-api-proxy:3.2.1")
-    implementation("com.amazonaws:aws-lambda-java-events:2.2.6")
+    implementation("com.amazonaws:aws-lambda-java-events:3.11.0")
     implementation("io.micronaut.aws:micronaut-function-aws")
 
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.security:micronaut-security-jwt")
 
+    runtimeOnly("ch.qos.logback:logback-classic")
+
     testImplementation("org.mockito:mockito-all:1.8.4")
-
-
 }
 
 test {

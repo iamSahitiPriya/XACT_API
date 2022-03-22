@@ -24,7 +24,15 @@ public class AssessmentController {
         logger.info("AssessmentId : {}",assessmentId);
         logger.info("Auth attributes : " + authentication.getAttributes());
         Assessment assessment = new Assessment();
-        assessment.setName("My Latest assessment");
+        assessment.setName("Created successfully");
+        return HttpResponse.ok(assessment);
+    }
+    @Get(value = "/open/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_ANONYMOUS)
+    public HttpResponse get(@PathVariable String assessmentId) {
+        logger.info("AssessmentId : {}",assessmentId);
+        Assessment assessment = new Assessment();
+        assessment.setName("Created an anonymous endpoint");
         return HttpResponse.ok(assessment);
     }
 }

@@ -15,6 +15,14 @@ pipeline {
                 sh './gradlew clean build'
             }
         }
+
+        stage('Dependency Check') {
+            steps {
+                sh './gradlew dependencyCheckAnalyze'
+                sh './gradlew dependencyUpdates -Drevision=release'
+            }
+        }
+
         stage('Deploy To Dev') {
             steps {
                 sh 'npm install'
@@ -25,6 +33,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+            archiveArtifacts artifacts: 'build/dependencyUpdates/report.txt', fingerprint: true
             publishHTML (target : [allowMissing: false,
                                    alwaysLinkToLastBuild: true,
                                    keepAll: true,
@@ -32,6 +41,13 @@ pipeline {
                                    reportFiles: 'index.html',
                                    reportName: 'Unit Test Reports',
                                    reportTitles: 'Unit Test Report'])
+            publishHTML (target : [allowMissing: false,
+                                   alwaysLinkToLastBuild: true,
+                                   keepAll: true,
+                                   reportDir: './build/reports/',
+                                   reportFiles: 'dependency-check-report.html',
+                                   reportName: 'Dependency Check Reports',
+                                   reportTitles: 'Dependency Check Report'])
         }
     }
 }

@@ -33,6 +33,7 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+            archiveArtifacts artifacts: 'build/classes/**/**/META-INF/swagger/swagger.yml', fingerprint: true
             archiveArtifacts artifacts: 'build/dependencyUpdates/report.txt', fingerprint: true
             publishHTML (target : [allowMissing: false,
                                    alwaysLinkToLastBuild: true,

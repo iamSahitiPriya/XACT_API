@@ -24,7 +24,6 @@ public class AssessmentController {
         this.assessmentService= assessmentService;
     }
 
-
     @Get(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Assessment> getAssessmentSecure(@PathVariable String assessmentId, Authentication authentication) {
@@ -34,6 +33,8 @@ public class AssessmentController {
         assessment.setName("Created successfully");
         return HttpResponse.ok(assessment);
     }
+
+
     @Get(value = "/open/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_ANONYMOUS)
     public HttpResponse<Assessment> getAssessmentOpen(@PathVariable String assessmentId) {

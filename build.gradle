@@ -5,10 +5,12 @@ plugins {
     id "application"
     id "org.owasp.dependencycheck" version "7.0.0"
     id "com.github.ben-manes.versions" version "0.42.0"
+    id 'jacoco'
 }
 
 apply plugin: "java"
 apply plugin: "application"
+apply plugin: 'jacoco'
 
 version = "0.1"
 group = "com.xact"
@@ -73,18 +75,44 @@ task deploy(dependsOn: [shadowJar], type: Exec) {
 
 }
 
-
 task destroy(type: Exec) {
     description "Destroys resources in AWS"
     commandLine "bash", "-c", "npx serverless remove --stage ${stage}"
 }
 
+test {
+    finalizedBy jacocoTestReport
+}
+jacocoTestReport {
+    dependsOn test
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['com/xact/assessment/functions/AssessmentHandler.class','com/xact/assessment/Application.class'])
+        }))
+    }
+}
 
+check.dependsOn jacocoTestCoverageVerification
 
 mainClassName = "com.xact.assessment.Application"
 
 jar {
     manifest {
         attributes "Main-Class": mainClassName
+    }
+}
+
+jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: ['com/xact/assessment/functions/AssessmentHandler.class','com/xact/assessment/Application.class'])
+        }))
+    }
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.99
+            }
+        }
     }
 }

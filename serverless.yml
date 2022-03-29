@@ -40,4 +40,4 @@ functions:
       - http:
           path: /${self:custom.apiVersion}/{proxy+}
           method: any
-  provisionedConcurrency: 2
+    provisionedConcurrency: 2

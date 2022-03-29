@@ -18,8 +18,6 @@ custom:
     domainName: ${param:domain}
     basePath: ''
     createRoute53Record: true
-  dbLogin: ${param:dbLogin}
-  dbPassword: ${param:dbPassword}
   apiVersion: v1
 
 provider:

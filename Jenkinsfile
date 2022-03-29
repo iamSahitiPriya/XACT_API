@@ -51,7 +51,7 @@ pipeline {
                                    reportTitles: 'Dependency Check Report'])
             publishHTML (target : [allowMissing: false,
                                                alwaysLinkToLastBuild: true,
-                                               keepAll: true,
+                                               keepAll: true,:
                                                reportDir: './build/reports/jacoco/test/html',
                                                reportFiles: 'index.html',
                                                reportName: 'Coverage Reports',

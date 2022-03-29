@@ -7,7 +7,7 @@ import jakarta.inject.Singleton;
 public class AssessmentService {
     public Assessment getAssessmentById(String assessmentID) {
         Assessment assessment = new Assessment();
-        assessment.setName("Created an anonymous endpoint");
+        assessment.setName("Created an anonymous endpoint "+assessmentID);
         return assessment;
     }
 }

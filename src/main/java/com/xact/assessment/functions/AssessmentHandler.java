@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class AssessmentHandler implements RequestStreamHandler {
-    private static Logger logger = LoggerFactory.getLogger(AssessmentHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger(AssessmentHandler.class);
     private static MicronautLambdaContainerHandler handler;
 
     static {

@@ -25,6 +25,6 @@ public class AssessmentControllerTest {
     void testGetAssessmentResponse() {
         Assessment assessmentResponse = client.toBlocking() //
                 .retrieve(HttpRequest.GET("/v1/assessments/open/125"),Assessment.class);
-        assertEquals("Created an anonymous endpoint", assessmentResponse.getName()); //
+        assertEquals("Created an anonymous endpoint 125", assessmentResponse.getName()); //
     }
 }

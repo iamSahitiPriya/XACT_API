@@ -12,11 +12,14 @@ params:
   dev:
     domain: api-dev.project-xact.in
 
+
 custom:
   customDomain:
     domainName: ${param:domain}
     basePath: ''
     createRoute53Record: true
+  dbLogin: ${param:dbLogin}
+  dbPassword: ${param:dbPassword}
   apiVersion: v1
 
 provider:
@@ -33,10 +36,10 @@ package:
   artifact: ./build/libs/XAct_Assessment_API-0.1-all.jar
 
 functions:
-
   assessment-function:
     handler: com.xact.assessment.functions.AssessmentHandler
     events:
       - http:
           path: /${self:custom.apiVersion}/{proxy+}
           method: any
+  provisionedConcurrency: 2

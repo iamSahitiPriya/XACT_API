@@ -26,6 +26,15 @@ provider:
   region: ap-south-1
   versionFunctions: false
   timeout: 30
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - rds-db:connect
+          Resource:
+            - arn:aws:rds-db:${self:provider.region}:*:*
+
   environment:
     MICRONAUT_ENVIRONMENTS : ${sls:stage}
 

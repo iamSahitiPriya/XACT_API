@@ -42,7 +42,7 @@ functions:
     handler: com.xact.assessment.functions.AssessmentHandler
     vpc:
       securityGroupIds:
-        - sg-0f611a243e3df9e60
+        - sg-07319553c49fc1714
       subnetIds:
         - subnet-0184ccf3faa75628d
         - subnet-02249a393eb372da6

@@ -13,7 +13,6 @@ import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("PMD.BeanMembersShouldSerialize")
 @Controller("/v1/assessments")
 public class AssessmentController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentController.class);

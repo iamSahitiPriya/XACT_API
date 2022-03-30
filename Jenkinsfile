@@ -4,6 +4,8 @@ pipeline {
     environment {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
+        DB_USER_DEV     = credentials('DB_USER_DEV')
+        DB_PWD_DEV = credentials('DB_PWD_DEV')
     }
 
     tools { nodejs "nodejs" }
@@ -26,7 +28,7 @@ pipeline {
         stage('Deploy To Dev') {
             steps {
                 sh 'npm install'
-                sh './gradlew deploy -Pstage=dev'
+                sh './gradlew deploy -Pstage=dev -Pdbuser=${DB_USER_DEV} -Pdbpwd=${DB_PWD_DEV}'
             }
         }
     }

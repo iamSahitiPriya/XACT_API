@@ -26,17 +26,12 @@ provider:
   region: ap-south-1
   versionFunctions: false
   timeout: 30
-  iam:
-    role:
-      statements:
-        - Effect: Allow
-          Action:
-            - rds-db:connect
-          Resource:
-            - arn:aws:rds-db:${self:provider.region}:*:*
 
   environment:
     MICRONAUT_ENVIRONMENTS : ${sls:stage}
+    DB_USER: ${param:db_user, 'fake-user'}
+    DB_PWD: ${param:db_pwd, 'fake-pwd'}
+
 
 
 package:
@@ -45,6 +40,13 @@ package:
 functions:
   assessment-function:
     handler: com.xact.assessment.functions.AssessmentHandler
+    vpc:
+      securityGroupIds:
+        - sg-0f611a243e3df9e60
+      subnetIds:
+        - subnet-0184ccf3faa75628d
+        - subnet-02249a393eb372da6
+        - subnet-042b76f3f4aa643c9
     events:
       - http:
           path: /${self:custom.apiVersion}/{proxy+}

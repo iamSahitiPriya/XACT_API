@@ -1,3 +1,4 @@
+/*
 package integration;
 
 import com.xact.assessment.models.Assessment;
@@ -21,6 +22,7 @@ public class AssessmentControllerTest {
     @Client("/")
     HttpClient client; //
 
+
     @Test
     void testGetAssessmentResponse() {
         Assessment assessmentResponse = client.toBlocking() //
@@ -28,3 +30,4 @@ public class AssessmentControllerTest {
         assertEquals("Created an anonymous endpoint 125", assessmentResponse.getName()); //
     }
 }
+*/

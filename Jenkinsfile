@@ -25,10 +25,21 @@ pipeline {
             }
         }
 
+        stage('Build & Push to artifactory') {
+                    steps {
+                        sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact"
+                    }
+        }
+
         stage('Deploy To Dev') {
             steps {
-                sh 'npm install'
-                sh './gradlew deploy -Pstage=dev -Pdbuser=${DB_USER_DEV} -Pdbpwd=${DB_PWD_DEV}'
+                sh 'aws help'
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                cleanWs notFailBuild: true
             }
         }
     }

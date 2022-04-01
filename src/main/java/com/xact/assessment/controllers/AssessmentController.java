@@ -25,7 +25,7 @@ public class AssessmentController {
     @Get(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Assessment> getAssessmentSecure(@PathVariable String assessmentId, Authentication authentication) {
-        LOGGER.info("AssessmentId : {}",assessmentId);
+        LOGGER.info("Passed AssessmentId : {}",assessmentId);
         LOGGER.info("Auth attributes : " + authentication.getAttributes());
         Assessment assessment = new Assessment();
         assessment.setName("Created successfully");

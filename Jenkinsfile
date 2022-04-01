@@ -27,7 +27,7 @@ pipeline {
 
         stage('Build & Push to artifactory') {
                     steps {
-                        sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact"
+                        sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${env.BUILD_NUMBER}"
                     }
         }
 

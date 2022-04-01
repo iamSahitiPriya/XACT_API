@@ -6,6 +6,7 @@ plugins {
     id "org.owasp.dependencycheck" version "7.0.0"
     id "com.github.ben-manes.versions" version "0.42.0"
     id 'jacoco'
+    id 'com.google.cloud.tools.jib' version '3.2.0'
 }
 
 apply plugin: "java"
@@ -38,10 +39,10 @@ dependencies {
 
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.security:micronaut-security-jwt")
-    implementation("io.micronaut.sql:micronaut-jdbc-hikari")
+    /*implementation("io.micronaut.sql:micronaut-jdbc-hikari")
     implementation("io.micronaut.flyway:micronaut-flyway")
 
-    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.postgresql:postgresql")*/
 
     runtimeOnly("ch.qos.logback:logback-classic")
 

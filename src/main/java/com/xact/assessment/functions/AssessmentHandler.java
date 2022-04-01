@@ -25,6 +25,7 @@ public class AssessmentHandler implements RequestStreamHandler {
 
     @Override
     public void handleRequest(InputStream input, OutputStream output, Context context) throws IOException {
+        logger.info("Sending request to controller");
         handler.proxyStream(input, output, context);
     }
 }

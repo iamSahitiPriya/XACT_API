@@ -4,7 +4,7 @@ pipeline {
         AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
     }
-    properties([parameters([string(name: 'Commit_ID', trim: true)])])
+    options([parameters([string(name: 'Commit_ID', trim: true)])])
     stages {
         stage('Fetch Image') {
             steps {

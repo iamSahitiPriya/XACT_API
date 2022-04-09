@@ -32,11 +32,6 @@ dependencies {
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut:micronaut-http-server-netty")
 
-    implementation("io.micronaut:micronaut-function-aws:1.4.1")
-    implementation("io.micronaut.aws:micronaut-function-aws-api-proxy:3.2.1")
-    implementation("com.amazonaws:aws-lambda-java-events:3.11.0")
-    implementation("io.micronaut.aws:micronaut-function-aws")
-
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.security:micronaut-security-jwt")
     implementation("io.micronaut.sql:micronaut-jdbc-hikari")
@@ -75,17 +70,6 @@ tasks.named("assemble") {
     dependsOn(":shadowJar")
 }
 
-task deploy(dependsOn: [shadowJar], type: Exec) {
-    description "Deploys code to AWS"
-    commandLine "bash", "-c", "npx serverless deploy --stage ${stage} --param=\"db_user=${dbuser}\" --param=\"db_pwd=${dbpwd}\" "
-
-}
-
-task destroy(type: Exec) {
-    description "Destroys resources in AWS"
-    commandLine "bash", "-c", "npx serverless remove --stage ${stage}"
-}
-
 test {
     finalizedBy jacocoTestReport
 }
@@ -93,7 +77,7 @@ jacocoTestReport {
     dependsOn test
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/functions/AssessmentHandler.class','com/xact/assessment/Application.class','com/xact/assessment/controllers/ServiceStatusController.class'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class','com/xact/assessment/controllers/ServiceStatusController.class'])
         }))
     }
 }
@@ -111,7 +95,7 @@ jar {
 jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/functions/AssessmentHandler.class','com/xact/assessment/Application.class','com/xact/assessment/controllers/ServiceStatusController.class'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class','com/xact/assessment/controllers/ServiceStatusController.class'])
         }))
     }
     violationRules {

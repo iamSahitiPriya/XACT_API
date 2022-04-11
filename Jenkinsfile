@@ -1,13 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        DB_USER_DEV     = credentials('DB_USER_DEV')
-        DB_PWD_DEV = credentials('DB_PWD_DEV')
-    }
-
     tools { nodejs "nodejs" }
 
     stages {

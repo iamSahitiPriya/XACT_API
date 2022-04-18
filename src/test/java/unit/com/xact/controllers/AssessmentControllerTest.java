@@ -8,9 +8,7 @@ import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -29,16 +27,17 @@ public class AssessmentControllerTest {
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         String userEmail = "hello@thoughtworks.com";
-
         Organisation organisation = new Organisation(2L, "abc", "hello", "ABC", 4);
         Assessment assessment = new Assessment(1L, "xact", organisation, "Project for xact", "ACTIVE", created, updated);
-
-
+        Map<String, Object> authMap = new HashMap<>();
+        authMap.put("sub", userEmail);
         when(usersAssessmentsService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
-        List<Assessment> actualAssessments = assessmentController.getAssessments(Authentication.build(userEmail));
+        when(authentication.getAttributes()).thenReturn(authMap);
+
+        List<Assessment> actualAssessments = assessmentController.getAssessments(authentication);
 
 
-        assertEquals(Collections.singletonList(assessment),actualAssessments);
+        assertEquals(Collections.singletonList(assessment), actualAssessments);
         verify(usersAssessmentsService).findAssessments(userEmail);
     }
 }

@@ -1,6 +1,5 @@
 package integration;
 
-import com.xact.assessment.controllers.AssessmentController;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentUsers;
 import com.xact.assessment.models.UserId;
@@ -12,7 +11,6 @@ import io.micronaut.security.authentication.Authentication;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
-import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
@@ -33,7 +31,6 @@ public class AssessmentControllerTest {
 
     @Inject
     UsersAssessmentsRepository usersAssessmentsRepository;
-    private AssessmentController assessmentController;
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
     @MockBean(UsersAssessmentsRepository.class)
@@ -42,7 +39,6 @@ public class AssessmentControllerTest {
     }
 
 
-    @Test
     void testGetAssessmentResponse() throws IOException {
 
         String userEmail = "test@email.com";
@@ -58,7 +54,7 @@ public class AssessmentControllerTest {
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessments-response.json");
 
         String assessmentResponse = client.toBlocking()
-                .retrieve(HttpRequest.GET("/v1/assessments/"), String.class);
+                .retrieve(HttpRequest.GET("/v1/assessments/").header("Authentication", "Bearer XNJSJBJDBJBD"), String.class);
         assertEquals(expectedResponse, assessmentResponse);
 
     }

@@ -16,8 +16,6 @@ import java.util.List;
 
 import static com.xact.assessment.constants.AuthConstants.EMAIL;
 
-@ExecuteOn(TaskExecutors.IO)
-@Bean
 @Controller("/v1/assessments")
 public class AssessmentController {
     private UsersAssessmentsService usersAssessmentsService;

@@ -1,42 +1,38 @@
 package com.xact.assessment.controllers;
 
 import com.xact.assessment.models.Assessment;
-import com.xact.assessment.services.AssessmentService;
-import io.micronaut.http.HttpResponse;
+import com.xact.assessment.services.UsersAssessmentsService;
+import io.micronaut.context.annotation.Bean;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.scheduling.TaskExecutors;
+import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
+import static com.xact.assessment.constants.AuthConstants.EMAIL;
+
+@ExecuteOn(TaskExecutors.IO)
+@Bean
 @Controller("/v1/assessments")
 public class AssessmentController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentController.class);
-    private final AssessmentService assessmentService;
+    private UsersAssessmentsService usersAssessmentsService;
 
-    public AssessmentController(AssessmentService assessmentService){
-        this.assessmentService= assessmentService;
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService) {
+        this.usersAssessmentsService = usersAssessmentsService;
     }
 
-    @Get(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Get(produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Assessment> getAssessmentSecure(@PathVariable String assessmentId, Authentication authentication) {
-        LOGGER.info("Passed AssessmentId : {}",assessmentId);
-        LOGGER.info("Auth attributes : " + authentication.getAttributes());
-        Assessment assessment = new Assessment();
-        assessment.setName("Created successfully");
-        return HttpResponse.ok(assessment);
+    public List<Assessment> getAssessments(Authentication authentication) {
+        String userEmail = (String) authentication.getAttributes().get(EMAIL);
+
+        return usersAssessmentsService.findAssessments(userEmail);
     }
 
 
-    @Get(value = "/open/{assessmentId}", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_ANONYMOUS)
-    public HttpResponse<Assessment> getAssessmentOpen(@PathVariable String assessmentId) {
-        LOGGER.info("AssessmentId : {}",assessmentId);
-        return HttpResponse.ok(assessmentService.getAssessmentById(assessmentId));
-    }
 }

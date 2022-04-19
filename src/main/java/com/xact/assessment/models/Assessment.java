@@ -38,7 +38,8 @@ public class Assessment {
 
     @NotNull
     @Column(name = "assessment_status", nullable = false, unique = true)
-    private String assessmentStatus;
+    @Enumerated(EnumType.STRING)
+    private AssessmentStatus assessmentStatus;
 
     @NotNull
     @Column(name = "created_at", nullable = false, unique = true)

@@ -1,9 +1,6 @@
 package unit.com.xact.services;
 
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentUsers;
-import com.xact.assessment.models.Organisation;
-import com.xact.assessment.models.UserId;
+import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,9 +33,9 @@ class UsersAssessmentsServiceTest {
         String userEmail = "hello@thoughtworks.com";
 
         Organisation organisation = new Organisation(1L, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1L, "xact", organisation, "TWI", "ACTIVE", created, updated);
+        Assessment assessment = new Assessment(1L, "xact", organisation, "TWI", AssessmentStatus.ACTIVE, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
-        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, "hello", "world", "Owner");
+        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, "hello", "world", AssessmentRole.Owner);
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(Collections.singletonList(assessmentUsers));
         List<Assessment> actualAssessments = usersAssessmentsService.findAssessments(userEmail);

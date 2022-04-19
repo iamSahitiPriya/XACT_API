@@ -34,6 +34,7 @@ public class AssessmentUsers implements Serializable {
 
     @NotNull
     @Column(name = "role", nullable = false, unique = true)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private AssessmentRole role;
 }
 

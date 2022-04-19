@@ -86,7 +86,7 @@ jacocoTestReport {
     dependsOn test
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class','com/xact/assessment/controllers/ServiceStatusController.class','com/xact/assessment/models'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class','com/xact/assessment/controllers/ServiceStatusController.class'])
         }))
     }
 }
@@ -104,7 +104,7 @@ jar {
 jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class','com/xact/assessment/controllers/ServiceStatusController.class','com/xact/assessment/models'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class','com/xact/assessment/controllers/ServiceStatusController.class'])
         }))
     }
     violationRules {

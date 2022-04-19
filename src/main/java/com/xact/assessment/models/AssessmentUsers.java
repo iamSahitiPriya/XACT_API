@@ -2,15 +2,22 @@ package com.xact.assessment.models;
 
 
 import io.micronaut.core.annotation.Introspected;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Introspected
 @Entity
 @Table(name = "tbl_assessment_users")
-
 public class AssessmentUsers implements Serializable {
 
     @EmbeddedId
@@ -28,48 +35,5 @@ public class AssessmentUsers implements Serializable {
     @NotNull
     @Column(name = "role", nullable = false, unique = true)
     private String role;
-
-
-    public UserId getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UserId userId) {
-        this.userId = userId;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public AssessmentUsers() {
-    }
-
-    public AssessmentUsers(UserId userId, String firstName, String lastName, String role) {
-        this.userId = userId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.role = role;
-    }
 }
 

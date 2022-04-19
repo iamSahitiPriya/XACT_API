@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-
 public class UsersAssessmentsService {
     UsersAssessmentsRepository usersAssessmentsRepository;
 

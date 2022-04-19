@@ -2,12 +2,9 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.services.UsersAssessmentsService;
-import io.micronaut.context.annotation.Bean;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.scheduling.TaskExecutors;
-import io.micronaut.scheduling.annotation.ExecuteOn;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;

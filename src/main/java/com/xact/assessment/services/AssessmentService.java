@@ -14,7 +14,7 @@ import java.util.List;
 
 
 @Singleton
-public class CreateAssessmentService {
+public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
@@ -22,7 +22,7 @@ public class CreateAssessmentService {
     private final OrganisationService organisationService;
     private final UsersAssessmentsService usersAssessmentsService;
 
-    public CreateAssessmentService(AssessmentsRepository assessmentsRepository, OrganisationService organisationService, UsersAssessmentsService usersAssessmentsService) {
+    public AssessmentService(AssessmentsRepository assessmentsRepository, OrganisationService organisationService, UsersAssessmentsService usersAssessmentsService) {
         this.assessmentsRepository = assessmentsRepository;
         this.organisationService = organisationService;
         this.usersAssessmentsService = usersAssessmentsService;

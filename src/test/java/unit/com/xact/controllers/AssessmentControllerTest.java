@@ -7,7 +7,7 @@ import com.xact.assessment.models.AssessmentStatus;
 import com.xact.assessment.models.Organisation;
 import com.xact.assessment.models.User;
 import com.xact.assessment.services.AuthService;
-import com.xact.assessment.services.CreateAssessmentService;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -27,8 +27,8 @@ public class AssessmentControllerTest {
     private final Authentication authentication = Mockito.mock(Authentication.class);
     private final UsersAssessmentsService usersAssessmentsService = Mockito.mock(UsersAssessmentsService.class);
     private final AuthService authService = Mockito.mock(AuthService.class);
-    private final CreateAssessmentService createAssessmentService = Mockito.mock(CreateAssessmentService.class);
-    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, authService, createAssessmentService);
+    private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
+    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, authService, assessmentService);
 
     @Test
     public void testGetAssessment() {
@@ -85,7 +85,7 @@ public class AssessmentControllerTest {
 
 
         when(authService.getLoggedInUser(authentication)).thenReturn(user);
-        when(createAssessmentService.createAssessment(assessmentRequest, user)).thenReturn(assessment);
+        when(assessmentService.createAssessment(assessmentRequest, user)).thenReturn(assessment);
 
         HttpResponse<AssessmentResponse> actualAssessments = assessmentController.createAssessment(assessmentRequest, authentication);
 

@@ -4,7 +4,7 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.AssessmentResponse;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.User;
-import com.xact.assessment.services.CreateAssessmentService;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.AuthService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import io.micronaut.http.HttpResponse;
@@ -26,15 +26,15 @@ import java.util.Objects;
 @Controller("/v1/assessments")
 public class AssessmentController {
     private final UsersAssessmentsService usersAssessmentsService;
-    private final CreateAssessmentService createAssessmentService;
+    private final AssessmentService assessmentService;
     private final AuthService authService;
 
     private ModelMapper modelMapper = new ModelMapper();
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, AuthService authService, CreateAssessmentService createAssessmentService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, AuthService authService, AssessmentService assessmentService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.authService = authService;
-        this.createAssessmentService = createAssessmentService;
+        this.assessmentService = assessmentService;
     }
 
     @Get(produces = MediaType.APPLICATION_JSON)
@@ -54,7 +54,7 @@ public class AssessmentController {
     public HttpResponse<AssessmentResponse> createAssessment(@Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
         User loggedInUser = authService.getLoggedInUser(authentication);
 
-        Assessment assessment = createAssessmentService.createAssessment(assessmentRequest, loggedInUser);
+        Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
 
         return HttpResponse.created(assessmentResponse);

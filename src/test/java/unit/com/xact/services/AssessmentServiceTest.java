@@ -6,7 +6,7 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentsRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
-import com.xact.assessment.services.CreateAssessmentService;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.OrganisationService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +19,12 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class CreateAssessmentServiceTest {
+public class AssessmentServiceTest {
     private AssessmentsRepository assessmentsRepository;
     private OrganisationService organisationService;
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private UsersAssessmentsService usersAssessmentsService;
-    private CreateAssessmentService createAssessmentService;
+    private AssessmentService assessmentService;
 
 
     @BeforeEach
@@ -33,7 +33,7 @@ public class CreateAssessmentServiceTest {
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
         usersAssessmentsService = new UsersAssessmentsService(usersAssessmentsRepository);
         organisationService = mock(OrganisationService.class);
-        createAssessmentService = new CreateAssessmentService(assessmentsRepository, organisationService, usersAssessmentsService);
+        assessmentService = new AssessmentService(assessmentsRepository, organisationService, usersAssessmentsService);
     }
 
     @Test
@@ -56,7 +56,7 @@ public class CreateAssessmentServiceTest {
         assessmentRequest.setTeamSize(10);
         assessmentRequest.setUsers(assessmentUsers);
 
-        Assessment actualCreatedAssessment = createAssessmentService.createAssessment(assessmentRequest, new User("test@email.com", "first-name", "last-name"));
+        Assessment actualCreatedAssessment = assessmentService.createAssessment(assessmentRequest, new User("test@email.com", "first-name", "last-name"));
 
         Assessment assessment = mapper.map(assessmentRequest, Assessment.class);
         assessment.setAssessmentStatus(AssessmentStatus.ACTIVE);

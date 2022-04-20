@@ -9,7 +9,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AssessmentResponseDto {
+public class AssessmentResponse {
 
     private Long assessmentId;
 

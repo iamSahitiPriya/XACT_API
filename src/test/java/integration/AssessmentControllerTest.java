@@ -7,11 +7,10 @@ import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.security.authentication.Authentication;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -31,7 +30,6 @@ public class AssessmentControllerTest {
 
     @Inject
     UsersAssessmentsRepository usersAssessmentsRepository;
-    private final Authentication authentication = Mockito.mock(Authentication.class);
 
     @MockBean(UsersAssessmentsRepository.class)
     UsersAssessmentsRepository usersAssessmentsRepository() {
@@ -39,9 +37,10 @@ public class AssessmentControllerTest {
     }
 
 
+    @Test
     void testGetAssessmentResponse() throws IOException {
 
-        String userEmail = "test@email.com";
+        String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         UserId userId = new UserId(userEmail, assessment);
@@ -53,8 +52,9 @@ public class AssessmentControllerTest {
         when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(singletonList(assessmentUsers));
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessments-response.json");
 
-        String assessmentResponse = client.toBlocking()
-                .retrieve(HttpRequest.GET("/v1/assessments/").header("Authentication", "Bearer XNJSJBJDBJBD"), String.class);
+        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments")
+                .bearerAuth("anything"), String.class);
+
         assertEquals(expectedResponse, assessmentResponse);
 
     }

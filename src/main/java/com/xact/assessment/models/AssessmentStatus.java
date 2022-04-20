@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public enum AssessmentStatus {
-    ACTIVE,INACTIVE
+    ACTIVE,COMPLETED
 
 }

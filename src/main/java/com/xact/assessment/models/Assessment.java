@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -18,9 +20,10 @@ import java.util.Date;
 @Entity
 @Table(name = "tbl_assessment")
 public class Assessment {
-    @NotNull
+
     @Id
     @Column(name = "assessment_id", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long assessmentId;
 
     @NotNull
@@ -33,19 +36,17 @@ public class Assessment {
     private Organisation organisation;
 
     @NotNull
-    @Column(name = "description", nullable = false, unique = true)
-    private String description;
-
-    @NotNull
     @Column(name = "assessment_status", nullable = false, unique = true)
     @Enumerated(EnumType.STRING)
     private AssessmentStatus assessmentStatus;
 
-    @NotNull
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false, unique = true)
     private Date createdAt;
 
-    @NotNull
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false, unique = true)
     private Date updatedAt;
 }

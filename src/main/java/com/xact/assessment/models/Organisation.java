@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Getter
@@ -22,9 +19,9 @@ import javax.validation.constraints.NotNull;
 @Table(name = "tbl_organisation")
 public class Organisation {
 
-    @NotNull
     @Id
     @Column(name = "organisation_id", nullable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long organisationId;
 
     @NotNull

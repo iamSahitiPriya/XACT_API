@@ -33,15 +33,17 @@ class UsersAssessmentsServiceTest {
         String userEmail = "hello@thoughtworks.com";
 
         Organisation organisation = new Organisation(1L, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1L, "xact", organisation, "TWI", AssessmentStatus.ACTIVE, created, updated);
+        Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.ACTIVE, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, "hello", "world", AssessmentRole.Owner);
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(Collections.singletonList(assessmentUsers));
         List<Assessment> actualAssessments = usersAssessmentsService.findAssessments(userEmail);
 
-        assertEquals(Collections.singletonList(assessment),actualAssessments);
+        assertEquals(Collections.singletonList(assessment), actualAssessments);
 
         verify(usersAssessmentsRepository).findByUserEmail(userEmail);
     }
+
+
 }

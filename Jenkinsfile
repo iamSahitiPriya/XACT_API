@@ -7,7 +7,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh './gradlew clean build'
+                sh 'MICRONAUT_ENVIRONMENTS=test  ./gradlew clean build'
             }
         }
 

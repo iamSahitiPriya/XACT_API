@@ -17,8 +17,8 @@ public class UsersAssessmentsService {
         this.usersAssessmentsRepository = assessmentRepository;
     }
 
-    public List<Assessment> findAssessments(String user_email) {
-        List<AssessmentUsers> assessmentUsers = usersAssessmentsRepository.findByUserEmail(user_email);
+    public List<Assessment> findAssessments(String userEmail) {
+        List<AssessmentUsers> assessmentUsers = usersAssessmentsRepository.findByUserEmail(userEmail);
 
         List<Assessment> usersAssessments = new ArrayList<>();
         for (AssessmentUsers user : assessmentUsers) {

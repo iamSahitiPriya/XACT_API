@@ -1,0 +1,29 @@
+micronaut:
+  application:
+    name: XAct_Assessment_API
+  server:
+    port: 8080
+    cors:
+      enabled: true
+  security:
+    enabled: true
+    token:
+      jwt:
+        enabled: true
+        claims-validators:
+          issuer: '${OIDC_ISSUER:`https://dev-47045452.okta.com/oauth2/default`}'
+        signatures:
+          jwks:
+            okta:
+              url: '${OIDC_ISSUER:`https://dev-47045452.okta.com/oauth2/default`}/v1/keys'
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+
+
+flyway:
+  datasources:
+    default:
+      enabled: false

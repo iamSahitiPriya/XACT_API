@@ -37,6 +37,6 @@ public class Organisation {
     private String domain;
 
     @NotNull
-    @Column(name = "size", nullable = false, unique = true)
+    @Column(name = "size", nullable = false)
     private int size;
 }

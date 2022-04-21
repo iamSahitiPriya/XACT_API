@@ -36,17 +36,17 @@ public class Assessment {
     private Organisation organisation;
 
     @NotNull
-    @Column(name = "assessment_status", nullable = false, unique = true)
+    @Column(name = "assessment_status", nullable = false)
     @Enumerated(EnumType.STRING)
     private AssessmentStatus assessmentStatus;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", nullable = false, unique = true)
+    @Column(name = "created_at", nullable = false)
     private Date createdAt;
 
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated_at", nullable = false, unique = true)
+    @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 }

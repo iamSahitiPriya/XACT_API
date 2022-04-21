@@ -34,9 +34,10 @@ public class AssessmentService {
         assessment.setAssessmentStatus(AssessmentStatus.ACTIVE);
 
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
-        organisationService.createOrganisation(organisation);
+        Organisation createdOrg = organisationService.createOrganisation(organisation);
 
-        assessment.setOrganisation(organisation);
+
+        assessment.setOrganisation(createdOrg);
         createAssessment(assessment);
 
         List<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);

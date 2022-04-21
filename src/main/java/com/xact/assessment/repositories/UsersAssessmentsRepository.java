@@ -16,6 +16,4 @@ public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUse
     @Executable
     @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail")
     List<AssessmentUsers> findByUserEmail(@Parameter("userEmail") String userEmail);
-
-
 }

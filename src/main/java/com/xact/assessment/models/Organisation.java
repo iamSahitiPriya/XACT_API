@@ -21,7 +21,7 @@ public class Organisation {
 
     @Id
     @Column(name = "organisation_id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long organisationId;
 
     @NotNull

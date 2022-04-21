@@ -23,7 +23,7 @@ public class Assessment {
 
     @Id
     @Column(name = "assessment_id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long assessmentId;
 
     @NotNull
@@ -31,7 +31,7 @@ public class Assessment {
     private String assessmentName;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "organisation")
     private Organisation organisation;
 

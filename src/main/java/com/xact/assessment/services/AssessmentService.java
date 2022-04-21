@@ -4,7 +4,7 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AssessmentsRepository;
+import com.xact.assessment.repositories.AssessmentRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
@@ -18,14 +18,12 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    private final AssessmentsRepository assessmentsRepository;
-    private final OrganisationService organisationService;
     private final UsersAssessmentsService usersAssessmentsService;
+    private final AssessmentRepository assessmentRepository;
 
-    public AssessmentService(AssessmentsRepository assessmentsRepository, OrganisationService organisationService, UsersAssessmentsService usersAssessmentsService) {
-        this.assessmentsRepository = assessmentsRepository;
-        this.organisationService = organisationService;
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository) {
         this.usersAssessmentsService = usersAssessmentsService;
+        this.assessmentRepository = assessmentRepository;
     }
 
     @Transactional
@@ -34,19 +32,20 @@ public class AssessmentService {
         assessment.setAssessmentStatus(AssessmentStatus.ACTIVE);
 
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
-        Organisation createdOrg = organisationService.createOrganisation(organisation);
-
-
-        assessment.setOrganisation(createdOrg);
-        createAssessment(assessment);
-
+        assessment.setOrganisation(organisation);
         List<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
+
+        createAssessment(assessment);
         usersAssessmentsService.createUsersInAssessment(assessmentUsers);
 
         return assessment;
     }
 
-    private List<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedinUser, Assessment createdAssessment) {
+    private void createAssessment(Assessment assessment) {
+        assessmentRepository.save(assessment);
+    }
+
+    private List<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedinUser, Assessment assessment) {
         List<UserDto> users = assessmentRequest.getUsers();
 
         List<AssessmentUsers> assessmentUsers = new ArrayList<>();
@@ -56,15 +55,11 @@ public class AssessmentService {
                 eachUser.setRole(UserRole.Owner);
             }
             AssessmentUsers EachAssessmentUsers = mapper.map(eachUser, AssessmentUsers.class);
-            EachAssessmentUsers.setUserId(new UserId(eachUser.getEmail(), createdAssessment));
+            EachAssessmentUsers.setUserId(new UserId(eachUser.getEmail(), assessment));
             assessmentUsers.add(EachAssessmentUsers);
 
         }
         return assessmentUsers;
-    }
-
-    private Assessment createAssessment(Assessment assessment) {
-        return assessmentsRepository.save(assessment);
     }
 
 }

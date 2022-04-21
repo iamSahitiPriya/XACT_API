@@ -4,97 +4,73 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AssessmentsRepository;
-import com.xact.assessment.repositories.UsersAssessmentsRepository;
+import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.OrganisationService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AssessmentServiceTest {
-    private AssessmentsRepository assessmentsRepository;
-    private OrganisationService organisationService;
-    private UsersAssessmentsRepository usersAssessmentsRepository;
     private UsersAssessmentsService usersAssessmentsService;
     private AssessmentService assessmentService;
+    private AssessmentRepository assessmentRepository;
 
 
     @BeforeEach
     public void beforeEach() {
-        assessmentsRepository = mock(AssessmentsRepository.class);
-        usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
-        usersAssessmentsService = new UsersAssessmentsService(usersAssessmentsRepository);
-        organisationService = mock(OrganisationService.class);
-        assessmentService = new AssessmentService(assessmentsRepository, organisationService, usersAssessmentsService);
-    }
-
-    @Test
-    public void shouldCreateNewAssessment() {
-
-        List<UserDto> assessmentUsers = new ArrayList<>();
-        ModelMapper mapper = new ModelMapper();
-
-
-        UserDto userDto1 = new UserDto("test@email.com", "first-name", "last-name", UserRole.Facilitator);
-        assessmentUsers.add(userDto1);
-
-        UserDto userDto2 = new UserDto("test2@email.com", "first2-name", "last2-name", UserRole.Facilitator);
-        assessmentUsers.add(userDto2);
-        AssessmentRequest assessmentRequest = new AssessmentRequest();
-        assessmentRequest.setAssessmentName("test-assessment");
-        assessmentRequest.setOrganisationName("test-organisation");
-        assessmentRequest.setDomain("test-domain");
-        assessmentRequest.setIndustry("test-industry");
-        assessmentRequest.setTeamSize(10);
-        assessmentRequest.setUsers(assessmentUsers);
-
-        Assessment actualCreatedAssessment = assessmentService.createAssessment(assessmentRequest, new User("test@email.com", "first-name", "last-name"));
-
-        Assessment assessment = mapper.map(assessmentRequest, Assessment.class);
-        assessment.setAssessmentStatus(AssessmentStatus.ACTIVE);
-
-        when(assessmentsRepository.save(assessment)).thenReturn(assessment);
-
-        assertEquals(userDto1.getRole(), UserRole.Owner);
-        assertEquals(actualCreatedAssessment.getAssessmentName(), assessment.getAssessmentName());
-        assertEquals(actualCreatedAssessment.getAssessmentStatus(), assessment.getAssessmentStatus());
-        assertEquals(actualCreatedAssessment.getOrganisation().getOrganisationName(), assessment.getOrganisation().getOrganisationName());
-
-        verify(assessmentsRepository).save(actualCreatedAssessment);
-
+        usersAssessmentsService = mock(UsersAssessmentsService.class);
+        assessmentRepository = mock(AssessmentRepository.class);
+        assessmentService = new AssessmentService(usersAssessmentsService,assessmentRepository);
     }
 
     @Test
     void shouldAddUsersToAssessment() {
+        AssessmentRequest assessmentRequest = new AssessmentRequest();
+        assessmentRequest.setAssessmentName("assessment1");
+        assessmentRequest.setTeamSize(1);
+        assessmentRequest.setOrganisationName("org1");
+        assessmentRequest.setIndustry("IT");
+        assessmentRequest.setDomain("IT");
+        List<UserDto> users = new ArrayList<>();
+        UserDto user = new UserDto("test@email.com", "first-name", "last-name", UserRole.Owner);
+        users.add(user);
+        assessmentRequest.setUsers(users);
+
+        User loggedinUser = new User();
+        loggedinUser.setEmail("test@email.com");
+
+
         List<AssessmentUsers> assessmentUsers = new ArrayList<>();
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentStatus(AssessmentStatus.ACTIVE);
+        assessment.setAssessmentName("assessment1");
+        Organisation organisation = new Organisation();
+        organisation.setOrganisationName("org1");
+        organisation.setDomain("IT");
+        organisation.setIndustry("IT");
+        organisation.setSize(1);
+        assessment.setOrganisation(organisation);
 
 
-        UserId userId1 = new UserId("test@email.com", new Assessment());
-        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, "first-name", "last-name", AssessmentRole.Facilitator);
+        UserId userId1 = new UserId("test@email.com", assessment);
+        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, "first-name", "last-name", AssessmentRole.Owner);
         assessmentUsers.add(assessmentUsers1);
 
-        UserId userId2 = new UserId("test-2@email.com", new Assessment());
-        AssessmentUsers assessmentUsers2 = new AssessmentUsers(userId2, "first2-name", "last2-name", AssessmentRole.Facilitator);
-        assessmentUsers.add(assessmentUsers2);
 
+        when(assessmentRepository.save(assessment)).thenReturn(assessment);
+        when(usersAssessmentsService.createUsersInAssessment(assessmentUsers)).thenReturn(assessmentUsers);
 
-        when(usersAssessmentsRepository.saveAll(assessmentUsers)).thenReturn(assessmentUsers);
+        Assessment actualAssessment = assessmentService.createAssessment(assessmentRequest, loggedinUser);
 
-        List<AssessmentUsers> actualAssessmentUsers = usersAssessmentsService.createUsersInAssessment(assessmentUsers);
-
-        assertEquals(assessmentUsers, actualAssessmentUsers);
-
-        verify(usersAssessmentsRepository).saveAll(assessmentUsers);
-
-
+        assertEquals(assessment.getAssessmentName(), actualAssessment.getAssessmentName());
+        assertEquals(assessment.getAssessmentStatus(), actualAssessment.getAssessmentStatus());
     }
 
 }

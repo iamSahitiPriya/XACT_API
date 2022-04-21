@@ -25,15 +25,15 @@ public class Organisation {
     private Long organisationId;
 
     @NotNull
-    @Column(name = "organisation_name", nullable = false, unique = true)
+    @Column(name = "organisation_name", nullable = false)
     private String organisationName;
 
     @NotNull
-    @Column(name = "industry", nullable = false, unique = true)
+    @Column(name = "industry", nullable = false)
     private String industry;
 
     @NotNull
-    @Column(name = "domain", nullable = false, unique = true)
+    @Column(name = "domain", nullable = false)
     private String domain;
 
     @NotNull

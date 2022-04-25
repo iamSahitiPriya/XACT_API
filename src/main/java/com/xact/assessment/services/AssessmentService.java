@@ -3,7 +3,7 @@ package com.xact.assessment.services;
 import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
-import com.xact.assessment.models.*;
+import unit.com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
@@ -51,7 +51,7 @@ public class AssessmentService {
         List<AssessmentUsers> assessmentUsers = new ArrayList<>();
         for (UserDto eachUser : users) {
             eachUser.setRole(UserRole.Facilitator);
-            if (loggedinUser.getEmail().equals(eachUser.getEmail())) {
+            if (loggedinUser.getUserEmail().equals(eachUser.getEmail())) {
                 eachUser.setRole(UserRole.Owner);
             }
             AssessmentUsers assessmentUser = mapper.map(eachUser, AssessmentUsers.class);

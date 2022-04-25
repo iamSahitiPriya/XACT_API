@@ -1,7 +1,7 @@
 package com.xact.assessment.services;
 
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentUsers;
+import unit.com.xact.assessment.models.Assessment;
+import unit.com.xact.assessment.models.AssessmentUsers;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
 

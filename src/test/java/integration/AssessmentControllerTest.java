@@ -1,8 +1,8 @@
 package integration;
 
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentUsers;
-import com.xact.assessment.models.UserId;
+import unit.com.xact.assessment.models.Assessment;
+import unit.com.xact.assessment.models.AssessmentUsers;
+import unit.com.xact.assessment.models.UserId;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;

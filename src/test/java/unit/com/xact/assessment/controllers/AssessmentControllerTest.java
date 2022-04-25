@@ -1,13 +1,10 @@
-package unit.com.xact.controllers;
+package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AssessmentController;
 import com.xact.assessment.dtos.*;
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentStatus;
-import com.xact.assessment.models.Organisation;
-import com.xact.assessment.models.User;
+import unit.com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.AuthService;
+import com.xact.assessment.services.UserAuthService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -26,9 +23,9 @@ class AssessmentControllerTest {
 
     private final Authentication authentication = Mockito.mock(Authentication.class);
     private final UsersAssessmentsService usersAssessmentsService = Mockito.mock(UsersAssessmentsService.class);
-    private final AuthService authService = Mockito.mock(AuthService.class);
+    private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
-    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, authService, assessmentService);
+    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService);
 
     @Test
     void testGetAssessment() {
@@ -37,13 +34,15 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        user.setEmail(userEmail);
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
         Organisation organisation = new Organisation(2L, "abc", "hello", "ABC", 4);
         Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         when(usersAssessmentsService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
-        when(authService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         AssessmentResponse expectedAssessment = new AssessmentResponse();
         expectedAssessment.setAssessmentId(1L);
         expectedAssessment.setAssessmentName("xact");
@@ -77,14 +76,16 @@ class AssessmentControllerTest {
         assessmentRequest.setUsers(users);
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        user.setEmail(userEmail);
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2L, "abc", "hello", "ABC", 4);
         Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.Active, created, updated);
 
 
-        when(authService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         when(assessmentService.createAssessment(assessmentRequest, user)).thenReturn(assessment);
 
         HttpResponse<AssessmentResponse> actualAssessments = assessmentController.createAssessment(assessmentRequest, authentication);

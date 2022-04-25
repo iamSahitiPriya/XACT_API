@@ -2,10 +2,10 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.AssessmentResponse;
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.User;
+import unit.com.xact.assessment.models.Assessment;
+import unit.com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.AuthService;
+import com.xact.assessment.services.UserAuthService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -27,22 +27,22 @@ import java.util.Objects;
 public class AssessmentController {
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentService assessmentService;
-    private final AuthService authService;
+    private final UserAuthService userAuthService;
 
     private ModelMapper modelMapper = new ModelMapper();
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, AuthService authService, AssessmentService assessmentService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService) {
         this.usersAssessmentsService = usersAssessmentsService;
-        this.authService = authService;
+        this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
     }
 
     @Get(produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<AssessmentResponse>> getAssessments(Authentication authentication) {
-        User loggedInUser = authService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
 
-        List<Assessment> assessments = usersAssessmentsService.findAssessments(loggedInUser.getEmail());
+        List<Assessment> assessments = usersAssessmentsService.findAssessments(loggedInUser.getUserEmail());
         List<AssessmentResponse> assessmentResponses = new ArrayList<>();
         if (Objects.nonNull(assessments))
             assessments.forEach(assessment -> assessmentResponses.add(modelMapper.map(assessment, AssessmentResponse.class)));
@@ -52,7 +52,7 @@ public class AssessmentController {
     @Post(produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> createAssessment(@Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
-        User loggedInUser = authService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);

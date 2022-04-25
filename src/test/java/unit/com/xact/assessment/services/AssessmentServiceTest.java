@@ -1,9 +1,9 @@
-package unit.com.xact.services;
+package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
-import com.xact.assessment.models.*;
+import unit.com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
@@ -44,7 +44,9 @@ class AssessmentServiceTest {
         assessmentRequest.setUsers(users);
 
         User loggedinUser = new User();
-        loggedinUser.setEmail("test@email.com");
+        Profile profile = new Profile();
+        profile.setEmail("test@email.com");
+        loggedinUser.setProfile(profile);
 
 
         List<AssessmentUsers> assessmentUsers = new ArrayList<>();

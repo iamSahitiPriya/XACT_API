@@ -1,4 +1,4 @@
-package com.xact.assessment.models;
+package unit.com.xact.assessment.models;
 
 public enum AssessmentRole {
     Owner,Developer,Facilitator

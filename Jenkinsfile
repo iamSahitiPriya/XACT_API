@@ -10,7 +10,7 @@ pipeline {
                 sh './gradlew clean build'
             }
         }
-        stage("build & SonarQube analysis") {
+        stage("SonarQube analysis") {
             steps {
               withSonarQubeEnv('XACT_SONAR') {
                 sh './gradlew sonarqube'

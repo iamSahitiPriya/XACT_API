@@ -39,7 +39,7 @@ public class AssessmentControllerTest {
         String userEmail = "hello@thoughtworks.com";
         user.setEmail(userEmail);
         Organisation organisation = new Organisation(2L, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.ACTIVE, created, updated);
+        Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         when(usersAssessmentsService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
@@ -48,7 +48,7 @@ public class AssessmentControllerTest {
         expectedAssessment.setAssessmentId(1L);
         expectedAssessment.setAssessmentName("xact");
         expectedAssessment.setOrganisationName("abc");
-        expectedAssessment.setAssessmentStatus(AssessmentStatusDto.ACTIVE);
+        expectedAssessment.setAssessmentStatus(AssessmentStatusDto.Active);
         expectedAssessment.setUpdatedAt(updated);
         HttpResponse<List<AssessmentResponse>> actualAssessments = assessmentController.getAssessments(authentication);
 
@@ -81,7 +81,7 @@ public class AssessmentControllerTest {
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2L, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.ACTIVE, created, updated);
+        Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.Active, created, updated);
 
 
         when(authService.getLoggedInUser(authentication)).thenReturn(user);

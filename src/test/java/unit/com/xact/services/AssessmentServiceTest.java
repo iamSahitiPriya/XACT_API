@@ -49,7 +49,7 @@ public class AssessmentServiceTest {
 
         List<AssessmentUsers> assessmentUsers = new ArrayList<>();
         Assessment assessment = new Assessment();
-        assessment.setAssessmentStatus(AssessmentStatus.ACTIVE);
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setAssessmentName("assessment1");
         Organisation organisation = new Organisation();
         organisation.setOrganisationName("org1");

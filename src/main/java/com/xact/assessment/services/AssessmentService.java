@@ -29,7 +29,7 @@ public class AssessmentService {
     @Transactional
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
         Assessment assessment = mapper.map(assessmentRequest, Assessment.class);
-        assessment.setAssessmentStatus(AssessmentStatus.ACTIVE);
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
 
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
         assessment.setOrganisation(organisation);

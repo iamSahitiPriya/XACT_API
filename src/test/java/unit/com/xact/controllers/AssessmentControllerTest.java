@@ -6,8 +6,8 @@ import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentStatus;
 import com.xact.assessment.models.Organisation;
 import com.xact.assessment.models.User;
-import com.xact.assessment.services.AuthService;
 import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.AuthService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class AssessmentControllerTest {
+class AssessmentControllerTest {
 
 
     private final Authentication authentication = Mockito.mock(Authentication.class);
@@ -31,7 +31,7 @@ public class AssessmentControllerTest {
     private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, authService, assessmentService);
 
     @Test
-    public void testGetAssessment() {
+    void testGetAssessment() {
 
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
@@ -61,7 +61,7 @@ public class AssessmentControllerTest {
     }
 
     @Test
-    public void testCreateAssessment() {
+    void testCreateAssessment() {
         AssessmentRequest assessmentRequest = new AssessmentRequest();
         assessmentRequest.setAssessmentName("Dummy assessment");
         assessmentRequest.setDomain("Dummy domain");

@@ -7,10 +7,22 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'MICRONAUT_ENVIRONMENTS=test  ./gradlew clean build'
+                sh './gradlew clean build'
             }
         }
-
+        stage("build & SonarQube analysis") {
+                    steps {
+                      withSonarQubeEnv('XACT_SONAR') {
+                        sh './gradlew sonarqube'
+                      }
+                    }
+        }
+        stage("Quality Gate") {
+                    steps {
+                      timeout(time: 1, unit: 'HOURS') {
+                        waitForQualityGate abortPipeline: true
+                      }
+        }
         stage('Dependency Check') {
             steps {
                 sh './gradlew dependencyCheckAnalyze'

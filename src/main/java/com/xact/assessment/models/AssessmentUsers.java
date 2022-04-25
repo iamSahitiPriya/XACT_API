@@ -21,7 +21,8 @@ import java.io.Serializable;
 public class AssessmentUsers implements Serializable {
 
     @EmbeddedId
-    @AttributeOverrides({@AttributeOverride(name = "userEmail", column = @Column(name = "user_email")), @AttributeOverride(name = "assessment", column = @Column(name = "assessment_id"))})
+    @AttributeOverride(name = "userEmail", column = @Column(name = "user_email"))
+    @AttributeOverride(name = "assessment", column = @Column(name = "assessment_id"))
     public UserId userId;
 
     @NotNull

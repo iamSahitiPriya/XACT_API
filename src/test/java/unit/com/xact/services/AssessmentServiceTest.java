@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class AssessmentServiceTest {
+class AssessmentServiceTest {
     private UsersAssessmentsService usersAssessmentsService;
     private AssessmentService assessmentService;
     private AssessmentRepository assessmentRepository;
@@ -27,7 +27,7 @@ public class AssessmentServiceTest {
     public void beforeEach() {
         usersAssessmentsService = mock(UsersAssessmentsService.class);
         assessmentRepository = mock(AssessmentRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService,assessmentRepository);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository);
     }
 
     @Test

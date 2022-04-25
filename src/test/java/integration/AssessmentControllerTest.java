@@ -20,7 +20,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @MicronautTest
-public class AssessmentControllerTest {
+class AssessmentControllerTest {
 
     @Inject
     @Client("/")

@@ -26,7 +26,7 @@ class UsersAssessmentsServiceTest {
     }
 
     @Test
-    public void shouldFetchAllAssessmentDetails() {
+    void shouldFetchAllAssessmentDetails() {
 
         Date created = new Date(22 - 10 - 2022);
         Date updated = new Date(22 - 10 - 2022);

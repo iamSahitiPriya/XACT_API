@@ -54,9 +54,9 @@ public class AssessmentService {
             if (loggedinUser.getEmail().equals(eachUser.getEmail())) {
                 eachUser.setRole(UserRole.Owner);
             }
-            AssessmentUsers EachAssessmentUsers = mapper.map(eachUser, AssessmentUsers.class);
-            EachAssessmentUsers.setUserId(new UserId(eachUser.getEmail(), assessment));
-            assessmentUsers.add(EachAssessmentUsers);
+            AssessmentUsers assessmentUser = mapper.map(eachUser, AssessmentUsers.class);
+            assessmentUser.setUserId(new UserId(eachUser.getEmail(), assessment));
+            assessmentUsers.add(assessmentUser);
 
         }
         return assessmentUsers;

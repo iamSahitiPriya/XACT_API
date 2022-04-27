@@ -1,8 +1,8 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.clients.UserClient;
-import unit.com.xact.assessment.models.Profile;
-import unit.com.xact.assessment.models.User;
+import com.xact.assessment.models.Profile;
+import com.xact.assessment.models.User;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;

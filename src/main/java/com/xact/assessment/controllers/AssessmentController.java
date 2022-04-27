@@ -2,8 +2,8 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.AssessmentResponse;
-import unit.com.xact.assessment.models.Assessment;
-import unit.com.xact.assessment.models.User;
+import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
 import com.xact.assessment.services.UsersAssessmentsService;

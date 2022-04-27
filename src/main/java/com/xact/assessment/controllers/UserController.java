@@ -11,7 +11,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import unit.com.xact.assessment.models.User;
+import com.xact.assessment.models.User;
 
 @Controller("/v1/users")
 public class UserController {

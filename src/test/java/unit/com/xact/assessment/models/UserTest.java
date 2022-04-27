@@ -1,5 +1,7 @@
 package unit.com.xact.assessment.models;
 
+import com.xact.assessment.models.Profile;
+import com.xact.assessment.models.User;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,7 +1,8 @@
 package integration;
 
 import com.xact.assessment.clients.UserClient;
-import com.xact.assessment.repositories.UsersAssessmentsRepository;
+import com.xact.assessment.models.Profile;
+import com.xact.assessment.models.User;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -13,7 +14,6 @@ import unit.com.xact.assessment.models.*;
 
 import java.io.IOException;
 
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

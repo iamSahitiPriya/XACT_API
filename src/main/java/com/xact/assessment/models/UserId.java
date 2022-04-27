@@ -1,4 +1,4 @@
-package unit.com.xact.assessment.models;
+package com.xact.assessment.models;
 
 import lombok.*;
 

@@ -1,6 +1,6 @@
 package com.xact.assessment.repositories;
 
-import unit.com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.Assessment;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 

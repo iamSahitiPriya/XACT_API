@@ -1,7 +1,7 @@
 package com.xact.assessment.repositories;
 
-import unit.com.xact.assessment.models.AssessmentUsers;
-import unit.com.xact.assessment.models.UserId;
+import com.xact.assessment.models.AssessmentUsers;
+import com.xact.assessment.models.UserId;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.data.annotation.Query;

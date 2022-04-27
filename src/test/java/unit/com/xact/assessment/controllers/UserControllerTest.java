@@ -6,8 +6,8 @@ import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import org.junit.jupiter.api.Test;
-import unit.com.xact.assessment.models.Profile;
-import unit.com.xact.assessment.models.User;
+import com.xact.assessment.models.Profile;
+import com.xact.assessment.models.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

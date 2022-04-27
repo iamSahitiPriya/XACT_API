@@ -1,5 +1,6 @@
 package unit.com.xact.assessment.services;
 
+import com.xact.assessment.models.*;
 import unit.com.xact.assessment.models.*;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.UsersAssessmentsService;

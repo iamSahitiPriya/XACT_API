@@ -1,6 +1,6 @@
 package com.xact.assessment.clients;
 
-import unit.com.xact.assessment.models.User;
+import com.xact.assessment.models.User;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.client.annotation.Client;

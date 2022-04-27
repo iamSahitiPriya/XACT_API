@@ -38,14 +38,14 @@ class AssessmentControllerTest {
         Profile profile = new Profile();
         profile.setEmail(userEmail);
         user.setProfile(profile);
-        Organisation organisation = new Organisation(2L, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         when(usersAssessmentsService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         AssessmentResponse expectedAssessment = new AssessmentResponse();
-        expectedAssessment.setAssessmentId(1L);
+        expectedAssessment.setAssessmentId(1);
         expectedAssessment.setAssessmentName("xact");
         expectedAssessment.setOrganisationName("abc");
         expectedAssessment.setAssessmentStatus(AssessmentStatusDto.Active);
@@ -82,8 +82,8 @@ class AssessmentControllerTest {
         user.setProfile(profile);
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
-        Organisation organisation = new Organisation(2L, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
 
 
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);

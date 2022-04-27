@@ -33,8 +33,8 @@ class UsersAssessmentsServiceTest {
         Date updated = new Date(22 - 10 - 2022);
         String userEmail = "hello@thoughtworks.com";
 
-        Organisation organisation = new Organisation(1L, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1L, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
+        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, "hello", "world", AssessmentRole.Owner);
 

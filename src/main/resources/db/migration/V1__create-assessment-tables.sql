@@ -9,7 +9,7 @@ create table tbl_assessment (
                                assessment_id SERIAL PRIMARY KEY,
                                assessment_name varchar(50) NOT NULL,
                                organisation int references tbl_organisation(organisation_id),
-                               assessment_status char(20) CHECK(assessment_status='Active' OR assessment_status='Completed'),
+                               assessment_status varchar(20) CHECK(assessment_status='Active' OR assessment_status='Completed'),
                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

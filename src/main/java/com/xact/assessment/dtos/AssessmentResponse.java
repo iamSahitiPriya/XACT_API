@@ -11,7 +11,7 @@ import java.util.Date;
 @Setter
 public class AssessmentResponse {
 
-    private Long assessmentId;
+    private Integer assessmentId;
 
     private String assessmentName;
 

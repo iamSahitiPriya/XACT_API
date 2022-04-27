@@ -5,5 +5,5 @@ import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 
 @Repository
-public interface AssessmentRepository extends CrudRepository<Assessment, Long> {
+public interface AssessmentRepository extends CrudRepository<Assessment, Integer> {
 }

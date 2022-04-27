@@ -45,7 +45,7 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         UserId userId = new UserId(userEmail, assessment);
         assessmentUsers.setUserId(userId);
-        assessment.setAssessmentId(23L);
+        assessment.setAssessmentId(23);
         assessment.setAssessmentName("Mocked Assessment");
 
 

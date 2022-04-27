@@ -16,7 +16,7 @@ public class UserId implements Serializable {
 
     private String userEmail;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;

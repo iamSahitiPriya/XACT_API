@@ -1,7 +1,6 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
-import unit.com.xact.assessment.models.*;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +43,27 @@ class UsersAssessmentsServiceTest {
         assertEquals(Collections.singletonList(assessment), actualAssessments);
 
         verify(usersAssessmentsRepository).findByUserEmail(userEmail);
+    }
+
+    @Test
+    void shouldSaveAssessmentUsersDetails() {
+
+        Date created = new Date(22 - 10 - 2022);
+        Date updated = new Date(22 - 10 - 2022);
+
+        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
+        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
+        UserId userId = new UserId("hello@thoughtworks.com", assessment);
+        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, "hello", "world", AssessmentRole.Owner);
+
+        List<AssessmentUsers> users = Collections.singletonList(assessmentUsers);
+
+        when(usersAssessmentsRepository.saveAll(users)).thenReturn(users);
+        List<AssessmentUsers> actualAssessmentUsers = usersAssessmentsService.createUsersInAssessment(users);
+
+        assertEquals(users, actualAssessmentUsers);
+
+        verify(usersAssessmentsRepository).saveAll(users);
     }
 
 

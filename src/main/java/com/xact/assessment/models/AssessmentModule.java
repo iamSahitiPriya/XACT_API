@@ -1,5 +1,7 @@
 package com.xact.assessment.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.micronaut.core.annotation.Introspected;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,10 +15,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "topics")
 @Introspected
 @Entity
 @Table(name = "tbm_assessment_module")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "moduleId")
 public class AssessmentModule {
     @Id
     @Column(name = "module_id", nullable = false, unique = true)
@@ -32,7 +37,8 @@ public class AssessmentModule {
     @JoinColumn(name = "category",referencedColumnName="category_id")
     private AssessmentCategory category;
 
-    @OneToMany(mappedBy = "module")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "module")
     @ElementCollection()
+
     private Set<AssessmentTopic> topics;
 }

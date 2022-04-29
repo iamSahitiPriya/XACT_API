@@ -4,7 +4,6 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
-import unit.com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
@@ -22,7 +21,6 @@ class AssessmentServiceTest {
     private UsersAssessmentsService usersAssessmentsService;
     private AssessmentService assessmentService;
     private AssessmentRepository assessmentRepository;
-
 
     @BeforeEach
     public void beforeEach() {

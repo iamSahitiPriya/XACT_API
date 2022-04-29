@@ -1,5 +1,9 @@
 package com.xact.assessment.models;
 
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.micronaut.core.annotation.Introspected;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,10 +17,13 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"parameters", "references"})
 @Introspected
 @Entity
 @Table(name = "tbm_assessment_topic")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "topicId")
 public class AssessmentTopic {
     @Id
     @Column(name = "topic_id", nullable = false, unique = true)
@@ -29,14 +36,17 @@ public class AssessmentTopic {
 
     @NotNull
     @ManyToOne()
+    @JsonIgnore
     @JoinColumn(name = "module", referencedColumnName = "module_id")
     private AssessmentModule module;
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "topic")
     @ElementCollection()
+
     private Set<AssessmentParameter> parameters;
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "topic")
     @ElementCollection()
+
     private Set<AssessmentTopicReference> references;
 }

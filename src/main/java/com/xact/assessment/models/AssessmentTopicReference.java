@@ -1,5 +1,9 @@
 package com.xact.assessment.models;
 
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +18,9 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 @Entity
 @Table(name = "tbm_assessment_topic_reference")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "referenceId")
 public class AssessmentTopicReference {
 
     @Id
@@ -23,7 +30,8 @@ public class AssessmentTopicReference {
 
     @NotNull
     @ManyToOne()
-    @JoinColumn(name = "topic",referencedColumnName = "topic_id")
+    @JsonIgnore
+    @JoinColumn(name = "topic", referencedColumnName = "topic_id")
     private AssessmentTopic topic;
 
     @Column(name = "rating")

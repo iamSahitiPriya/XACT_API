@@ -1,9 +1,6 @@
 package integration;
 
-import com.xact.assessment.clients.UserClient;
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.Profile;
-import com.xact.assessment.models.User;
+import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
@@ -15,7 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -41,9 +40,9 @@ class AssessmentMasterDataControllerTest {
 
     @Test
     void testGetMasterDataCategoryResponse() throws IOException {
-        AssessmentCategory category = new AssessmentCategory();
-        category.setCategoryId(3);
-        category.setCategoryName("My category");
+
+        AssessmentCategory category = getAssessmentCategory();
+
         List<AssessmentCategory> allCategories = Collections.singletonList(category);
         when(categoryRepository.findAll()).thenReturn(allCategories);
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-master-data-category-response.json");
@@ -53,6 +52,70 @@ class AssessmentMasterDataControllerTest {
 
         assertEquals(expectedResponse, userResponse);
 
+    }
+
+    private AssessmentCategory getAssessmentCategory() {
+        Set<AssessmentModule> modules = new HashSet<>();
+        Set<AssessmentTopic> topics = new HashSet<>();
+        Set<AssessmentTopicReference> topicReferences = new HashSet<>();
+        Set<AssessmentParameterReference> parameterReferences = new HashSet<>();
+        Set<AssessmentParameter> parameters = new HashSet<>();
+        Set<Question> questions = new HashSet<>();
+
+
+        AssessmentCategory category = new AssessmentCategory();
+        AssessmentModule module = new AssessmentModule();
+        AssessmentTopic topic = new AssessmentTopic();
+        AssessmentTopicReference topicReference = new AssessmentTopicReference();
+        AssessmentParameterReference parameterReference = new AssessmentParameterReference();
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        Question question = new Question();
+
+
+        category.setCategoryId(3);
+        category.setCategoryName("My category");
+        category.setModules(modules);
+
+
+        module.setModuleId(3);
+        module.setModuleName("My module");
+        module.setCategory(category);
+        module.setTopics(topics);
+        modules.add(module);
+
+
+        topic.setTopicId(5);
+        topic.setTopicName("My topic");
+        topic.setModule(module);
+        topic.setReferences(topicReferences);
+        topic.setParameters(parameters);
+        topics.add(topic);
+
+        topicReference.setReferenceId(1);
+        topicReference.setRating(Rating.ONE);
+        topicReference.setReference("One Reference topic");
+        topicReference.setTopic(topic);
+        topicReferences.add(topicReference);
+
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("My parameter");
+        assessmentParameter.setTopic(topic);
+        assessmentParameter.setQuestions(questions);
+        assessmentParameter.setReferences(parameterReferences);
+        parameters.add(assessmentParameter);
+
+        parameterReference.setReferenceId(1);
+        parameterReference.setRating(Rating.ONE);
+        parameterReference.setReference("One Reference parameter");
+        parameterReference.setParameter(assessmentParameter);
+        parameterReferences.add(parameterReference);
+
+        question.setParameter(assessmentParameter);
+        question.setQuestionId(1);
+        question.setQuestionText("My question");
+        questions.add(question);
+
+        return category;
     }
 
 

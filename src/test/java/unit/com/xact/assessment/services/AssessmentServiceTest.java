@@ -38,7 +38,7 @@ class AssessmentServiceTest {
         assessmentRequest.setIndustry("IT");
         assessmentRequest.setDomain("IT");
         List<UserDto> users = new ArrayList<>();
-        UserDto user = new UserDto("test@email.com", "first-name", "last-name", UserRole.Owner);
+        UserDto user = new UserDto("test@email.com", UserRole.Owner);
         users.add(user);
         assessmentRequest.setUsers(users);
 
@@ -61,7 +61,7 @@ class AssessmentServiceTest {
 
 
         UserId userId1 = new UserId("test@email.com", assessment);
-        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, "first-name", "last-name", AssessmentRole.Owner);
+        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, AssessmentRole.Owner);
         assessmentUsers.add(assessmentUsers1);
 
 

@@ -16,9 +16,7 @@ create table tbl_assessment (
 
 create table tbl_assessment_users (
                                      assessment_id int references tbl_assessment(assessment_id),
-                                     user_email varchar(50) NOT NULL ,
-                                     first_name varchar(50) NOT NULL,
-                                     last_name varchar(50) NOT NULL,
+                                     user_email varchar(50) NOT NULL , 
                                      role varchar(50) CHECK(role='Facilitator' OR role='Developer' OR role='Owner'),
                                      primary key (assessment_id,user_email)
 );

@@ -70,8 +70,6 @@ class AssessmentControllerTest {
         assessmentRequest.setTeamSize(10);
         UserDto userDto = new UserDto();
         userDto.setEmail("dummy@thoughtworks.com");
-        userDto.setFirstName("Dummy FN");
-        userDto.setLastName("Dummy LN");
         userDto.setRole(UserRole.Owner);
         List<UserDto> users = Collections.singletonList(userDto);
         assessmentRequest.setUsers(users);

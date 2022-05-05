@@ -25,7 +25,6 @@ import java.util.Set;
 public class AssessmentModule {
     @Id
     @Column(name = "module_id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer moduleId;
 
     @NotNull
@@ -39,6 +38,5 @@ public class AssessmentModule {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "module")
     @ElementCollection()
-
     private Set<AssessmentTopic> topics;
 }

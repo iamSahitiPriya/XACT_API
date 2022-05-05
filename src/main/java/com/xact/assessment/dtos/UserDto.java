@@ -16,7 +16,5 @@ public class UserDto {
     @Email
     @NotBlank
     private String email;
-    private String firstName;
-    private String lastName;
     private UserRole role;
 }

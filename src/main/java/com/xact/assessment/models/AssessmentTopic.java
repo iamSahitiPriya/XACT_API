@@ -27,7 +27,6 @@ import java.util.Set;
 public class AssessmentTopic {
     @Id
     @Column(name = "topic_id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer topicId;
 
     @NotNull
@@ -42,11 +41,9 @@ public class AssessmentTopic {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "topic")
     @ElementCollection()
-
     private Set<AssessmentParameter> parameters;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "topic")
     @ElementCollection()
-
     private Set<AssessmentTopicReference> references;
 }

@@ -27,7 +27,6 @@ import java.util.Set;
 public class AssessmentParameter {
     @Id
     @Column(name = "parameter_id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer parameterId;
 
     @NotNull

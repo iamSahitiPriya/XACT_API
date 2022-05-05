@@ -26,14 +26,6 @@ public class AssessmentUsers implements Serializable {
     public UserId userId;
 
     @NotNull
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @NotNull
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @NotNull
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private AssessmentRole role;

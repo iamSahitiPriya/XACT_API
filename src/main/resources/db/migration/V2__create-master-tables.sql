@@ -1,25 +1,25 @@
 create table tbm_assessment_category (
-                                  category_id SERIAL PRIMARY KEY,
+                                  category_id INT PRIMARY KEY,
                                   category_name varchar(50) NOT NULL
 );
 create table tbm_assessment_module (
-                               module_id SERIAL PRIMARY KEY,
+                               module_id INT PRIMARY KEY,
                                module_name varchar(50) NOT NULL,
                                category int references tbm_assessment_category(category_id)
 );
 create table tbm_assessment_topic (
-                               topic_id SERIAL PRIMARY KEY,
+                               topic_id INT PRIMARY KEY,
                                topic_name varchar(50) NOT NULL,
                                module int references tbm_assessment_module(module_id)
 );
 create table tbm_assessment_parameter (
-                               parameter_id SERIAL PRIMARY KEY,
+                               parameter_id INT PRIMARY KEY,
                                parameter_name varchar(50) NOT NULL,
                                topic int references tbm_assessment_topic(topic_id)
 );
 
 create table tbm_assessment_question (
-                               question_id SERIAL PRIMARY KEY,
+                               question_id INT PRIMARY KEY,
                                question_text text NOT NULL,
                                parameter int references tbm_assessment_parameter(parameter_id)
 );

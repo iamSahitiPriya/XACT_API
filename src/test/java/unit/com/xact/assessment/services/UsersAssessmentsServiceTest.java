@@ -35,7 +35,7 @@ class UsersAssessmentsServiceTest {
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
         Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
-        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, "hello", "world", AssessmentRole.Owner);
+        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(Collections.singletonList(assessmentUsers));
         List<Assessment> actualAssessments = usersAssessmentsService.findAssessments(userEmail);
@@ -54,7 +54,7 @@ class UsersAssessmentsServiceTest {
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
         Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
-        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, "hello", "world", AssessmentRole.Owner);
+        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
         List<AssessmentUsers> users = Collections.singletonList(assessmentUsers);
 

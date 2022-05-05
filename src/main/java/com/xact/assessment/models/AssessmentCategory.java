@@ -25,7 +25,6 @@ import java.util.Set;
 public class AssessmentCategory {
     @Id
     @Column(name = "category_id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer categoryId;
 
     @NotNull

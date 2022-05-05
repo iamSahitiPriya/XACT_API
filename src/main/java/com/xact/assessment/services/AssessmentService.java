@@ -16,10 +16,9 @@ import java.util.List;
 @Singleton
 public class AssessmentService {
 
-    ModelMapper mapper = new ModelMapper();
-
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
+    ModelMapper mapper = new ModelMapper();
 
     public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository) {
         this.usersAssessmentsService = usersAssessmentsService;

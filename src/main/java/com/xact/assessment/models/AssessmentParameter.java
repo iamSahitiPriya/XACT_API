@@ -17,7 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = {"questions","references"})
+@EqualsAndHashCode(exclude = {"questions", "references"})
 @Introspected
 @Entity
 @Table(name = "tbm_assessment_parameter")
@@ -36,7 +36,7 @@ public class AssessmentParameter {
     @NotNull
     @ManyToOne()
     @JsonIgnore
-    @JoinColumn(name = "topic",referencedColumnName = "topic_id")
+    @JoinColumn(name = "topic", referencedColumnName = "topic_id")
     private AssessmentTopic topic;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "parameter")

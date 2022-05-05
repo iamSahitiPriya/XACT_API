@@ -1,6 +1,9 @@
 package com.xact.assessment.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -8,8 +11,8 @@ import lombok.*;
 @Setter
 public class User {
 
-    private String status;
     Profile profile;
+    private String status;
 
     public String getUserEmail() {
         return profile.getEmail();

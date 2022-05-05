@@ -21,12 +21,6 @@ public class AssessmentMasterDataController {
 
     private static ModelMapper mapper = new ModelMapper();
 
-    private AssessmentMasterDataService assessmentMasterDataService;
-
-    public AssessmentMasterDataController(AssessmentMasterDataService assessmentMasterDataService) {
-        this.assessmentMasterDataService = assessmentMasterDataService;
-    }
-
     static {
         PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
             protected void configure() {
@@ -64,6 +58,12 @@ public class AssessmentMasterDataController {
         mapper.addMappings(questionMap);
         mapper.addMappings(topicReferenceMap);
         mapper.addMappings(parameterReferenceMap);
+    }
+
+    private AssessmentMasterDataService assessmentMasterDataService;
+
+    public AssessmentMasterDataController(AssessmentMasterDataService assessmentMasterDataService) {
+        this.assessmentMasterDataService = assessmentMasterDataService;
     }
 
     @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)

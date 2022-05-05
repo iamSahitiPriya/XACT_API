@@ -31,7 +31,7 @@ public class UsersAssessmentsService {
 
     @Transactional
     public List<AssessmentUsers> createUsersInAssessment(List<AssessmentUsers> assessmentUsers) {
-         return (List<AssessmentUsers>) usersAssessmentsRepository.saveAll(assessmentUsers);
+        return (List<AssessmentUsers>) usersAssessmentsRepository.saveAll(assessmentUsers);
     }
 
 

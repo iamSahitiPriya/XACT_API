@@ -16,7 +16,7 @@ public class UserAuthService {
 
         Profile profile = new Profile();
         profile.setEmail((String) authentication.getAttributes().get(EMAIL));
-        return new User(ACTIVE, profile);
+        return new User(profile,ACTIVE);
     }
 
 

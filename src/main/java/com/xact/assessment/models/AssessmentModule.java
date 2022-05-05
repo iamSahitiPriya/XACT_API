@@ -33,7 +33,7 @@ public class AssessmentModule {
 
     @NotNull
     @ManyToOne
-    @JoinColumn(name = "category",referencedColumnName="category_id")
+    @JoinColumn(name = "category", referencedColumnName = "category_id")
     private AssessmentCategory category;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "module")

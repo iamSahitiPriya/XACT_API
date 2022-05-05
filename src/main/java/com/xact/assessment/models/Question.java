@@ -35,7 +35,7 @@ public class Question {
     @NotNull
     @ManyToOne()
     @JsonIgnore
-    @JoinColumn(name = "parameter",referencedColumnName = "parameter_id")
+    @JoinColumn(name = "parameter", referencedColumnName = "parameter_id")
     private AssessmentParameter parameter;
 
 }

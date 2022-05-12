@@ -17,9 +17,6 @@ public class AssessmentScore {
     @Column(name = "score")
     private Double score;
 
-    @Column(name = "notes")
-    private String notes;
-
     @Column(name = "recommendation")
     private String recommendation;
 }

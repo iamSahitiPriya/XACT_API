@@ -1,20 +1,20 @@
 create table tbm_assessment_category (
                                   category_id INT PRIMARY KEY,
-                                  category_name varchar(50) NOT NULL
+                                  category_name varchar(500) NOT NULL
 );
 create table tbm_assessment_module (
                                module_id INT PRIMARY KEY,
-                               module_name varchar(50) NOT NULL,
+                               module_name varchar(500) NOT NULL,
                                category int references tbm_assessment_category(category_id)
 );
 create table tbm_assessment_topic (
                                topic_id INT PRIMARY KEY,
-                               topic_name varchar(50) NOT NULL,
+                               topic_name varchar(500) NOT NULL,
                                module int references tbm_assessment_module(module_id)
 );
 create table tbm_assessment_parameter (
                                parameter_id INT PRIMARY KEY,
-                               parameter_name varchar(50) NOT NULL,
+                               parameter_name varchar(500) NOT NULL,
                                topic int references tbm_assessment_topic(topic_id)
 );
 
@@ -43,7 +43,6 @@ create table tbl_assessment_topic (
                                assessment_id int references tbl_assessment(assessment_id),
                                topic_id  int references tbm_assessment_topic(topic_id),
                                score double precision,
-                               notes text,
                                recommendation text,
                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -53,8 +52,14 @@ create table tbl_assessment_parameter (
                                assessment_id int references tbl_assessment(assessment_id),
                                parameter_id  int references tbm_assessment_parameter(parameter_id),
                                score double precision,
-                               notes text,
                                recommendation text,
                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+create table tbl_assessment_question (
+                                          question_id int references tbm_assessment_question(question_id),
+                                          notes text,
+                                          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

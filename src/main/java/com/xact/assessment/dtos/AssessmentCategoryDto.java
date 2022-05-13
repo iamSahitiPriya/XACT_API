@@ -4,14 +4,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class AssessmentCategoryDto {
+public class AssessmentCategoryDto implements Comparable<AssessmentCategoryDto> {
 
     private Integer categoryId;
     private String categoryName;
-    private Set<AssessmentModuleDto> modules;
+    private SortedSet<AssessmentModuleDto> modules;
+
+
+    @Override
+    public int compareTo(AssessmentCategoryDto o) {
+        return o.categoryId - categoryId;
+    }
 }
+

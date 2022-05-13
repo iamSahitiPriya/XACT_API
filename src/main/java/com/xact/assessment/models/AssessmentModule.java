@@ -39,4 +39,5 @@ public class AssessmentModule {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "module")
     @ElementCollection()
     private Set<AssessmentTopic> topics;
+
 }

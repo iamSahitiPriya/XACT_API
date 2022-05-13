@@ -8,10 +8,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class QuestionDto {
+public class QuestionDto implements Comparable<QuestionDto> {
 
     private Integer questionId;
     private String questionText;
     private Integer parameter;
 
+    @Override
+    public int compareTo(QuestionDto currentQuestion) {
+        return questionId - currentQuestion.getQuestionId();
+    }
 }

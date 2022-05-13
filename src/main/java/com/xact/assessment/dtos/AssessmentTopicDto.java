@@ -6,15 +6,23 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
+import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
 @Setter
-public class AssessmentTopicDto {
+public class AssessmentTopicDto implements Comparable<AssessmentTopicDto> {
 
     private Integer topicId;
     private String topicName;
     private Integer module;
-    private Set<AssessmentParameterDto> parameters;
+    private SortedSet<AssessmentParameterDto> parameters;
     private Set<AssessmentTopicReferenceDto> references;
+
+    @Override
+    public int compareTo(AssessmentTopicDto currentTopic) {
+        return topicId - currentTopic.topicId;
+    }
+
+
 }

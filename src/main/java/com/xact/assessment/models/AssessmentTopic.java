@@ -46,4 +46,10 @@ public class AssessmentTopic {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "topic")
     @ElementCollection()
     private Set<AssessmentTopicReference> references;
+
+    @NotNull
+    @Column(name="assessment_level")
+    @Enumerated(EnumType.STRING)
+    private AssessmentLevel assessmentLevel;
+
 }

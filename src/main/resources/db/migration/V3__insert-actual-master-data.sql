@@ -40,25 +40,25 @@ INSERT INTO tbm_assessment_module(module_id,module_name, category)
 --------------------------------------------------------------------
 
 DELETE FROM tbm_assessment_topic;
-INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
-        VALUES (1, 'Architectural style', 1);
-INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
-        VALUES (2, 'API Strategy', 1);
-INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
-        VALUES (3, 'Technology Stack', 1);
-INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
-        VALUES (4, 'Performance', 1);
-INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
-        VALUES (5, 'Governance', 1);
+INSERT INTO tbm_assessment_topic(topic_id,topic_name, module, assessment_level)
+        VALUES (1, 'Architectural style', 1 , 'Topic');
+INSERT INTO tbm_assessment_topic(topic_id,topic_name, module,assessment_level)
+        VALUES (2, 'API Strategy', 1, 'Parameter');
+INSERT INTO tbm_assessment_topic(topic_id,topic_name, module,assessment_level)
+        VALUES (3, 'Technology Stack', 1,'Topic');
+INSERT INTO tbm_assessment_topic(topic_id,topic_name, module,assessment_level)
+        VALUES (4, 'Performance', 1,'Parameter');
+INSERT INTO tbm_assessment_topic(topic_id,topic_name, module,assessment_level)
+        VALUES (5, 'Governance', 1,'Topic');
 
 -----------------
 
-INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
-        VALUES (6, 'Product vision evolution & strategy', 5);
-INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
-        VALUES (7, 'OKR`s - Organization & Products', 5);
-INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
-        VALUES (8, 'Go To market strategy', 5);
+INSERT INTO tbm_assessment_topic(topic_id,topic_name, module,assessment_level)
+        VALUES (6, 'Product vision evolution & strategy', 5,'Parameter');
+INSERT INTO tbm_assessment_topic(topic_id,topic_name, module,assessment_level)
+        VALUES (7, 'OKR`s - Organization & Products', 5,'Parameter');
+INSERT INTO tbm_assessment_topic(topic_id,topic_name, module,assessment_level)
+        VALUES (8, 'Go To market strategy', 5,'Topic');
 INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)
         VALUES (9, 'Product analytics ', 5);
 INSERT INTO tbm_assessment_topic(topic_id,topic_name, module)

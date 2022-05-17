@@ -1,16 +1,20 @@
 create table tbm_assessment_category (
                                   category_id INT PRIMARY KEY,
-                                  category_name varchar(500) NOT NULL
+                                  category_name varchar(500) NOT NULL,
+
 );
 create table tbm_assessment_module (
                                module_id INT PRIMARY KEY,
                                module_name varchar(500) NOT NULL,
-                               category int references tbm_assessment_category(category_id)
+                               category int references tbm_assessment_category(category_id),
+
 );
 create table tbm_assessment_topic (
                                topic_id INT PRIMARY KEY,
                                topic_name varchar(500) NOT NULL,
-                               module int references tbm_assessment_module(module_id)
+                               module int references tbm_assessment_module(module_id),
+                               assessment_level varchar(20) CHECK(assessment_level='Topic' OR assessment_level='Parameter')
+
 );
 create table tbm_assessment_parameter (
                                parameter_id INT PRIMARY KEY,

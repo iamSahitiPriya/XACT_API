@@ -1,8 +1,8 @@
 fileignoreconfig:
 - filename: src/main/resources/db/migration/V1__create-assessment-tables.sql
   checksum: 1ce1551020c706c08fe21cdea15e83e9f34e9bf043155f7a74ee802f50fab5ee
-- filename: src/main/resources/db/migration/V2__create-master-tables.sql
-  checksum: 790e79e790b17e29d9601aeef9ea13b4202942a4ebb33704963aa9cb35b3f4d8
 - filename: src/main/resources/db/migration/V3__insert-actual-master-data.sql
   checksum: f0fb0a27e7e31f71c52a2476be237bca584b341c55a8d4ed68723218e25b3786
+- filename: src/main/resources/db/migration/V2__create-master-tables.sql
+  checksum: 112abcbf8196c621de26a1b75cd9b6bb0b3a58a47464d50d7ed05797158b207e
 version: ""

@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package unit.com.xact.assessment.models;
 
 import com.xact.assessment.models.Profile;
@@ -12,7 +16,7 @@ class UserTest {
     void getUserEmail() {
         Profile profile = new Profile();
         profile.setEmail("test@test.com");
-        User user = new User(profile,"Active");
+        User user = new User(profile, "Active");
 
         assertEquals(user.getUserEmail(), "test@test.com");
     }

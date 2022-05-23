@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 plugins {
     id("io.micronaut.library") version "3.2.2"
     id("com.github.johnrengelman.shadow") version "7.1.2"
@@ -49,9 +53,9 @@ dependencies {
     runtimeOnly("ch.qos.logback:logback-classic")
 
     testImplementation("org.mockito:mockito-all:1.8.4")
-    testImplementation ("org.hamcrest:hamcrest-library:2.2")
-    testImplementation ("io.reactivex:rxjava:1.3.8")
-    testImplementation ("io.reactivex.rxjava3:rxjava:3.1.4")
+    testImplementation("org.hamcrest:hamcrest-library:2.2")
+    testImplementation("io.reactivex:rxjava:1.3.8")
+    testImplementation("io.reactivex.rxjava3:rxjava:3.1.4")
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
     testImplementation("org.junit.jupiter:junit-jupiter-api")
     testImplementation("io.micronaut.test:micronaut-test-junit5:3.1.1")
@@ -93,7 +97,7 @@ jacocoTestReport {
     dependsOn test
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class','com/xact/assessment/models/Rating.class'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class'])
         }))
     }
 }
@@ -111,13 +115,13 @@ jar {
 jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class','com/xact/assessment/models/Rating.class'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class'])
         }))
     }
     violationRules {
         rule {
             limit {
-                minimum = 0.98
+                minimum = 0.90
             }
         }
     }

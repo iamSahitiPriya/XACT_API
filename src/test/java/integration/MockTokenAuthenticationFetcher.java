@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package integration;
 
 import io.micronaut.context.annotation.Replaces;
@@ -24,9 +28,9 @@ public class MockTokenAuthenticationFetcher implements AuthenticationFetcher {
     @Override
     public Publisher<Authentication> fetchAuthentication(HttpRequest<?> request) {
         String email = "dummy@test.com";
-        Map<String,Object> authMap = new HashMap<>();
-        authMap.put("sub",email);
-        Authentication authentication = Authentication.build(email,authMap);
+        Map<String, Object> authMap = new HashMap<>();
+        authMap.put("sub", email);
+        Authentication authentication = Authentication.build(email, authMap);
 
 
         System.out.println("{resolver} " + resolver);

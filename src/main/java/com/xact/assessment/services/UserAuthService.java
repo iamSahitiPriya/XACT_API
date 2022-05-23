@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.services;
 
 import com.xact.assessment.models.Profile;
@@ -16,7 +20,7 @@ public class UserAuthService {
 
         Profile profile = new Profile();
         profile.setEmail((String) authentication.getAttributes().get(EMAIL));
-        return new User(profile,ACTIVE);
+        return new User(profile, ACTIVE);
     }
 
 

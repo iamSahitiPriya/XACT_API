@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.models;
 
 
@@ -48,7 +52,7 @@ public class AssessmentTopic {
     private Set<AssessmentTopicReference> references;
 
     @NotNull
-    @Column(name="assessment_level")
+    @Column(name = "assessment_level")
     @Enumerated(EnumType.STRING)
     private AssessmentLevel assessmentLevel;
 

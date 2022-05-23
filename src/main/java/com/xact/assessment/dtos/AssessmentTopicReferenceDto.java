@@ -5,7 +5,6 @@
 package com.xact.assessment.dtos;
 
 
-import com.xact.assessment.models.Rating;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +12,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AssessmentTopicReferenceDto {
+public class AssessmentTopicReferenceDto implements Comparable<AssessmentTopicReferenceDto> {
 
     private Integer referenceId;
     private Integer topic;
-    private Rating rating;
+    private RatingDto rating;
     private String reference;
+
+    @Override
+    public int compareTo(AssessmentTopicReferenceDto reference) {
+        return reference.getRating().getValue() - rating.getValue();
+    }
 }

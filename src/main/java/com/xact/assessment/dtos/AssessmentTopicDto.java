@@ -21,7 +21,7 @@ public class AssessmentTopicDto implements Comparable<AssessmentTopicDto> {
     private String topicName;
     private Integer module;
     private SortedSet<AssessmentParameterDto> parameters;
-    private Set<AssessmentTopicReferenceDto> references;
+    private SortedSet<AssessmentTopicReferenceDto> references;
     private String assessmentLevel;
 
     @Override

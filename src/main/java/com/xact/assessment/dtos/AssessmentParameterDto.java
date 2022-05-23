@@ -21,7 +21,7 @@ public class AssessmentParameterDto implements Comparable<AssessmentParameterDto
     private String parameterName;
     private Integer topic;
     private SortedSet<QuestionDto> questions;
-    private Set<AssessmentParameterReferenceDto> references;
+    private SortedSet<AssessmentParameterReferenceDto> references;
 
     @Override
     public int compareTo(AssessmentParameterDto currentParameter) {

@@ -85,14 +85,4 @@ public class AssessmentMasterDataController {
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
 
-//    @Post(produces = MediaType.APPLICATION_JSON)
-//    @Secured(SecurityRule.IS_AUTHENTICATED)
-//    public HttpResponse<SaveAssessmentResponse> saveAssessment(@Valid @Body SaveAssessmentRequest saveAssessmentRequest) {
-//
-//        AssessmentDetail assessmentDetail = saveAssessmentService.saveAssessment(saveAssessmentRequest);
-//        SaveAssessmentResponse saveAssessmentResponse = modelMapper.map(assessmentDetail, SaveAssessmentResponse.class);
-//
-//        return HttpResponse.created(assessmentResponse);
-//    }
-
 }

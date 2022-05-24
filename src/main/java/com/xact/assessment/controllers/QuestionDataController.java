@@ -45,7 +45,6 @@ public class QuestionDataController {
             answer.setAnswerId(answerId);
             answerService.saveAnswer(answer);
         }
-
         return HttpResponse.ok();
     }
 }

@@ -12,7 +12,7 @@ public class AnswerService {
         this.answerRepository = answerRepository;
     }
 
-    public void saveAnswer(Answer answer) {
+    public Answer saveAnswer(Answer answer) {
 
         if (answerRepository.existsById(answer.getAnswerId())) {
             answerRepository.update(answer);
@@ -20,5 +20,6 @@ public class AnswerService {
             answerRepository.save(answer);
         }
 
+        return answer;
     }
 }

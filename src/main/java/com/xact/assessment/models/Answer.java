@@ -29,7 +29,7 @@ public class Answer implements Serializable {
 
 
     @Column(name = "notes")
-    private String questionText;
+    private String answer;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

@@ -9,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -28,7 +27,7 @@ public class Answer implements Serializable {
     @AttributeOverride(name = "assessment", column = @Column(name = "assessment_id"))
     public AnswerId answerId;
 
-    @NotNull
+
     @Column(name = "notes")
     private String questionText;
 

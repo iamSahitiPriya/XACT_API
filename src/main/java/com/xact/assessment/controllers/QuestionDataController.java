@@ -1,10 +1,12 @@
 package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.AnswerDto;
-import com.xact.assessment.models.Answer;
-import com.xact.assessment.models.AnswerId;
-import com.xact.assessment.models.Assessment;
+import com.xact.assessment.dtos.ParameterLevelAssessmentRequest;
+import com.xact.assessment.dtos.RatingAndRecommendationDto;
+import com.xact.assessment.dtos.TopicLevelAssessmentRequest;
+import com.xact.assessment.models.*;
 import com.xact.assessment.services.AnswerService;
+import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -20,9 +22,11 @@ import java.util.List;
 @Controller("/v1/notes")
 public class QuestionDataController {
     private AnswerService answerService;
+    private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
 
-    public QuestionDataController(AnswerService answerService) {
+    public QuestionDataController(AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
         this.answerService = answerService;
+        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
     }
 
     public QuestionDataController() {
@@ -33,17 +37,41 @@ public class QuestionDataController {
 
     @Post(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AnswerDto> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body List<AnswerDto> listAnswerDto) {
+    public HttpResponse<AnswerDto> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body List<TopicLevelAssessmentRequest> topicLevelAssessmentRequests) {
 
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
-        for (AnswerDto answerDto : listAnswerDto) {
+
+        RatingAndRecommendationDto ratingAndRecommendationDto1 = mapper.map(topicLevelAssessmentRequests, RatingAndRecommendationDto.class);
+        TopicLevelId topicLevelId = mapper.map(ratingAndRecommendationDto1, TopicLevelId.class);
+        topicLevelId.setAssessment(assessment);
+        TopicLevelAssessment topicLevelAssessment = mapper.map(ratingAndRecommendationDto1, TopicLevelAssessment.class);
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+
+        List<ParameterLevelAssessmentRequest> parameterLevelAssessmentRequestList = (List<ParameterLevelAssessmentRequest>) mapper.map(topicLevelAssessment, ParameterLevelAssessmentRequest.class);
+
+
+        for (ParameterLevelAssessmentRequest parameterLevelAssessmentRequest : parameterLevelAssessmentRequestList) {
+            List<AnswerDto> answerDtoList = (List<AnswerDto>) mapper.map(parameterLevelAssessmentRequest, AnswerDto.class);
+            for (AnswerDto answerDto : answerDtoList) {
+                assessment.setAssessmentId(assessmentId);
+                AnswerId answerId = mapper.map(answerDto, AnswerId.class);
+                answerId.setAssessment(assessment);
+                Answer answer = mapper.map(answerDto, Answer.class);
+                answer.setAnswerId(answerId);
+                answerService.saveAnswer(answer);
+            }
+
             assessment.setAssessmentId(assessmentId);
-            AnswerId answerId = mapper.map(answerDto, AnswerId.class);
-            answerId.setAssessment(assessment);
-            Answer answer = mapper.map(answerDto, Answer.class);
-            answer.setAnswerId(answerId);
-            answerService.saveAnswer(answer);
+            RatingAndRecommendationDto ratingAndRecommendationDto2 = mapper.map(parameterLevelAssessmentRequest, RatingAndRecommendationDto.class);
+            ParameterLevelId parameterLevelId = mapper.map(ratingAndRecommendationDto2, ParameterLevelId.class);
+            parameterLevelId.setAssessment(assessment);
+            ParameterLevelAssessment parameterLevelAssessment = mapper.map(ratingAndRecommendationDto2, ParameterLevelAssessment.class);
+            parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+
+
         }
         return HttpResponse.ok();
     }

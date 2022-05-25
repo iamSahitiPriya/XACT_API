@@ -46,19 +46,21 @@ create table tbm_assessment_topic_reference (
 create table tbl_assessment_topic (
                                assessment_id int references tbl_assessment(assessment_id),
                                topic_id  int references tbm_assessment_topic(topic_id),
-                               score double precision,
+                               score int ,
                                recommendation text,
                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                               primary key (assessment_id,topic_id)
 );
 
 create table tbl_assessment_parameter (
                                assessment_id int references tbl_assessment(assessment_id),
                                parameter_id  int references tbm_assessment_parameter(parameter_id),
-                               score double precision,
+                               score int ,
                                recommendation text,
                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                               primary key (assessment_id,parameter_id)
 );
 
 create table tbl_assessment_question (

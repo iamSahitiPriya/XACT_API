@@ -4,5 +4,5 @@ fileignoreconfig:
 - filename: src/main/resources/db/migration/V3__insert-actual-master-data.sql
   checksum: f0fb0a27e7e31f71c52a2476be237bca584b341c55a8d4ed68723218e25b3786
 - filename: src/main/resources/db/migration/V2__create-master-tables.sql
-  checksum: 112abcbf8196c621de26a1b75cd9b6bb0b3a58a47464d50d7ed05797158b207e
+  checksum: 4580c24f1f551b48aa7796e3e3f53c9c40b12b07edf531e326b0fb66bd84ed6f
 version: ""

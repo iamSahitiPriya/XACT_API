@@ -21,5 +21,5 @@ public class TopicLevelId implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "topic_id")
-    private AssessmentTopic topic_id;
+    private AssessmentTopic topic;
 }

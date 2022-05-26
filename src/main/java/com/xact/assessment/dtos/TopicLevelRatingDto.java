@@ -7,16 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Introspected
 @NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
-public class ParameterLevelAssessmentRequest {
+public class TopicLevelRatingDto {
+    private Integer topicId;
+    private Integer rating;
+    private String recommendation;
 
-    private List<AnswerDto> answerDto;
-    private ParameterLevelRatingDto parameterLevelRatingDto;
-
+    public void setRating(RatingDto ratingDto) {
+        rating = ratingDto.value();
+    }
 }

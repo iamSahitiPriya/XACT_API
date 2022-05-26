@@ -11,9 +11,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class RatingAndRecommendationDto {
+public class ParameterLevelRatingDto {
 
-    private Integer topicId;
+
     private Integer parameterId;
     private Integer rating;
     private String recommendation;

@@ -27,6 +27,7 @@ repositories {
 }
 
 dependencies {
+    implementation 'au.com.dius.pact.provider:junit5spring:4.3.7'
     compileOnly "org.projectlombok:lombok:1.18.22"
     annotationProcessor "org.projectlombok:lombok:1.18.22"
     annotationProcessor "io.micronaut:micronaut-inject-java"

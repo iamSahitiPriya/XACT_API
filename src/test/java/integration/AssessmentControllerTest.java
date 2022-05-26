@@ -60,6 +60,7 @@ class AssessmentControllerTest {
         String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments")
                 .bearerAuth("anything"), String.class);
 
+        System.out.println(assessmentResponse);
         assertEquals(expectedResponse, assessmentResponse);
 
     }

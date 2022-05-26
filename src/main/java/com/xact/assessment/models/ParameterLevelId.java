@@ -21,6 +21,6 @@ public class ParameterLevelId implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     @MapsId
     @JoinColumn(name = "parameter_id")
-    private AssessmentParameter parameter_id;
+    private AssessmentParameter parameter;
 
 }

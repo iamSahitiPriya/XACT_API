@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ParameterLevelAssessmentRequest {
 
-    private List<AnswerDto> answerDto;
-    private ParameterLevelRatingDto parameterLevelRatingDto;
+    private List<AnswerRequest> answerRequest;
+    private ParameterRatingAndRecommendation parameterRatingAndRecommendation;
 
 }

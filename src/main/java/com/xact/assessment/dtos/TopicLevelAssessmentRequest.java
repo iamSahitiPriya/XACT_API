@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
@@ -19,10 +18,10 @@ import java.util.List;
 public class TopicLevelAssessmentRequest {
     @JsonProperty("parameterLevel")
     private List<ParameterLevelAssessmentRequest> parameterLevelAssessmentRequestList;
-    private TopicLevelRatingDto topicLevelRatingDto;
+    private TopicRatingAndRecommendation topicRatingAndRecommendation;
 
     public boolean isRatedAtTopicLevel(){
-        return topicLevelRatingDto != null;
+        return topicRatingAndRecommendation != null;
     }
 }
 

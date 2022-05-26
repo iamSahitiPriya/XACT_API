@@ -1,8 +1,7 @@
 package unit.com.xact.assessment.controllers;
 
-import com.xact.assessment.controllers.QuestionDataController;
+import com.xact.assessment.controllers.SaveAssessmentDataController;
 import com.xact.assessment.dtos.*;
-import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.ParameterLevelAssessment;
 import com.xact.assessment.models.TopicLevelAssessment;
 import com.xact.assessment.services.AnswerService;
@@ -16,14 +15,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-public class QuestionDataControllerTest {
+public class SaveAssessmentDataControllerTest {
 
-    private QuestionDataController questionDataController;
+    private SaveAssessmentDataController saveAssessmentDataController;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private ModelMapper mapper = new ModelMapper();
 
@@ -32,7 +31,7 @@ public class QuestionDataControllerTest {
     public void beforeEach() {
         AnswerService answerService = mock(AnswerService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
-        questionDataController = new QuestionDataController(answerService, topicAndParameterLevelAssessmentService);
+        saveAssessmentDataController = new SaveAssessmentDataController(answerService, topicAndParameterLevelAssessmentService);
     }
 
     @Test
@@ -40,26 +39,26 @@ public class QuestionDataControllerTest {
         Integer assessmentId = 1;
         TopicLevelAssessmentRequest topicLevelAssessmentRequest = new TopicLevelAssessmentRequest();
 
-        TopicLevelRatingDto topicLevelRatingDto = new TopicLevelRatingDto();
-        topicLevelRatingDto.setTopicId(1);
-        topicLevelRatingDto.setRating(RatingDto.ONE);
-        topicLevelRatingDto.setRecommendation("some text");
+        TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+        topicRatingAndRecommendation.setTopicId(1);
+        topicRatingAndRecommendation.setRating(RatingDto.ONE);
+        topicRatingAndRecommendation.setRecommendation("some text");
 
-        topicLevelAssessmentRequest.setTopicLevelRatingDto(topicLevelRatingDto);
+        topicLevelAssessmentRequest.setTopicRatingAndRecommendation(topicRatingAndRecommendation);
 
-        List<AnswerDto> answerDtoList = new ArrayList<>();
+        List<AnswerRequest> answerRequestList = new ArrayList<>();
 
-        AnswerDto answerDto1 = new AnswerDto(1, "some text");
-        AnswerDto answerDto2 = new AnswerDto(2, "some more text");
-        answerDtoList.add(answerDto1);
-        answerDtoList.add(answerDto2);
+        AnswerRequest answerRequest1 = new AnswerRequest(1, "some text");
+        AnswerRequest answerRequest2 = new AnswerRequest(2, "some more text");
+        answerRequestList.add(answerRequest1);
+        answerRequestList.add(answerRequest2);
 
         ParameterLevelAssessmentRequest parameterLevelAssessmentRequest = new ParameterLevelAssessmentRequest();
-        parameterLevelAssessmentRequest.setAnswerDto(answerDtoList);
+        parameterLevelAssessmentRequest.setAnswerRequest(answerRequestList);
 
         topicLevelAssessmentRequest.setParameterLevelAssessmentRequestList(Collections.singletonList(parameterLevelAssessmentRequest));
 
-        HttpResponse<TopicLevelAssessmentRequest> actualResponse = questionDataController.saveAnswer(assessmentId, topicLevelAssessmentRequest);
+        HttpResponse<TopicLevelAssessmentRequest> actualResponse = saveAssessmentDataController.saveAnswer(assessmentId, topicLevelAssessmentRequest);
 
         verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation((TopicLevelAssessment) any());
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -70,26 +69,26 @@ public class QuestionDataControllerTest {
         Integer assessmentId = 1;
         TopicLevelAssessmentRequest topicLevelAssessmentRequest = new TopicLevelAssessmentRequest();
 
-        List<AnswerDto> answerDtoList = new ArrayList<>();
+        List<AnswerRequest> answerRequestList = new ArrayList<>();
 
-        AnswerDto answerDto1 = new AnswerDto(1, "some text");
-        AnswerDto answerDto2 = new AnswerDto(2, "some more text");
-        answerDtoList.add(answerDto1);
-        answerDtoList.add(answerDto2);
+        AnswerRequest answerRequest1 = new AnswerRequest(1, "some text");
+        AnswerRequest answerRequest2 = new AnswerRequest(2, "some more text");
+        answerRequestList.add(answerRequest1);
+        answerRequestList.add(answerRequest2);
 
         ParameterLevelAssessmentRequest parameterLevelAssessmentRequest = new ParameterLevelAssessmentRequest();
-        parameterLevelAssessmentRequest.setAnswerDto(answerDtoList);
+        parameterLevelAssessmentRequest.setAnswerRequest(answerRequestList);
 
-        ParameterLevelRatingDto parameterLevelRatingDto = new ParameterLevelRatingDto();
-        parameterLevelRatingDto.setParameterId(1);
-        parameterLevelRatingDto.setRating(RatingDto.ONE);
-        parameterLevelRatingDto.setRecommendation("some text");
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation.setParameterId(1);
+        parameterRatingAndRecommendation.setRating(RatingDto.ONE);
+        parameterRatingAndRecommendation.setRecommendation("some text");
 
-        parameterLevelAssessmentRequest.setParameterLevelRatingDto(parameterLevelRatingDto);
+        parameterLevelAssessmentRequest.setParameterRatingAndRecommendation(parameterRatingAndRecommendation);
 
         topicLevelAssessmentRequest.setParameterLevelAssessmentRequestList(Collections.singletonList(parameterLevelAssessmentRequest));
 
-        HttpResponse<TopicLevelAssessmentRequest> actualResponse = questionDataController.saveAnswer(assessmentId, topicLevelAssessmentRequest);
+        HttpResponse<TopicLevelAssessmentRequest> actualResponse = saveAssessmentDataController.saveAnswer(assessmentId, topicLevelAssessmentRequest);
 
         verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation((ParameterLevelAssessment) any());
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());

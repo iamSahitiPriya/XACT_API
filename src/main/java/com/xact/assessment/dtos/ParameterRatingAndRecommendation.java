@@ -1,6 +1,5 @@
 package com.xact.assessment.dtos;
 
-
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +11,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AnswerDto {
-    private Integer questionId;
-    private String answer;
+public class ParameterRatingAndRecommendation {
+
+    private Integer parameterId;
+    private Integer rating;
+    private String recommendation;
+
+    public void setRating(RatingDto ratingDto) {
+        rating = ratingDto.value();
+    }
+
 }

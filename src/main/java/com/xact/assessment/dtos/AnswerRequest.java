@@ -12,12 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TopicLevelRatingDto {
-    private Integer topicId;
-    private Integer rating;
-    private String recommendation;
-
-    public void setRating(RatingDto ratingDto) {
-        rating = ratingDto.value();
-    }
+public class AnswerRequest {
+    private Integer questionId;
+    private String answer;
 }

@@ -1,7 +1,7 @@
 [{
   "parameterLevel": [
     {
-      "answerDto": [
+      "answerRequest": [
         {
           "questionId": 1,
           "answer": "text"
@@ -13,7 +13,7 @@
       ]
     }
   ],
-  "topicLevelRatingDto": {
+  "topicRatingAndRecommendation": {
     "topicId":1,
     "rating":1,
     "recommendation":"text"

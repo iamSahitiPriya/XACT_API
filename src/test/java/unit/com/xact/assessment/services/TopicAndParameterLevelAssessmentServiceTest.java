@@ -1,8 +1,8 @@
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.dtos.ParameterLevelRatingDto;
+import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
 import com.xact.assessment.dtos.RatingDto;
-import com.xact.assessment.dtos.TopicLevelRatingDto;
+import com.xact.assessment.dtos.TopicRatingAndRecommendation;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
@@ -21,6 +21,7 @@ public class TopicAndParameterLevelAssessmentServiceTest {
     private TopicLevelAssessmentRepository topicLevelAssessmentRepository;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
+
     @BeforeEach
     public void beforeEach() {
         topicLevelAssessmentRepository = mock(TopicLevelAssessmentRepository.class);
@@ -29,20 +30,20 @@ public class TopicAndParameterLevelAssessmentServiceTest {
     }
 
     @Test
-    void shouldSaveAssessmentRatingAndRecommendationForTopicLevel(){
+    void shouldSaveAssessmentRatingAndRecommendationForTopicLevel() {
         Integer assessmentId = 1;
-        TopicLevelRatingDto topicLevelRatingDto = new TopicLevelRatingDto();
-        topicLevelRatingDto.setTopicId(1);
+        TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+        topicRatingAndRecommendation.setTopicId(1);
 
-        topicLevelRatingDto.setRating(RatingDto.ONE);
-        topicLevelRatingDto.setRecommendation("some text");
+        topicRatingAndRecommendation.setRating(RatingDto.ONE);
+        topicRatingAndRecommendation.setRecommendation("some text");
 
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
 
-        TopicLevelId topicLevelId = mapper.map(topicLevelRatingDto, TopicLevelId.class);
+        TopicLevelId topicLevelId = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
         topicLevelId.setAssessment(assessment);
-        TopicLevelAssessment topicLevelAssessment = mapper.map(topicLevelRatingDto, TopicLevelAssessment.class);
+        TopicLevelAssessment topicLevelAssessment = mapper.map(topicRatingAndRecommendation, TopicLevelAssessment.class);
         topicLevelAssessment.setTopicLevelId(topicLevelId);
 
         when(topicLevelAssessmentRepository.save(topicLevelAssessment)).thenReturn(topicLevelAssessment);
@@ -50,39 +51,40 @@ public class TopicAndParameterLevelAssessmentServiceTest {
 
         assertEquals(topicLevelAssessment.getRating(), actualResponse.getRating());
         assertEquals(topicLevelAssessment.getTopicLevelId(), actualResponse.getTopicLevelId());
-        assertEquals(topicLevelAssessment.getRecommendation(),actualResponse.getRecommendation());
+        assertEquals(topicLevelAssessment.getRecommendation(), actualResponse.getRecommendation());
     }
+
     @Test
     void shouldUpdateAssessmentRatingAndRecommendationForTopicLevel() {
 
         Integer assessmentId1 = 1;
-        TopicLevelRatingDto topicLevelRatingDto  = new TopicLevelRatingDto();
-        topicLevelRatingDto.setTopicId(1);
-        topicLevelRatingDto.setRating(RatingDto.ONE);
-        topicLevelRatingDto.setRecommendation("some text");
+        TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+        topicRatingAndRecommendation.setTopicId(1);
+        topicRatingAndRecommendation.setRating(RatingDto.ONE);
+        topicRatingAndRecommendation.setRecommendation("some text");
 
         Assessment assessment1 = new Assessment();
         assessment1.setAssessmentId(assessmentId1);
 
-        TopicLevelId topicLevelId1 = mapper.map(topicLevelRatingDto, TopicLevelId.class);
+        TopicLevelId topicLevelId1 = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
         topicLevelId1.setAssessment(assessment1);
-        TopicLevelAssessment topicLevelAssessment1 = mapper.map(topicLevelRatingDto, TopicLevelAssessment.class);
+        TopicLevelAssessment topicLevelAssessment1 = mapper.map(topicRatingAndRecommendation, TopicLevelAssessment.class);
         topicLevelAssessment1.setTopicLevelId(topicLevelId1);
 
         topicLevelAssessmentRepository.save(topicLevelAssessment1);
 
         Integer assessmentId2 = 1;
-        TopicLevelRatingDto topicLevelRatingDto1 = new TopicLevelRatingDto();
-        topicLevelRatingDto1.setTopicId(1);
-        topicLevelRatingDto1.setRating(RatingDto.TWO);
-        topicLevelRatingDto1.setRecommendation("some update text");
+        TopicRatingAndRecommendation topicRatingAndRecommendation1 = new TopicRatingAndRecommendation();
+        topicRatingAndRecommendation1.setTopicId(1);
+        topicRatingAndRecommendation1.setRating(RatingDto.TWO);
+        topicRatingAndRecommendation1.setRecommendation("some update text");
 
         Assessment assessment2 = new Assessment();
         assessment2.setAssessmentId(assessmentId2);
 
-        TopicLevelId topicLevelId2 = mapper.map(topicLevelRatingDto1, TopicLevelId.class);
+        TopicLevelId topicLevelId2 = mapper.map(topicRatingAndRecommendation1, TopicLevelId.class);
         topicLevelId2.setAssessment(assessment2);
-        TopicLevelAssessment topicLevelAssessment2 = mapper.map(topicLevelRatingDto1, TopicLevelAssessment.class);
+        TopicLevelAssessment topicLevelAssessment2 = mapper.map(topicRatingAndRecommendation1, TopicLevelAssessment.class);
         topicLevelAssessment2.setTopicLevelId(topicLevelId2);
 
 
@@ -91,25 +93,25 @@ public class TopicAndParameterLevelAssessmentServiceTest {
 
         assertEquals(topicLevelAssessment2.getRating(), actualResponse.getRating());
         assertEquals(topicLevelAssessment2.getTopicLevelId(), actualResponse.getTopicLevelId());
-        assertEquals(topicLevelAssessment2.getRecommendation(),actualResponse.getRecommendation());
+        assertEquals(topicLevelAssessment2.getRecommendation(), actualResponse.getRecommendation());
 
     }
 
     @Test()
-    void shouldSaveAssessmentRatingAndRecommendationForParameterLevel(){
+    void shouldSaveAssessmentRatingAndRecommendationForParameterLevel() {
         Integer assessmentId = 1;
-        ParameterLevelRatingDto parameterLevelRatingDto = new ParameterLevelRatingDto();
-        parameterLevelRatingDto.setParameterId(1);
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation.setParameterId(1);
 
-        parameterLevelRatingDto.setRating(RatingDto.ONE);
-        parameterLevelRatingDto.setRecommendation("some text");
+        parameterRatingAndRecommendation.setRating(RatingDto.ONE);
+        parameterRatingAndRecommendation.setRecommendation("some text");
 
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
 
-        ParameterLevelId parameterLevelId = mapper.map(parameterLevelRatingDto, ParameterLevelId.class);
+        ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation, ParameterLevelId.class);
         parameterLevelId.setAssessment(assessment);
-        ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterLevelRatingDto, ParameterLevelAssessment.class);
+        ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterRatingAndRecommendation, ParameterLevelAssessment.class);
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
 
         when(parameterLevelAssessmentRepository.save(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
@@ -119,40 +121,40 @@ public class TopicAndParameterLevelAssessmentServiceTest {
         System.out.println(parameterLevelAssessment.parameterLevelId);
         assertEquals(parameterLevelAssessment.getRating(), actualResponse.getRating());
         assertEquals(parameterLevelAssessment.getParameterLevelId(), actualResponse.getParameterLevelId());
-        assertEquals(parameterLevelAssessment.getRecommendation(),actualResponse.getRecommendation());
+        assertEquals(parameterLevelAssessment.getRecommendation(), actualResponse.getRecommendation());
     }
 
     @Test
     void shouldUpdateAssessmentRatingAndRecommendationForParameterLevel() {
 
         Integer assessmentId1 = 1;
-        ParameterLevelRatingDto parameterLevelRatingDto1 = new ParameterLevelRatingDto();
-        parameterLevelRatingDto1.setParameterId(1);
-        parameterLevelRatingDto1.setRating(RatingDto.ONE);
-        parameterLevelRatingDto1.setRecommendation("some text");
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation1 = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation1.setParameterId(1);
+        parameterRatingAndRecommendation1.setRating(RatingDto.ONE);
+        parameterRatingAndRecommendation1.setRecommendation("some text");
 
         Assessment assessment1 = new Assessment();
         assessment1.setAssessmentId(assessmentId1);
 
-        ParameterLevelId parameterLevelId = mapper.map(parameterLevelRatingDto1, ParameterLevelId.class);
+        ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation1, ParameterLevelId.class);
         parameterLevelId.setAssessment(assessment1);
-        ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterLevelRatingDto1, ParameterLevelAssessment.class);
+        ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterRatingAndRecommendation1, ParameterLevelAssessment.class);
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
 
         parameterLevelAssessmentRepository.save(parameterLevelAssessment);
 
         Integer assessmentId2 = 1;
-        ParameterLevelRatingDto parameterLevelRatingDto2 = new ParameterLevelRatingDto();
-        parameterLevelRatingDto2.setParameterId(1);
-        parameterLevelRatingDto2.setRating(RatingDto.TWO);
-        parameterLevelRatingDto2.setRecommendation("some update text");
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation2 = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation2.setParameterId(1);
+        parameterRatingAndRecommendation2.setRating(RatingDto.TWO);
+        parameterRatingAndRecommendation2.setRecommendation("some update text");
 
         Assessment assessment2 = new Assessment();
         assessment2.setAssessmentId(assessmentId2);
 
-        ParameterLevelId parameterLevelId1 = mapper.map(parameterLevelRatingDto2, ParameterLevelId.class);
+        ParameterLevelId parameterLevelId1 = mapper.map(parameterRatingAndRecommendation2, ParameterLevelId.class);
         parameterLevelId1.setAssessment(assessment2);
-        ParameterLevelAssessment parameterLevelAssessment1 = mapper.map(parameterLevelRatingDto2, ParameterLevelAssessment.class);
+        ParameterLevelAssessment parameterLevelAssessment1 = mapper.map(parameterRatingAndRecommendation2, ParameterLevelAssessment.class);
         parameterLevelAssessment1.setParameterLevelId(parameterLevelId1);
 
 
@@ -161,7 +163,7 @@ public class TopicAndParameterLevelAssessmentServiceTest {
 
         assertEquals(parameterLevelAssessment1.getRating(), actualResponse.getRating());
         assertEquals(parameterLevelAssessment1.getParameterLevelId(), actualResponse.getParameterLevelId());
-        assertEquals(parameterLevelAssessment1.getRecommendation(),actualResponse.getRecommendation());
+        assertEquals(parameterLevelAssessment1.getRecommendation(), actualResponse.getRecommendation());
 
     }
 }

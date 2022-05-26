@@ -1,6 +1,8 @@
 package com.xact.assessment.controllers;
 
-import com.xact.assessment.dtos.*;
+import com.xact.assessment.dtos.AnswerRequest;
+import com.xact.assessment.dtos.ParameterLevelAssessmentRequest;
+import com.xact.assessment.dtos.TopicLevelAssessmentRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AnswerService;
 import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
@@ -14,19 +16,17 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
 
-import java.util.List;
-
 @Controller("/v1/notes")
-public class QuestionDataController {
+public class SaveAssessmentDataController {
     private AnswerService answerService;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
 
-    public QuestionDataController(AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
+    public SaveAssessmentDataController(AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
         this.answerService = answerService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
     }
 
-    public QuestionDataController() {
+    public SaveAssessmentDataController() {
     }
 
     private ModelMapper mapper = new ModelMapper();
@@ -42,27 +42,27 @@ public class QuestionDataController {
         System.out.println(topicLevelAssessmentRequests.getParameterLevelAssessmentRequestList());
 
         if (topicLevelAssessmentRequests.isRatedAtTopicLevel()) {
-            TopicLevelId topicLevelId = mapper.map(topicLevelAssessmentRequests.getTopicLevelRatingDto(), TopicLevelId.class);
+            TopicLevelId topicLevelId = mapper.map(topicLevelAssessmentRequests.getTopicRatingAndRecommendation(), TopicLevelId.class);
             topicLevelId.setAssessment(assessment);
-            TopicLevelAssessment topicLevelAssessment = mapper.map(topicLevelAssessmentRequests.getTopicLevelRatingDto(), TopicLevelAssessment.class);
+            TopicLevelAssessment topicLevelAssessment = mapper.map(topicLevelAssessmentRequests.getTopicRatingAndRecommendation(), TopicLevelAssessment.class);
             topicLevelAssessment.setTopicLevelId(topicLevelId);
             topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
         } else {
             for (ParameterLevelAssessmentRequest parameterLevelAssessmentRequest : topicLevelAssessmentRequests.getParameterLevelAssessmentRequestList()) {
-                ParameterLevelId parameterLevelId = mapper.map(parameterLevelAssessmentRequest.getParameterLevelRatingDto(), ParameterLevelId.class);
+                ParameterLevelId parameterLevelId = mapper.map(parameterLevelAssessmentRequest.getParameterRatingAndRecommendation(), ParameterLevelId.class);
                 parameterLevelId.setAssessment(assessment);
-                ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterLevelAssessmentRequest.getParameterLevelRatingDto(), ParameterLevelAssessment.class);
+                ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterLevelAssessmentRequest.getParameterRatingAndRecommendation(), ParameterLevelAssessment.class);
                 parameterLevelAssessment.setParameterLevelId(parameterLevelId);
                 topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
             }
         }
 
         for (ParameterLevelAssessmentRequest parameterLevelAssessmentRequest : topicLevelAssessmentRequests.getParameterLevelAssessmentRequestList()) {
-            for (AnswerDto answerDto : parameterLevelAssessmentRequest.getAnswerDto()) {
+            for (AnswerRequest answerRequest : parameterLevelAssessmentRequest.getAnswerRequest()) {
                 assessment.setAssessmentId(assessmentId);
-                AnswerId answerId = mapper.map(answerDto, AnswerId.class);
+                AnswerId answerId = mapper.map(answerRequest, AnswerId.class);
                 answerId.setAssessment(assessment);
-                Answer answer = mapper.map(answerDto, Answer.class);
+                Answer answer = mapper.map(answerRequest, Answer.class);
                 answer.setAnswerId(answerId);
                 answerService.saveAnswer(answer);
             }

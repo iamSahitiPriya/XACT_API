@@ -9,6 +9,7 @@ import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
+import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,12 +26,14 @@ class AssessmentServiceTest {
     private UsersAssessmentsService usersAssessmentsService;
     private AssessmentService assessmentService;
     private AssessmentRepository assessmentRepository;
+    private UsersAssessmentsRepository usersAssessmentsRepository;
 
     @BeforeEach
     public void beforeEach() {
         usersAssessmentsService = mock(UsersAssessmentsService.class);
         assessmentRepository = mock(AssessmentRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository);
+        usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository);
     }
 
     @Test
@@ -71,6 +74,7 @@ class AssessmentServiceTest {
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
         when(usersAssessmentsService.createUsersInAssessment(assessmentUsers)).thenReturn(assessmentUsers);
+
 
         Assessment actualAssessment = assessmentService.createAssessment(assessmentRequest, loggedinUser);
 

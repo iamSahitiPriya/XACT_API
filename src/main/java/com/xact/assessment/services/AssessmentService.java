@@ -9,6 +9,7 @@ import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
+import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
@@ -22,11 +23,14 @@ public class AssessmentService {
 
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
+    private final UsersAssessmentsRepository usersAssessmentsRepository;
+
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
+        this.usersAssessmentsRepository = usersAssessmentsRepository;
     }
 
     @Transactional
@@ -65,4 +69,8 @@ public class AssessmentService {
         return assessmentUsers;
     }
 
+    public Assessment getAssessment(Integer assessmentId, User user) {
+        AssessmentUsers assessmentUsers = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);
+        return assessmentUsers.getUserId().getAssessment();
+    }
 }

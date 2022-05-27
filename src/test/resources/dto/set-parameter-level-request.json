@@ -1,0 +1,21 @@
+{
+  "parameterLevel": [
+    {
+      "answerRequest": [
+        {
+          "questionId": 1,
+          "questionText": "text"
+        },
+        {
+          "questionId": 2,
+          "questionText": "text2"
+        }
+      ],
+      "parameterRatingAndRecommendation": {
+        "parameterId": 1,
+        "rating": 1,
+        "recommendation": "text"
+      }
+    }
+  ]
+}

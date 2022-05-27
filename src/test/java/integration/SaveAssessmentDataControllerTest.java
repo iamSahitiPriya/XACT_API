@@ -1,27 +1,33 @@
 package integration;
 
-import au.com.dius.pact.core.model.Response;
-import com.xact.assessment.dtos.AnswerRequest;
+import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
 import com.xact.assessment.dtos.RatingDto;
 import com.xact.assessment.dtos.TopicRatingAndRecommendation;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AnswerRepository;
+import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
+import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.annotation.MockBean;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+
+@MicronautTest
 public class SaveAssessmentDataControllerTest {
 
 
@@ -39,6 +45,12 @@ public class SaveAssessmentDataControllerTest {
     @Inject
     AnswerRepository answerRepository;
 
+    @Inject
+    UsersAssessmentsRepository usersAssessmentsRepository;
+
+    @Inject
+    ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
+
     @MockBean(TopicLevelAssessmentRepository.class)
     TopicLevelAssessmentRepository topicLevelAssessmentRepository() {
         return mock(TopicLevelAssessmentRepository.class);
@@ -49,56 +61,107 @@ public class SaveAssessmentDataControllerTest {
         return mock(AnswerRepository.class);
     }
 
+    @MockBean(UsersAssessmentsRepository.class)
+    UsersAssessmentsRepository usersAssessmentsRepository() {
+        return mock(UsersAssessmentsRepository.class);
+    }
+
+    @MockBean(ParameterLevelAssessmentRepository.class)
+    ParameterLevelAssessmentRepository parameterLevelAssessmentRepository() {
+        return mock(ParameterLevelAssessmentRepository.class);
+    }
+
 
     @Test
     void testSaveTopicLevelAssessmentResponse() throws IOException {
 
-        Integer assessmentId = 1;
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
+
+        Answer answer = new Answer();
+
+        when(answerRepository.save(answer)).thenReturn(answer);
+
+
         TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation.setTopicId(1);
 
         topicRatingAndRecommendation.setRating(RatingDto.ONE);
         topicRatingAndRecommendation.setRecommendation("text");
 
-        Assessment assessment = new Assessment();
-        assessment.setAssessmentId(assessmentId);
-
         TopicLevelId topicLevelId = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
         topicLevelId.setAssessment(assessment);
         TopicLevelAssessment topicLevelAssessment = mapper.map(topicRatingAndRecommendation, TopicLevelAssessment.class);
         topicLevelAssessment.setTopicLevelId(topicLevelId);
 
+
         when(topicLevelAssessmentRepository.save(topicLevelAssessment)).thenReturn(topicLevelAssessment);
 
 
-        AnswerRequest answerRequest = new AnswerRequest(1, "text");
-        assessment.setAssessmentId(assessmentId);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-topic-level-request.json");
 
-        AnswerId answerId = mapper.map(answerRequest, AnswerId.class);
-        answerId.setAssessment(assessment);
-        Answer answer = mapper.map(answerRequest, Answer.class);
-        answer.setAnswerId(answerId);
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/notes/1", dataRequest)
+                .bearerAuth("anything"));
 
-        answerRepository.save(answer);
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
-        AnswerRequest answerRequest1 = new AnswerRequest(2, "text2");
-        assessment.setAssessmentId(assessmentId);
+    }
 
-        AnswerId answerId1 = mapper.map(answerRequest1, AnswerId.class);
-        answerId.setAssessment(assessment);
-        Answer answer1 = mapper.map(answerRequest1, Answer.class);
-        answer.setAnswerId(answerId1);
+    @Test
+    void testSaveParameterLevelAssessmentResponse() throws IOException {
 
-        when(answerRepository.save(answer1)).thenReturn(answer1);
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
+
+        Answer answer = new Answer();
+
+        when(answerRepository.save(answer)).thenReturn(answer);
 
 
-        String dataRequest = resourceFileUtil.getJsonString("dto/set-question-data-request.json");
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation.setParameterId(1);
 
-        Response saveResponse = client.toBlocking().retrieve(HttpRequest.POST("/v1/notes/1", dataRequest)
-                .bearerAuth("anything"), Response.class);
+        parameterRatingAndRecommendation.setRating(RatingDto.ONE);
+        parameterRatingAndRecommendation.setRecommendation("some text");
 
-        System.out.println(saveResponse);
-        assertEquals(HttpResponse.ok(), saveResponse);
+        ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation, ParameterLevelId.class);
+        parameterLevelId.setAssessment(assessment);
+        ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterRatingAndRecommendation, ParameterLevelAssessment.class);
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+
+        when(parameterLevelAssessmentRepository.save(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
+
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-level-request.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/notes/1", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
 

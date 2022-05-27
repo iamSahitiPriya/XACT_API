@@ -21,10 +21,10 @@ import org.modelmapper.ModelMapper;
 
 @Controller("/v1/notes")
 public class SaveAssessmentDataController {
-    private AnswerService answerService;
-    private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
-    private UserAuthService userAuthService;
-    private AssessmentService assessmentService;
+    private final AnswerService answerService;
+    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
+    private final UserAuthService userAuthService;
+    private final AssessmentService assessmentService;
 
     public SaveAssessmentDataController(AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, UserAuthService userAuthService, AssessmentService assessmentService) {
         this.answerService = answerService;
@@ -33,10 +33,7 @@ public class SaveAssessmentDataController {
         this.assessmentService = assessmentService;
     }
 
-    public SaveAssessmentDataController() {
-    }
-
-    private ModelMapper mapper = new ModelMapper();
+    private final ModelMapper mapper = new ModelMapper();
 
 
     @Post(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)

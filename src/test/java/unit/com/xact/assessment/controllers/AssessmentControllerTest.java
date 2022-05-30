@@ -32,7 +32,7 @@ class AssessmentControllerTest {
     private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService);
 
     @Test
-    void testGetAssessment() {
+    void testGetAssessments() {
 
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
@@ -98,4 +98,104 @@ class AssessmentControllerTest {
         assertEquals(assessment.getAssessmentStatus().name(), actualAssessments.body().getAssessmentStatus().name());
         assertEquals(assessment.getOrganisation().getOrganisationName(), actualAssessments.body().getOrganisationName());
     }
+
+    @Test
+    void testGetAssessment() {
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+        Assessment assessment = new Assessment(123, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Map<String, Object> authMap = new HashMap<>();
+        authMap.put("sub", userEmail);
+        Integer assessmentId=123;
+        when(assessmentService.getAssessment(assessmentId,user)).thenReturn(assessment);
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        AssessmentResponse expectedAssessment = new AssessmentResponse();
+        expectedAssessment.setAssessmentId(123);
+        expectedAssessment.setAssessmentName("xact");
+        expectedAssessment.setOrganisationName("abc");
+        expectedAssessment.setAssessmentStatus(AssessmentStatusDto.Active);
+        expectedAssessment.setUpdatedAt(updated);
+        HttpResponse<AssessmentResponse> actualAssessment = assessmentController.getAssessment(assessmentId,authentication);
+
+        assertEquals(expectedAssessment.getAssessmentId(), actualAssessment.body().getAssessmentId());
+        assertEquals(expectedAssessment.getAssessmentName(), actualAssessment.body().getAssessmentName());
+        assertEquals(expectedAssessment.getAssessmentStatus(), actualAssessment.body().getAssessmentStatus());
+        assertEquals(expectedAssessment.getOrganisationName(), actualAssessment.body().getOrganisationName());
+        assertEquals(expectedAssessment.getUpdatedAt(), actualAssessment.body().getUpdatedAt());
+        verify(assessmentService).getAssessment(assessmentId,user);
+    }
+
+    @Test
+    void testFinishAssessment() {
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+        Assessment assessment = new Assessment(123, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Map<String, Object> authMap = new HashMap<>();
+        authMap.put("sub", userEmail);
+        Integer assessmentId=123;
+        Assessment expectedAssessment = new Assessment();
+        expectedAssessment.setAssessmentId(123);
+        expectedAssessment.setAssessmentName("xact");
+        expectedAssessment.setAssessmentStatus(AssessmentStatus.Completed);
+        expectedAssessment.setUpdatedAt(updated);
+        when(assessmentService.getAssessment(assessmentId,user)).thenReturn(assessment);
+        when(assessmentService.finishAssessment(assessment)).thenReturn(expectedAssessment);
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        HttpResponse<AssessmentResponse> actualAssessment = assessmentController.finishAssessment(assessmentId,authentication);
+
+        assertEquals(expectedAssessment.getAssessmentId(), actualAssessment.body().getAssessmentId());
+        assertEquals(expectedAssessment.getAssessmentName(), actualAssessment.body().getAssessmentName());
+        assertEquals(expectedAssessment.getAssessmentStatus().name(), actualAssessment.body().getAssessmentStatus().name());
+        verify(assessmentService).finishAssessment(assessment);
+    }
+
+    @Test
+    void testReopenAssessment() {
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+        Assessment assessment = new Assessment(123, "xact", organisation, AssessmentStatus.Completed, created, updated);
+        Map<String, Object> authMap = new HashMap<>();
+        authMap.put("sub", userEmail);
+        Integer assessmentId=123;
+        Assessment expectedAssessment = new Assessment();
+        expectedAssessment.setAssessmentId(123);
+        expectedAssessment.setAssessmentName("xact");
+        expectedAssessment.setAssessmentStatus(AssessmentStatus.Active);
+        expectedAssessment.setUpdatedAt(updated);
+        when(assessmentService.getAssessment(assessmentId,user)).thenReturn(assessment);
+        when(assessmentService.reopenAssessment(assessment)).thenReturn(expectedAssessment);
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        HttpResponse<AssessmentResponse> actualAssessment = assessmentController.reopenAssessment(assessmentId,authentication);
+
+        assertEquals(expectedAssessment.getAssessmentId(), actualAssessment.body().getAssessmentId());
+        assertEquals(expectedAssessment.getAssessmentName(), actualAssessment.body().getAssessmentName());
+        assertEquals(expectedAssessment.getAssessmentStatus().name(), actualAssessment.body().getAssessmentStatus().name());
+        verify(assessmentService).reopenAssessment(assessment);
+    }
+
+
+
 }

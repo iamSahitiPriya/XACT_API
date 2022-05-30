@@ -13,10 +13,7 @@ import com.xact.assessment.services.UserAuthService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -62,6 +59,41 @@ public class AssessmentController {
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
 
         return HttpResponse.created(assessmentResponse);
+    }
+
+    @Put(value = "{assessmentId}/statuses/open", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse reopenAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        Assessment assessment = assessmentService.getAssessment(assessmentId, loggedInUser);
+
+        Assessment finishedAssessment = assessmentService.reopenAssessment(assessment);
+        AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
+
+        return HttpResponse.ok(assessmentResponse);
+    }
+
+    @Put(value = "{assessmentId}/statuses/finish", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse finishAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        Assessment assessment = assessmentService.getAssessment(assessmentId, loggedInUser);
+
+        Assessment finishedAssessment = assessmentService.finishAssessment(assessment);
+        AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
+
+        return HttpResponse.ok(assessmentResponse);
+    }
+
+    @Get(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AssessmentResponse> getAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        Assessment assessment = assessmentService.getAssessment(assessmentId, loggedInUser);
+
+        AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
+
+        return HttpResponse.ok(assessmentResponse);
     }
 
 }

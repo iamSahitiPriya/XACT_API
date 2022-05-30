@@ -9,6 +9,7 @@ import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
+import com.xact.assessment.repositories.AssessmentsRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
@@ -27,13 +28,15 @@ class AssessmentServiceTest {
     private AssessmentService assessmentService;
     private AssessmentRepository assessmentRepository;
     private UsersAssessmentsRepository usersAssessmentsRepository;
+    private AssessmentsRepository assessmentsRepository;
 
     @BeforeEach
     public void beforeEach() {
         usersAssessmentsService = mock(UsersAssessmentsService.class);
         assessmentRepository = mock(AssessmentRepository.class);
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository);
+        assessmentsRepository = mock(AssessmentsRepository.class);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, assessmentsRepository);
     }
 
     @Test
@@ -82,4 +85,55 @@ class AssessmentServiceTest {
         assertEquals(assessment.getAssessmentStatus(), actualAssessment.getAssessmentStatus());
     }
 
+    @Test
+    void getAssessment() {
+        Integer assessmentId = 123;
+        User loggedinUser = new User();
+        Profile profile = new Profile();
+        profile.setEmail("test@email.com");
+        loggedinUser.setProfile(profile);
+        Assessment mockAssessment = new Assessment();
+        mockAssessment.setAssessmentId(assessmentId);
+        AssessmentUsers assessmentUser = new AssessmentUsers();
+        UserId userId = new UserId(loggedinUser.getUserEmail(), mockAssessment);
+        assessmentUser.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(loggedinUser.getUserEmail(), assessmentId)).thenReturn(assessmentUser);
+
+        Assessment assessment = assessmentService.getAssessment(assessmentId, loggedinUser);
+
+        assertEquals(assessment, mockAssessment);
+    }
+
+    @Test
+    void finishAssessment() {
+        Integer assessmentId = 123;
+        User loggedinUser = new User();
+        Profile profile = new Profile();
+        profile.setEmail("test@email.com");
+        loggedinUser.setProfile(profile);
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+
+        Assessment actualAsessment = assessmentService.finishAssessment(assessment);
+
+        assertEquals(actualAsessment.getAssessmentStatus(), AssessmentStatus.Completed);
+    }
+
+    @Test
+    void reopenAssessment() {
+        Integer assessmentId = 123;
+        User loggedinUser = new User();
+        Profile profile = new Profile();
+        profile.setEmail("test@email.com");
+        loggedinUser.setProfile(profile);
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+
+        Assessment actualAsessment = assessmentService.reopenAssessment(assessment);
+
+        assertEquals(actualAsessment.getAssessmentStatus(), AssessmentStatus.Active);
+    }
 }

@@ -91,6 +91,10 @@ tasks.named("assemble") {
     dependsOn(":shadowJar")
 }
 
+shadowJar {
+    zip64 = true
+}
+
 test {
     finalizedBy jacocoTestReport
 }

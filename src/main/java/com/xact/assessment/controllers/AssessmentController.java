@@ -75,7 +75,7 @@ public class AssessmentController {
 
     @Put(value = "{assessmentId}/statuses/finish", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse finishAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+    public HttpResponse<AssessmentResponse> finishAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         Assessment assessment = assessmentService.getAssessment(assessmentId, loggedInUser);
 

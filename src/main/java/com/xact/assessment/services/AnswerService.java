@@ -4,6 +4,9 @@ import com.xact.assessment.models.Answer;
 import com.xact.assessment.repositories.AnswerRepository;
 import jakarta.inject.Singleton;
 
+import java.util.List;
+import java.util.Optional;
+
 @Singleton
 public class AnswerService {
     private final AnswerRepository answerRepository;
@@ -21,5 +24,9 @@ public class AnswerService {
         }
 
         return answer;
+    }
+
+    public List<Answer> getAnswers(Integer assessmentId) {
+        return answerRepository.findByAssessment(assessmentId);
     }
 }

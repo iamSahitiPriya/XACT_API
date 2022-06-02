@@ -6,6 +6,8 @@ import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import jakarta.inject.Singleton;
 
+import java.util.List;
+
 @Singleton
 public class TopicAndParameterLevelAssessmentService {
 
@@ -38,4 +40,11 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterLevelAssessment;
     }
 
+    public List<ParameterLevelAssessment> getParameterAssessmentData(Integer assessmentId) {
+        return parameterLevelAssessmentRepository.findByAssessment(assessmentId);
+    }
+
+    public List<TopicLevelAssessment> getTopicAssessmentData(Integer assessmentId) {
+        return topicLevelAssessmentRepository.findByAssessment(assessmentId);
+    }
 }

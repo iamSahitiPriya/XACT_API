@@ -33,7 +33,7 @@ public class SaveAssessmentDataController {
         this.assessmentService = assessmentService;
     }
 
-    private final ModelMapper mapper = new ModelMapper();
+    private ModelMapper mapper = new ModelMapper();
 
 
     @Post(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)

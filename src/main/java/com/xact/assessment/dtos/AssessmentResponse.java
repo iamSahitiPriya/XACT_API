@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -24,5 +25,11 @@ public class AssessmentResponse {
     private AssessmentStatusDto assessmentStatus;
 
     private Date updatedAt;
+
+    private List<AnswerResponse> answerResponseList;
+
+    private List<ParameterRatingAndRecommendation> parameterRatingAndRecommendation;
+
+    private List<TopicRatingAndRecommendation> topicRatingAndRecommendation;
 
 }

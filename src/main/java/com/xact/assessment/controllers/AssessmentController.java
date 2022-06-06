@@ -61,7 +61,7 @@ public class AssessmentController {
         return HttpResponse.created(assessmentResponse);
     }
 
-    @Put(value = "{assessmentId}/statuses/open", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/{assessmentId}/statuses/open", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse reopenAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
@@ -73,7 +73,7 @@ public class AssessmentController {
         return HttpResponse.ok(assessmentResponse);
     }
 
-    @Put(value = "{assessmentId}/statuses/finish", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/{assessmentId}/statuses/finish", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> finishAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);

@@ -1,6 +1,7 @@
 pipeline {
     agent any
     parameters { string(name: 'Commit_ID', defaultValue: '', description: '') }
+    parameters { string(name: 'ENV_TYPE', defaultValue: 'qa', description: '') }
 
     stages {
         stage('Fetch Image') {
@@ -11,9 +12,9 @@ pipeline {
         }
         stage('Push'){
             steps{
-                sh "docker tag 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${Commit_ID} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-prod:${Commit_ID}"
-                sh "docker tag 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${Commit_ID} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-prod:latest"
-                sh "docker push --all-tags 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-prod"
+                sh "docker tag 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${Commit_ID} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-${ENV_TYPE}:${Commit_ID}"
+                sh "docker tag 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${Commit_ID} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-${ENV_TYPE}:latest"
+                sh "docker push --all-tags 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-${ENV_TYPE}"
             }
         }
     }

@@ -1,7 +1,8 @@
 pipeline {
     agent any
-    parameters { string(name: 'Commit_ID', defaultValue: '', description: '') }
-    parameters { string(name: 'ENV_TYPE', defaultValue: 'qa', description: '') }
+    parameters {
+    string(name: 'Commit_ID', defaultValue: '', description: '')
+    choice choices: ['qa', 'prod'], name: 'ENV_TYPE'}
 
     stages {
         stage('Fetch Image') {

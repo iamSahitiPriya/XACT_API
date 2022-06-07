@@ -1,0 +1,35 @@
+micronaut:
+  application:
+    name: XAct_Assessment_API
+  server:
+    port: 8080
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedOrigins:
+            - https://qa.project-xact.in
+  security:
+    enabled: true
+    token:
+      jwt:
+        enabled: true
+        claims-validators:
+          issuer: '${OIDC_ISSUER:`https://qa-47045452.okta.com/oauth2/default`}'
+        signatures:
+          jwks:
+            okta:
+              url: '${OIDC_ISSUER:`https://qa-47045452.okta.com/oauth2/default`}/v1/keys'
+
+datasources:
+  default:
+    url: jdbc:postgresql://xact-db.cs3hcgchak2w.ap-south-1.rds.amazonaws.com:5432/xactqa?sslmode=disable
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USER}
+    password: ${DB_PWD}
+
+flyway:
+  datasources:
+    default:
+      enabled: true
+      baseline-on-migrate: true

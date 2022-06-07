@@ -98,7 +98,7 @@ public class SaveAssessmentDataControllerTest {
         TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation.setTopicId(1);
 
-        topicRatingAndRecommendation.setRating(RatingDto.ONE);
+        topicRatingAndRecommendation.setRating(1);
         topicRatingAndRecommendation.setRecommendation("text");
 
         TopicLevelId topicLevelId = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
@@ -145,7 +145,7 @@ public class SaveAssessmentDataControllerTest {
         ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
         parameterRatingAndRecommendation.setParameterId(1);
 
-        parameterRatingAndRecommendation.setRating(RatingDto.ONE);
+        parameterRatingAndRecommendation.setRating(1);
         parameterRatingAndRecommendation.setRecommendation("some text");
 
         ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation, ParameterLevelId.class);

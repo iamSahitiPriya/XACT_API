@@ -35,7 +35,7 @@ public class TopicAndParameterLevelAssessmentServiceTest {
         TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation.setTopicId(1);
 
-        topicRatingAndRecommendation.setRating(RatingDto.ONE);
+        topicRatingAndRecommendation.setRating(1);
         topicRatingAndRecommendation.setRecommendation("some text");
 
         Assessment assessment = new Assessment();
@@ -60,7 +60,7 @@ public class TopicAndParameterLevelAssessmentServiceTest {
         Integer assessmentId1 = 1;
         TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation.setTopicId(1);
-        topicRatingAndRecommendation.setRating(RatingDto.ONE);
+        topicRatingAndRecommendation.setRating(1);
         topicRatingAndRecommendation.setRecommendation("some text");
 
         Assessment assessment1 = new Assessment();
@@ -76,7 +76,7 @@ public class TopicAndParameterLevelAssessmentServiceTest {
         Integer assessmentId2 = 1;
         TopicRatingAndRecommendation topicRatingAndRecommendation1 = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation1.setTopicId(1);
-        topicRatingAndRecommendation1.setRating(RatingDto.TWO);
+        topicRatingAndRecommendation1.setRating(2);
         topicRatingAndRecommendation1.setRecommendation("some update text");
 
         Assessment assessment2 = new Assessment();
@@ -103,7 +103,7 @@ public class TopicAndParameterLevelAssessmentServiceTest {
         ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
         parameterRatingAndRecommendation.setParameterId(1);
 
-        parameterRatingAndRecommendation.setRating(RatingDto.ONE);
+        parameterRatingAndRecommendation.setRating(1);
         parameterRatingAndRecommendation.setRecommendation("some text");
 
         Assessment assessment = new Assessment();
@@ -130,7 +130,7 @@ public class TopicAndParameterLevelAssessmentServiceTest {
         Integer assessmentId1 = 1;
         ParameterRatingAndRecommendation parameterRatingAndRecommendation1 = new ParameterRatingAndRecommendation();
         parameterRatingAndRecommendation1.setParameterId(1);
-        parameterRatingAndRecommendation1.setRating(RatingDto.ONE);
+        parameterRatingAndRecommendation1.setRating(1);
         parameterRatingAndRecommendation1.setRecommendation("some text");
 
         Assessment assessment1 = new Assessment();
@@ -146,7 +146,7 @@ public class TopicAndParameterLevelAssessmentServiceTest {
         Integer assessmentId2 = 1;
         ParameterRatingAndRecommendation parameterRatingAndRecommendation2 = new ParameterRatingAndRecommendation();
         parameterRatingAndRecommendation2.setParameterId(1);
-        parameterRatingAndRecommendation2.setRating(RatingDto.TWO);
+        parameterRatingAndRecommendation2.setRating(2);
         parameterRatingAndRecommendation2.setRecommendation("some update text");
 
         Assessment assessment2 = new Assessment();

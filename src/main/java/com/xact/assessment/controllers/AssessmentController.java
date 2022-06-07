@@ -116,8 +116,8 @@ public class AssessmentController {
 
         for (ParameterLevelAssessment eachParameter : parameterRatingAndRecommendations) {
             ParameterRatingAndRecommendation eachParameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
-            AssessmentTopicDto eachTopicDto = modelMapper.map(eachParameter.getParameterLevelId(), AssessmentTopicDto.class);
-            eachParameterRatingAndRecommendation.setParameterId(eachTopicDto.getTopicId());
+            AssessmentParameterDto eachParameterDto = modelMapper.map(eachParameter.getParameterLevelId(), AssessmentParameterDto.class);
+            eachParameterRatingAndRecommendation.setParameterId(eachParameterDto.getParameterId());
             eachParameterRatingAndRecommendation.setRating(eachParameter.getRating());
             eachParameterRatingAndRecommendation.setRecommendation(eachParameter.getRecommendation());
             parameterRatingAndRecommendationsResponseList.add(eachParameterRatingAndRecommendation);

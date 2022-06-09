@@ -15,11 +15,11 @@ micronaut:
       jwt:
         enabled: true
         claims-validators:
-          issuer: '${OIDC_ISSUER:`https://qa-47045452.okta.com/oauth2/default`}'
+          issuer: '${OIDC_ISSUER:`https://dev-47045452.okta.com/oauth2/default`}'
         signatures:
           jwks:
             okta:
-              url: '${OIDC_ISSUER:`https://qa-47045452.okta.com/oauth2/default`}/v1/keys'
+              url: '${OIDC_ISSUER:`https://dev-47045452.okta.com/oauth2/default`}/v1/keys'
 
 datasources:
   default:

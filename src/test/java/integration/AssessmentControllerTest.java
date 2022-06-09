@@ -4,13 +4,8 @@
 
 package integration;
 
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentStatus;
-import com.xact.assessment.models.AssessmentUsers;
-import com.xact.assessment.models.UserId;
-import com.xact.assessment.repositories.AnswerRepository;
-import com.xact.assessment.repositories.AssessmentsRepository;
-import com.xact.assessment.repositories.UsersAssessmentsRepository;
+import com.xact.assessment.models.*;
+import com.xact.assessment.repositories.*;
 import io.micronaut.http.HttpMethod;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -23,6 +18,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,14 +41,30 @@ class AssessmentControllerTest {
     AssessmentsRepository assessmentsRepository;
     @Inject
     AnswerRepository answerRepository;
+    @Inject
+    ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
+    @Inject
+    TopicLevelAssessmentRepository topicLevelAssessmentRepository;
 
     @MockBean(UsersAssessmentsRepository.class)
     UsersAssessmentsRepository usersAssessmentsRepository() {
         return mock(UsersAssessmentsRepository.class);
-
-    } @MockBean(AssessmentsRepository.class)
+    }
+    @MockBean(AssessmentsRepository.class)
     AssessmentsRepository assessmentsRepository() {
         return mock(AssessmentsRepository.class);
+    }
+    @MockBean(AnswerRepository.class)
+    AnswerRepository answerRepository() {
+        return mock(AnswerRepository.class);
+    }
+    @MockBean(ParameterLevelAssessmentRepository.class)
+    ParameterLevelAssessmentRepository parameterLevelAssessmentRepository() {
+        return mock(ParameterLevelAssessmentRepository.class);
+    }
+    @MockBean(TopicLevelAssessmentRepository.class)
+    TopicLevelAssessmentRepository topicLevelAssessmentRepository() {
+        return mock(TopicLevelAssessmentRepository.class);
     }
 
 
@@ -79,27 +91,53 @@ class AssessmentControllerTest {
 
     }
 
-//    @Test
-//    void testGetAssessmentResponse() throws IOException {
-//
-//        String userEmail = "dummy@test.com";
-//        Assessment assessment = new Assessment();
-//        AssessmentUsers assessmentUsers = new AssessmentUsers();
-//        UserId userId = new UserId(userEmail, assessment);
-//        assessmentUsers.setUserId(userId);
-//        assessment.setAssessmentId(123);
-//        assessment.setAssessmentName("Mocked Assessment");
-//
-//
-//        when(usersAssessmentsRepository.findByUserEmail(userEmail,123)).thenReturn(assessmentUsers);
-//        String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessment-response.json");
-//
-//        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/123")
-//                .bearerAuth("anything"), String.class);
-//
-//        assertEquals(expectedResponse, assessmentResponse);
-//
-//    }
+    @Test
+    void testGetAssessmentResponse() throws IOException {
+
+        String userEmail = "dummy@test.com";
+        Assessment assessment = new Assessment();
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        UserId userId = new UserId(userEmail, assessment);
+        assessmentUsers.setUserId(userId);
+        assessment.setAssessmentId(123);
+        assessment.setAssessmentName("Mocked Assessment");
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("text");
+        AnswerId answerId = new AnswerId(assessment,question);
+        Answer answer = new Answer();
+        answer.setAnswerId(answerId);
+        answer.setAnswer("answer");
+
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment,assessmentParameter);
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRating(4);
+        parameterLevelAssessment.setRecommendation("recommendation");
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(2);
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        TopicLevelId topicLevelId = new TopicLevelId(assessment,assessmentTopic);
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(4);
+
+        when(usersAssessmentsRepository.findByUserEmail(userEmail,123)).thenReturn(assessmentUsers);
+        when(answerRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(answer));
+        when(parameterLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(parameterLevelAssessment));
+        when(topicLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(topicLevelAssessment));
+
+        String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessment-response.json");
+
+        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/123")
+                .bearerAuth("anything"), String.class);
+
+        assertEquals(expectedResponse, assessmentResponse);
+
+    }
 
     @Test
     void finishAssessment() throws IOException {

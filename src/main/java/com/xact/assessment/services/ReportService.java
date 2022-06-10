@@ -2,10 +2,7 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.List;
@@ -55,7 +52,8 @@ public class ReportService {
         AssessmentCategory category = module.getCategory();
 
         Sheet sheet = getMatchingSheet(workbook, category);
-        generateHeaderIfNotExist(sheet);
+
+        generateHeaderIfNotExist(sheet, workbook);
         writeDataOnSheet(sheet, module, topic, rating, recommendation);
     }
 
@@ -68,7 +66,7 @@ public class ReportService {
         AssessmentCategory category = module.getCategory();
 
         Sheet sheet = getMatchingSheet(workbook, category);
-        generateHeaderIfNotExist(sheet);
+        generateHeaderIfNotExist(sheet, workbook);
         writeDataOnSheet(sheet, module, topic, parameter, rating, recommendation);
     }
 
@@ -80,7 +78,7 @@ public class ReportService {
         AssessmentCategory category = module.getCategory();
 
         Sheet sheet = getMatchingSheet(workbook, category);
-        generateHeaderIfNotExist(sheet);
+        generateHeaderIfNotExist(sheet, workbook);
         writeDataOnSheet(sheet,
                 module,
                 topic,
@@ -99,20 +97,31 @@ public class ReportService {
         return (sheet == null) ? workbook.createSheet(category.getCategoryName()) : sheet;
     }
 
-    private void generateHeaderIfNotExist(Sheet sheet) {
+    private void generateHeaderIfNotExist(Sheet sheet, Workbook workbook) {
         int rowNum = sheet.getLastRowNum();
+
         if (rowNum == -1) {
             Row row = sheet.createRow(0);
-            row.createCell(0, CellType.STRING).setCellValue("Module");
-            row.createCell(1, CellType.STRING).setCellValue("Topic");
-            row.createCell(2, CellType.STRING).setCellValue("Topic Score");
-            row.createCell(3, CellType.STRING).setCellValue("Topic Recommendation");
-            row.createCell(4, CellType.STRING).setCellValue("Parameter");
-            row.createCell(5, CellType.STRING).setCellValue("Parameter Score");
-            row.createCell(6, CellType.STRING).setCellValue("Parameter Recommendation");
-            row.createCell(7, CellType.STRING).setCellValue("Question");
-            row.createCell(8, CellType.STRING).setCellValue("Answer");
+            CellStyle style = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            style.setFont(font);
+            createBoldCell(row, 0, "Module", style);
+            createBoldCell(row, 1, "Topic", style);
+            createBoldCell(row, 2, "Topic Score", style);
+            createBoldCell(row, 3, "Topic Recommendation", style);
+            createBoldCell(row, 4, "Parameter", style);
+            createBoldCell(row, 5, "Parameter Score", style);
+            createBoldCell(row, 6, "Parameter Recommendation", style);
+            createBoldCell(row, 7, "Question", style);
+            createBoldCell(row, 8, "Answer", style);
         }
+    }
+
+    private void createBoldCell(Row row, int i, String module, CellStyle style) {
+        Cell cell = row.createCell(i, CellType.STRING);
+        cell.setCellValue(module);
+        cell.setCellStyle(style);
     }
 
     private void writeDataOnSheet(Sheet sheet, AssessmentModule module, AssessmentTopic topic, String topicRating, String topicRecommendation) {

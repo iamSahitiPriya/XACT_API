@@ -17,6 +17,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,7 +31,6 @@ class AssessmentControllerTest {
     private final AnswerService answerService = Mockito.mock(AnswerService.class);
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
     private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService,assessmentService,answerService,topicAndParameterLevelAssessmentService);
-
     @Test
     void testGetAssessments() {
 
@@ -92,7 +92,6 @@ class AssessmentControllerTest {
 
         HttpResponse<AssessmentResponse> actualAssessments = assessmentController.createAssessment(assessmentRequest, authentication);
 
-        System.out.println(actualAssessments.body().getOrganisationName());
         assertNotNull(actualAssessments.body().getAssessmentId());
         assertEquals(assessment.getAssessmentName(), actualAssessments.body().getAssessmentName());
         assertEquals(assessment.getAssessmentStatus().name(), actualAssessments.body().getAssessmentStatus().name());
@@ -231,6 +230,107 @@ class AssessmentControllerTest {
         verify(assessmentService).reopenAssessment(assessment);
     }
 
+    @Test
+    void testSaveAssessmentAtTopicLevel() {
+        Integer assessmentId = 1;
+        TopicLevelAssessmentRequest topicLevelAssessmentRequest = new TopicLevelAssessmentRequest();
 
+        TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+        topicRatingAndRecommendation.setTopicId(1);
+        topicRatingAndRecommendation.setRating(1);
+        topicRatingAndRecommendation.setRecommendation("some text");
 
+        topicLevelAssessmentRequest.setTopicRatingAndRecommendation(topicRatingAndRecommendation);
+
+        List<AnswerRequest> answerRequestList = new ArrayList<>();
+
+        AnswerRequest answerRequest1 = new AnswerRequest(1, "some text");
+        AnswerRequest answerRequest2 = new AnswerRequest(2, "some more text");
+        answerRequestList.add(answerRequest1);
+        answerRequestList.add(answerRequest2);
+
+        ParameterLevelAssessmentRequest parameterLevelAssessmentRequest = new ParameterLevelAssessmentRequest();
+        parameterLevelAssessmentRequest.setAnswerRequest(answerRequestList);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(any(), any())).thenReturn(assessmentUsers.getUserId().getAssessment());
+        System.out.println(userAuthService.getLoggedInUser(authentication));
+        topicLevelAssessmentRequest.setParameterLevelAssessmentRequestList(Collections.singletonList(parameterLevelAssessmentRequest));
+
+        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveAnswer(assessmentId, topicLevelAssessmentRequest, authentication);
+
+        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation((TopicLevelAssessment) any());
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testSaveAssessmentAtParameterLevel() {
+        Integer assessmentId = 1;
+        TopicLevelAssessmentRequest topicLevelAssessmentRequest = new TopicLevelAssessmentRequest();
+
+        List<AnswerRequest> answerRequestList = new ArrayList<>();
+
+        AnswerRequest answerRequest1 = new AnswerRequest(1, "some text");
+        AnswerRequest answerRequest2 = new AnswerRequest(2, "some more text");
+        answerRequestList.add(answerRequest1);
+        answerRequestList.add(answerRequest2);
+
+        ParameterLevelAssessmentRequest parameterLevelAssessmentRequest = new ParameterLevelAssessmentRequest();
+        parameterLevelAssessmentRequest.setAnswerRequest(answerRequestList);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation.setParameterId(1);
+        parameterRatingAndRecommendation.setRating(1);
+        parameterRatingAndRecommendation.setRecommendation("some text");
+
+        parameterLevelAssessmentRequest.setParameterRatingAndRecommendation(parameterRatingAndRecommendation);
+
+        topicLevelAssessmentRequest.setParameterLevelAssessmentRequestList(Collections.singletonList(parameterLevelAssessmentRequest));
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessmentUsers.getUserId().getAssessment());
+
+        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveAnswer(assessmentId, topicLevelAssessmentRequest, authentication);
+
+        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation((ParameterLevelAssessment) any());
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
 }
+
+
+
+

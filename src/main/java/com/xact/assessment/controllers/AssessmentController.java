@@ -37,6 +37,69 @@ public class AssessmentController {
         this.answerService = answerService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
     }
+    private Assessment getAuthenticatedAssessment(Integer assessmentId,Authentication authentication){
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        return assessmentService.getAssessment(assessmentId, loggedInUser);
+    }
+    private TopicLevelAssessment topicLevelAssessmentForSave(TopicLevelAssessmentRequest topicLevelAssessmentRequests,Assessment assessment){
+        TopicLevelId topicLevelId = modelMapper.map(topicLevelAssessmentRequests.getTopicRatingAndRecommendation(), TopicLevelId.class);
+        topicLevelId.setAssessment(assessment);
+        TopicLevelAssessment topicLevelAssessment = modelMapper.map(topicLevelAssessmentRequests.getTopicRatingAndRecommendation(), TopicLevelAssessment.class);
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        return topicLevelAssessment;
+    }
+    private ParameterLevelAssessment parameterLevelAssessmentForSave(ParameterLevelAssessmentRequest parameterLevelAssessmentRequest,Assessment assessment){
+        ParameterLevelId parameterLevelId = modelMapper.map(parameterLevelAssessmentRequest.getParameterRatingAndRecommendation(), ParameterLevelId.class);
+        parameterLevelId.setAssessment(assessment);
+        ParameterLevelAssessment parameterLevelAssessment = modelMapper.map(parameterLevelAssessmentRequest.getParameterRatingAndRecommendation(), ParameterLevelAssessment.class);
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        return parameterLevelAssessment;
+    }
+    private Answer answerForSave(AnswerRequest answerRequest,Assessment assessment){
+        AnswerId answerId = modelMapper.map(answerRequest, AnswerId.class);
+        answerId.setAssessment(assessment);
+        Answer answer = modelMapper.map(answerRequest, Answer.class);
+        answer.setAnswerId(answerId);
+        return answer;
+    }
+    private List<AnswerResponse> getAnswerResponseList(List<Answer> answerList){
+        List<AnswerResponse> answerResponseList = new ArrayList<>();
+        for (Answer eachAnswer : answerList) {
+            AnswerResponse eachAnswerResponse = new AnswerResponse();
+            QuestionDto eachQuestion = modelMapper.map(eachAnswer.getAnswerId(), QuestionDto.class);
+            eachAnswerResponse.setQuestionId(eachQuestion.getQuestionId());
+            eachAnswerResponse.setAnswer(eachAnswer.getAnswer());
+            answerResponseList.add(eachAnswerResponse);
+        }
+        return answerResponseList;
+    }
+
+    private List<TopicRatingAndRecommendation> getTopicRatingAndRecommendationList(List<TopicLevelAssessment> topicLevelAssessmentList){
+        List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = new ArrayList<>();
+        for (TopicLevelAssessment eachTopic : topicLevelAssessmentList) {
+            TopicRatingAndRecommendation eachTopicRatingAndRecommendation = new TopicRatingAndRecommendation();
+            AssessmentTopicDto eachTopicDto = modelMapper.map(eachTopic.getTopicLevelId(), AssessmentTopicDto.class);
+            eachTopicRatingAndRecommendation.setTopicId(eachTopicDto.getTopicId());
+            eachTopicRatingAndRecommendation.setRating(eachTopic.getRating());
+            eachTopicRatingAndRecommendation.setRecommendation(eachTopic.getRecommendation());
+            topicRatingAndRecommendationsResponseList.add(eachTopicRatingAndRecommendation);
+        }
+        return topicRatingAndRecommendationsResponseList;
+    }
+
+    private List<ParameterRatingAndRecommendation> getParameterRatingAndRecommendationList(List<ParameterLevelAssessment> parameterLevelAssessmentList){
+        List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponseList = new ArrayList<>();
+
+        for (ParameterLevelAssessment eachParameter : parameterLevelAssessmentList) {
+            ParameterRatingAndRecommendation eachParameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+            AssessmentParameterDto eachParameterDto = modelMapper.map(eachParameter.getParameterLevelId(), AssessmentParameterDto.class);
+            eachParameterRatingAndRecommendation.setParameterId(eachParameterDto.getParameterId());
+            eachParameterRatingAndRecommendation.setRating(eachParameter.getRating());
+            eachParameterRatingAndRecommendation.setRecommendation(eachParameter.getRecommendation());
+            parameterRatingAndRecommendationsResponseList.add(eachParameterRatingAndRecommendation);
+        }
+        return parameterRatingAndRecommendationsResponseList;
+    }
 
     @Get(produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -64,8 +127,8 @@ public class AssessmentController {
     @Put(value = "/{assessmentId}/statuses/open", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse reopenAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
-        Assessment assessment = assessmentService.getAssessment(assessmentId, loggedInUser);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
+
 
         Assessment finishedAssessment = assessmentService.reopenAssessment(assessment);
         AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
@@ -76,8 +139,7 @@ public class AssessmentController {
     @Put(value = "/{assessmentId}/statuses/finish", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> finishAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
-        Assessment assessment = assessmentService.getAssessment(assessmentId, loggedInUser);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
 
         Assessment finishedAssessment = assessmentService.finishAssessment(assessment);
         AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
@@ -89,52 +151,53 @@ public class AssessmentController {
     @Get(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> getAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
-        Assessment assessment = assessmentService.getAssessment(assessmentId, loggedInUser);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
+
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
-//        AssessmentUsers assessmentUsers=new AssessmentUsers();
+        List<AnswerResponse> answerResponseList = getAnswerResponseList(answerResponse);
+
         List<String> Users=assessmentService.getUserMail(assessmentId,AssessmentRole.Facilitator);
-        List<AnswerResponse> answerList = new ArrayList<>();
-        for (Answer eachAnswer : answerResponse) {
-            AnswerResponse eachAnswerResponse = new AnswerResponse();
-            QuestionDto eachQuestion = modelMapper.map(eachAnswer.getAnswerId(), QuestionDto.class);
-            eachAnswerResponse.setQuestionId(eachQuestion.getQuestionId());
-            eachAnswerResponse.setAnswer(eachAnswer.getAnswer());
-            answerList.add(eachAnswerResponse);
-        }
-        List<TopicLevelAssessment> topicRatingAndRecommendations = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
-        List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = new ArrayList<>();
 
-        for (TopicLevelAssessment eachTopic : topicRatingAndRecommendations) {
-            TopicRatingAndRecommendation eachTopicRatingAndRecommendation = new TopicRatingAndRecommendation();
-            AssessmentTopicDto eachTopicDto = modelMapper.map(eachTopic.getTopicLevelId(), AssessmentTopicDto.class);
-            eachTopicRatingAndRecommendation.setTopicId(eachTopicDto.getTopicId());
-            eachTopicRatingAndRecommendation.setRating(eachTopic.getRating());
-            eachTopicRatingAndRecommendation.setRecommendation(eachTopic.getRecommendation());
-            topicRatingAndRecommendationsResponseList.add(eachTopicRatingAndRecommendation);
-        }
-        List<ParameterLevelAssessment> parameterRatingAndRecommendations = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId());
-        List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponseList = new ArrayList<>();
+        List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
+        List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = getTopicRatingAndRecommendationList(topicLevelAssessmentList);
 
-        for (ParameterLevelAssessment eachParameter : parameterRatingAndRecommendations) {
-            ParameterRatingAndRecommendation eachParameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
-            AssessmentParameterDto eachParameterDto = modelMapper.map(eachParameter.getParameterLevelId(), AssessmentParameterDto.class);
-            eachParameterRatingAndRecommendation.setParameterId(eachParameterDto.getParameterId());
-            eachParameterRatingAndRecommendation.setRating(eachParameter.getRating());
-            eachParameterRatingAndRecommendation.setRecommendation(eachParameter.getRecommendation());
-            parameterRatingAndRecommendationsResponseList.add(eachParameterRatingAndRecommendation);
-        }
+        List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId());
+        List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponseList = getParameterRatingAndRecommendationList(parameterLevelAssessmentList);
+
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
-        AssessmentRequest assessmentRequest=new AssessmentRequest();
+        assessmentResponse.setAnswerResponseList(answerResponseList);
+        assessmentResponse.setTopicRatingAndRecommendation(topicRatingAndRecommendationsResponseList);
+        assessmentResponse.setParameterRatingAndRecommendation(parameterRatingAndRecommendationsResponseList);
         assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
         assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
         assessmentResponse.setUsers(Users);
-        System.out.println("============================>"+Users);
-        assessmentResponse.setAnswerResponseList(answerList);
-        assessmentResponse.setTopicRatingAndRecommendation(topicRatingAndRecommendationsResponseList);
-        assessmentResponse.setParameterRatingAndRecommendation(parameterRatingAndRecommendationsResponseList);
+
         return HttpResponse.ok(assessmentResponse);
+    }
+
+    @Post(value = "/notes/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<TopicLevelAssessmentRequest> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body TopicLevelAssessmentRequest topicLevelAssessmentRequests, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
+
+        if (AssessmentStatus.Active.equals(assessment.getAssessmentStatus())) {
+
+            if (topicLevelAssessmentRequests.isRatedAtTopicLevel()) {
+                topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessmentForSave(topicLevelAssessmentRequests,assessment));
+            } else {
+                for (ParameterLevelAssessmentRequest parameterLevelAssessmentRequest : topicLevelAssessmentRequests.getParameterLevelAssessmentRequestList()) {
+                    topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessmentForSave(parameterLevelAssessmentRequest,assessment));
+                }
+            }
+
+            for (ParameterLevelAssessmentRequest parameterLevelAssessmentRequest : topicLevelAssessmentRequests.getParameterLevelAssessmentRequestList()) {
+                for (AnswerRequest answerRequest : parameterLevelAssessmentRequest.getAnswerRequest()) {
+                    answerService.saveAnswer(answerForSave(answerRequest,assessment));
+                }
+            }
+        }
+        return HttpResponse.ok();
     }
 
 }

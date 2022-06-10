@@ -92,6 +92,8 @@ public class AssessmentController {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         Assessment assessment = assessmentService.getAssessment(assessmentId, loggedInUser);
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
+//        AssessmentUsers assessmentUsers=new AssessmentUsers();
+        List<String> Users=assessmentService.getUserMail(assessmentId,AssessmentRole.Facilitator);
         List<AnswerResponse> answerList = new ArrayList<>();
         for (Answer eachAnswer : answerResponse) {
             AnswerResponse eachAnswerResponse = new AnswerResponse();
@@ -122,9 +124,13 @@ public class AssessmentController {
             eachParameterRatingAndRecommendation.setRecommendation(eachParameter.getRecommendation());
             parameterRatingAndRecommendationsResponseList.add(eachParameterRatingAndRecommendation);
         }
-
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
-
+        AssessmentRequest assessmentRequest=new AssessmentRequest();
+        assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
+        assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
+        assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
+        assessmentResponse.setUsers(Users);
+        System.out.println("============================>"+Users);
         assessmentResponse.setAnswerResponseList(answerList);
         assessmentResponse.setTopicRatingAndRecommendation(topicRatingAndRecommendationsResponseList);
         assessmentResponse.setParameterRatingAndRecommendation(parameterRatingAndRecommendationsResponseList);

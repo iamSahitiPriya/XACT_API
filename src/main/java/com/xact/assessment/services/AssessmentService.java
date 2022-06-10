@@ -47,7 +47,6 @@ public class AssessmentService {
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
         assessment.setOrganisation(organisation);
         List<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
-
         createAssessment(assessment);
         usersAssessmentsService.createUsersInAssessment(assessmentUsers);
 
@@ -58,7 +57,7 @@ public class AssessmentService {
         assessmentRepository.save(assessment);
     }
 
-    private List<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedinUser, Assessment assessment) {
+    public List<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedinUser, Assessment assessment) {
         List<UserDto> users = assessmentRequest.getUsers();
 
         List<AssessmentUsers> assessmentUsers = new ArrayList<>();
@@ -80,6 +79,15 @@ public class AssessmentService {
         return assessmentUsers.getUserId().getAssessment();
     }
 
+    public List<String> getUserMail(Integer assessmentId,AssessmentRole role){
+        List<AssessmentUsers> assessmentUsers=usersAssessmentsRepository.findUserByAssessmentId(assessmentId,role);
+        List<String> assessmentUsers1 = new ArrayList<>();
+        for(AssessmentUsers eachUser : assessmentUsers){
+
+            assessmentUsers1.add(eachUser.getUserId().getUserEmail());
+        }
+        return  assessmentUsers1;
+    }
     public Assessment finishAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Completed);
         assessmentsRepository.update(assessment);

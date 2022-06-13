@@ -16,6 +16,7 @@ pipeline {
                 sh "docker tag 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${Commit_ID} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-${ENV_TYPE}:${Commit_ID}"
                 sh "docker tag 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${Commit_ID} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-${ENV_TYPE}:latest"
                 sh "docker push --all-tags 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-${ENV_TYPE}"
+                sh "aws ecs update-service --cluster xact-backend-cluster-${ENV_TYPE} --service xact-service-${ENV_TYPE} --force-new-deployment"
             }
         }
     }

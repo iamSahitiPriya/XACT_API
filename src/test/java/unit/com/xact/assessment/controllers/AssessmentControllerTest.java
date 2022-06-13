@@ -276,7 +276,7 @@ class AssessmentControllerTest {
 
         HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveAnswer(assessmentId, topicLevelAssessmentRequest, authentication);
 
-        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation((TopicLevelAssessment) any());
+        verify(topicAndParameterLevelAssessmentService).saveTopicLevelAssessment((TopicLevelAssessment) any(),any() );
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -326,7 +326,7 @@ class AssessmentControllerTest {
 
         HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveAnswer(assessmentId, topicLevelAssessmentRequest, authentication);
 
-        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation((ParameterLevelAssessment) any());
+        verify(topicAndParameterLevelAssessmentService).saveParameterLevelAssessment((List<ParameterLevelAssessment>) any(),any());
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 }

@@ -1,11 +1,11 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
-import com.xact.assessment.dtos.RatingDto;
 import com.xact.assessment.dtos.TopicRatingAndRecommendation;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
+import com.xact.assessment.services.AnswerService;
 import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,12 +21,14 @@ public class TopicAndParameterLevelAssessmentServiceTest {
     private TopicLevelAssessmentRepository topicLevelAssessmentRepository;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
+    private AnswerService answerService;
 
     @BeforeEach
     public void beforeEach() {
         topicLevelAssessmentRepository = mock(TopicLevelAssessmentRepository.class);
         parameterLevelAssessmentRepository = mock(ParameterLevelAssessmentRepository.class);
-        topicAndParameterLevelAssessmentService = new TopicAndParameterLevelAssessmentService(topicLevelAssessmentRepository, parameterLevelAssessmentRepository);
+        answerService = mock(AnswerService.class);
+        topicAndParameterLevelAssessmentService = new TopicAndParameterLevelAssessmentService(topicLevelAssessmentRepository, parameterLevelAssessmentRepository, answerService);
     }
 
     @Test

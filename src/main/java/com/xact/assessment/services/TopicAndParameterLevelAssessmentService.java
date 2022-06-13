@@ -1,5 +1,6 @@
 package com.xact.assessment.services;
 
+import com.xact.assessment.models.Answer;
 import com.xact.assessment.models.ParameterLevelAssessment;
 import com.xact.assessment.models.TopicLevelAssessment;
 import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
@@ -13,10 +14,12 @@ public class TopicAndParameterLevelAssessmentService {
 
     private final TopicLevelAssessmentRepository topicLevelAssessmentRepository;
     private final ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
+    private final AnswerService answerService;
 
-    public TopicAndParameterLevelAssessmentService(TopicLevelAssessmentRepository topicLevelAssessmentRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository) {
+    public TopicAndParameterLevelAssessmentService(TopicLevelAssessmentRepository topicLevelAssessmentRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository, AnswerService answerService) {
         this.topicLevelAssessmentRepository = topicLevelAssessmentRepository;
         this.parameterLevelAssessmentRepository = parameterLevelAssessmentRepository;
+        this.answerService = answerService;
     }
 
     public TopicLevelAssessment saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
@@ -40,6 +43,22 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterLevelAssessment;
     }
 
+    public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment, List<Answer> answerList){
+        saveRatingAndRecommendation(topicLevelAssessment);
+        for (Answer answer: answerList) {
+            answerService.saveAnswer(answer);
+        }
+    }
+
+    public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<Answer> answerList){
+        for (ParameterLevelAssessment parameterLevelAssessment: parameterLevelAssessmentList) {
+            saveRatingAndRecommendation(parameterLevelAssessment);
+        }
+        for (Answer answer: answerList) {
+            answerService.saveAnswer(answer);
+        }
+    }
+
     public List<ParameterLevelAssessment> getParameterAssessmentData(Integer assessmentId) {
         return parameterLevelAssessmentRepository.findByAssessment(assessmentId);
     }
@@ -47,4 +66,6 @@ public class TopicAndParameterLevelAssessmentService {
     public List<TopicLevelAssessment> getTopicAssessmentData(Integer assessmentId) {
         return topicLevelAssessmentRepository.findByAssessment(assessmentId);
     }
+
+
 }

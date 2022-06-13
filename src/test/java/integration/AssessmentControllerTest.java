@@ -20,6 +20,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Date;
 
@@ -109,6 +110,8 @@ class AssessmentControllerTest {
         UserId userId = new UserId(userEmail, assessment);
         assessmentUsers.setUserId(userId);
         assessment.setAssessmentId(123);
+        Organisation org = new Organisation(12,"testorg","IT","Telecom",10);
+        assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();

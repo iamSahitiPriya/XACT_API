@@ -17,11 +17,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AssessmentServiceTest {
     private UsersAssessmentsService usersAssessmentsService;
@@ -58,7 +59,7 @@ class AssessmentServiceTest {
         loggedinUser.setProfile(profile);
 
 
-        List<AssessmentUsers> assessmentUsers = new ArrayList<>();
+        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
         Assessment assessment = new Assessment();
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setAssessmentName("assessment1");
@@ -76,7 +77,7 @@ class AssessmentServiceTest {
 
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
-        when(usersAssessmentsService.createUsersInAssessment(assessmentUsers)).thenReturn(assessmentUsers);
+        doNothing().when(usersAssessmentsService).createUsersInAssessment(assessmentUsers);
 
 
         Assessment actualAssessment = assessmentService.createAssessment(assessmentRequest, loggedinUser);

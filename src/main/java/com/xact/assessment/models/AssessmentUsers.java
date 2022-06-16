@@ -6,10 +6,7 @@ package com.xact.assessment.models;
 
 
 import io.micronaut.core.annotation.Introspected;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,6 +18,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Introspected
 @Entity
+@EqualsAndHashCode
 @Table(name = "tbl_assessment_users")
 public class AssessmentUsers implements Serializable {
 

@@ -6,7 +6,6 @@ package com.xact.assessment.repositories;
 
 import com.xact.assessment.models.AssessmentRole;
 import com.xact.assessment.models.AssessmentUsers;
-import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserId;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;

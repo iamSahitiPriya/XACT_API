@@ -263,7 +263,44 @@ public class AssessmentController {
             topicLevelAssessment.setRecommendation(recommendation);
             topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
         }
-
         return HttpResponse.ok();
     }
+    @Patch(value = "/topicRating/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<TopicLevelAssessmentRequest> saveTopicRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body String rating, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
+        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+        if (topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).isPresent()) {
+            TopicLevelAssessment topicLevelAssessment = topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).orElseThrow();
+            topicLevelAssessment.setRating(Integer.valueOf(rating));
+            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+        } else {
+            TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+            topicLevelAssessment.setTopicLevelId(topicLevelId);
+            topicLevelAssessment.setRating(Integer.valueOf(rating));
+            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+        }
+        return HttpResponse.ok();
+    }
+    @Patch(value = "/parameterRating/{assessmentId}/{parameterId}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<TopicLevelAssessmentRequest> saveParameterRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body String rating, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
+        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+        if (topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId).isPresent()) {
+            ParameterLevelAssessment parameterLevelAssessment = topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId).orElseThrow();
+            parameterLevelAssessment.setRating(Integer.valueOf(rating));
+            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+
+        } else {
+            ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+            parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+            parameterLevelAssessment.setRating(Integer.valueOf(rating));
+            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+        }
+        return HttpResponse.ok();
+    }
+
 }

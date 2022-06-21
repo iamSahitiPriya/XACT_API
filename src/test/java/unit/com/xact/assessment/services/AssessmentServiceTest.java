@@ -49,7 +49,7 @@ class AssessmentServiceTest {
         assessmentRequest.setIndustry("IT");
         assessmentRequest.setDomain("IT");
         List<UserDto> users = new ArrayList<>();
-        UserDto user = new UserDto("test@email.com", UserRole.Owner);
+        UserDto user = new UserDto("test@gmail.com", UserRole.Owner);
         users.add(user);
         assessmentRequest.setUsers(users);
 

@@ -37,12 +37,13 @@ public class UsersAssessmentsService {
 
     @Transactional
     public void createUsersInAssessment(Set<AssessmentUsers> assessmentUsers) {
-         usersAssessmentsRepository.saveAll(assessmentUsers);
+        usersAssessmentsRepository.saveAll(assessmentUsers);
     }
 
 
     @Transactional
-    public void updateUsersInAssessment(Set<AssessmentUsers> assessmentUsers) {
+    public void updateUsersInAssessment(Set<AssessmentUsers> assessmentUsers, Integer assessmentId) {
+        usersAssessmentsRepository.deleteById(assessmentId);
         usersAssessmentsRepository.updateAll(assessmentUsers);
     }
 }

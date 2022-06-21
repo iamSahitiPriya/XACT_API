@@ -4,6 +4,7 @@
 
 package com.xact.assessment.dtos;
 
+import io.micronaut.context.annotation.Value;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,7 +18,8 @@ import java.util.regex.Pattern;
 @NoArgsConstructor
 public class UserDto {
 
-    private final String EMAIL_REGEX = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
+    @Value("${validation.email}")
+    private String EMAIL_REGEX="^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com|gmail.com))$";
 
     public UserDto(@Email @NotBlank String email, UserRole role) {
         setEmail(email);

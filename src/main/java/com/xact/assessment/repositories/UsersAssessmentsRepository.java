@@ -30,4 +30,7 @@ public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUse
     @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId AND au.role=:role")
     List<AssessmentUsers> findUserByAssessmentId(@Parameter("assessmentId") Integer assessmentId,@Parameter("role") AssessmentRole role);
 
+    @Executable
+    @Query("DELETE FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId")
+    void deleteById(Integer assessmentId);
 }

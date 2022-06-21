@@ -6,10 +6,12 @@ package unit.com.xact.assessment.models;
 
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@MicronautTest
 class UserDtoTest {
 
     @Test

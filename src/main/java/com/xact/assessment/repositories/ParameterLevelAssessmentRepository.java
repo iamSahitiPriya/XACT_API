@@ -16,4 +16,5 @@ public interface ParameterLevelAssessmentRepository extends CrudRepository<Param
     @Executable
     @Query("SELECT pla FROM ParameterLevelAssessment pla WHERE pla.parameterLevelId.assessment.assessmentId=:assessmentId")
     List<ParameterLevelAssessment> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
+
 }

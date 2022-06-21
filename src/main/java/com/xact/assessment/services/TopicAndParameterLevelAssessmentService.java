@@ -1,15 +1,16 @@
 package com.xact.assessment.services;
 
-import com.xact.assessment.models.Answer;
-import com.xact.assessment.models.ParameterLevelAssessment;
-import com.xact.assessment.models.TopicLevelAssessment;
+import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import jakarta.inject.Singleton;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Singleton
+@Transactional
 public class TopicAndParameterLevelAssessmentService {
 
     private final TopicLevelAssessmentRepository topicLevelAssessmentRepository;
@@ -67,5 +68,12 @@ public class TopicAndParameterLevelAssessmentService {
         return topicLevelAssessmentRepository.findByAssessment(assessmentId);
     }
 
+    public Optional<ParameterLevelAssessment> searchParameter(ParameterLevelId parameterLevelId) {
+        return  parameterLevelAssessmentRepository.findById(parameterLevelId);
+    }
 
+
+    public Optional<TopicLevelAssessment> searchTopic(TopicLevelId topicLevelId) {
+        return topicLevelAssessmentRepository.findById(topicLevelId);
+    }
 }

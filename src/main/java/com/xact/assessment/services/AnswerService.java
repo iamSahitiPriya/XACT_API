@@ -5,7 +5,6 @@ import com.xact.assessment.repositories.AnswerRepository;
 import jakarta.inject.Singleton;
 
 import java.util.List;
-import java.util.Optional;
 
 @Singleton
 public class AnswerService {

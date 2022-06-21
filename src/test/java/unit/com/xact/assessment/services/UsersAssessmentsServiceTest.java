@@ -10,9 +10,7 @@ import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -60,12 +58,11 @@ class UsersAssessmentsServiceTest {
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
-        List<AssessmentUsers> users = Collections.singletonList(assessmentUsers);
+        Set<AssessmentUsers> users = new HashSet<>();
+        users.add(assessmentUsers);
 
         when(usersAssessmentsRepository.saveAll(users)).thenReturn(users);
-        List<AssessmentUsers> actualAssessmentUsers = usersAssessmentsService.createUsersInAssessment(users);
-
-        assertEquals(users, actualAssessmentUsers);
+        usersAssessmentsService.createUsersInAssessment(users);
 
         verify(usersAssessmentsRepository).saveAll(users);
     }

@@ -36,4 +36,5 @@ public class AssessmentRequest {
 
     @NotEmpty
     private List<@Valid UserDto> users;
+
 }

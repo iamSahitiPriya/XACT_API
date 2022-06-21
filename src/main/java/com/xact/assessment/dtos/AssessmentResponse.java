@@ -4,13 +4,10 @@
 
 package com.xact.assessment.dtos;
 
-import com.xact.assessment.models.Organisation;
-import com.xact.assessment.models.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 

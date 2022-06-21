@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Controller("/v1/assessments")
 public class AssessmentController {
@@ -144,6 +145,30 @@ public class AssessmentController {
         return HttpResponse.created(assessmentResponse);
     }
 
+    @Put(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateAssessment(@PathVariable("assessmentId") Integer assessmentId, @Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
+
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+
+        assessment.setAssessmentName(assessmentRequest.getAssessmentName());
+        assessment.getOrganisation().setOrganisationName(assessmentRequest.getOrganisationName());
+        assessment.getOrganisation().setDomain(assessmentRequest.getDomain());
+        assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
+        assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
+
+        Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
+
+        UserId userID = new UserId();
+        userID.setAssessment(assessment);
+        assessmentService.updateAssessment(assessment, assessmentUsers);
+
+        return HttpResponse.ok();
+    }
+
+
     @Put(value = "/{assessmentId}/statuses/open", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse reopenAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
@@ -177,6 +202,7 @@ public class AssessmentController {
         List<AnswerResponse> answerResponseList = getAnswerResponseList(answerResponse);
 
         List<String> Users = assessmentService.getUserMail(assessmentId, AssessmentRole.Facilitator);
+        List<String> users = assessmentService.getAssessmentUsers(assessmentId);
 
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
         List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = getTopicRatingAndRecommendationList(topicLevelAssessmentList);
@@ -191,7 +217,7 @@ public class AssessmentController {
         assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
         assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
-        assessmentResponse.setUsers(Users);
+        assessmentResponse.setUsers(users);
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -303,4 +329,5 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
+}
 }

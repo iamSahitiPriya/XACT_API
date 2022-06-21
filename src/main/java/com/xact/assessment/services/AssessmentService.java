@@ -16,7 +16,9 @@ import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
@@ -46,10 +48,9 @@ public class AssessmentService {
 
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
         assessment.setOrganisation(organisation);
-        List<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
+        Set<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
         usersAssessmentsService.createUsersInAssessment(assessmentUsers);
-
         return assessment;
     }
 
@@ -57,19 +58,20 @@ public class AssessmentService {
         assessmentRepository.save(assessment);
     }
 
-    public List<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedinUser, Assessment assessment) {
+    public Set<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedinUser, Assessment assessment) {
         List<UserDto> users = assessmentRequest.getUsers();
 
-        List<AssessmentUsers> assessmentUsers = new ArrayList<>();
+        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
         for (UserDto eachUser : users) {
-            eachUser.setRole(UserRole.Facilitator);
-            if (loggedinUser.getUserEmail().equals(eachUser.getEmail())) {
-                eachUser.setRole(UserRole.Owner);
+            if (!eachUser.getEmail().isBlank()) {
+                eachUser.setRole(UserRole.Facilitator);
+                if (loggedinUser.getUserEmail().equals(eachUser.getEmail())) {
+                    eachUser.setRole(UserRole.Owner);
+                }
+                AssessmentUsers assessmentUser = mapper.map(eachUser, AssessmentUsers.class);
+                assessmentUser.setUserId(new UserId(eachUser.getEmail(), assessment));
+                assessmentUsers.add(assessmentUser);
             }
-            AssessmentUsers assessmentUser = mapper.map(eachUser, AssessmentUsers.class);
-            assessmentUser.setUserId(new UserId(eachUser.getEmail(), assessment));
-            assessmentUsers.add(assessmentUser);
-
         }
         return assessmentUsers;
     }
@@ -79,15 +81,16 @@ public class AssessmentService {
         return assessmentUsers.getUserId().getAssessment();
     }
 
-    public List<String> getUserMail(Integer assessmentId,AssessmentRole role){
-        List<AssessmentUsers> assessmentUsers=usersAssessmentsRepository.findUserByAssessmentId(assessmentId,role);
+    public List<String> getAssessmentUsers(Integer assessmentId) {
+        List<AssessmentUsers> assessmentUsers = usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator);
         List<String> assessmentUsers1 = new ArrayList<>();
-        for(AssessmentUsers eachUser : assessmentUsers){
+        for (AssessmentUsers eachUser : assessmentUsers) {
 
             assessmentUsers1.add(eachUser.getUserId().getUserEmail());
         }
-        return  assessmentUsers1;
+        return assessmentUsers1;
     }
+
     public Assessment finishAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Completed);
         assessmentsRepository.update(assessment);
@@ -99,4 +102,13 @@ public class AssessmentService {
         assessmentsRepository.update(assessment);
         return assessment;
     }
+
+
+    @Transactional
+    public void updateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+        assessmentRepository.update(assessment);
+        usersAssessmentsService.updateUsersInAssessment(assessmentUsers,assessment.getAssessmentId());
+    }
+
+
 }

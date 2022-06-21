@@ -6,7 +6,6 @@ package com.xact.assessment.repositories;
 
 import com.xact.assessment.models.AssessmentRole;
 import com.xact.assessment.models.AssessmentUsers;
-import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserId;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
@@ -31,4 +30,7 @@ public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUse
     @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId AND au.role=:role")
     List<AssessmentUsers> findUserByAssessmentId(@Parameter("assessmentId") Integer assessmentId,@Parameter("role") AssessmentRole role);
 
+    @Executable
+    @Query("DELETE FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId")
+    void deleteById(Integer assessmentId);
 }

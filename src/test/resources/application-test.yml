@@ -2,13 +2,9 @@ micronaut:
   application:
     name: XAct_Assessment_API
   server:
-    port: 8080
+    port: 8000
     cors:
       enabled: true
-      configurations:
-        web:
-          allowedOrigins:
-            - https://qa.project-xact.in
   security:
     enabled: true
     token:
@@ -20,19 +16,35 @@ micronaut:
           jwks:
             okta:
               url: '${OIDC_ISSUER:`https://dev-47045452.okta.com/oauth2/default`}/v1/keys'
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
 
-datasources:
-  default:
-    url: jdbc:postgresql://xact-db.cs3hcgchak2w.ap-south-1.rds.amazonaws.com:5432/xactqa?sslmode=disable
-    driverClassName: org.postgresql.Driver
-    username: ${DB_USER}
-    password: ${DB_PWD}
+#datasources:
+#  default:
+#    url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
+#    driverClassName: org.postgresql.Driver
+#    username: ${USER}
+#    password: ''
+#    dialect: POSTGRES
 
 flyway:
   datasources:
     default:
       enabled: true
       baseline-on-migrate: true
+
+jpa:
+  default:
+    entity-scan:
+      packages: 'com.xact.assessment.models'
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: validate
+        show_sql: true
 
 validation:
   email: '^([_A-Za-z0-9-+]+\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$'

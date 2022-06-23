@@ -4,11 +4,9 @@ import com.xact.assessment.models.Question;
 import com.xact.assessment.repositories.QuestionRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class QuestionService {
     private final QuestionRepository questionRepository;
 

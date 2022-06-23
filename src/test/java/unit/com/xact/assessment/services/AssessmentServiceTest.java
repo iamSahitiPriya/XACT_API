@@ -16,10 +16,7 @@ import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -133,10 +130,9 @@ class AssessmentServiceTest {
         assessment.setAssessmentId(assessmentId);
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
 
-        Assessment actualAsessment = assessmentService.reopenAssessment(assessment);
+        Assessment actualAssessment = assessmentService.reopenAssessment(assessment);
 
-        assertEquals(actualAsessment.getAssessmentStatus(), AssessmentStatus.Active);
+        assertEquals(actualAssessment.getAssessmentStatus(), AssessmentStatus.Active);
     }
-
 
 }

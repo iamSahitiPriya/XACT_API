@@ -5,12 +5,10 @@ import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class TopicAndParameterLevelAssessmentService {
 
     private final TopicLevelAssessmentRepository topicLevelAssessmentRepository;
@@ -44,18 +42,18 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterLevelAssessment;
     }
 
-    public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment, List<Answer> answerList){
+    public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment, List<Answer> answerList) {
         saveRatingAndRecommendation(topicLevelAssessment);
-        for (Answer answer: answerList) {
+        for (Answer answer : answerList) {
             answerService.saveAnswer(answer);
         }
     }
 
-    public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<Answer> answerList){
-        for (ParameterLevelAssessment parameterLevelAssessment: parameterLevelAssessmentList) {
+    public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<Answer> answerList) {
+        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
             saveRatingAndRecommendation(parameterLevelAssessment);
         }
-        for (Answer answer: answerList) {
+        for (Answer answer : answerList) {
             answerService.saveAnswer(answer);
         }
     }
@@ -69,7 +67,7 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
     public Optional<ParameterLevelAssessment> searchParameter(ParameterLevelId parameterLevelId) {
-        return  parameterLevelAssessmentRepository.findById(parameterLevelId);
+        return parameterLevelAssessmentRepository.findById(parameterLevelId);
     }
 
 

@@ -246,7 +246,6 @@ public class AssessmentController {
     public HttpResponse<TopicLevelAssessmentRequest> saveNotesAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body String notes, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         Question question = questionService.getQuestion(questionId) .orElseThrow();
-        question.setQuestionId(questionId);
         AnswerId answerId = new AnswerId(assessment, question);
         if(answerService.getAnswer(answerId).isPresent()) {
             Answer answer = answerService.getAnswer(answerId).orElseThrow();

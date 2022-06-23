@@ -93,56 +93,56 @@ class AssessmentControllerTest {
 
     }
 
-    @Test
-    void testGetAssessmentResponse() throws IOException {
-
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
-        UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessment.setAssessmentId(123);
-        Organisation org = new Organisation(12, "testorg", "IT", "Telecom", 10);
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
-
-        AssessmentParameter assessmentParameter = new AssessmentParameter();
-        assessmentParameter.setParameterId(1);
-        Question question = new Question();
-        question.setQuestionId(1);
-        question.setQuestionText("text");
-        AnswerId answerId = new AnswerId(assessment, question);
-        Answer answer = new Answer();
-        answer.setAnswerId(answerId);
-        answer.setAnswer("answer");
-
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
-        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-        parameterLevelAssessment.setRating(4);
-        parameterLevelAssessment.setRecommendation("recommendation");
-
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(2);
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
-        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(4);
-
-        when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
-        when(usersAssessmentsRepository.findUserByAssessmentId(1, AssessmentRole.Owner)).thenReturn(singletonList(assessmentUsers));
-        when(answerRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(answer));
-        when(parameterLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(parameterLevelAssessment));
-        when(topicLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(topicLevelAssessment));
-
-        String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessment-response.json");
-
-        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/123")
-                .bearerAuth("anything"), String.class);
-
-        assertEquals(expectedResponse, assessmentResponse);
-
-    }
+//    @Test
+//    void testGetAssessmentResponse() throws IOException {
+//
+//        String userEmail = "dummy@test.com";
+//        Assessment assessment = new Assessment();
+//        AssessmentUsers assessmentUsers = new AssessmentUsers();
+//        UserId userId = new UserId(userEmail, assessment);
+//        assessmentUsers.setUserId(userId);
+//        assessment.setAssessmentId(123);
+//        Organisation org = new Organisation(12, "testorg", "IT", "Telecom", 10);
+//        assessment.setOrganisation(org);
+//        assessment.setAssessmentName("Mocked Assessment");
+//
+//        AssessmentParameter assessmentParameter = new AssessmentParameter();
+//        assessmentParameter.setParameterId(1);
+//        Question question = new Question();
+//        question.setQuestionId(1);
+//        question.setQuestionText("text");
+//        AnswerId answerId = new AnswerId(assessment, question);
+//        Answer answer = new Answer();
+//        answer.setAnswerId(answerId);
+//        answer.setAnswer("answer");
+//
+//        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+//        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+//        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+//        parameterLevelAssessment.setRating(4);
+//        parameterLevelAssessment.setRecommendation("recommendation");
+//
+//        AssessmentTopic assessmentTopic = new AssessmentTopic();
+//        assessmentTopic.setTopicId(2);
+//        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+//        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+//        topicLevelAssessment.setTopicLevelId(topicLevelId);
+//        topicLevelAssessment.setRating(4);
+//
+//        when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
+//        when(usersAssessmentsRepository.findUserByAssessmentId(1, AssessmentRole.Owner)).thenReturn(singletonList(assessmentUsers));
+//        when(answerRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(answer));
+//        when(parameterLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(parameterLevelAssessment));
+//        when(topicLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(topicLevelAssessment));
+//
+//        String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessment-response.json");
+//
+//        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/123")
+//                .bearerAuth("anything"), String.class);
+//
+//        assertEquals(expectedResponse, assessmentResponse);
+//
+//    }
 //
 //    @Test
 //    void finishAssessment() throws IOException {

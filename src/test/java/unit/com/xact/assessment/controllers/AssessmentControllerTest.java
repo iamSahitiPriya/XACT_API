@@ -430,6 +430,154 @@ class AssessmentControllerTest {
 
     }
 
+    @Test
+    public void testUpdateAssessmentTopicRating() {
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+
+        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(1);
+
+        when(topicAndParameterLevelAssessmentService.searchTopic(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
+
+        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveTopicRating(assessmentId, topicId, "1", authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation(topicLevelAssessment);
+
+    }
+
+    @Test
+    public void testUpdateAssessmentParameterRecommendation() {
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        Integer parameterId = 1;
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRecommendation("Recommendation");
+
+        when(topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
+
+        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, "Note", authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation(parameterLevelAssessment);
+
+    }
+
+    @Test
+    public void testUpdateAssessmentParameterRating() {
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        Integer parameterId = 1;
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRating(1);
+
+        when(topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
+
+        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveParameterRating(assessmentId, parameterId, "2", authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation(parameterLevelAssessment);
+
+    }
+
+
 }
 
 

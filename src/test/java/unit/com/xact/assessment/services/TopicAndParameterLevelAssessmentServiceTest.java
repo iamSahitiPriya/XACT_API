@@ -13,6 +13,9 @@ import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -77,27 +80,15 @@ public class TopicAndParameterLevelAssessmentServiceTest {
 
         topicLevelAssessmentRepository.save(topicLevelAssessment1);
 
-        Integer assessmentId2 = 1;
-        TopicRatingAndRecommendation topicRatingAndRecommendation1 = new TopicRatingAndRecommendation();
-        topicRatingAndRecommendation1.setTopicId(1);
-        topicRatingAndRecommendation1.setRating(2);
-        topicRatingAndRecommendation1.setRecommendation("some update text");
+        topicLevelAssessment1.setRecommendation("new recommendation");
 
-        Assessment assessment2 = new Assessment();
-        assessment2.setAssessmentId(assessmentId2);
+        when(topicLevelAssessmentRepository.existsById(topicLevelId1)).thenReturn(true);
+        when(topicLevelAssessmentRepository.update(topicLevelAssessment1)).thenReturn(topicLevelAssessment1);
+        TopicLevelAssessment actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment1);
 
-        TopicLevelId topicLevelId2 = mapper.map(topicRatingAndRecommendation1, TopicLevelId.class);
-        topicLevelId2.setAssessment(assessment2);
-        TopicLevelAssessment topicLevelAssessment2 = mapper.map(topicRatingAndRecommendation1, TopicLevelAssessment.class);
-        topicLevelAssessment2.setTopicLevelId(topicLevelId2);
-
-
-        when(topicLevelAssessmentRepository.update(topicLevelAssessment2)).thenReturn(topicLevelAssessment2);
-        TopicLevelAssessment actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment2);
-
-        assertEquals(topicLevelAssessment2.getRating(), actualResponse.getRating());
-        assertEquals(topicLevelAssessment2.getTopicLevelId(), actualResponse.getTopicLevelId());
-        assertEquals(topicLevelAssessment2.getRecommendation(), actualResponse.getRecommendation());
+        assertEquals(topicLevelAssessment1.getRating(), actualResponse.getRating());
+        assertEquals(topicLevelAssessment1.getTopicLevelId(), actualResponse.getTopicLevelId());
+        assertEquals(topicLevelAssessment1.getRecommendation(), actualResponse.getRecommendation());
 
     }
 
@@ -147,27 +138,40 @@ public class TopicAndParameterLevelAssessmentServiceTest {
 
         parameterLevelAssessmentRepository.save(parameterLevelAssessment);
 
-        Integer assessmentId2 = 1;
-        ParameterRatingAndRecommendation parameterRatingAndRecommendation2 = new ParameterRatingAndRecommendation();
-        parameterRatingAndRecommendation2.setParameterId(1);
-        parameterRatingAndRecommendation2.setRating(2);
-        parameterRatingAndRecommendation2.setRecommendation("some update text");
+        parameterLevelAssessment.setRecommendation("newRecommendation");
 
-        Assessment assessment2 = new Assessment();
-        assessment2.setAssessmentId(assessmentId2);
+        when(parameterLevelAssessmentRepository.existsById(parameterLevelId)).thenReturn(true);
+        when(parameterLevelAssessmentRepository.update(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
+        ParameterLevelAssessment actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
 
-        ParameterLevelId parameterLevelId1 = mapper.map(parameterRatingAndRecommendation2, ParameterLevelId.class);
-        parameterLevelId1.setAssessment(assessment2);
-        ParameterLevelAssessment parameterLevelAssessment1 = mapper.map(parameterRatingAndRecommendation2, ParameterLevelAssessment.class);
-        parameterLevelAssessment1.setParameterLevelId(parameterLevelId1);
-
-
-        when(parameterLevelAssessmentRepository.update(parameterLevelAssessment1)).thenReturn(parameterLevelAssessment1);
-        ParameterLevelAssessment actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment1);
-
-        assertEquals(parameterLevelAssessment1.getRating(), actualResponse.getRating());
-        assertEquals(parameterLevelAssessment1.getParameterLevelId(), actualResponse.getParameterLevelId());
-        assertEquals(parameterLevelAssessment1.getRecommendation(), actualResponse.getRecommendation());
+        assertEquals(parameterLevelAssessment.getRating(), actualResponse.getRating());
+        assertEquals(parameterLevelAssessment.getParameterLevelId(), actualResponse.getParameterLevelId());
+        assertEquals(parameterLevelAssessment.getRecommendation(), actualResponse.getRecommendation());
 
     }
+
+    @Test
+    void shouldReturnParameterAssessmentData() {
+        Integer assessmentId = 1;
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter Name");
+        ParameterLevelId parameterLevelId = new ParameterLevelId();
+        parameterLevelId.setAssessment(assessment);
+        parameterLevelId.setParameter(assessmentParameter);
+
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRecommendation("Hello");
+
+        when(parameterLevelAssessmentRepository.findByAssessment(assessmentId)).thenReturn(Collections.singletonList(parameterLevelAssessment));
+        List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+
+        assertEquals(parameterLevelAssessmentList.get(0).getRecommendation(),parameterLevelAssessment.getRecommendation());
+    }
+
+
 }

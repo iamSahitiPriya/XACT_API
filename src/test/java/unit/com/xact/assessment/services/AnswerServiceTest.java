@@ -83,4 +83,30 @@ public class AnswerServiceTest {
         assertEquals(answer2.getAnswerId(), actualAnswer.getAnswerId());
 
     }
+
+    @Test
+    void shouldUpdateAnswer() {
+
+        Integer assessmentId = 1;
+        AnswerRequest answerRequest = new AnswerRequest(1, "some text");
+
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+
+        AnswerId answerId = mapper.map(answerRequest, AnswerId.class);
+        answerId.setAssessment(assessment);
+        Answer answer = mapper.map(answerRequest, Answer.class);
+        answer.setAnswerId(answerId);
+
+        answerRepository.save(answer);
+
+        answer.setAnswer("new Answer");
+        when(answerRepository.existsById(answerId)).thenReturn(true);
+        when(answerRepository.update(answer)).thenReturn(answer);
+        Answer actualAnswer = answerService.saveAnswer(answer);
+
+        assertEquals(answer.getAnswer(), actualAnswer.getAnswer());
+        assertEquals(answer.getAnswerId(), actualAnswer.getAnswerId());
+        System.out.println(answer.getAnswer());
+    }
 }

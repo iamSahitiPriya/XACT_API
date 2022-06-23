@@ -16,4 +16,5 @@ public interface AnswerRepository extends CrudRepository<Answer, AnswerId> {
     @Executable
     @Query("SELECT ans FROM Answer ans WHERE ans.answerId.assessment.assessmentId=:assessmentId")
     List<Answer> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
+
 }

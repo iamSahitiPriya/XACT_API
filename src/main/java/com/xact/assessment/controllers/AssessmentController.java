@@ -31,10 +31,11 @@ public class AssessmentController {
     private final UserAuthService userAuthService;
     private final ParameterService parameterService;
     private final TopicService topicService;
+    private final QuestionService questionService;
 
     private ModelMapper modelMapper = new ModelMapper();
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService,QuestionService questionService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
@@ -42,6 +43,7 @@ public class AssessmentController {
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.parameterService = parameterService;
         this.topicService = topicService;
+        this.questionService = questionService;
     }
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
@@ -201,7 +203,6 @@ public class AssessmentController {
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
         List<AnswerResponse> answerResponseList = getAnswerResponseList(answerResponse);
 
-        List<String> Users = assessmentService.getUserMail(assessmentId, AssessmentRole.Facilitator);
         List<String> users = assessmentService.getAssessmentUsers(assessmentId);
 
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
@@ -240,16 +241,24 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
-    @Post(value = "/answers/{assessmentId}/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/answers/{assessmentId}/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelAssessmentRequest> saveNotesAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body String notes, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        AnswerRequest answerRequest = new AnswerRequest(questionId, notes);
-        AnswerId answerId = modelMapper.map(answerRequest, AnswerId.class);
-        answerId.setAssessment(assessment);
-        Answer answer = modelMapper.map(answerRequest, Answer.class);
-        answer.setAnswerId(answerId);
-        answerService.saveAnswer(answer);
+        Question question = questionService.getQuestion(questionId) .orElseThrow();
+        question.setQuestionId(questionId);
+        AnswerId answerId = new AnswerId(assessment, question);
+        if(answerService.getAnswer(answerId).isPresent()) {
+            Answer answer = answerService.getAnswer(answerId).orElseThrow();
+            answer.setAnswer(notes);
+            answerService.saveAnswer(answer);
+        }
+        else {
+            Answer answer = new Answer();
+            answer.setAnswerId(answerId);
+            answer.setAnswer(notes);
+            answerService.saveAnswer(answer);
+        }
         return HttpResponse.ok();
     }
 
@@ -329,5 +338,4 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
-}
 }

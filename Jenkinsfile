@@ -7,8 +7,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh "aws s3 cp s3://xact-artifacts/ap-south-1-bundle.pem"
-                sh "mv ap-south-1-bundle.pem src/main/resources/certs"
+                sh "aws s3 cp s3://xact-artifacts/ap-south-1-bundle.pem ap-south-1-bundle.pem"
+                sh "mv ap-south-1-bundle.pem src/main/resources/certs/"
                 sh './gradlew clean build'
             }
         }

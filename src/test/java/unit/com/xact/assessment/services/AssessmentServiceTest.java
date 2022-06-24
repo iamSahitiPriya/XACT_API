@@ -16,7 +16,10 @@ import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -134,5 +137,71 @@ class AssessmentServiceTest {
 
         assertEquals(actualAssessment.getAssessmentStatus(), AssessmentStatus.Active);
     }
+
+    @Test
+    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
+        List<AssessmentUsers> assessmentUsersList = new ArrayList<>();
+
+        Integer assessmentId = 1;
+
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+
+        UserId userId1 = new UserId("hello@gmail.com", assessment);
+        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, AssessmentRole.Facilitator);
+        assessmentUsersList.add(assessmentUsers1);
+
+        UserId userId2 = new UserId("new@gmail.com", assessment);
+        AssessmentUsers assessmentUsers2 = new AssessmentUsers(userId2, AssessmentRole.Facilitator);
+        assessmentUsersList.add(assessmentUsers2);
+
+        List<String> expectedAssessmentUsersList = new ArrayList<>();
+        for (AssessmentUsers eachUser : assessmentUsersList) {
+            expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
+        }
+        when(usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator)).thenReturn(assessmentUsersList);
+        List<String> actualResponse = assessmentService.getAssessmentUsers(assessmentId);
+        assertEquals(expectedAssessmentUsersList, actualResponse);
+
+    }
+
+    @Test
+    void shouldUpdateAssessment() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("Assessment");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+
+        when(assessmentRepository.save(assessment)).thenReturn(assessment);
+
+        assessment.setAssessmentName("New Assessment");
+
+        when(assessmentRepository.update(assessment)).thenReturn(assessment);
+        Set<AssessmentUsers> assessmentUsersSet = new HashSet<>(Set.of());
+        UserId userId1 = new UserId("hello@gmail.com", assessment);
+        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, AssessmentRole.Facilitator);
+        assessmentUsersSet.add(assessmentUsers1);
+
+        UserId userId2 = new UserId("new@gmail.com", assessment);
+        AssessmentUsers assessmentUsers2 = new AssessmentUsers(userId2, AssessmentRole.Facilitator);
+        assessmentUsersSet.add(assessmentUsers2);
+
+        doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUsersSet, assessment.getAssessmentId());
+
+        assessmentService.updateAssessment(assessment, assessmentUsersSet);
+
+        User user = new User();
+        Profile profile = new Profile();
+        profile.setEmail("hello@email.com");
+        user.setProfile(profile);
+        when(usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), 1)).thenReturn(assessmentUsers1);
+
+        Assessment expectedAssessment = assessmentService.getAssessment(1, user);
+
+        assertEquals(expectedAssessment.getAssessmentName(), assessment.getAssessmentName());
+
+    }
+
 
 }

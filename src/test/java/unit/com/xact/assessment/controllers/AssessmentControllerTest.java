@@ -18,8 +18,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AssessmentControllerTest {
 
@@ -577,6 +576,53 @@ class AssessmentControllerTest {
 
     }
 
+    @Test
+    void shouldUpdateAssessment() {
+        AssessmentRequest assessmentRequest = new AssessmentRequest();
+        assessmentRequest.setAssessmentName("Assessment Name");
+        assessmentRequest.setDomain("Domain Name");
+        assessmentRequest.setIndustry("Industry Name");
+        assessmentRequest.setOrganisationName("Org Name");
+        assessmentRequest.setTeamSize(10);
+        List<UserDto> userDtoList = new ArrayList<>();
+        UserDto userDto1 = new UserDto("hello@thoughtworks.com", UserRole.Owner);
+        UserDto userDto2 = new UserDto("new@thoughtworks.com", UserRole.Facilitator);
+        userDtoList.add(userDto1);
+        userDtoList.add(userDto2);
+
+        assessmentRequest.setUsers(userDtoList);
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(1, "Name", "Industry", "Domain", 1);
+        Assessment assessment = new Assessment(1, "Assessment", organisation, AssessmentStatus.Active, created, updated);
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
+
+        Set<AssessmentUsers> assessmentUsersSet = new HashSet<>(Set.of());
+        UserId userId1 = new UserId("hello@thoughtworks.com", assessment);
+        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, AssessmentRole.Owner);
+        assessmentUsersSet.add(assessmentUsers1);
+
+        UserId userId2 = new UserId("new@thoughtworks.com", assessment);
+        AssessmentUsers assessmentUsers2 = new AssessmentUsers(userId2, AssessmentRole.Facilitator);
+        assessmentUsersSet.add(assessmentUsers2);
+
+        when(assessmentService.getAssessmentUsers(assessmentRequest, user, assessment)).thenReturn(assessmentUsersSet);
+        doNothing().when(assessmentService).updateAssessment(assessment, assessmentUsersSet);
+
+        HttpResponse actualResponse = assessmentController.updateAssessment(assessment.getAssessmentId(), assessmentRequest, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+
+    }
 }
 
 

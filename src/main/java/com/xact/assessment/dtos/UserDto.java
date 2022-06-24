@@ -33,7 +33,6 @@ public class UserDto {
     }
 
     public boolean isValid(String pattern) {
-        System.out.println(pattern+"  "+email);
         Pattern pat = Pattern.compile(pattern);
         return pat.matcher(email).matches();
     }

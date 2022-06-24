@@ -37,4 +37,13 @@ public class AssessmentRequest {
     @NotEmpty
     private List<@Valid UserDto> users;
 
+    public void validate(String pattern) {
+        if (users != null) {
+            for (UserDto user : users) {
+                if (!user.isValid(pattern)) {
+                    throw new RuntimeException("Invalid email of user");
+                }
+            }
+        }
+    }
 }

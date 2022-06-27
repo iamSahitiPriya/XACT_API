@@ -23,7 +23,7 @@ micronaut:
 
 datasources:
   default:
-    url: jdbc:postgresql://xact-db.cs3hcgchak2w.ap-south-1.rds.amazonaws.com:5432/xactqa?sslmode=disable
+    url: jdbc:postgresql://xact-db.cs3hcgchak2w.ap-south-1.rds.amazonaws.com:5432/xactqa?sslmode=require
     driverClassName: org.postgresql.Driver
     username: ${DB_USER}
     password: ${DB_PWD}

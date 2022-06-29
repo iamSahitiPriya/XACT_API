@@ -24,9 +24,13 @@ public class TopicAndParameterLevelAssessmentService {
     public TopicLevelAssessment saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
 
         if (topicLevelAssessmentRepository.existsById(topicLevelAssessment.getTopicLevelId())) {
+            if (topicLevelAssessment.getRating() == null) {
+                topicLevelAssessmentRepository.delete(topicLevelAssessment);
+            }
             topicLevelAssessmentRepository.update(topicLevelAssessment);
         } else {
-            topicLevelAssessmentRepository.save(topicLevelAssessment);
+            if (topicLevelAssessment.getRating() != null)
+                topicLevelAssessmentRepository.save(topicLevelAssessment);
         }
         return topicLevelAssessment;
     }
@@ -35,9 +39,14 @@ public class TopicAndParameterLevelAssessmentService {
     public ParameterLevelAssessment saveRatingAndRecommendation(ParameterLevelAssessment parameterLevelAssessment) {
 
         if (parameterLevelAssessmentRepository.existsById(parameterLevelAssessment.getParameterLevelId())) {
-            parameterLevelAssessmentRepository.update(parameterLevelAssessment);
+            if (parameterLevelAssessment.getRating() == null) {
+                parameterLevelAssessmentRepository.delete(parameterLevelAssessment);
+            } else
+                parameterLevelAssessmentRepository.update(parameterLevelAssessment);
         } else {
-            parameterLevelAssessmentRepository.save(parameterLevelAssessment);
+            if (parameterLevelAssessment.getRating() != null) {
+                parameterLevelAssessmentRepository.save(parameterLevelAssessment);
+            }
         }
         return parameterLevelAssessment;
     }

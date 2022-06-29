@@ -617,6 +617,7 @@ class AssessmentControllerTest {
 
         when(assessmentService.getAssessmentUsers(assessmentRequest, user, assessment)).thenReturn(assessmentUsersSet);
         doNothing().when(assessmentService).updateAssessment(assessment, assessmentUsersSet);
+        doNothing().when(assessmentService).updateAssessment(assessment);
 
         HttpResponse actualResponse = assessmentController.updateAssessment(assessment.getAssessmentId(), assessmentRequest, authentication);
 

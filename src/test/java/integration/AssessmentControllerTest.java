@@ -392,7 +392,7 @@ class AssessmentControllerTest {
         when(topicLevelAssessmentRepository.save(topicLevelAssessment)).thenReturn(topicLevelAssessment);
 
 
-        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-string-value.json");
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-value.json");
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendation/1/1", dataRequest)
                 .bearerAuth("anything"));
@@ -435,7 +435,7 @@ class AssessmentControllerTest {
         when(parameterLevelAssessmentRepository.save(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
 
 
-        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-string-value.json");
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-value.json");
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/1/1", dataRequest)
                 .bearerAuth("anything"));

@@ -18,15 +18,14 @@ class UserDtoTest {
     void setValidEmail() {
         UserDto userDto = new UserDto();
         userDto.setEmail("test@thoughtworks.com");
-
-        assertEquals(userDto.getEmail(), "test@thoughtworks.com");
+        assertEquals(userDto.isValid("^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$"), true);
     }
 
     @Test
-    void CreateValidUser() {
-        UserDto userDto = new UserDto("test@thoughtworks.com", UserRole.Owner);
-
-        assertEquals(userDto.getEmail(), "test@thoughtworks.com");
+    void CreateInValidUser() {
+        UserDto userDto = new UserDto();
+        userDto.setEmail("test@gmail.com");
+        assertEquals(userDto.isValid("^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$"), false);
     }
 
 }

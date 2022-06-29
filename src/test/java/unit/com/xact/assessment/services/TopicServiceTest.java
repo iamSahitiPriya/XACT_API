@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TopicServiceTest {
+class TopicServiceTest {
     private TopicService topicService;
     private AssessmentTopicRepository assessmentTopicRepository;
 
@@ -23,7 +23,7 @@ public class TopicServiceTest {
     }
 
     @Test
-    public void shouldGetDetailsForParticularTopicId() {
+    void shouldGetDetailsForParticularTopicId() {
         Integer topicId = 1;
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);

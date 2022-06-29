@@ -67,10 +67,4 @@ class UsersAssessmentsServiceTest {
         verify(usersAssessmentsRepository).saveAll(users);
     }
 
-    @Test
-    void shouldUpdateUsersInAssessment() {
-
-    }
-
-
 }

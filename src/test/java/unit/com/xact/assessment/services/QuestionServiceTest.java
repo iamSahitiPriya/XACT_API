@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class QuestionServiceTest {
+class QuestionServiceTest {
     private QuestionRepository questionRepository;
     private QuestionService questionService;
 
@@ -24,7 +24,7 @@ public class QuestionServiceTest {
     }
 
     @Test
-    public void shouldGetDetailsForQuestionId() {
+    void shouldGetDetailsForQuestionId() {
         Integer questionId = 1;
         Question question = new Question();
         question.setQuestionId(1);

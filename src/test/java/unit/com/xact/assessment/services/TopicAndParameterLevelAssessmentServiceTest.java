@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TopicAndParameterLevelAssessmentServiceTest {
+class TopicAndParameterLevelAssessmentServiceTest {
 
     private ModelMapper mapper = new ModelMapper();
     private TopicLevelAssessmentRepository topicLevelAssessmentRepository;

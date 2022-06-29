@@ -33,7 +33,7 @@ class ReportControllerTest {
         MutableHttpResponse<byte[]> xlsDataResponse = reportController.getReport(assessmentId);
 
 
-        assertEquals(xlsDataResponse.status(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK,xlsDataResponse.status());
         assertNotNull(xlsDataResponse.body());
     }
 

@@ -334,7 +334,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    public void testUpdateAssessmentAnswers() {
+    void testUpdateAssessmentAnswers() {
         Integer assessmentId = 1;
 
         User user = new User();
@@ -381,7 +381,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    public void testUpdateAssessmentTopicRecommendation() {
+    void testUpdateAssessmentTopicRecommendation() {
         Integer assessmentId = 1;
 
         User user = new User();
@@ -430,7 +430,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    public void testUpdateAssessmentTopicRating() {
+    void testUpdateAssessmentTopicRating() {
         Integer assessmentId = 1;
 
         User user = new User();
@@ -479,7 +479,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    public void testUpdateAssessmentParameterRecommendation() {
+    void testUpdateAssessmentParameterRecommendation() {
         Integer assessmentId = 1;
 
         User user = new User();
@@ -528,7 +528,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    public void testUpdateAssessmentParameterRating() {
+    void testUpdateAssessmentParameterRating() {
         Integer assessmentId = 1;
 
         User user = new User();

@@ -117,9 +117,9 @@ class AssessmentServiceTest {
         assessment.setAssessmentId(assessmentId);
         assessment.setAssessmentStatus(AssessmentStatus.Active);
 
-        Assessment actualAsessment = assessmentService.finishAssessment(assessment);
+        Assessment actualAssessment = assessmentService.finishAssessment(assessment);
 
-        assertEquals(actualAsessment.getAssessmentStatus(), AssessmentStatus.Completed);
+        assertEquals(AssessmentStatus.Completed,actualAssessment.getAssessmentStatus());
     }
 
     @Test
@@ -135,7 +135,7 @@ class AssessmentServiceTest {
 
         Assessment actualAssessment = assessmentService.reopenAssessment(assessment);
 
-        assertEquals(actualAssessment.getAssessmentStatus(), AssessmentStatus.Active);
+        assertEquals( AssessmentStatus.Active,actualAssessment.getAssessmentStatus());
     }
 
     @Test

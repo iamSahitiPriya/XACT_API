@@ -17,8 +17,4 @@ public class ParameterRatingAndRecommendation {
     private Integer rating;
     private String recommendation;
 
-//    public void setRating(RatingDto ratingDto) {
-//        rating = ratingDto.value();
-//    }
-
 }

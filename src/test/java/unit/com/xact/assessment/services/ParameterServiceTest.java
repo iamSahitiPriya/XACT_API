@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ParameterServiceTest {
+class ParameterServiceTest {
     private ParameterService parameterService;
     private AssessmentParameterRepository assessmentParameterRepository;
 
@@ -23,7 +23,7 @@ public class ParameterServiceTest {
     }
 
     @Test
-    public void shouldGetDetailsForParticularParameterId() {
+    void shouldGetDetailsForParticularParameterId() {
         Integer parameterId = 1;
         AssessmentParameter assessmentParameter = new AssessmentParameter();
         assessmentParameter.setParameterId(1);

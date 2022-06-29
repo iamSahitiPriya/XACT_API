@@ -109,6 +109,10 @@ public class AssessmentService {
         assessmentRepository.update(assessment);
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
     }
+    @Transactional
+    public void updateAssessment(Assessment assessment){
+        assessmentRepository.update(assessment);
+    }
 
 
 }

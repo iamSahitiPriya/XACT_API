@@ -21,6 +21,7 @@ import javax.validation.Valid;
 import java.util.*;
 
 
+
 @Controller("/v1/assessments")
 public class AssessmentController {
     private final AnswerService answerService;
@@ -144,6 +145,8 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         if (AssessmentStatus.Active.equals(assessment.getAssessmentStatus())) {
+            assessment.setUpdatedAt(new Date());
+            assessmentService.updateAssessment(assessment);
             List<Answer> answerList = setAnswerListToSave(topicLevelAssessmentRequests, assessment);
             if (topicLevelAssessmentRequests.isRatedAtTopicLevel()) {
                 TopicLevelAssessment topicLevelRatingAndRecommendation = setTopicLevelRatingAndRecommendation(topicLevelAssessmentRequests, assessment);
@@ -162,6 +165,8 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         Question question = questionService.getQuestion(questionId).orElseThrow();
         AnswerId answerId = new AnswerId(assessment, question);
+        assessment.setUpdatedAt(new Date());
+        assessmentService.updateAssessment(assessment);
         if (answerService.getAnswer(answerId).isPresent()) {
             Answer answer = answerService.getAnswer(answerId).orElseThrow();
             answer.setAnswer(notes);
@@ -181,6 +186,8 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+        assessment.setUpdatedAt(new Date());
+        assessmentService.updateAssessment(assessment);
         if (topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId).isPresent()) {
             ParameterLevelAssessment parameterLevelAssessment = topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId).orElseThrow();
             parameterLevelAssessment.setRecommendation(recommendation);
@@ -201,6 +208,8 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
         TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+        assessment.setUpdatedAt(new Date());
+        assessmentService.updateAssessment(assessment);
         if (topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).isPresent()) {
             TopicLevelAssessment topicLevelAssessment = topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).orElseThrow();
             topicLevelAssessment.setRecommendation(recommendation);
@@ -220,6 +229,8 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
         TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+        assessment.setUpdatedAt(new Date());
+        assessmentService.updateAssessment(assessment);
         if (topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).isPresent()) {
             TopicLevelAssessment topicLevelAssessment = topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).orElseThrow();
             topicLevelAssessment.setRating(Integer.valueOf(rating));
@@ -239,6 +250,8 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+        assessment.setUpdatedAt(new Date());
+        assessmentService.updateAssessment(assessment);
         if (topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId).isPresent()) {
             ParameterLevelAssessment parameterLevelAssessment = topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId).orElseThrow();
             parameterLevelAssessment.setRating(Integer.valueOf(rating));

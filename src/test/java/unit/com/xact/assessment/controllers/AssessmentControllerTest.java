@@ -375,6 +375,7 @@ class AssessmentControllerTest {
         when(answerService.getAnswer(answerId)).thenReturn(Optional.of(answer));
         when(answerService.saveAnswer(answer)).thenReturn(answer);
 
+
         HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveNotesAnswer(assessmentId, questionId, "Note", authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());

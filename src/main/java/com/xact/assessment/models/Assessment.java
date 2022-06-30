@@ -53,4 +53,7 @@ public class Assessment {
     private Date updatedAt;
 
 
+    public boolean isEditable() {
+        return assessmentStatus == AssessmentStatus.Active;
+    }
 }

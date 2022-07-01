@@ -15,9 +15,11 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.modelmapper.ModelMapper;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
 import java.util.*;
 
 
@@ -138,7 +140,7 @@ public class AssessmentController {
 
     @Post(value = "/notes/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelAssessmentRequest> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body TopicLevelAssessmentRequest topicLevelAssessmentRequests, Authentication authentication) {
+    public HttpResponse<TopicLevelAssessmentRequest> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body  TopicLevelAssessmentRequest topicLevelAssessmentRequests, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         if (assessment.isEditable()) {

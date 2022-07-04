@@ -19,9 +19,15 @@ public class AnswerService {
     public Answer saveAnswer(Answer answer) {
 
         if (answerRepository.existsById(answer.getAnswerId())) {
-            answerRepository.update(answer);
+            if (answer.hasNotes()) {
+                answerRepository.update(answer);
+            } else {
+                answerRepository.delete(answer);
+            }
         } else {
-            answerRepository.save(answer);
+            if (answer.hasNotes()) {
+                answerRepository.save(answer);
+            }
         }
 
         return answer;
@@ -30,7 +36,8 @@ public class AnswerService {
     public List<Answer> getAnswers(Integer assessmentId) {
         return answerRepository.findByAssessment(assessmentId);
     }
-    public Optional<Answer> getAnswer(AnswerId answerId ){
+
+    public Optional<Answer> getAnswer(AnswerId answerId) {
         return answerRepository.findById(answerId);
     }
 }

@@ -106,6 +106,7 @@ public class ReportService {
             Font font = workbook.createFont();
             font.setBold(true);
             style.setFont(font);
+            style.setQuotePrefixed(true);
             createBoldCell(row, 0, "Module", style);
             createBoldCell(row, 1, "Topic", style);
             createBoldCell(row, 2, "Topic Score", style);

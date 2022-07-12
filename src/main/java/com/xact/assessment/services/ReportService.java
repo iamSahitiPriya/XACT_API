@@ -11,6 +11,7 @@ import java.util.List;
 public class ReportService {
 
     public static final String BLANK_STRING = "";
+    public static final String FORMULA_STRING = "=-+@";
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final AnswerService answerService;
 
@@ -54,7 +55,7 @@ public class ReportService {
         Sheet sheet = getMatchingSheet(workbook, category);
 
         generateHeaderIfNotExist(sheet, workbook);
-        writeDataOnSheet(sheet, module, topic, rating, recommendation);
+        writeDataOnSheet(workbook, sheet, module, topic, rating, recommendation);
     }
 
     private void writeParameterRow(Workbook workbook, ParameterLevelAssessment parameterLevelAssessment) {
@@ -67,7 +68,7 @@ public class ReportService {
 
         Sheet sheet = getMatchingSheet(workbook, category);
         generateHeaderIfNotExist(sheet, workbook);
-        writeDataOnSheet(sheet, module, topic, parameter, rating, recommendation);
+        writeDataOnSheet(workbook, sheet, module, topic, parameter, rating, recommendation);
     }
 
     private void writeAnswerRow(Workbook workbook, Answer answer) {
@@ -79,7 +80,7 @@ public class ReportService {
 
         Sheet sheet = getMatchingSheet(workbook, category);
         generateHeaderIfNotExist(sheet, workbook);
-        writeDataOnSheet(sheet,
+        writeDataOnSheet(workbook, sheet,
                 module,
                 topic,
                 BLANK_STRING,
@@ -106,7 +107,6 @@ public class ReportService {
             Font font = workbook.createFont();
             font.setBold(true);
             style.setFont(font);
-            style.setQuotePrefixed(true);
             createBoldCell(row, 0, "Module", style);
             createBoldCell(row, 1, "Topic", style);
             createBoldCell(row, 2, "Topic Score", style);
@@ -119,31 +119,45 @@ public class ReportService {
         }
     }
 
-    private void createBoldCell(Row row, int i, String module, CellStyle style) {
+    private void createBoldCell(Row row, int i, String value, CellStyle style) {
         Cell cell = row.createCell(i, CellType.STRING);
-        cell.setCellValue(module);
+        cell.setCellValue(value);
         cell.setCellStyle(style);
     }
 
-    private void writeDataOnSheet(Sheet sheet, AssessmentModule module, AssessmentTopic topic, String topicRating, String topicRecommendation) {
-        writeDataOnSheet(sheet, module, topic, topicRating, topicRecommendation, new AssessmentParameter(), BLANK_STRING, BLANK_STRING, BLANK_STRING, BLANK_STRING);
+    private void createStyledCell(Row row, int i, String value, CellStyle style) {
+        Cell cell = row.createCell(i, CellType.STRING);
+        cell.setCellValue(value);
+        if (value != null && !value.isBlank() && FORMULA_STRING.indexOf(value.trim().charAt(0)) >= 0) {
+            cell.setCellStyle(style);
+        }
     }
 
-    private void writeDataOnSheet(Sheet sheet, AssessmentModule module, AssessmentTopic topic, AssessmentParameter parameter, String paramRating, String paramRecommendation) {
-        writeDataOnSheet(sheet, module, topic, ReportService.BLANK_STRING, ReportService.BLANK_STRING, parameter, paramRating, paramRecommendation, BLANK_STRING, BLANK_STRING);
+    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
+            topic, String topicRating, String topicRecommendation) {
+        writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation, new AssessmentParameter(), BLANK_STRING, BLANK_STRING, BLANK_STRING, BLANK_STRING);
     }
 
-    private void writeDataOnSheet(Sheet sheet, AssessmentModule module, AssessmentTopic topic, String topicRating, String topicRecommendation, AssessmentParameter parameter, String paramRating, String paramRecommendation, String questionText, String answer) {
+    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
+            topic, AssessmentParameter parameter, String paramRating, String paramRecommendation) {
+        writeDataOnSheet(workbook, sheet, module, topic, ReportService.BLANK_STRING, ReportService.BLANK_STRING, parameter, paramRating, paramRecommendation, BLANK_STRING, BLANK_STRING);
+    }
+
+    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
+            topic, String topicRating, String topicRecommendation, AssessmentParameter parameter, String paramRating, String
+                                          paramRecommendation, String questionText, String answer) {
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
-        row.createCell(0, CellType.STRING).setCellValue(module.getModuleName());
-        row.createCell(1, CellType.STRING).setCellValue(topic.getTopicName());
-        row.createCell(2, CellType.STRING).setCellValue(topicRating);
-        row.createCell(3, CellType.STRING).setCellValue(topicRecommendation);
-        row.createCell(4, CellType.STRING).setCellValue(parameter.getParameterName());
-        row.createCell(5, CellType.STRING).setCellValue(paramRating);
-        row.createCell(6, CellType.STRING).setCellValue(paramRecommendation);
-        row.createCell(7, CellType.STRING).setCellValue(questionText);
-        row.createCell(8, CellType.STRING).setCellValue(answer);
+        CellStyle style = workbook.createCellStyle();
+        style.setQuotePrefixed(true);
+        createStyledCell(row, 0, module.getModuleName(), style);
+        createStyledCell(row, 1, topic.getTopicName(), style);
+        createStyledCell(row, 2, topicRating, style);
+        createStyledCell(row, 3, topicRecommendation, style);
+        createStyledCell(row, 4, parameter.getParameterName(), style);
+        createStyledCell(row, 5, paramRating, style);
+        createStyledCell(row, 6, paramRecommendation, style);
+        createStyledCell(row, 7, questionText, style);
+        createStyledCell(row, 8, answer, style);
     }
 
 }

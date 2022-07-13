@@ -9,7 +9,51 @@ VALUES ( 52, 'FOUR', 'Check-ins and CI happen on a short-lived private branch to
 INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
 VALUES ( 52, 'FIVE', 'Check-ins and CI happen on the mainline. A branch-by-abstraction style is used to turn off incomplete work. Integration is truly continuous. The build process includes a good mix of unit, integration, contract, functional and acceptance tests, and these tests are mostly green. Manual testing only used for exploratory testing. Failed builds are not that common. When they do occur, team members are empowered to rollback the cause of the build failure if they are not fixed by the owner.');
 
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 54, 'ONE', 'Observability patterns such as log aggregation, distributed tracing, health checks, alerting, APM, etc. are not used');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 54, 'TWO', 'Observability patterns such as log aggregation, distributed tracing, health checks, alerting, APM, etc. are used sporadically by individual teams' );
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 54, 'THREE', 'Observability patterns such as log aggregation, distributed tracing, health checks, alerting, APM, etc. are documented, with varying implementations' );
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 54, 'FOUR', 'Implementation of Observability patterns such as log aggregation, distributed tracing, health checks, alerting, APM, etc. are standardized.' );
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 54, 'FIVE', 'Observability patterns such as log aggregation, distributed tracing, health checks, alerting, APM, etc. are tested to meet SLAs' );
 
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 55, 'ONE', 'Active passive with MTTR of 24 hours or more');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 55, 'TWO', 'Active passive with MTTR between 12 and 24 hours');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 55, 'THREE', 'Active passive with MTTR between 6 and 12 hours');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 55, 'FOUR', 'Active passive with MTTR between 2 to 6 hours');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 55, 'FIVE', 'Active active with zero downtime');
+
+
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 56, 'ONE', 'Manually provisioned, long-running bare metal servers.');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 56, 'TWO', 'Manually provisioned, long-running virtual machine servers.');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 56, 'THREE', 'Programmatically provisioned, long running, mutable virtual machine servers.');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 56, 'FOUR', 'Programmatically provisioned, ephemeral, immutable virtual machine servers.');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 56, 'FIVE', 'Programmatically provisioned, ephemeral, immutable containers or serverless functions.');
+
+
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 57, 'ONE', 'Application configuration is embedded within application deployment artifacts for a fixed set of environments. New environment(s) or changes to application configuration require an application rebuild. Feature toggles are not used to turn on/off application functionality dynamically. Secrets are embedded within application deployment artifacts and are managed manually.');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 57, 'TWO', 'Application configuration is embedded within application artifacts. Environment specific configuration parameters can be overridden without requiring an application rebuild. However, overrides are not audited. Changes to configuration require an application redeployment. Feature toggles are embedded within application deployment artifacts. Changes to toggles require an application rebuild. Secrets are externalized from application deployment artifacts, but are managed manually.');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 57, 'THREE', 'Application configuration is externalizable from application artifacts. But there is no operationalized mechanism to do so. Teams continue to require rebuilds when a change to application configuration is required. Feature toggles are externalized from application deployment artifacts. Individual teams use custom methods to implement toggle functionality. Turning off functionality reliably requires intimate knowledge of application internals. Secrets are externalized from application deployment artifacts, with encrypted secrets being stored in source control.');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 57, 'FOUR', 'Application configuration is externalized from the deployable application artifact. Teams making use of externalized configuration use custom (including homegrown) methods to do so. Feature toggles are externalized from application deployment artifacts. Teams use a consistent approach to toggles, but toggling off functionality still requires knowledge of application internals. Secrets are externalized from application deployment artifacts, with encrypted secrets being stored in a configuration management system.');
+INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
+VALUES ( 57, 'FIVE', 'Application configuration is externalized from the deployable application artifact. All teams use a consistent method to make changes to application configuration. All changes are traceable to a source code check-in. Feature toggles are externalized from application deployment artifacts. Toggles are defined at a business feature level. Secrets are externalized from application deployment artifacts, with encrypted secrets being stored in a secrets management server.');
 ------------------------------------------------------------------
 
 
@@ -62,6 +106,8 @@ INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
 VALUES ( 20,'Is API protected?', 5);
 INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
 VALUES ( 21,'Is API response data restricted?', 5);
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 47,'Does API validate file size, format etc?', 5);
 
 INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
 VALUES ( 22,'How are APIs documented?', 6);
@@ -70,5 +116,94 @@ VALUES ( 23,'How are cross-cutting concerns such as authentication, rate limitin
 INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
 VALUES ( 24,'Are there any APM tools to monitor APIs?', 6);
 
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 25,'What is server side Tech?', 7);
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 26,'What is client side Tech?', 7);
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 27,'What is cloud Tech?', 7);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (28,'What are supporting tools / libraries?',7);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (29,'What is the database / data storage?',7);
 
 
+
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 30,'Is Chaos Engineering practiced to test the resilience of the system?', 8);
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 31,'Is the component resilience approach as simple as it needs to be, but no simpler?', 8);
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 32,'Does the component separate downstream dependency health from it''s own health', 8);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (33,'Is the component tolerant of both upstream and downstream component failure?',8);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (34,'Does the component/system support active/active cross-site for resilience and failover?',8);
+
+
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 35,'Is there any performance test suite?', 9);
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 36,'What is the scaling approach? Horizotal / vertical?', 9);
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 37,'How is cache-bursting handled in case of static assets?', 9);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (38,'Is there any CDN being used?',9);
+
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 39,'Are SLOs published and agreed upon by business stakeholders?', 10);
+INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
+VALUES ( 40,'Are througputs and response times continuously measured?', 10);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (41,'Are alerts configured in case of a departure from SLOs?',10);
+
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (42,'Do Architecture Decision Records exist?',11);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (43,'How are architecture decisions made?',11);
+
+
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (44,'Does the documented architecture diagram depict the reality?',12);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (45,'How and when are architecture reviews done?',12);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (46,'Are fitness functions used? To what degree are they automated?',12);
+
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (48,'Is CPU and Memory usage monitored?',54);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (49,'Are critical errors monitored?',54);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (50,'Any notification or alerts for monitoring?',54);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (51,'Infra-health monitoring?',54);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (52,'Service-health monitoring?',54);
+
+
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (53,'How is incident management done?',55);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (54,'What strategy is followed for DB recovery?',55);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (55,'What is max and min time taken for disaster recovery on production so far?',55);
+
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (56,'What are the different environments setup? In which environment does the QA perform story testing?',56);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (57,'How are environments provisioned? What strategy is used to make sure they are provisioned consistently?',56);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (58,'Does the environment automatically scale to accommodate higher load?',56);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (59,'How stable and predictable are environments? Are environments isolated from one another with respect to deployed components, databases, etc.?',56);
+
+
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (60,'How is application configuration managed?',57);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (61,'Is there any strategy in place to reduce the cost? (Eg: during times of less user activity)',57);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (62,'How is application functionality turned on/off dynamically?',57);
+INSERT INTO tbm_assessment_question(question_id,question_text,parameter)
+VALUES (63,'How are secrets managed?',57);

@@ -41,4 +41,8 @@ public class Answer implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+
+    public boolean hasNotes() {
+        return answer != null && !answer.isBlank();
+    }
 }

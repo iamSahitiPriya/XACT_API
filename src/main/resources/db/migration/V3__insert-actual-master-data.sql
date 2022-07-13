@@ -266,23 +266,41 @@ VALUES (71, 'Process Streamlining (Internal)', 26);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
 VALUES (72, 'Managing product stack and tools', 26);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (73, 'Support On-boarding', 27);
+VALUES (73, 'Internal Team On-boarding', 27);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (74, 'Develop a continuous education program', 27);
+VALUES (74, 'Client On-boarding', 27);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (75, 'Make the right data easily available', 27);
+VALUES (75, 'Develop a continuous education program', 27);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (76, 'Address Emerging Issues (Production Issues / Operation issues )', 28);
+VALUES (76, 'Make the right data easily available', 27);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (77, 'Experimentation execution', 28);
+VALUES (77, 'Acting On Data', 27);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (78, 'Roll out Industry best practices', 28);
+VALUES (78, 'Client Doc Collaborations', 27);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (79, 'Establish & Streamline critical and routine tasks and processes', 28);
+VALUES (79, 'Competition analysis collaborations', 27);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (80, 'Vendor Partnership ', 28);
+VALUES (80, 'Product feedbak management', 27);
 INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
-VALUES (81, 'Work with other team', 29);
+VALUES (81, 'Address Emerging Issues (Production Issues / Operation issues )', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (82, 'Managing product Uptime', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (83, 'Experimentation execution', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (84, 'Experimentation Management', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (85, 'Roll out Industry best practices', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (86, 'Regulatory', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (87, 'Establish & Streamline critical and routine tasks and processes', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (88, 'Vendor On-boarding', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (89, 'Vendor Management', 28);
+INSERT INTO tbm_assessment_parameter(parameter_id, parameter_name, topic)
+VALUES (90, 'Work with other team', 29);
 
 
 
@@ -345,5 +363,28 @@ INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES (2, 'FIVE',
         'API Gateway is used as a single entry point for all consumers for value added services such as authentication, authorization and resilience patterns such as circuit breaker, rate limiting, throttling etc. Header-based API versioning is used when multiple versions of an API need to co-exist. Consumers not including an explicit version identifier are returned responses from the latest version. API documentation and examples are produced and kept in sync with implementation at all times. Documentation is generated from tests and published as an artifact of the build. All documentation is published on a central API management portal for easy discoverability and access.');
 
+------------
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 3, 'ONE', 'Architecture predominantly uses a technology stack that is unsupported, extremely difficult to extend or out-of-date.');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 3, 'TWO', 'The technology stack has less support, either needs the goodwill of the open source community or needs involves expensive licenses. It is possible to extend the architecture but at the expense of business priorities and downtime');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 3, 'THREE', 'Technology stack is not proprietary but deprecated or around 5 years out-of-date with the current way of doing things. ');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 3, 'FOUR', 'Technology stack is current, but not quite the best fit for the problem domain. For eg; data stores use data models that have been force-fitted to capture the domain model');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 3, 'FIVE', 'Technology stack is state-of-the-art and architecture is open to extend. The problem domain nicely fits in with the tech stack being used.');
+
+-------------
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 5, 'ONE', 'Architecture decisions are made on an ad-hoc basis with individual teams responsible for all major decisions. There is little to no record maintained for decisions made. The primary means to enforce architecture decisions is through documents and accompanying literature.');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 5, 'TWO', 'Architecture decisions are made by a central committee outside of the team and pushed to teams for adoption. The primary means to enforce architecture decisions is through architecture and code reviews.');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 5, 'THREE', 'Architecture decisions are initiated by teams working on a problem. These decisions are reviewed with a central committee to ensure standards are adhered to. Architecture decisions are enforced through a combination of documentation, reviews and static analysis observations.');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 5, 'FOUR', 'Architecture decisions are initiated by teams working on a problem. These decisions are reviewed with a central committee to ensure standards are adhered to. Decisions made are captured and persisted in a lightweight manner. Architecture decisions are enforced through a combination of documentation, reviews static analysis observations. In addition, some architecture decisions are enforced using a set of fitness functions that are integrated as part of the build.');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 5, 'FIVE', 'A pattern catalog of historic architecture decisions is consulted prior to large projects/undertakings. Teams works with an embedded representative from an architecture forum to expedite decisions from both a domain and technology perspective. These decisions are reviewed with a central committee to ensure standards are adhered to. Decisions made are captured and persisted in a lightweight manner. Architecture decisions are enforced through a combination of documentation, reviews static analysis observations. In addition, a majority of architecture decisions are enforced using a set of fitness functions that are integrated as part of the build.');
 
 

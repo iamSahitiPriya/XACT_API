@@ -9,9 +9,7 @@ VALUES ( 52, 'FOUR', 'Check-ins and CI happen on a short-lived private branch to
 INSERT INTO tbm_assessment_param_reference(parameter, rating, reference)
 VALUES ( 52, 'FIVE', 'Check-ins and CI happen on the mainline. A branch-by-abstraction style is used to turn off incomplete work. Integration is truly continuous. The build process includes a good mix of unit, integration, contract, functional and acceptance tests, and these tests are mostly green. Manual testing only used for exploratory testing. Failed builds are not that common. When they do occur, team members are empowered to rollback the cause of the build failure if they are not fixed by the owner.');
 
-
 ------------------------------------------------------------------
-
 
 INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
 VALUES ( 7,'How are checkins done and what branching strategy is used?', 52);
@@ -69,6 +67,10 @@ INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
 VALUES ( 23,'How are cross-cutting concerns such as authentication, rate limiting etc. implemented?', 6);
 INSERT INTO tbm_assessment_question(question_id,question_text, parameter)
 VALUES ( 24,'Are there any APM tools to monitor APIs?', 6);
+
+
+
+
 
 
 

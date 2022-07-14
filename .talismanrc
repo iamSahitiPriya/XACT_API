@@ -6,7 +6,5 @@ fileignoreconfig:
 - filename: src/main/resources/db/migration/V4__create_index.sql
   checksum: 3c068d4116e6803168aafae326a44ae6673bda0985961a87fee5488f88be21f3
 - filename: src/main/resources/db/migration/V3__insert-actual-master-data.sql
-  checksum: 02c6999d858a883e14a880dfd399b71895ddfac8dd4f6e7f8efc781516065bc0
-- filename: src/main/resources/db/migration/V5__insert-actual-master-data.sql
-  checksum: 8655bcea4a99805d6c44a245aa2ae5b83a66d7b3cdeac26cbfe6f053c55b71e0
+  checksum: 161bc8037eaad70d233796c62030c4bee61963f0fb23cf60f27c5f03c8f7c48a
 version: ""

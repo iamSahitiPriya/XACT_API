@@ -120,7 +120,7 @@ INSERT INTO tbm_assessment_parameter(parameter_id,parameter_name, topic)
 INSERT INTO tbm_assessment_parameter(parameter_id,parameter_name, topic)
         VALUES ( 7,'Technology Stack', 3);
 INSERT INTO tbm_assessment_parameter(parameter_id,parameter_name, topic)
-        VALUES ( 8,'Resilience', 3);
+        VALUES ( 8,'Resilience', 4);
 INSERT INTO tbm_assessment_parameter(parameter_id,parameter_name, topic)
         VALUES ( 9,'Scalability', 4);
 INSERT INTO tbm_assessment_parameter(parameter_id,parameter_name, topic)
@@ -323,4 +323,14 @@ VALUES ( 5, 'FOUR', 'Architecture decisions are initiated by teams working on a 
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 5, 'FIVE', 'A pattern catalog of historic architecture decisions is consulted prior to large projects/undertakings. Teams works with an embedded representative from an architecture forum to expedite decisions from both a domain and technology perspective. These decisions are reviewed with a central committee to ensure standards are adhered to. Decisions made are captured and persisted in a lightweight manner. Architecture decisions are enforced through a combination of documentation, reviews static analysis observations. In addition, a majority of architecture decisions are enforced using a set of fitness functions that are integrated as part of the build.');
 
-
+---------------
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 4, 'ONE', 'Resilience patterns like circuit breakers, timeouts, service discovery, rate limiting, throttling and caching are not used. Performance and scale testing are not practiced.');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 4, 'TWO', 'Resilience patterns like circuit breakers, timeouts, service discovery, rate limiting, throttling and caching are used sporadically by individual teams. Performance and scale testing are not practiced, but only on an ad-hoc basis.');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 4, 'THREE', 'Resilience patterns like circuit breakers, timeouts, service discovery, rate limiting, throttling and caching are documented, with varying implementation styles. Performance and scale testing are not practiced, but only before significant milestones (like a large cross-functional release)');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 4, 'FOUR', 'There are standardized implementation across teams on Resilience patterns like circuit breakers, timeouts, service discovery, rate limiting, throttling and caching. Performance and scale testing are practiced periodically, but not part of the pipeline');
+INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
+VALUES ( 4, 'FIVE', 'Implementation of resilience patterns like circuit breakers, timeouts, service discovery, rate limiting, throttling and caching are standardized and tested to meet SLAs. Performance and scale testing are practiced consistently and automated as part of the pipeline');

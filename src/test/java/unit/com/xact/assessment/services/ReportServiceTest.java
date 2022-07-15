@@ -6,9 +6,7 @@ package unit.com.xact.assessment.services;
 
 
 import com.xact.assessment.models.*;
-import com.xact.assessment.services.AnswerService;
-import com.xact.assessment.services.ReportService;
-import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
+import com.xact.assessment.services.*;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -27,8 +25,9 @@ class ReportServiceTest {
 
     TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
     AnswerService answerService = mock(AnswerService.class);
+    SpiderChartService chartService = mock(SpiderChartService.class);
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService);
 
     @Test
     void getWorkbook() {

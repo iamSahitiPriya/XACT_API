@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class ReportService {
@@ -14,10 +15,12 @@ public class ReportService {
     public static final String FORMULA_STRING = "=-+@";
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final AnswerService answerService;
+    private final ChartService chartService;
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService) {
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, SpiderChartService chartService) {
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
+        this.chartService = chartService;
     }
 
     public Workbook generateReport(Integer assessmentId) {
@@ -41,8 +44,28 @@ public class ReportService {
             writeTopicRow(workbook, topicLevelAssessment);
         }
 
+        generateCharts(workbook);
 
         return workbook;
+    }
+
+    private void generateCharts(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Charts");
+        //Get the contents of an InputStream as a byte[].
+        Map<String, List<CategoryMaturity>> dataMap = null;
+        byte[] bytes = chartService.generateChart(dataMap);
+        //Adds a picture to the workbook
+        int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
+        CreationHelper helper = workbook.getCreationHelper();
+        Drawing drawing = sheet.createDrawingPatriarch();
+        ClientAnchor anchor = helper.createClientAnchor();
+
+        //create an anchor with upper left cell _and_ bottom right cell
+        anchor.setCol1(1); //Column B
+        anchor.setRow1(2); //Row 3
+        anchor.setCol2(15); //Column 16th
+        anchor.setRow2(21); //Row 22
+        drawing.createPicture(anchor, pictureIdx);
     }
 
     private void writeTopicRow(Workbook workbook, TopicLevelAssessment topicLevelAssessment) {

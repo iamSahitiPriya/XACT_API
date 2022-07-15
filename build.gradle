@@ -52,7 +52,7 @@ dependencies {
     implementation 'org.modelmapper:modelmapper:3.1.0'
     implementation 'org.apache.poi:poi:5.2.2'
     implementation 'org.apache.poi:poi-ooxml:5.2.2'
-
+    implementation 'jfree:jfreechart:1.0.13'
 
     runtimeOnly("ch.qos.logback:logback-classic")
 

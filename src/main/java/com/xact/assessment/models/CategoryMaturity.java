@@ -13,5 +13,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CategoryMaturity {
     private String category;
-    private Integer score;
+    private double score;
 }

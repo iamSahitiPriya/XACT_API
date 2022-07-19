@@ -13,6 +13,7 @@ import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.ui.RectangleEdge;
 
+import java.awt.*;
 import java.io.IOException;
 
 public class ChartsUtil {
@@ -32,6 +33,7 @@ public class ChartsUtil {
         LegendTitle legend = new LegendTitle(plot);
         legend.setPosition(RectangleEdge.BOTTOM);
         chart.addSubtitle(legend);
+        chart.getPlot().setBackgroundPaint(Color.pink);
         ChartUtilities.applyCurrentTheme(chart);
         return chart;
 
@@ -40,6 +42,7 @@ public class ChartsUtil {
 
     public static byte[] getSpiderChart(int width, int height, CategoryDataset dataset) throws IOException {
         JFreeChart chart = createChart(dataset);
+        chart.getPlot().setBackgroundPaint(Color.white);
         //ChartUtilities.saveChartAsJPEG(spiderChart, chart, width, height);
         return ChartUtilities.encodeAsPNG(chart.createBufferedImage(width, height));
 

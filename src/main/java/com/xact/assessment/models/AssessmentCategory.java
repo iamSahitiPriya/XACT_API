@@ -14,6 +14,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -38,4 +39,20 @@ public class AssessmentCategory {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
     @ElementCollection()
     private Set<AssessmentModule> modules;
+
+    public double getCategoryAverage(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
+        double moduleSum = 0;
+        int moduleCount = 0;
+        for(AssessmentModule assessmentModule: this.modules){
+            if(assessmentModule.getModuleAverage(topicLevelAssessmentList,parameterLevelAssessmentList) != 0){
+                moduleSum += assessmentModule.getModuleAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+                moduleCount +=1 ;
+            }
+        }
+        if(moduleSum == 0 && moduleCount == 0){
+            return 0;
+        }
+        return moduleSum/moduleCount;
+    }
+
 }

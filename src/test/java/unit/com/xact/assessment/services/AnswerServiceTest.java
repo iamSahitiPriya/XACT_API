@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AnswerServiceTest {
 
@@ -108,5 +107,28 @@ class AnswerServiceTest {
         assertEquals(answer.getAnswer(), actualAnswer.getAnswer());
         assertEquals(answer.getAnswerId(), actualAnswer.getAnswerId());
         System.out.println(answer.getAnswer());
+    }
+
+    @Test
+    void shouldDeleteAssessmentNotes(){
+        Integer assessmentId = 1;
+        AnswerRequest answerRequest = new AnswerRequest(1, "some text");
+
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+
+        AnswerId answerId = mapper.map(answerRequest, AnswerId.class);
+        answerId.setAssessment(assessment);
+        Answer answer = mapper.map(answerRequest, Answer.class);
+        answer.setAnswerId(answerId);
+
+        answerRepository.save(answer);
+
+        answer.setAnswer("");
+        when(answerRepository.existsById(answerId)).thenReturn(true);
+        answerService.saveAnswer(answer);
+
+        verify(answerRepository).delete(answer);
+
     }
 }

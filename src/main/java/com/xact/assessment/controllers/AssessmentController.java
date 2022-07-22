@@ -198,7 +198,7 @@ public class AssessmentController {
             TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
             TopicLevelAssessment topicLevelAssessment = topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).orElse(new TopicLevelAssessment());
             topicLevelAssessment.setTopicLevelId(topicLevelId);
-            topicLevelAssessment.setRecommendation(recommendation);
+//            topicLevelAssessment.setRecommendation(recommendation);
             topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
             updateAssessment(assessment);
         }
@@ -311,7 +311,7 @@ public class AssessmentController {
             AssessmentTopicDto eachTopicDto = modelMapper.map(eachTopic.getTopicLevelId(), AssessmentTopicDto.class);
             eachTopicRatingAndRecommendation.setTopicId(eachTopicDto.getTopicId());
             eachTopicRatingAndRecommendation.setRating(eachTopic.getRating());
-            eachTopicRatingAndRecommendation.setRecommendation(eachTopic.getRecommendation());
+//            eachTopicRatingAndRecommendation.setRecommendation(eachTopic.getRecommendation());
             topicRatingAndRecommendationsResponseList.add(eachTopicRatingAndRecommendation);
         }
         return topicRatingAndRecommendationsResponseList;

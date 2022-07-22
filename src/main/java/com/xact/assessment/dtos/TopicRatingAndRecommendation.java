@@ -15,6 +15,4 @@ import lombok.Setter;
 public class TopicRatingAndRecommendation {
     private Integer topicId;
     private Integer rating;
-    private String recommendation;
-
 }

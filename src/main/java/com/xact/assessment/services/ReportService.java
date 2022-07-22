@@ -46,7 +46,8 @@ public class ReportService {
     }
 
     private void writeTopicRow(Workbook workbook, TopicLevelAssessment topicLevelAssessment) {
-        String recommendation = topicLevelAssessment.getRecommendation();
+//        String recommendation = topicLevelAssessment.getRecommendation();
+        String recommendation="";
         String rating = String.valueOf(topicLevelAssessment.getRating());
         AssessmentTopic topic = topicLevelAssessment.getTopicLevelId().getTopic();
         AssessmentModule module = topic.getModule();

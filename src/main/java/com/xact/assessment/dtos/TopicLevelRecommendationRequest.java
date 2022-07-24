@@ -6,15 +6,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+
 
 @Introspected
 @NoArgsConstructor
 @Getter
 @Setter
 @AllArgsConstructor
-public class TopicRatingAndRecommendation {
+public class TopicLevelRecommendationRequest {
     private Integer topicId;
-    private Integer rating;
-    private List<TopicLevelRecommendationRequest> topicLevelRecommendationRequest;
+    private Integer recommendationId;
+    private Integer assessmentId;
+    private String recommendation;
+    private String impact;
+    private String effect;
+    private String deliveryHorizon;
 }

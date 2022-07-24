@@ -66,7 +66,7 @@ class ReportServiceTest {
         parameterAssessments.add(parameterAssessment);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment,topic);
-        TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId,4,"recom",new Date(),new Date());
+        TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId,4,new Date(),new Date());
         topicAssessments.add(topicAssessment);
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);

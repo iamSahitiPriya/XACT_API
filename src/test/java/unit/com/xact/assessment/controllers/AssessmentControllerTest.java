@@ -15,6 +15,8 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
+import static com.xact.assessment.models.RecommendationEffect.HIGH;
+import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Matchers.any;
@@ -148,7 +150,7 @@ class AssessmentControllerTest {
         parameterAssessments.add(parameterAssessment);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
-        TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId, 4, "recom", new Date(), new Date());
+        TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId, 4, new Date(), new Date());
         topicAssessments.add(topicAssessment);
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
@@ -241,7 +243,16 @@ class AssessmentControllerTest {
         TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation.setTopicId(1);
         topicRatingAndRecommendation.setRating(1);
-        topicRatingAndRecommendation.setRecommendation("some text");
+
+        List<TopicLevelRecommendationRequest> topicLevelRecommendationRequest = new ArrayList<>();
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest1= new TopicLevelRecommendationRequest(1,1,1,"some text","HIGH","LOW","text");
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest2= new TopicLevelRecommendationRequest(1,1,1,"some text","HIGH","LOW","text");
+
+        topicLevelRecommendationRequest.add(topicLevelRecommendationRequest1);
+        topicLevelRecommendationRequest.add(topicLevelRecommendationRequest2);
+
+        topicRatingAndRecommendation.setTopicLevelRecommendationRequest(topicLevelRecommendationRequest);
 
         topicLevelAssessmentRequest.setTopicRatingAndRecommendation(topicRatingAndRecommendation);
 
@@ -418,7 +429,7 @@ class AssessmentControllerTest {
         TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
         TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
         topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRecommendation("Recommendation");
+
 
         when(topicAndParameterLevelAssessmentService.searchTopic(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
 
@@ -468,6 +479,15 @@ class AssessmentControllerTest {
         TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         topicLevelAssessment.setRating(1);
+
+        TopicLevelRecommendation topicLevelRecommendation= new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setRecommendation("some text");
+        topicLevelRecommendation.setRecommendationEffect(HIGH);
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setDeliveryHorizon("text");
 
         when(topicAndParameterLevelAssessmentService.searchTopic(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
 

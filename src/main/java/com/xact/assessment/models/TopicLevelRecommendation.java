@@ -12,7 +12,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.util.Date;
 
 @Getter
@@ -40,6 +39,10 @@ public class TopicLevelRecommendation{
     @JsonIgnore
     @JoinColumn(name = "topic", referencedColumnName = "topic_id")
     private AssessmentTopic topic;
+
+    @NotNull
+    @Column(name = "recommendation")
+    private String recommendation;
 
     @NotNull
     @Column(name = "impact", nullable = false)

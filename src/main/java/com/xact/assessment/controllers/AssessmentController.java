@@ -15,11 +15,9 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.modelmapper.ModelMapper;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Null;
 import java.util.*;
 
 
@@ -146,8 +144,9 @@ public class AssessmentController {
         if (assessment.isEditable()) {
             List<Answer> answerList = setAnswerListToSave(topicLevelAssessmentRequests, assessment);
             if (topicLevelAssessmentRequests.isRatedAtTopicLevel()) {
-                TopicLevelAssessment topicLevelRatingAndRecommendation = setTopicLevelRatingAndRecommendation(topicLevelAssessmentRequests, assessment);
-                topicAndParameterLevelAssessmentService.saveTopicLevelAssessment(topicLevelRatingAndRecommendation, answerList);
+                TopicLevelAssessment topicLevelRatingAndRecommendation = setTopicLevelRating(topicLevelAssessmentRequests, assessment);
+                List<TopicLevelRecommendation> topicLevelRecommendationList=setTopicLevelRecommendation(topicLevelAssessmentRequests,assessment);
+                topicAndParameterLevelAssessmentService.saveTopicLevelAssessment(topicLevelRatingAndRecommendation,answerList);
             } else {
                 List<ParameterLevelAssessment> parameterLevelAssessmentList = setParameterLevelRatingAndResommendationList(topicLevelAssessmentRequests, assessment);
                 topicAndParameterLevelAssessmentService.saveParameterLevelAssessment(parameterLevelAssessmentList, answerList);
@@ -156,6 +155,7 @@ public class AssessmentController {
         }
         return HttpResponse.ok();
     }
+
 
     @Patch(value = "/answers/{assessmentId}/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -258,13 +258,23 @@ public class AssessmentController {
         return assessmentService.getAssessment(assessmentId, loggedInUser);
     }
 
-    private TopicLevelAssessment setTopicLevelRatingAndRecommendation(TopicLevelAssessmentRequest topicLevelAssessmentRequests, Assessment assessment) {
+    private TopicLevelAssessment setTopicLevelRating(TopicLevelAssessmentRequest topicLevelAssessmentRequests, Assessment assessment) {
         TopicLevelId topicLevelId = modelMapper.map(topicLevelAssessmentRequests.getTopicRatingAndRecommendation(), TopicLevelId.class);
         topicLevelId.setAssessment(assessment);
         TopicLevelAssessment topicLevelAssessment = modelMapper.map(topicLevelAssessmentRequests.getTopicRatingAndRecommendation(), TopicLevelAssessment.class);
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         return topicLevelAssessment;
     }
+
+    private List<TopicLevelRecommendation> setTopicLevelRecommendation(TopicLevelAssessmentRequest topicLevelAssessmentRequests, Assessment assessment) {
+        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
+        for(TopicLevelRecommendationRequest topicLevelRecommendationRequest:topicLevelAssessmentRequests.getTopicRatingAndRecommendation().getTopicLevelRecommendationRequest()){
+           TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
+           topicLevelRecommendationList.add(topicLevelRecommendation);
+        }
+        return topicLevelRecommendationList;
+    }
+
 
     private List<ParameterLevelAssessment> setParameterLevelRatingAndResommendationList(TopicLevelAssessmentRequest topicLevelAssessmentRequests, Assessment assessment) {
         List<ParameterLevelAssessment> parameterLevelAssessmentList = new ArrayList<>();

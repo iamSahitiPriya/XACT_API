@@ -17,8 +17,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class TopicAndParameterLevelAssessmentServiceTest {
 
@@ -171,6 +170,57 @@ class TopicAndParameterLevelAssessmentServiceTest {
         List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
 
         assertEquals(parameterLevelAssessmentList.get(0).getRecommendation(),parameterLevelAssessment.getRecommendation());
+    }
+
+    @Test
+    void shouldDeleteRatingForTopicLevelAssessment(){
+        Integer assessmentId1 = 1;
+        TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+        topicRatingAndRecommendation.setTopicId(1);
+        topicRatingAndRecommendation.setRating(1);
+        topicRatingAndRecommendation.setRecommendation("some text");
+
+        Assessment assessment1 = new Assessment();
+        assessment1.setAssessmentId(assessmentId1);
+
+        TopicLevelId topicLevelId1 = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
+        topicLevelId1.setAssessment(assessment1);
+        TopicLevelAssessment topicLevelAssessment1 = mapper.map(topicRatingAndRecommendation, TopicLevelAssessment.class);
+        topicLevelAssessment1.setTopicLevelId(topicLevelId1);
+
+        topicLevelAssessmentRepository.save(topicLevelAssessment1);
+
+        topicLevelAssessment1.setRating(null);
+
+        when(topicLevelAssessmentRepository.existsById(topicLevelId1)).thenReturn(true);
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment1);
+
+        verify(topicLevelAssessmentRepository).delete(topicLevelAssessment1);
+    }
+    @Test
+    void shouldDeleteRatingForParameterLevelAssessment(){
+        Integer assessmentId1 = 1;
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation1 = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation1.setParameterId(1);
+        parameterRatingAndRecommendation1.setRating(1);
+        parameterRatingAndRecommendation1.setRecommendation("some text");
+
+        Assessment assessment1 = new Assessment();
+        assessment1.setAssessmentId(assessmentId1);
+
+        ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation1, ParameterLevelId.class);
+        parameterLevelId.setAssessment(assessment1);
+        ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterRatingAndRecommendation1, ParameterLevelAssessment.class);
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+
+        parameterLevelAssessmentRepository.save(parameterLevelAssessment);
+
+        parameterLevelAssessment.setRating(null);
+
+        when(parameterLevelAssessmentRepository.existsById(parameterLevelId)).thenReturn(true);
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+        verify(parameterLevelAssessmentRepository).delete(parameterLevelAssessment);
+
     }
 
 

@@ -6,32 +6,41 @@ package unit.com.xact.assessment.services;
 
 
 import com.xact.assessment.models.*;
+import com.xact.assessment.repositories.CategoryRepository;
+import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
+import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import com.xact.assessment.services.AnswerService;
 import com.xact.assessment.services.ReportService;
+import com.xact.assessment.services.SpiderChartService;
 import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
+import com.xact.assessment.utils.ChartsUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ReportServiceTest {
 
     TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
     AnswerService answerService = mock(AnswerService.class);
+    SpiderChartService chartService = mock(SpiderChartService.class);
+    CategoryRepository categoryRepository = mock(CategoryRepository.class);
+    TopicLevelAssessmentRepository topicLevelAssessmentRepository =mock(TopicLevelAssessmentRepository.class);
+    ParameterLevelAssessmentRepository parameterLevelAssessmentRepository = mock(ParameterLevelAssessmentRepository.class);
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService);
+
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository,topicLevelAssessmentRepository,parameterLevelAssessmentRepository);
 
     @Test
-    void getWorkbook() {
+    void getWorkbookAssessmentDataSheet() {
         Integer assessmentId = 123;
         List<Answer> answers = new ArrayList<>();
 
@@ -72,7 +81,8 @@ class ReportServiceTest {
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
 
 
-        Workbook report = reportService.generateReport(assessmentId);
+        Workbook report = new XSSFWorkbook();
+        reportService.writeReport(answers,parameterAssessments,topicAssessments,report);
 
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
 
@@ -86,5 +96,60 @@ class ReportServiceTest {
         return workbook;
     }
 
+    @Test
+    void getChartSheetInWorkbook() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+
+        List<AssessmentCategory> assessmentCategories = new ArrayList<>();
+        AssessmentCategory assessmentCategory1 = new AssessmentCategory();
+        assessmentCategory1.setCategoryId(1);
+        assessmentCategory1.setCategoryName("First Category");
+        assessmentCategories.add(assessmentCategory1);
+
+        AssessmentCategory assessmentCategory2 = new AssessmentCategory();
+        assessmentCategory2.setCategoryName("Second Category");
+        assessmentCategories.add(assessmentCategory2);
+
+        when(categoryRepository.findAll()).thenReturn(assessmentCategories);
+
+        Map<String,List<CategoryMaturity>> dataSet = new HashMap<>();
+        List<CategoryMaturity> listOfCurrentScores = new ArrayList<>();
+        List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
+        for(AssessmentCategory assessmentCategory: assessmentCategoryList){
+            CategoryMaturity categoryMaturity = new CategoryMaturity();
+            double avgCategoryScore = 4.0;
+            categoryMaturity.setCategory(assessmentCategory.getCategoryName());
+            categoryMaturity.setScore(avgCategoryScore);
+            listOfCurrentScores.add(categoryMaturity);
+        }
+        dataSet.put("Maturity",listOfCurrentScores);
+
+
+        String series1 = "Maturity";
+
+        String category1 = "First Category";
+        String category2 = "Second Category";
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        dataset.addValue(5.0, series1, category1);
+        dataset.addValue(5.0, series1, category2);
+
+        try {
+            when(chartService.generateChart(dataSet)).thenReturn(ChartsUtil.getSpiderChart(680, 480, dataset));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Workbook report = new XSSFWorkbook();
+        reportService.generateCharts(report, dataSet);
+        verify(chartService).generateChart(dataSet);
+        assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbookForChart().getSheetAt(0).getSheetName());
+    }
+    private Workbook getMockWorkbookForChart() {
+        Workbook workbook = new XSSFWorkbook();
+        workbook.createSheet("Charts");
+        return workbook;
+    }
 
 }

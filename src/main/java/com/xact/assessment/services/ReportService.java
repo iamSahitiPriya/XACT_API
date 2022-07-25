@@ -2,10 +2,11 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
+import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
+import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import jakarta.inject.Singleton;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jfree.data.category.DefaultCategoryDataset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,15 +21,18 @@ public class ReportService {
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final AnswerService answerService;
     private final ChartService chartService;
-    private final AverageCategoryService averageCategoryService;
     private final CategoryRepository categoryRepository;
+    private final TopicLevelAssessmentRepository topicLevelAssessmentRepository;
+    private final ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, AverageCategoryService averageCategoryService, CategoryRepository categoryRepository) {
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, TopicLevelAssessmentRepository topicLevelAssessmentRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository) {
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
         this.chartService = chartService;
-        this.averageCategoryService = averageCategoryService;
         this.categoryRepository = categoryRepository;
+        this.topicLevelAssessmentRepository = topicLevelAssessmentRepository;
+        this.parameterLevelAssessmentRepository = parameterLevelAssessmentRepository;
+
     }
 
     public Workbook generateReport(Integer assessmentId) {
@@ -42,6 +46,13 @@ public class ReportService {
     private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments,Integer assessmentId) {
         Workbook workbook = new XSSFWorkbook();
 
+        writeReport(answers,parameterAssessments,topicLevelAssessments,workbook);
+
+        createDataAndGenerateChart(workbook,assessmentId);
+
+        return workbook;
+    }
+    public void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments,Workbook workbook){
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
         }
@@ -51,6 +62,8 @@ public class ReportService {
         for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
             writeTopicRow(workbook, topicLevelAssessment);
         }
+    }
+    public void createDataAndGenerateChart(Workbook workbook,Integer assessmentId){
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
 
@@ -59,7 +72,7 @@ public class ReportService {
         List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
         for(AssessmentCategory assessmentCategory: assessmentCategoryList){
             CategoryMaturity categoryMaturity = new CategoryMaturity();
-            double avgCategoryScore = averageCategoryService.getAverage(assessmentCategory.getCategoryId(),assessment);
+            double avgCategoryScore = assessmentCategory.getCategoryAverage(topicLevelAssessmentRepository.findByAssessment(assessmentId),parameterLevelAssessmentRepository.findByAssessment(assessmentId));
             categoryMaturity.setCategory(assessmentCategory.getCategoryName());
             categoryMaturity.setScore(avgCategoryScore);
             listOfCurrentScores.add(categoryMaturity);
@@ -77,14 +90,11 @@ public class ReportService {
         dataSet.put("Desired Maturity",listOfDesiredScores);
 
         generateCharts(workbook,dataSet);
-
-        return workbook;
     }
 
-    private void generateCharts(Workbook workbook,Map<String, List<CategoryMaturity>> dataSet) {
+    public void generateCharts(Workbook workbook,Map<String, List<CategoryMaturity>> dataSet) {
         Sheet sheet = workbook.createSheet("Charts");
         //Get the contents of an InputStream as a byte[].
-        Map<String, List<CategoryMaturity>> dataSet1 = null;
         byte[] bytes = chartService.generateChart(dataSet);
         //Adds a picture to the workbook
         int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);

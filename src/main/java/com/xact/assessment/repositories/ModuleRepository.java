@@ -1,7 +1,6 @@
 package com.xact.assessment.repositories;
 
 import com.xact.assessment.models.AssessmentModule;
-import com.xact.assessment.models.ParameterLevelAssessment;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.data.annotation.Query;

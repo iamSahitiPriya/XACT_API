@@ -42,11 +42,11 @@ pipeline {
             }
         }
 
-        stage('Deploy To Dev') {
+        /* stage('Deploy To Dev') {
             steps {
                 sh 'aws ecs update-service --cluster xact-backend-cluster --service xact-service --force-new-deployment'
             }
-        }
+        } */
         stage('Archive & Cleanup') {
                 steps {
                     archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true

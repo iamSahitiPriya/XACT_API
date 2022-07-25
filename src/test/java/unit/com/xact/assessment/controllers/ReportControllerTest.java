@@ -5,9 +5,13 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.ReportController;
+import com.xact.assessment.models.*;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.ReportService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.security.authentication.Authentication;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -15,25 +19,52 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 class ReportControllerTest {
 
+    private final Authentication authentication = Mockito.mock(Authentication.class);
     private final ReportService reportService = Mockito.mock(ReportService.class);
-    private ReportController reportController = new ReportController(reportService);
+    private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
+    private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
+    private ReportController reportController = new ReportController(reportService, assessmentService, userAuthService);
 
     @Test
     void getReport() {
         Integer assessmentId = 123;
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(reportService.generateReport(assessmentId)).thenReturn(getMockWorkbook());
 
 
-        MutableHttpResponse<byte[]> xlsDataResponse = reportController.getReport(assessmentId);
+        MutableHttpResponse<byte[]> xlsDataResponse = reportController.getReport(assessmentId, authentication);
 
 
-        assertEquals(HttpStatus.OK,xlsDataResponse.status());
+        assertEquals(HttpStatus.OK, xlsDataResponse.status());
         assertNotNull(xlsDataResponse.body());
     }
 
@@ -45,3 +76,4 @@ class ReportControllerTest {
         return workbook;
     }
 }
+

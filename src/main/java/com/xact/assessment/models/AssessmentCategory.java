@@ -15,6 +15,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
@@ -38,4 +39,13 @@ public class AssessmentCategory {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
     @ElementCollection()
     private Set<AssessmentModule> modules;
+
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
+
+    public Set<AssessmentModule> getModules() {
+        return modules == null ? null : modules.stream().filter(AssessmentModule::isActive).collect(Collectors.toSet());
+
+    }
 }

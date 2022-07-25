@@ -44,4 +44,8 @@ public class AssessmentModule {
     @ElementCollection()
     private Set<AssessmentTopic> topics;
 
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
+
 }

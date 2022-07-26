@@ -78,6 +78,7 @@ class AssessmentMasterDataControllerTest {
 
         category.setCategoryId(3);
         category.setCategoryName("My category");
+        category.setActive(true);
         category.setModules(modules);
 
 
@@ -85,6 +86,7 @@ class AssessmentMasterDataControllerTest {
         module.setModuleName("My module");
         module.setCategory(category);
         module.setTopics(topics);
+        module.setActive(true);
         modules.add(module);
 
 

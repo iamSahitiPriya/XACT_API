@@ -16,6 +16,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -55,5 +57,32 @@ public class AssessmentTopic {
     @Column(name = "assessment_level")
     @Enumerated(EnumType.STRING)
     private AssessmentLevel assessmentLevel;
+
+    public double getTopicAverage(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList) {
+        double parameterSum = 0;
+        int parameterCount = 0;
+
+        if (this.references != null) {
+            for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessmentList) {
+                if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(this.getTopicId())) {
+                    return topicLevelAssessment.getRating();
+                }
+            }
+        }
+        for (AssessmentParameter assessmentParameter : this.parameters) {
+            double parameterAverageScore = assessmentParameter.getParameterAverage(parameterLevelAssessmentList);
+            if (parameterAverageScore != 0) {
+                parameterSum += parameterAverageScore;
+                parameterCount += 1;
+            }
+        }
+
+
+        if (parameterSum == 0 && parameterCount == 0) {
+            return 0;
+        }
+        return parameterSum / parameterCount;
+    }
+
 
 }

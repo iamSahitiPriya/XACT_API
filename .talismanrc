@@ -9,8 +9,12 @@ fileignoreconfig:
   checksum: 6739f133902f00d4aefedc348ae439986b814f722d869c27905a8ac57fae3065
 - filename: src/main/resources/db/migration/V3__insert-actual-master-data.sql
   checksum: 021f1a9ce1d872e0a80556a1ffdb2477722349eafa38edbb7938116caaea7fdf
+- filename: src/main/resources/db/migration/V7__alter-master-table.sql
+  checksum: eb5a9f29b364f8d9be01ab70036e001e63ccc3d3bc794c80798b98dc8601efde
 - filename: src/main/resources/db/migration/V8__insert-actual-master-data.sql
   checksum: 5242d4f206841433cd4803e6ca61093a3edc2566f21d4815aea2f1ac3f94f582
+- filename: src/main/resources/db/migration/V6__insert-actual-master-data.sql
+  checksum: c7ecdf200dc00c186aa849ec45fae230facad0d69f7744cfbe52e9bd7f11eede
 
 version: ""
 

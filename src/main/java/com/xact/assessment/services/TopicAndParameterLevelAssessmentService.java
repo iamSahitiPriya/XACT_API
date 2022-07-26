@@ -61,31 +61,26 @@ public class TopicAndParameterLevelAssessmentService {
     @Transactional
     public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment,List<TopicLevelRecommendation> topicLevelRecommendationList, List<Answer> answerList) {
         saveRatingAndRecommendation(topicLevelAssessment);
-//        for(TopicLevelRecommendation topicLevelRecommendation :topicLevelRecommendationList){
-//                    saveTopicLevelRecommendation(topicLevelRecommendation);
-//        }
-        saveTopicLevelRecommendation(topicLevelRecommendationList);
+        for(TopicLevelRecommendation topicLevelRecommendation :topicLevelRecommendationList){
+                    saveTopicLevelRecommendation(topicLevelRecommendation);
+        }
         for (Answer answer : answerList) {
             answerService.saveAnswer(answer);
         }
     }
 
-    public void saveTopicLevelRecommendation(List<TopicLevelRecommendation> topicLevelRecommendation) {
-        List<TopicLevelRecommendation> topicLevelRecommendations=new ArrayList<>();
-        for(TopicLevelRecommendation topicLevelRecommendation1: topicLevelRecommendation){
-           topicLevelRecommendations=topicLevelRecommendationRepository.findByAssessmentAndTopic(topicLevelRecommendation1.getAssessment().getAssessmentId(),topicLevelRecommendation1.getTopic().getTopicId());
-        }
-        if ((topicLevelRecommendations.size()!=0)) {
-            topicLevelRecommendationRepository.deleteAll(topicLevelRecommendations);
-        }
-        for(TopicLevelRecommendation topicLevelRecommendation1: topicLevelRecommendation)
-            if (topicLevelRecommendation1.hasRecommendation()) {
-
-                topicLevelRecommendationRepository.save(topicLevelRecommendation1);
+    public void saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+        if (topicLevelRecommendation.getRecommendationId()!=null) {
+            if (topicLevelRecommendation.hasRecommendation()) {
+                topicLevelRecommendationRepository.update(topicLevelRecommendation);
+            } else {
+                topicLevelRecommendationRepository.delete(topicLevelRecommendation);
             }
-//            else {
-//                topicLevelRecommendationRepository.delete(topicLevelRecommendation);
-//            }
+        } else {
+            if (topicLevelRecommendation.hasRecommendation()) {
+                topicLevelRecommendationRepository.save(topicLevelRecommendation);
+            }
+        }
 
     }
 
@@ -104,6 +99,10 @@ public class TopicAndParameterLevelAssessmentService {
 
     public List<TopicLevelAssessment> getTopicAssessmentData(Integer assessmentId) {
         return topicLevelAssessmentRepository.findByAssessment(assessmentId);
+    }
+
+    public List<TopicLevelRecommendation> getTopicAssessmentRecommendationData(Integer assessmentId,Integer topicId) {
+        return  topicLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId,topicId);
     }
 
     public Optional<ParameterLevelAssessment> searchParameter(ParameterLevelId parameterLevelId) {

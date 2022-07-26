@@ -1,5 +1,6 @@
 package com.xact.assessment.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,5 +17,6 @@ import java.util.List;
 public class TopicRatingAndRecommendation {
     private Integer topicId;
     private Integer rating;
+    @JsonProperty("topicLevelRecommendation")
     private List<TopicLevelRecommendationRequest> topicLevelRecommendationRequest;
 }

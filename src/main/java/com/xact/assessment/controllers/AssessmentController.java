@@ -17,6 +17,7 @@ import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
 
@@ -146,7 +147,7 @@ public class AssessmentController {
             if (topicLevelAssessmentRequests.isRatedAtTopicLevel()) {
                 TopicLevelAssessment topicLevelRatingAndRecommendation = setTopicLevelRating(topicLevelAssessmentRequests, assessment);
                 List<TopicLevelRecommendation> topicLevelRecommendationList=setTopicLevelRecommendation(topicLevelAssessmentRequests,assessment);
-                topicAndParameterLevelAssessmentService.saveTopicLevelAssessment(topicLevelRatingAndRecommendation,answerList);
+                topicAndParameterLevelAssessmentService.saveTopicLevelAssessment(topicLevelRatingAndRecommendation,topicLevelRecommendationList,answerList);
             } else {
                 List<ParameterLevelAssessment> parameterLevelAssessmentList = setParameterLevelRatingAndResommendationList(topicLevelAssessmentRequests, assessment);
                 topicAndParameterLevelAssessmentService.saveParameterLevelAssessment(parameterLevelAssessmentList, answerList);
@@ -270,6 +271,9 @@ public class AssessmentController {
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
         for(TopicLevelRecommendationRequest topicLevelRecommendationRequest:topicLevelAssessmentRequests.getTopicRatingAndRecommendation().getTopicLevelRecommendationRequest()){
            TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
+           topicLevelRecommendation.setAssessment(assessment);
+           AssessmentTopic assessmentTopic=topicService.getTopic(topicLevelAssessmentRequests.getTopicRatingAndRecommendation().getTopicId()).orElseThrow();
+           topicLevelRecommendation.setTopic(assessmentTopic);
            topicLevelRecommendationList.add(topicLevelRecommendation);
         }
         return topicLevelRecommendationList;

@@ -14,9 +14,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class TopicLevelRecommendationRequest {
-    private Integer topicId;
-    private Integer recommendationId;
-    private Integer assessmentId;
     private String recommendation;
     private String impact;
     private String effect;

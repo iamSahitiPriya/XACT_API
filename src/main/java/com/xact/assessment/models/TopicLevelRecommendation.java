@@ -3,10 +3,7 @@ package com.xact.assessment.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Introspected;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -19,28 +16,26 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Introspected
+@EqualsAndHashCode
 @Entity
 @Table(name = "tbl_assessment_topic_recommendation")
 public class TopicLevelRecommendation{
 
     @Id
-    @Column(name = "recommendation_id", nullable = false, unique = true)
+    @Column(name = "recommendation_id",unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer recommendationId;
 
     @NotNull
     @ManyToOne()
-    @JsonIgnore
     @JoinColumn(name = "assessment", referencedColumnName = "assessment_id")
     private Assessment assessment;
 
     @NotNull
     @ManyToOne()
-    @JsonIgnore
     @JoinColumn(name = "topic", referencedColumnName = "topic_id")
     private AssessmentTopic topic;
 
-    @NotNull
     @Column(name = "recommendation")
     private String recommendation;
 
@@ -68,4 +63,10 @@ public class TopicLevelRecommendation{
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+    public boolean hasRecommendation() {
+        return ((this.recommendation != null && !this.recommendation.isBlank()) ||
+                (this.recommendationEffect !=null && !this.recommendationEffect.toString().isBlank()) ||
+                (this.recommendationImpact !=null && !this.recommendationImpact.toString().isBlank())||
+                (this.deliveryHorizon !=null && !this.deliveryHorizon.isBlank()));
+    }
 }

@@ -59,7 +59,7 @@ public class AssessmentModule {
             }
         }
 
-        if(topicCount ==0 && topicSum ==0){
+        if(topicCount ==0){
             return 0;
         }
         return topicSum/topicCount;

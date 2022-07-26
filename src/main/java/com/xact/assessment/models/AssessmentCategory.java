@@ -59,7 +59,7 @@ public class AssessmentCategory {
                 moduleCount +=1 ;
             }
         }
-        if(moduleSum == 0 && moduleCount == 0){
+        if(moduleCount == 0){
             return 0;
         }
         return moduleSum/moduleCount;

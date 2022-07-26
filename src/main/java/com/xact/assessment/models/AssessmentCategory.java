@@ -16,6 +16,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
@@ -40,6 +41,15 @@ public class AssessmentCategory {
     @ElementCollection()
     private Set<AssessmentModule> modules;
 
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
+
+    public Set<AssessmentModule> getModules() {
+        return modules == null ? null : modules.stream().filter(AssessmentModule::isActive).collect(Collectors.toSet());
+
+    }
+
     public double getCategoryAverage(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
         double moduleSum = 0;
         int moduleCount = 0;
@@ -50,7 +60,7 @@ public class AssessmentCategory {
                 moduleCount +=1 ;
             }
         }
-        if(moduleSum == 0 && moduleCount == 0){
+        if(moduleCount == 0){
             return 0;
         }
         return moduleSum/moduleCount;

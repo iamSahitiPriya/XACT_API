@@ -45,6 +45,10 @@ public class AssessmentModule {
     @ElementCollection()
     private Set<AssessmentTopic> topics;
 
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
+
     public double getModuleAverage(List<TopicLevelAssessment> topicLevelAssessmentList,List<ParameterLevelAssessment> parameterLevelAssessmentList) {
         double topicSum = 0;
         int topicCount = 0;
@@ -56,11 +60,9 @@ public class AssessmentModule {
             }
         }
 
-        if(topicCount ==0 && topicSum ==0){
+        if(topicCount ==0){
             return 0;
         }
         return topicSum/topicCount;
     }
 }
-
-

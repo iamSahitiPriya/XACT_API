@@ -33,11 +33,8 @@ class ReportServiceTest {
     AnswerService answerService = mock(AnswerService.class);
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
-    TopicLevelAssessmentRepository topicLevelAssessmentRepository =mock(TopicLevelAssessmentRepository.class);
-    ParameterLevelAssessmentRepository parameterLevelAssessmentRepository = mock(ParameterLevelAssessmentRepository.class);
 
-
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository,topicLevelAssessmentRepository,parameterLevelAssessmentRepository);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository);
 
     @Test
     void getWorkbookAssessmentDataSheet() {

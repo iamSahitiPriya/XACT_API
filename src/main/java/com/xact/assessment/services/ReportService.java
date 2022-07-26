@@ -22,16 +22,14 @@ public class ReportService {
     private final AnswerService answerService;
     private final ChartService chartService;
     private final CategoryRepository categoryRepository;
-    private final TopicLevelAssessmentRepository topicLevelAssessmentRepository;
-    private final ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, TopicLevelAssessmentRepository topicLevelAssessmentRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository) {
+
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository) {
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
         this.chartService = chartService;
         this.categoryRepository = categoryRepository;
-        this.topicLevelAssessmentRepository = topicLevelAssessmentRepository;
-        this.parameterLevelAssessmentRepository = parameterLevelAssessmentRepository;
+
 
     }
 
@@ -43,12 +41,12 @@ public class ReportService {
         return createReport(answers, parameterAssessmentData, topicAssessmentData,assessmentId);
     }
 
-    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments,Integer assessmentId) {
+    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments,Integer assessmentId) {
         Workbook workbook = new XSSFWorkbook();
 
-        writeReport(answers,parameterAssessments,topicLevelAssessments,workbook);
+        writeReport(answers,parameterLevelAssessments,topicLevelAssessments,workbook);
 
-        createDataAndGenerateChart(workbook,assessmentId);
+        createDataAndGenerateChart(workbook, assessmentId,parameterLevelAssessments,topicLevelAssessments);
 
         return workbook;
     }
@@ -63,7 +61,7 @@ public class ReportService {
             writeTopicRow(workbook, topicLevelAssessment);
         }
     }
-    public void createDataAndGenerateChart(Workbook workbook,Integer assessmentId){
+    public void createDataAndGenerateChart(Workbook workbook,Integer assessmentId,List<ParameterLevelAssessment> parameterLevelAssessments,List<TopicLevelAssessment> topicLevelAssessments){
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
 
@@ -72,7 +70,7 @@ public class ReportService {
         List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
         for(AssessmentCategory assessmentCategory: assessmentCategoryList){
             CategoryMaturity categoryMaturity = new CategoryMaturity();
-            double avgCategoryScore = assessmentCategory.getCategoryAverage(topicLevelAssessmentRepository.findByAssessment(assessmentId),parameterLevelAssessmentRepository.findByAssessment(assessmentId));
+            double avgCategoryScore = assessmentCategory.getCategoryAverage(topicLevelAssessments,parameterLevelAssessments);
             categoryMaturity.setCategory(assessmentCategory.getCategoryName());
             categoryMaturity.setScore(avgCategoryScore);
             listOfCurrentScores.add(categoryMaturity);
@@ -105,8 +103,8 @@ public class ReportService {
         //create an anchor with upper left cell _and_ bottom right cell
         anchor.setCol1(1); //Column B
         anchor.setRow1(2); //Row 3
-        anchor.setCol2(15); //Column 16th
-        anchor.setRow2(21); //Row 22
+        anchor.setCol2(12); //Column 13th
+        anchor.setRow2(24); //Row 25
         drawing.createPicture(anchor, pictureIdx);
     }
 

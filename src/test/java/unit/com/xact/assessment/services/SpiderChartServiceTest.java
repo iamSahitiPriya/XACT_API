@@ -60,7 +60,6 @@ public class SpiderChartServiceTest {
 
         File file = new File("src/test/resources/spider-chart.png");
         byte[] expectedImage = new byte[0];
-
         try {
             expectedImage = Files.readAllBytes(file.toPath());
         } catch (IOException e) {

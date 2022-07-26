@@ -44,8 +44,9 @@ public class AssessmentCategory {
         double moduleSum = 0;
         int moduleCount = 0;
         for(AssessmentModule assessmentModule: this.modules){
-            if(assessmentModule.getModuleAverage(topicLevelAssessmentList,parameterLevelAssessmentList) != 0){
-                moduleSum += assessmentModule.getModuleAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+            double averageModule = assessmentModule.getModuleAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+            if(averageModule != 0){
+                moduleSum += averageModule;
                 moduleCount +=1 ;
             }
         }

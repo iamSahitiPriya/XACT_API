@@ -489,7 +489,6 @@ class AssessmentControllerTest {
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         topicLevelAssessment.setRating(1);
 
-
         when(topicAndParameterLevelAssessmentService.searchTopic(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 

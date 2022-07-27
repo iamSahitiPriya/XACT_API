@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
+import static com.xact.assessment.models.RecommendationEffect.HIGH;
+import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.any;
@@ -165,12 +167,22 @@ class AssessmentControllerTest {
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         topicLevelAssessment.setRating(4);
 
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setRecommendation("some recommendation");
+        topicLevelRecommendation.setDeliveryHorizon("some text");
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setRecommendationEffect(HIGH);
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
         when(usersAssessmentsRepository.findUserByAssessmentId(1, AssessmentRole.Owner)).thenReturn(singletonList(assessmentUsers));
         when(answerRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(answer));
         when(parameterLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(parameterLevelAssessment));
         when(topicLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(topicLevelAssessment));
+        when(topicLevelRecommendationRepository.findByAssessmentAndTopic(assessment.getAssessmentId(),assessmentTopic.getTopicId())).thenReturn(singletonList(topicLevelRecommendation));
 
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessment-response.json");
 

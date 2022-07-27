@@ -152,6 +152,36 @@ class AssessmentControllerTest {
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
         TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId, 4, new Date(), new Date());
         topicAssessments.add(topicAssessment);
+
+        List <TopicRatingAndRecommendation> topicRatingAndRecommendationList = new ArrayList<>();
+        TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+        topicRatingAndRecommendation.setTopicId(topic.getTopicId());
+        topicRatingAndRecommendation.setRating(2);
+
+       List <TopicLevelRecommendationRequest> topicLevelRecommendationRequestList = new ArrayList<>();
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setRecommendation("some recommendation");
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(topic);
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setRecommendationEffect(HIGH);
+        topicLevelRecommendation.setDeliveryHorizon("some text");
+        when(topicService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId,topic.getTopicId())).thenReturn(Collections.singletonList(topicLevelRecommendation));
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest=new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendationId(topicLevelRecommendation.getRecommendationId());
+        topicLevelRecommendationRequest.setRecommendation(topicLevelRecommendation.getRecommendation());
+        topicLevelRecommendationRequest.setImpact(topicLevelRecommendationRequest.getImpact());
+        topicLevelRecommendationRequest.setEffect(topicLevelRecommendationRequest.getEffect());
+        topicLevelRecommendationRequest.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
+        topicLevelRecommendationRequestList.add(topicLevelRecommendationRequest);
+
+        topicRatingAndRecommendation.setTopicLevelRecommendationRequest(topicLevelRecommendationRequestList);
+        topicRatingAndRecommendationList.add(topicRatingAndRecommendation);
+
+
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
@@ -161,6 +191,8 @@ class AssessmentControllerTest {
         expectedAssessment.setOrganisationName("abc");
         expectedAssessment.setAssessmentStatus(AssessmentStatusDto.Active);
         expectedAssessment.setUpdatedAt(updated);
+        expectedAssessment.setTopicRatingAndRecommendation(topicRatingAndRecommendationList);
+
         HttpResponse<AssessmentResponse> actualAssessment = assessmentController.getAssessment(assessmentId, authentication);
 
         assertEquals(expectedAssessment.getAssessmentId(), actualAssessment.body().getAssessmentId());

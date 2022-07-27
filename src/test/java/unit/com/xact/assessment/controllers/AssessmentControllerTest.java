@@ -247,8 +247,8 @@ class AssessmentControllerTest {
 
         List<TopicLevelRecommendationRequest> topicLevelRecommendationRequest = new ArrayList<>();
 
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest1= new TopicLevelRecommendationRequest("some text","HIGH","LOW","text");
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest2= new TopicLevelRecommendationRequest("some more text","HIGH","LOW","text");
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest1= new TopicLevelRecommendationRequest(1,"some text","HIGH","LOW","text");
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest2= new TopicLevelRecommendationRequest(2,"some more text","HIGH","LOW","text");
 
         topicLevelRecommendationRequest.add(topicLevelRecommendationRequest1);
         topicLevelRecommendationRequest.add(topicLevelRecommendationRequest2);

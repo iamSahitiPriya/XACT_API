@@ -69,7 +69,7 @@ public class TopicAndParameterLevelAssessmentService {
         }
     }
 
-    public void saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+    public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
         if (topicLevelRecommendation.getRecommendationId()!=null) {
             if (topicLevelRecommendation.hasRecommendation()) {
                 topicLevelRecommendationRepository.update(topicLevelRecommendation);
@@ -81,7 +81,7 @@ public class TopicAndParameterLevelAssessmentService {
                 topicLevelRecommendationRepository.save(topicLevelRecommendation);
             }
         }
-
+       return topicLevelRecommendation;
     }
 
     public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<Answer> answerList) {

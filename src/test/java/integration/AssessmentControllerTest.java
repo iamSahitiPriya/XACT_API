@@ -166,7 +166,6 @@ class AssessmentControllerTest {
         topicLevelAssessment.setRating(4);
 
 
-
         when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
         when(usersAssessmentsRepository.findUserByAssessmentId(1, AssessmentRole.Owner)).thenReturn(singletonList(assessmentUsers));
         when(answerRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(answer));

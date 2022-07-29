@@ -195,7 +195,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
         when(topicLevelAssessmentRepository.existsById(topicLevelId1)).thenReturn(true);
         topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment1);
 
-        verify(topicLevelAssessmentRepository).delete(topicLevelAssessment1);
+        verify(topicLevelAssessmentRepository).save(topicLevelAssessment1);
     }
     @Test
     void shouldDeleteRatingForParameterLevelAssessment(){
@@ -219,7 +219,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
 
         when(parameterLevelAssessmentRepository.existsById(parameterLevelId)).thenReturn(true);
         topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
-        verify(parameterLevelAssessmentRepository).delete(parameterLevelAssessment);
+        verify(parameterLevelAssessmentRepository).save(parameterLevelAssessment);
 
     }
 

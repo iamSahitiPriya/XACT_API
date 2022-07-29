@@ -33,11 +33,8 @@ class ReportServiceTest {
     AnswerService answerService = mock(AnswerService.class);
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
-    TopicLevelAssessmentRepository topicLevelAssessmentRepository =mock(TopicLevelAssessmentRepository.class);
-    ParameterLevelAssessmentRepository parameterLevelAssessmentRepository = mock(ParameterLevelAssessmentRepository.class);
 
-
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository,topicLevelAssessmentRepository,parameterLevelAssessmentRepository);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository);
 
     @Test
     void getWorkbookAssessmentDataSheet() {
@@ -96,8 +93,15 @@ class ReportServiceTest {
         return workbook;
     }
 
+
+    private Workbook getMockWorkbookForChart() {
+        Workbook workbook = new XSSFWorkbook();
+        workbook.createSheet("Charts");
+        return workbook;
+    }
+
     @Test
-    void getChartSheetInWorkbook() {
+    void shouldCreateDataAndGenerateChart() {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
 
@@ -107,49 +111,60 @@ class ReportServiceTest {
         assessmentCategory1.setCategoryName("First Category");
         assessmentCategories.add(assessmentCategory1);
 
-        AssessmentCategory assessmentCategory2 = new AssessmentCategory();
-        assessmentCategory2.setCategoryName("Second Category");
-        assessmentCategories.add(assessmentCategory2);
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("First Module");
+        assessmentModule.setCategory(assessmentCategory1);
+        assessmentModule.setActive(true);
+
+        assessmentCategory1.setModules(Collections.singleton(assessmentModule));
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("First Topic");
+        assessmentTopic.setModule(assessmentModule);
+
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
+        assessmentTopicReference.setReferenceId(1);
+        assessmentTopicReference.setReference("First Reference");
+        assessmentTopicReference.setRating(Rating.ONE);
+        assessmentTopicReference.setTopic(assessmentTopic);
+
+        assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));
+
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        TopicLevelId topicLevelId = new TopicLevelId();
+        topicLevelId.setAssessment(assessment);
+        topicLevelId.setTopic(assessmentTopic);
+
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(1);
 
         when(categoryRepository.findAll()).thenReturn(assessmentCategories);
 
-        Map<String,List<CategoryMaturity>> dataSet = new HashMap<>();
-        List<CategoryMaturity> listOfCurrentScores = new ArrayList<>();
-        List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
-        for(AssessmentCategory assessmentCategory: assessmentCategoryList){
-            CategoryMaturity categoryMaturity = new CategoryMaturity();
-            double avgCategoryScore = 4.0;
-            categoryMaturity.setCategory(assessmentCategory.getCategoryName());
-            categoryMaturity.setScore(avgCategoryScore);
-            listOfCurrentScores.add(categoryMaturity);
-        }
-        dataSet.put("Maturity",listOfCurrentScores);
-
-
-        String series1 = "Maturity";
+        String series1 = "Current Maturity";
+        String series2 = "Desired Maturity";
 
         String category1 = "First Category";
-        String category2 = "Second Category";
 
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        dataset.addValue(5.0, series1, category1);
-        dataset.addValue(5.0, series1, category2);
+        dataset.addValue(1.0, series1, category1);
+        dataset.addValue(1.0, series2, category1);
 
         try {
-            when(chartService.generateChart(dataSet)).thenReturn(ChartsUtil.getSpiderChart(680, 480, dataset));
+            when(chartService.generateChart(any())).thenReturn(ChartsUtil.getSpiderChart(680, 480, dataset));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Workbook report = new XSSFWorkbook();
-        reportService.generateCharts(report, dataSet);
-        verify(chartService).generateChart(dataSet);
-        assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbookForChart().getSheetAt(0).getSheetName());
-    }
-    private Workbook getMockWorkbookForChart() {
+
         Workbook workbook = new XSSFWorkbook();
-        workbook.createSheet("Charts");
-        return workbook;
+        reportService.createDataAndGenerateChart(workbook, assessment.getAssessmentId(), Collections.singletonList(parameterLevelAssessment), Collections.singletonList(topicLevelAssessment));
+        verify(chartService).generateChart(any());
+        assertEquals(workbook.getSheetAt(0).getSheetName(), getMockWorkbookForChart().getSheetAt(0).getSheetName());
     }
 
 }

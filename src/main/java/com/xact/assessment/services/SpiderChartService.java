@@ -19,7 +19,7 @@ public class SpiderChartService implements ChartService {
     @SneakyThrows
     @Override
     public byte[] generateChart(Map<String, List<CategoryMaturity>> dataSet) {
-        return ChartsUtil.getSpiderChart(680, 480, createDataset(dataSet));
+        return ChartsUtil.getSpiderChart(680, 440, createDataset(dataSet));
     }
 
     private static CategoryDataset createDataset(Map<String, List<CategoryMaturity>> dataMap) {

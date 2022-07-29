@@ -53,8 +53,9 @@ public class AssessmentModule {
         double topicSum = 0;
         int topicCount = 0;
         for(AssessmentTopic assessmentTopic : this.topics){
-            if(assessmentTopic.getTopicAverage(topicLevelAssessmentList,parameterLevelAssessmentList) != 0){
-                topicSum += assessmentTopic.getTopicAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+            double averageTopic = assessmentTopic.getTopicAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+            if(averageTopic != 0){
+                topicSum += averageTopic;
                 topicCount += 1;
             }
         }

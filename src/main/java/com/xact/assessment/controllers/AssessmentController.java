@@ -78,8 +78,6 @@ public class AssessmentController {
 
             Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
-            UserId userID = new UserId();
-            userID.setAssessment(assessment);
             assessmentService.updateAssessment(assessment, assessmentUsers);
         }
         return HttpResponse.ok();

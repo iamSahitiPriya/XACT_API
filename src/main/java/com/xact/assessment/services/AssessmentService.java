@@ -14,10 +14,7 @@ import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
@@ -55,18 +52,31 @@ public class AssessmentService {
         assessmentRepository.save(assessment);
     }
 
-    public Set<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedinUser, Assessment assessment) {
+    public Set<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedInUser, Assessment assessment) {
         List<UserDto> users = assessmentRequest.getUsers();
 
+
+        Optional<AssessmentUsers> assessmentOwner = Optional.empty();
+        if (assessment.getAssessmentId() != null) {
+            assessmentOwner = usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId());
+        }
+
         Set<AssessmentUsers> assessmentUsers = new HashSet<>();
-        for (UserDto eachUser : users) {
-            if (!eachUser.getEmail().isBlank()) {
-                eachUser.setRole(UserRole.Facilitator);
-                if (loggedinUser.getUserEmail().equals(eachUser.getEmail())) {
-                    eachUser.setRole(UserRole.Owner);
+        assessmentOwner.ifPresent(assessmentUsers::add);
+        for (UserDto user : users) {
+            if (!user.getEmail().isBlank()) {
+                user.setRole(UserRole.Facilitator);
+                if (assessmentOwner.isEmpty()) {
+                    if (loggedInUser.getUserEmail().equals(user.getEmail())) {
+                        user.setRole(UserRole.Owner);
+                    }
+                } else {
+                    if (user.getEmail().equals(assessmentOwner.get().getUserId().getUserEmail())) {
+                        continue;
+                    }
                 }
-                AssessmentUsers assessmentUser = mapper.map(eachUser, AssessmentUsers.class);
-                assessmentUser.setUserId(new UserId(eachUser.getEmail(), assessment));
+                AssessmentUsers assessmentUser = mapper.map(user, AssessmentUsers.class);
+                assessmentUser.setUserId(new UserId(user.getEmail(), assessment));
                 assessmentUsers.add(assessmentUser);
             }
         }
@@ -106,7 +116,8 @@ public class AssessmentService {
         assessmentRepository.update(assessment);
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
     }
-    public void updateAssessment(Assessment assessment){
+
+    public void updateAssessment(Assessment assessment) {
         assessmentRepository.update(assessment);
     }
 

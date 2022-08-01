@@ -36,6 +36,7 @@ public class TopicLevelRecommendation{
     @JoinColumn(name = "topic", referencedColumnName = "topic_id")
     private AssessmentTopic topic;
 
+    @NotNull
     @Column(name = "recommendation")
     private String recommendation;
 

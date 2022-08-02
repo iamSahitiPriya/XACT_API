@@ -6,6 +6,7 @@ package integration;
 
 import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
 import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
+import com.xact.assessment.dtos.TopicLevelRecommendationTextRequest;
 import com.xact.assessment.dtos.TopicRatingAndRecommendation;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
@@ -393,48 +394,50 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
-//    @Test
-//    void testUpdateTopicRecommendation() throws IOException {
-//        UserId userId = new UserId();
-//        userId.setUserEmail("hello@email.com");
-//
-//        Date created = new Date(2022 - 4 - 13);
-//        Date updated = new Date(2022 - 4 - 13);
-//        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-//
-//        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
-//        userId.setAssessment(assessment);
-//
-//        AssessmentUsers assessmentUsers = new AssessmentUsers();
-//        assessmentUsers.setUserId(userId);
-//
-//        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
-//
-//
-//        Integer topicId = 1;
-//        AssessmentTopic assessmentTopic = new AssessmentTopic();
-//        assessmentTopic.setTopicId(topicId);
-//        assessmentTopic.setTopicName("Topic Name");
-//
-//        when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
-//
-//        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
-//        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
-//        topicLevelAssessment.setTopicLevelId(topicLevelId);
-////        topicLevelAssessment.setRecommendation("Recommendation");
-//
-//        when(topicLevelAssessmentRepository.findById(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
-//        when(topicLevelAssessmentRepository.save(topicLevelAssessment)).thenReturn(topicLevelAssessment);
-//
-//
-//        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-value.json");
-//
-//        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendation/1/1", dataRequest)
-//                .bearerAuth("anything"));
-//
-//        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-//
-//    }
+    @Test
+    void testUpdateTopicRecommendationText() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
+
+
+        TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest=new TopicLevelRecommendationTextRequest();
+        topicLevelRecommendationTextRequest.setRecommendation("some text");
+
+
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
+
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-text-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationText/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
 
     @Test
     void testUpdateParameterRecommendation() throws IOException {
@@ -463,7 +466,7 @@ class AssessmentControllerTest {
         when(assessmentRepository.update(any(Assessment.class))).thenReturn(assessment);
 
 
-        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-value.json");
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-text-value.json");
         var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/1/1", dataRequest)
                 .bearerAuth("anything"));
 
@@ -514,47 +517,47 @@ class AssessmentControllerTest {
 
     }
 
-//    @Test
-//    void testUpdateTopicRating() throws IOException {
-//        UserId userId = new UserId();
-//        userId.setUserEmail("hello@email.com");
-//
-//        Date created = new Date(2022 - 4 - 13);
-//        Date updated = new Date(2022 - 4 - 13);
-//        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-//
-//        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
-//        userId.setAssessment(assessment);
-//
-//        AssessmentUsers assessmentUsers = new AssessmentUsers();
-//        assessmentUsers.setUserId(userId);
-//
-//        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
-//
-//
-//        Integer topicId = 1;
-//        AssessmentTopic assessmentTopic = new AssessmentTopic();
-//        assessmentTopic.setTopicId(topicId);
-//        assessmentTopic.setTopicName("Topic Name");
-//
-//        when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
-//
-//        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
-//        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
-//        topicLevelAssessment.setTopicLevelId(topicLevelId);
-//        topicLevelAssessment.setRating(1);
-//
-//        when(topicLevelAssessmentRepository.findById(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
-//        when(topicLevelAssessmentRepository.save(topicLevelAssessment)).thenReturn(topicLevelAssessment);
-//
-//
-//        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");
-//
-//        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRating/1/1", dataRequest)
-//                .bearerAuth("anything"));
-//
-//        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-//
-//    }
+    @Test
+    void testUpdateTopicRating() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
+
+        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(1);
+
+        when(topicLevelAssessmentRepository.findById(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
+        when(topicLevelAssessmentRepository.save(topicLevelAssessment)).thenReturn(topicLevelAssessment);
+
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRating/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
 
 }

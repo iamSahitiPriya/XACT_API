@@ -217,6 +217,31 @@ public class AssessmentController {
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }
 
+    @Patch(value = "/topicRecommendationImpact/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<TopicLevelRecommendationRequest> saveTopicRecommendationFields(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if (assessment.isEditable()) {
+            TopicLevelRecommendation topicLevelRecommendation = topicAndParameterLevelAssessmentService.searchRecommendation(topicLevelRecommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
+            AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
+            topicLevelRecommendation.setAssessment(assessment);
+            topicLevelRecommendation.setTopic(assessmentTopic);
+            topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+            if(topicLevelRecommendationRequest.getImpact()!=null) {
+                topicLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(topicLevelRecommendationRequest.getImpact()));
+            }
+            else if(topicLevelRecommendationRequest.getEffort()!=null){
+                topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(topicLevelRecommendationRequest.getEffort()));
+            }
+            else{
+                topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
+            }
+            topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
+            updateAssessment(assessment);
+        }
+        return HttpResponse.ok();
+    }
+
     @Patch(value = "/topicRating/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelAssessmentRequest> saveTopicRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String rating, Authentication authentication) {

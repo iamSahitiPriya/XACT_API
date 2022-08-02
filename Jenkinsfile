@@ -4,7 +4,29 @@ pipeline {
     tools { nodejs "nodejs" }
 
     stages {
+        stage("Security check"){
+                          steps{
+                                script{
+                                       try{
+                                          sh "set +e"
+                                          sh 'docker rm $(docker ps -a -q)'
+                                          sh "docker run --rm -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common filesystem --directory ${env.WORKSPACE} --debug"
+                                          ERROR_COUNT = sh(returnStdout: true, script: "docker run -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common filesystem --directory ${env.WORKSPACE} --json | grep -c Filesystem")
+                                          if(ERROR_COUNT != 0){
+                                                throw new Exception("Build failed due to security issues. Please check the above logs.")
+                                          }
+                                       }
+                                        catch(Exception e){
+                                              if(e.getMessage() == "Build failed due to security issues. Please check the above logs."){
+                                                        currentBuild.result = "FAILURE"
+                                                        echo "${e}"
+                                                        sh "false"
+                                              }
+                                        }
+                                }
 
+                          }
+                }
         stage('Build') {
             steps {
                 sh "aws s3 cp s3://xact-artifacts/ap-south-1-bundle.pem ap-south-1-bundle.pem"
@@ -12,29 +34,7 @@ pipeline {
                 sh './gradlew clean build'
             }
         }
-        stage("Security check"){
-                  steps{
-                        script{
-                               try{
-                                  sh "set +e"
-                                  sh 'docker rm $(docker ps -a -q)'
-                                  sh "docker run --rm -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common filesystem --directory ${env.WORKSPACE} --debug"
-                                  ERROR_COUNT = sh(returnStdout: true, script: "docker run -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common filesystem --directory ${env.WORKSPACE} --json | grep -c Filesystem")
-                                  if(ERROR_COUNT != 0){
-                                        throw new Exception("Build failed due to security issues. Please check the above logs.")
-                                  }
-                               }
-                                catch(Exception e){
-                                      if(e.getMessage() == "Build failed due to security issues. Please check the above logs."){
-                                                currentBuild.result = "FAILURE"
-                                                echo "${e}"
-                                                sh "false"
-                                      }
-                                }
-                        }
 
-                  }
-        }
         stage("SonarQube analysis") {
             steps {
               withSonarQubeEnv('XACT_SONAR') {

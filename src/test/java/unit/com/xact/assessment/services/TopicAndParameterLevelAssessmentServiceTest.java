@@ -53,7 +53,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
         topicLevelRecommendationRequest.setRecommendation("some text");
         topicLevelRecommendationRequest.setDeliveryHorizon("some other teext");
         topicLevelRecommendationRequest.setImpact("HIGH");
-        topicLevelRecommendationRequest.setEffect("LOW");
+        topicLevelRecommendationRequest.setEffort("LOW");
 
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
@@ -79,7 +79,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
         assertEquals(topicLevelAssessment.getRating(), actualResponse.getRating());
         assertEquals(topicLevelAssessment.getTopicLevelId(), actualResponse.getTopicLevelId());
         assertEquals(topicLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
-        assertEquals(topicLevelRecommendation.getRecommendationEffect(), actualResponse1.getRecommendationEffect());
+        assertEquals(topicLevelRecommendation.getRecommendationEffort(), actualResponse1.getRecommendationEffort());
     }
 
     @Test
@@ -96,7 +96,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
         topicLevelRecommendationRequest.setRecommendation("some text");
         topicLevelRecommendationRequest.setDeliveryHorizon("some other teext");
         topicLevelRecommendationRequest.setImpact("HIGH");
-        topicLevelRecommendationRequest.setEffect("LOW");
+        topicLevelRecommendationRequest.setEffort("LOW");
 
         Assessment assessment1 = new Assessment();
         assessment1.setAssessmentId(assessmentId1);

@@ -1,7 +1,6 @@
 package com.xact.assessment.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Introspected;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -46,9 +45,9 @@ public class TopicLevelRecommendation{
     private RecommendationImpact recommendationImpact;
 
     @NotNull
-    @Column(name = "effect", nullable = false)
+    @Column(name = "effort", nullable = false)
     @Enumerated(EnumType.STRING)
-    private RecommendationEffect recommendationEffect;
+    private RecommendationEffort recommendationEffort;
 
     @NotNull
     @Column(name = "delivery_horizon", nullable = false, unique = true)
@@ -66,7 +65,7 @@ public class TopicLevelRecommendation{
 
     public boolean hasRecommendation() {
         return ((this.recommendation != null && !this.recommendation.isBlank()) ||
-                (this.recommendationEffect !=null && !this.recommendationEffect.toString().isBlank()) ||
+                (this.recommendationEffort !=null && !this.recommendationEffort.toString().isBlank()) ||
                 (this.recommendationImpact !=null && !this.recommendationImpact.toString().isBlank())||
                 (this.deliveryHorizon !=null && !this.deliveryHorizon.isBlank()));
     }

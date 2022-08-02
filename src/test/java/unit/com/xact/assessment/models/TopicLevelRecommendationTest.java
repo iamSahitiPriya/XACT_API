@@ -16,7 +16,7 @@ public class TopicLevelRecommendationTest {
     }
 
     @Test
-    void hasNullRecommendationEffect(){
+    void hasNullRecommendationEffort(){
         assertEquals(false, topicLevelRecommendation.hasRecommendation());
     }
 

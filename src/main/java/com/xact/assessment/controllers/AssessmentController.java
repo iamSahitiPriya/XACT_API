@@ -121,7 +121,6 @@ public class AssessmentController {
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
         List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = getTopicRatingAndRecommendationList(topicLevelAssessmentList,assessment);
 
-
         List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId());
         List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponseList = getParameterRatingAndRecommendationList(parameterLevelAssessmentList);
 
@@ -191,20 +190,41 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
-    @Patch(value = "/topicRecommendation/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+//    @Patch(value = "/topicRecommendation/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+//    @Secured(SecurityRule.IS_AUTHENTICATED)
+//    public HttpResponse<TopicLevelAssessmentRequest> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String recommendation, Authentication authentication) {
+//        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+//        if (assessment.isEditable()) {
+//            AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
+//            TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+//            TopicLevelAssessment topicLevelAssessment = topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).orElse(new TopicLevelAssessment());
+//            topicLevelAssessment.setTopicLevelId(topicLevelId);
+////            topicLevelAssessment.setRecommendation(recommendation);
+//            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+//            updateAssessment(assessment);
+//        }
+//        return HttpResponse.ok();
+//    }
+
+    @Patch(value="/topicRating/{assessmentId}/{topicId}",produces=MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelAssessmentRequest> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String recommendation, Authentication authentication) {
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable()) {
-            AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
-            TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
-            TopicLevelAssessment topicLevelAssessment = topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).orElse(new TopicLevelAssessment());
-            topicLevelAssessment.setTopicLevelId(topicLevelId);
-//            topicLevelAssessment.setRecommendation(recommendation);
-            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
-            updateAssessment(assessment);
-        }
-        return HttpResponse.ok();
+    public HttpResponse<TopicLevelRecommendationRequest> saveTopicRecommendationText(@PathVariable("assessmentId") Integer assessmentId,@PathVariable("topicId") Integer topicId,@Body @Nullable String recommendation,@Body @Nullable Integer recommendationId,Authentication authentication){
+            Assessment assessment= getAuthenticatedAssessment(assessmentId,authentication);
+            if(assessment.isEditable()){
+                AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
+                List<TopicLevelRecommendation> topicLevelRecommendationList=topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId,topicId);
+                for(TopicLevelRecommendation topicLevelRecommendation :topicLevelRecommendationList){
+                   topicLevelRecommendation.setAssessment(assessment);
+                   topicLevelRecommendation.setTopic(assessmentTopic);
+                   Integer recommendationIdentity=recommendationId !=null ? recommendationId:null;
+                   topicLevelRecommendation.setRecommendationId(recommendationIdentity);
+                   topicLevelRecommendation.setRecommendation(recommendation);
+                   topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
+                   updateAssessment(assessment);
+                }
+
+            }
+            return HttpResponse.ok();
     }
 
     @Patch(value = "/topicRating/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
@@ -340,7 +360,7 @@ public class AssessmentController {
             TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
             topicLevelRecommendationRequest.setRecommendationId(eachTopicLevelRecommendation.getRecommendationId());
             topicLevelRecommendationRequest.setRecommendation(eachTopicLevelRecommendation.getRecommendation());
-            topicLevelRecommendationRequest.setEffect(eachTopicLevelRecommendation.getRecommendationEffect().toString());
+            topicLevelRecommendationRequest.setEffort(eachTopicLevelRecommendation.getRecommendationEffort().toString());
             topicLevelRecommendationRequest.setImpact(eachTopicLevelRecommendation.getRecommendationImpact().toString());
             topicLevelRecommendationRequest.setDeliveryHorizon(eachTopicLevelRecommendation.getDeliveryHorizon());
             topicLevelRecommendationRequestList.add(topicLevelRecommendationRequest);

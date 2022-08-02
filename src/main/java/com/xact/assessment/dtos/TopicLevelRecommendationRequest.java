@@ -17,6 +17,6 @@ public class TopicLevelRecommendationRequest {
     private Integer recommendationId;
     private String recommendation;
     private String impact;
-    private String effect;
+    private String effort;
     private String deliveryHorizon;
 }

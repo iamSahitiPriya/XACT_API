@@ -20,13 +20,13 @@
       {
         "recommendation":"some recommendation",
         "impact":"LOW",
-        "effect":"HIGH",
+        "effort":"HIGH",
         "deliveryHorizon":"some text"
       },
       {
         "recommendation":"some more recommendation",
         "impact":"LOW",
-        "effect":"HIGH",
+        "effort":"HIGH",
         "deliveryHorizon":"some more text"
       }
     ]

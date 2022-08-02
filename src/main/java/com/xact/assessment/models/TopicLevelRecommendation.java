@@ -39,17 +39,17 @@ public class TopicLevelRecommendation{
     @Column(name = "recommendation")
     private String recommendation;
 
-    @NotNull
+
     @Column(name = "impact", nullable = false)
     @Enumerated(EnumType.STRING)
     private RecommendationImpact recommendationImpact;
 
-    @NotNull
+
     @Column(name = "effort", nullable = false)
     @Enumerated(EnumType.STRING)
     private RecommendationEffort recommendationEffort;
 
-    @NotNull
+
     @Column(name = "delivery_horizon", nullable = false, unique = true)
     private String deliveryHorizon;
 

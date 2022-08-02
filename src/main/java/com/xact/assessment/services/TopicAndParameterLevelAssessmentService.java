@@ -113,4 +113,8 @@ public class TopicAndParameterLevelAssessmentService {
     public Optional<TopicLevelAssessment> searchTopic(TopicLevelId topicLevelId) {
         return topicLevelAssessmentRepository.findById(topicLevelId);
     }
+
+    public Optional<TopicLevelRecommendation> searchRecommendation(Integer recommendationId) {
+        return topicLevelRecommendationRepository.findById(recommendationId);
+    }
 }

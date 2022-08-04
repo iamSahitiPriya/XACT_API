@@ -440,6 +440,157 @@ class AssessmentControllerTest {
     }
 
     @Test
+    void testUpdateTopicRecommendationImpact() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
+
+
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setRecommendation("some recommendation");
+
+        when(topicLevelRecommendationRepository.findById(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendationId(1);
+        topicLevelRecommendationRequest.setImpact("HIGH");
+
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-impact-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationImpact/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
+
+    @Test
+    void testUpdateTopicRecommendationEffect() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
+
+
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setRecommendation("some recommendation");
+
+        when(topicLevelRecommendationRepository.findById(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendationId(1);
+        topicLevelRecommendationRequest.setEffort("MEDIUM");
+
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+        topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-effort-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationImpact/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
+
+    @Test
+    void testUpdateTopicRecommendationDeliveryHorizon() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
+
+
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setRecommendation("some recommendation");
+
+        when(topicLevelRecommendationRepository.findById(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendationId(1);
+        topicLevelRecommendationRequest.setDeliveryHorizon("some text");
+
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+        topicLevelRecommendation.setDeliveryHorizon("");
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-deliveryHorizon-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationImpact/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
+    @Test
     void testUpdateParameterRecommendation() throws IOException {
         UserId userId = new UserId();
         userId.setUserEmail("hello@email.com");

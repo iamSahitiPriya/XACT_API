@@ -230,10 +230,10 @@ public class AssessmentController {
             if(topicLevelRecommendationRequest.getImpact()!=null) {
                 topicLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(topicLevelRecommendationRequest.getImpact()));
             }
-            else if(topicLevelRecommendationRequest.getEffort()!=null){
+           if(topicLevelRecommendationRequest.getEffort()!=null){
                 topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(topicLevelRecommendationRequest.getEffort()));
             }
-            else{
+           if(topicLevelRecommendationRequest.getDeliveryHorizon() != null) {
                 topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
             }
             topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
@@ -375,9 +375,16 @@ public class AssessmentController {
             TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
             topicLevelRecommendationRequest.setRecommendationId(eachTopicLevelRecommendation.getRecommendationId());
             topicLevelRecommendationRequest.setRecommendation(eachTopicLevelRecommendation.getRecommendation());
-            topicLevelRecommendationRequest.setEffort(eachTopicLevelRecommendation.getRecommendationEffort().toString());
-            topicLevelRecommendationRequest.setImpact(eachTopicLevelRecommendation.getRecommendationImpact().toString());
-            topicLevelRecommendationRequest.setDeliveryHorizon(eachTopicLevelRecommendation.getDeliveryHorizon());
+            if (eachTopicLevelRecommendation.getRecommendationEffort() != null) {
+                topicLevelRecommendationRequest.setEffort(eachTopicLevelRecommendation.getRecommendationEffort().toString());
+            }
+            if (eachTopicLevelRecommendation.getRecommendationImpact() != null) {
+                topicLevelRecommendationRequest.setImpact(eachTopicLevelRecommendation.getRecommendationImpact().toString());
+            }
+            if (eachTopicLevelRecommendation.getDeliveryHorizon() != null) {
+                topicLevelRecommendationRequest.setDeliveryHorizon(eachTopicLevelRecommendation.getDeliveryHorizon());
+            }
+
             topicLevelRecommendationRequestList.add(topicLevelRecommendationRequest);
         }
         return topicLevelRecommendationRequestList;

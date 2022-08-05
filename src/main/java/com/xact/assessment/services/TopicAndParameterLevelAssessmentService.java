@@ -24,13 +24,13 @@ public class TopicAndParameterLevelAssessmentService {
     public TopicLevelAssessment saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
 
         if (topicLevelAssessmentRepository.existsById(topicLevelAssessment.getTopicLevelId())) {
-            if (topicLevelAssessment.getRating() == null) {
+            if (topicLevelAssessment.getRating() == null && topicLevelAssessment.getRecommendation() == null) {
                 topicLevelAssessmentRepository.delete(topicLevelAssessment);
             } else {
                 topicLevelAssessmentRepository.update(topicLevelAssessment);
             }
         } else {
-            if (topicLevelAssessment.getRating() != null)
+            if (topicLevelAssessment.getRating() != null || topicLevelAssessment.getRecommendation() !=null)
                 topicLevelAssessmentRepository.save(topicLevelAssessment);
         }
         return topicLevelAssessment;
@@ -40,13 +40,13 @@ public class TopicAndParameterLevelAssessmentService {
     public ParameterLevelAssessment saveRatingAndRecommendation(ParameterLevelAssessment parameterLevelAssessment) {
 
         if (parameterLevelAssessmentRepository.existsById(parameterLevelAssessment.getParameterLevelId())) {
-            if (parameterLevelAssessment.getRating() == null) {
+            if (parameterLevelAssessment.getRating() == null && parameterLevelAssessment.getRecommendation() == null) {
                 parameterLevelAssessmentRepository.delete(parameterLevelAssessment);
             } else {
                 parameterLevelAssessmentRepository.update(parameterLevelAssessment);
             }
         } else {
-            if (parameterLevelAssessment.getRating() != null) {
+            if (parameterLevelAssessment.getRating() != null || parameterLevelAssessment.getRecommendation() !=null) {
                 parameterLevelAssessmentRepository.save(parameterLevelAssessment);
             }
         }

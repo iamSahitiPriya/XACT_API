@@ -73,7 +73,8 @@ public class TopicAndParameterLevelAssessmentService {
         if (topicLevelRecommendation.getRecommendationId()!=null) {
             if (topicLevelRecommendation.hasRecommendation()) {
                 topicLevelRecommendationRepository.update(topicLevelRecommendation);
-            } else {
+            }
+           else{
                 topicLevelRecommendationRepository.delete(topicLevelRecommendation);
             }
         } else {

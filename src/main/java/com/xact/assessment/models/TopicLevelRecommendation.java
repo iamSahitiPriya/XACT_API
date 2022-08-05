@@ -69,4 +69,5 @@ public class TopicLevelRecommendation{
                 (this.recommendationImpact !=null && !this.recommendationImpact.toString().isBlank())||
                 (this.deliveryHorizon !=null && !this.deliveryHorizon.isBlank()));
     }
+
 }

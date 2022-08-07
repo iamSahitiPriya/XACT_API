@@ -66,4 +66,8 @@ public class AssessmentCategory {
         return moduleSum/moduleCount;
     }
 
+    public AssessmentCategory(Integer categoryId, String categoryName) {
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
+    }
 }

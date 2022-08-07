@@ -65,4 +65,10 @@ public class AssessmentModule {
         }
         return topicSum/topicCount;
     }
+
+    public AssessmentModule(Integer moduleId, String moduleName, AssessmentCategory category) {
+        this.moduleId = moduleId;
+        this.moduleName = moduleName;
+        this.category = category;
+    }
 }

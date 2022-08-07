@@ -18,4 +18,8 @@ public interface CategoryRepository extends CrudRepository<AssessmentCategory, I
     @Executable
     @Query("SELECT category FROM AssessmentCategory category WHERE category.isActive=true")
     List<AssessmentCategory> findAll();
+
+    @Executable
+    @Query("SELECT category FROM AssessmentCategory category WHERE category.categoryId=:categoryId")
+    AssessmentCategory findCategoryById(Integer categoryId);
 }

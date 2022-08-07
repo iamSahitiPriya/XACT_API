@@ -9,9 +9,12 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.security.annotation.Secured;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -84,6 +87,36 @@ public class AssessmentMasterDataController {
             assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(mapper.map(assessmentCategory, AssessmentCategoryDto.class)));
         }
         return HttpResponse.ok(assessmentCategoriesResponse);
+    }
+    @Post(value= "/category", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body AssessmentCategoryRequest assessmentCategory){
+        assessmentMasterDataService.createAssessmentMasterData(assessmentCategory);
+        return HttpResponse.ok();
+    }
+    @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AssessmentModule> createAssessmentModule(@Body List<AssessmentModuleRequest> assessmentModules){
+        for(AssessmentModuleRequest assessmentModule:assessmentModules) {
+            assessmentMasterDataService.createAssessmentModule(assessmentModule);
+        }
+        return HttpResponse.ok();
+    }
+    @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AssessmentTopic> createTopics(@Body List<AssessmentTopicRequest> assessmentTopicRequests){
+        for(AssessmentTopicRequest assessmentTopicRequest:assessmentTopicRequests) {
+            assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
+        }
+        return HttpResponse.ok();
+    }
+    @Post(value = "/parameters",produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AssessmentParameter> createParameters(@Body List<AssessmentParameterRequest> assessmentParameterRequests){
+        for(AssessmentParameterRequest assessmentParameter:assessmentParameterRequests){
+            assessmentMasterDataService.createAssessmentParameter(assessmentParameter);
+        }
+        return HttpResponse.ok();
     }
 
 }

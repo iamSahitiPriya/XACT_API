@@ -14,4 +14,8 @@ public interface ModuleRepository extends CrudRepository<AssessmentModule, Integ
     @Executable
     @Query("SELECT pla FROM AssessmentModule pla WHERE pla.category.categoryId=:categoryId")
     List<AssessmentModule> findByCategory(@Parameter("categoryId") Integer categoryId);
+
+    @Executable
+    @Query("SELECT module FROM AssessmentModule module WHERE module.moduleId=:moduleId")
+    AssessmentModule findByModuleId(Integer moduleId);
 }

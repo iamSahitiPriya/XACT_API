@@ -15,4 +15,8 @@ public interface AssessmentTopicRepository extends CrudRepository<AssessmentTopi
     @Executable
     @Query("SELECT pla FROM AssessmentTopic pla WHERE pla.module.moduleId=:moduleId")
     List<AssessmentTopic> findByModule(@Parameter("moduleId") Integer moduleId);
+
+    @Executable
+    @Query("SELECT topic FROM AssessmentTopic topic WHERE topic.topicId=:topicId")
+    AssessmentTopic findByTopicId(Integer topicId);
 }

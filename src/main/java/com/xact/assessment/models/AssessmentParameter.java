@@ -57,4 +57,10 @@ public class AssessmentParameter {
     public Integer getRating() {
         return rating == null ? 0 : rating;
     }
+
+    public AssessmentParameter(Integer parameterId, String parameterName, AssessmentTopic topic) {
+        this.parameterId = parameterId;
+        this.parameterName = parameterName;
+        this.topic = topic;
+    }
 }

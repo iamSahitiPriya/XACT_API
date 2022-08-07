@@ -87,4 +87,9 @@ public class AssessmentTopic {
     public boolean hasReferences() {
         return references != null && references.size() > 0;
     }
+    public AssessmentTopic(Integer topicId, String topicName, AssessmentModule module) {
+        this.topicId = topicId;
+        this.topicName = topicName;
+        this.module = module;
+    }
 }

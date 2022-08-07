@@ -42,4 +42,9 @@ public class Question {
     @JoinColumn(name = "parameter", referencedColumnName = "parameter_id")
     private AssessmentParameter parameter;
 
+    public Question(Integer questionId, String questionText, AssessmentParameter parameter) {
+        this.questionId = questionId;
+        this.questionText = questionText;
+        this.parameter = parameter;
+    }
 }

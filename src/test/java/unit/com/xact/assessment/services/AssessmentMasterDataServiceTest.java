@@ -23,7 +23,7 @@ class AssessmentMasterDataServiceTest {
     private final AssessmentParameterRepository assessmentParameterRepository = mock(AssessmentParameterRepository.class);
     private final QuestionRepository questionRepository = mock(QuestionRepository.class);
 
-    private AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleRepository,assessmentTopicRepository,assessmentParameterRepository);
+    private AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleRepository,assessmentTopicRepository,assessmentParameterRepository,questionRepository);
 
     @Test
     void getAllCategories() {

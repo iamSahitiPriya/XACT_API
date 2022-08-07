@@ -118,5 +118,13 @@ public class AssessmentMasterDataController {
         }
         return HttpResponse.ok();
     }
+    @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<Question> createQuestions(@Body List<QuestionRequest> questionRequests){
+        for(QuestionRequest questionRequest:questionRequests) {
+            assessmentMasterDataService.createAssessmentQuestions(questionRequest);
+        }
+        return HttpResponse.ok();
+    }
 
 }

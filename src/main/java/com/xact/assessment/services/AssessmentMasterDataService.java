@@ -4,10 +4,7 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentCategoryRequest;
-import com.xact.assessment.dtos.AssessmentModuleRequest;
-import com.xact.assessment.dtos.AssessmentParameterRequest;
-import com.xact.assessment.dtos.AssessmentTopicRequest;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
@@ -24,11 +21,12 @@ public class AssessmentMasterDataService {
     QuestionRepository questionRepository;
 
 
-    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleRepository modulesRepository, AssessmentTopicRepository assessmentTopicRepository, AssessmentParameterRepository assessmentParameterRepository) {
+    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleRepository modulesRepository, AssessmentTopicRepository assessmentTopicRepository, AssessmentParameterRepository assessmentParameterRepository, QuestionRepository questionRepository) {
         this.categoryRepository = categoryRepository;
         this.modulesRepository = modulesRepository;
         this.assessmentTopicRepository = assessmentTopicRepository;
         this.assessmentParameterRepository = assessmentParameterRepository;
+        this.questionRepository = questionRepository;
     }
 
     public List<AssessmentCategory> getAllCategories() {
@@ -62,4 +60,12 @@ public class AssessmentMasterDataService {
         assessmentParameterRepository.save(assessmentParameter1);
 
     }
+
+    public void createAssessmentQuestions(QuestionRequest questionRequest) {
+        AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(questionRequest.getParameter());
+        Question question = new Question(questionRequest.getQuestionId(),questionRequest.getQuestionText(),assessmentParameter);
+        System.out.println(question.getQuestionId() + question.getQuestionText() + question.getParameter());
+        questionRepository.save(question);
+    }
+
 }

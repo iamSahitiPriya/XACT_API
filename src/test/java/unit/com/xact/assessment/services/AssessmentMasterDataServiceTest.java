@@ -4,8 +4,14 @@
 
 package unit.com.xact.assessment.services;
 
+import com.xact.assessment.dtos.AssessmentCategoryRequest;
+import com.xact.assessment.dtos.AssessmentModuleRequest;
+import com.xact.assessment.dtos.AssessmentParameterRequest;
+import com.xact.assessment.dtos.AssessmentTopicRequest;
 import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.AssessmentTopicReference;
+import com.xact.assessment.models.AssessmentModule;
+import com.xact.assessment.models.AssessmentParameter;
+import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.ParameterService;
@@ -46,4 +52,62 @@ class AssessmentMasterDataServiceTest {
         verify(categoryRepository).findAll();
     }
 
+    @Test
+    void shouldCreateCategory() {
+        AssessmentCategoryRequest categoryRequest = new AssessmentCategoryRequest();
+        categoryRequest.setCategoryId(1);
+        categoryRequest.setCategoryName("Dummy category");
+        categoryRequest.setActive(false);
+        assessmentMasterDataService.createAssessmentCategory(categoryRequest);
+        AssessmentCategory assessmentCategory = new AssessmentCategory(categoryRequest.getCategoryId(),categoryRequest.getCategoryName());
+
+        when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
+        verify(categoryRepository).save(assessmentCategory);
+    }
+
+    @Test
+    void shouldCreateModule() {
+        AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
+        assessmentModuleRequest.setModuleId(1);
+        assessmentModuleRequest.setModuleName("Dummy module");
+        assessmentModuleRequest.setActive(false);
+        assessmentModuleRequest.setCategory(1);
+        AssessmentCategory category = new AssessmentCategory(1,"Dummy");
+        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
+
+
+        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleId(),assessmentModuleRequest.getModuleName(),category);
+        when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
+        assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest);
+        verify(moduleRepository).save(assessmentModule);
+    }
+
+    @Test
+    void shouldCreateTopic() {
+        AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
+        topicRequest.setTopicId(1);
+        topicRequest.setTopicName("topic");
+        topicRequest.setModule(1);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        AssessmentTopic assessmentTopic = new AssessmentTopic(topicRequest.getTopicId(),topicRequest.getTopicName(),assessmentModule);
+
+        topicService.createTopic(assessmentTopic);
+        verify(topicService).createTopic(assessmentTopic);
+
+    }
+
+    @Test
+    void shouldCreateParameter() {
+        AssessmentParameterRequest parameterRequest = new AssessmentParameterRequest();
+        parameterRequest.setParameterId(1);
+        parameterRequest.setParameterName("parameter");
+        parameterRequest.setTopic(1);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        AssessmentParameter assessmentParameter = new AssessmentParameter(parameterRequest.getParameterId(),parameterRequest.getParameterName(),assessmentTopic);
+
+        parameterService.createParameter(assessmentParameter);
+        verify(parameterService).createParameter(assessmentParameter);
+    }
 }

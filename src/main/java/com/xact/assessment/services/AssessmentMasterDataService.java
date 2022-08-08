@@ -38,7 +38,7 @@ public class AssessmentMasterDataService {
         return categoryRepository.findAll();
     }
 
-    public void createAssessmentMasterData(AssessmentCategoryRequest assessmentCategoryRequest) {
+    public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
         AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryId(), assessmentCategoryRequest.getCategoryName());
         assessmentCategory.setActive(assessmentCategoryRequest.isActive());
         categoryRepository.save(assessmentCategory);

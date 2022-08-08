@@ -9,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ParameterServiceTest {
     private ParameterService parameterService;
@@ -37,4 +36,15 @@ class ParameterServiceTest {
 
     }
 
+    @Test
+    void shouldSaveParameterWhenInputsAreGiven() {
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(assessmentParameterRepository.save(assessmentParameter)).thenReturn(assessmentParameter);
+        parameterService.createParameter(assessmentParameter);
+
+        verify(assessmentParameterRepository).save(assessmentParameter);
+    }
 }

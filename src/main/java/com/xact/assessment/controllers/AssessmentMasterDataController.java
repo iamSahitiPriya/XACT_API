@@ -9,10 +9,7 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
@@ -91,7 +88,7 @@ public class AssessmentMasterDataController {
     @Post(value = "/category", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body AssessmentCategoryRequest assessmentCategory) {
-        assessmentMasterDataService.createAssessmentMasterData(assessmentCategory);
+        assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
         return HttpResponse.ok();
     }
 
@@ -144,6 +141,12 @@ public class AssessmentMasterDataController {
         for(ParameterReferencesRequest parameterReferencesRequest:parameterReferencesRequests){
             assessmentMasterDataService.createAssessmentParameterReferences(parameterReferencesRequest);
         }
+        return HttpResponse.ok();
+    }
+    @Put(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateCategory(@PathVariable("categoryId")Integer categoryId, @Body AssessmentCategoryRequest assessmentCategoryRequest){
+
         return HttpResponse.ok();
     }
 

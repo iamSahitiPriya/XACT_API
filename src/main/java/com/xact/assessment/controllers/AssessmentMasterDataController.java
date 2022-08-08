@@ -143,11 +143,24 @@ public class AssessmentMasterDataController {
         }
         return HttpResponse.ok();
     }
-    @Put(value = "/{categoryId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/category/{categoryId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse updateCategory(@PathVariable("categoryId")Integer categoryId, @Body AssessmentCategoryRequest assessmentCategoryRequest){
-
+        AssessmentCategory assessmentCategory = getCategory(categoryId);
+        assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
+        assessmentCategory.setActive(assessmentCategoryRequest.isActive());
+        assessmentMasterDataService.updateCategory(assessmentCategory);
         return HttpResponse.ok();
+    }
+    @Put(value = "/module/{moduleId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateModule(@PathVariable("moduleId")Integer moduleId, @Body AssessmentModuleRequest assessmentModuleRequest){
+        assessmentMasterDataService.updateModule(moduleId,assessmentModuleRequest);
+        return HttpResponse.ok();
+    }
+
+    private AssessmentCategory getCategory(Integer categoryId) {
+        return assessmentMasterDataService.getCategory(categoryId);
     }
 
 }

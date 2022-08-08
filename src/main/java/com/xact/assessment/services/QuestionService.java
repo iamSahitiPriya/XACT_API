@@ -16,4 +16,7 @@ public class QuestionService {
     public Optional<Question> getQuestion(Integer questionId){
         return questionRepository.findById(questionId);
     }
+    public void createQuestion(Question question){
+        questionRepository.save(question);
+    }
 }

@@ -16,4 +16,7 @@ public class ParameterService {
     public Optional<AssessmentParameter> getParameter(Integer parameterId) {
         return  assessmentParameterRepository.findById(parameterId);
     }
+    public void createParameter(AssessmentParameter parameter){
+        assessmentParameterRepository.save(parameter);
+    }
 }

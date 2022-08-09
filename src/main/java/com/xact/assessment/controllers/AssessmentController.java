@@ -220,7 +220,6 @@ public class AssessmentController {
                 topicLevelRecommendationResponse.setRecommendationId(null);
             }
 
-
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }
@@ -251,6 +250,16 @@ public class AssessmentController {
         else{
             topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
         }
+    }
+
+    @Delete(value = "/deleteRecommendation/{assessmentId}/{parameterId}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<TopicLevelRecommendationRequest> deleteRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if (assessment.isEditable()) {
+            topicAndParameterLevelAssessmentService.deleteRecommendation(topicLevelRecommendationRequest.getRecommendationId());
+        }
+        return HttpResponse.ok();
     }
 
     private void saveTopicRecommendationEffort(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
@@ -392,7 +401,7 @@ public class AssessmentController {
             eachTopicRatingAndRecommendation.setTopicId(eachTopicDto.getTopicId());
             topicRecommendationResponseList.removeIf(recommendation -> recommendation.getTopicId() == eachTopicDto.getTopicId());
             eachTopicRatingAndRecommendation.setRating(eachTopic.getRating());
-            List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessment.getAssessmentId(), eachTopicDto.getTopicId());
+            List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessment.getAssessmentId(),eachTopicDto.getTopicId());
             List<TopicLevelRecommendationRequest> topicLevelRecommendationRequests = getRecommendationData(topicLevelRecommendationList);
             eachTopicRatingAndRecommendation.setTopicLevelRecommendationRequest(topicLevelRecommendationRequests);
             topicRatingAndRecommendationsResponseList.add(eachTopicRatingAndRecommendation);

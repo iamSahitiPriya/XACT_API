@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static org.hibernate.sql.InFragment.NULL;
+
 @Singleton
 public class TopicAndParameterLevelAssessmentService {
 
@@ -74,7 +76,7 @@ public class TopicAndParameterLevelAssessmentService {
             if (topicLevelRecommendation.hasRecommendation()) {
                 topicLevelRecommendationRepository.update(topicLevelRecommendation);
             }
-           else{
+            else{
                 topicLevelRecommendationRepository.delete(topicLevelRecommendation);
             }
         } else {
@@ -119,11 +121,21 @@ public class TopicAndParameterLevelAssessmentService {
         return topicLevelRecommendationRepository.findById(recommendationId);
     }
 
+
+    public void deleteRecommendation(Integer recommendationId) {
+      topicLevelRecommendationRepository.deleteById(recommendationId);
+    }
+
+
     public boolean checkRecommendationId(Integer recommendationId) {
         return topicLevelRecommendationRepository.existsById(recommendationId);
     }
 
+
     public List<TopicLevelRecommendation> getAssessmentRecommendationData(Integer assessmentId) {
         return  topicLevelRecommendationRepository.findByAssessment(assessmentId);
     }
+
+
+
 }

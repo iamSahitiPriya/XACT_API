@@ -22,4 +22,5 @@ public interface TopicLevelRecommendationRepository extends CrudRepository<Topic
     @Query("SELECT tlr FROM TopicLevelRecommendation tlr WHERE tlr.assessment.assessmentId=:assessmentId")
     List<TopicLevelRecommendation> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
 
+
 }

@@ -17,6 +17,7 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.OngoingStubbing;
 import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
@@ -418,11 +419,14 @@ class AssessmentControllerTest {
 
 
         TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest=new TopicLevelRecommendationTextRequest();
+
         topicLevelRecommendationTextRequest.setRecommendation("some recommendation");
         topicLevelRecommendationTextRequest.setRecommendationId(1);
         TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
         when(topicLevelRecommendationRepository.existsById(topicLevelRecommendationTextRequest.getRecommendationId())).thenReturn(false);
         when(topicLevelRecommendationRepository.findById(topicLevelRecommendationTextRequest.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+
+
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
@@ -586,6 +590,53 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
+    }
+
+    @Test
+    void testDeleteTopicRecommendationWithRecommendationId() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
+
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest=new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendationId(1);
+
+
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+
+//        OngoingStubbing<T> tOngoingStubbing = when(topicLevelRecommendationRepository.deleteById(topicLevelRecommendationRequest.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        topicLevelRecommendation.setRecommendation("some dummy recommendation");
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/delete-topic-recommendation-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/deleteRecommendation/{assessmentId}/{parameterId}", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
     @Test
     void testUpdateParameterRecommendation() throws IOException {

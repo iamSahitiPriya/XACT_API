@@ -525,10 +525,14 @@ class AssessmentControllerTest {
         topicLevelRecommendationTextRequest.setRecommendationId(1);
 
         TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
+
+        when(topicAndParameterLevelAssessmentService.searchRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+
         topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
+
 
         when(topicAndParameterLevelAssessmentService.searchRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
@@ -707,6 +711,62 @@ class AssessmentControllerTest {
 
         assertEquals(topicLevelRecommendation.getDeliveryHorizon(),"some text");
         verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+    }
+
+    @Test
+    void testDeleteRecommendationWithRecommendationId() {
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setRecommendation("some recommendation");
+
+        when(topicAndParameterLevelAssessmentService.searchRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendationId(1);
+
+
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+        topicLevelRecommendation.setRecommendation("some dummy recommendation");
+        topicLevelRecommendation.setDeliveryHorizon("some text");
+
+        HttpResponse<TopicLevelRecommendationRequest> actualResponse=assessmentController.deleteRecommendation(assessmentId,topicId,topicLevelRecommendationRequest,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+        verify(topicAndParameterLevelAssessmentService).deleteRecommendation(topicLevelRecommendationRequest.getRecommendationId());
     }
     @Test
     void testUpdateAssessmentTopicRating() {

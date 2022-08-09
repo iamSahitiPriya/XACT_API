@@ -14,7 +14,4 @@ import lombok.Setter;
 public class TopicLevelRecommendationTextRequest {
     private Integer recommendationId;
     private String recommendation;
-    private String impact;
-    private String effort;
-    private String deliveryHorizon;
 }

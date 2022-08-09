@@ -753,20 +753,18 @@ class AssessmentControllerTest {
 
         when(topicAndParameterLevelAssessmentService.searchRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendationId(1);
-
+         Integer recommendationId =1;
 
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+        topicLevelRecommendation.setRecommendationId(recommendationId);
         topicLevelRecommendation.setRecommendation("some dummy recommendation");
         topicLevelRecommendation.setDeliveryHorizon("some text");
 
-        HttpResponse<TopicLevelRecommendationRequest> actualResponse=assessmentController.deleteRecommendation(assessmentId,topicId,topicLevelRecommendationRequest,authentication);
+        HttpResponse<TopicLevelRecommendationRequest> actualResponse=assessmentController.deleteRecommendation(assessmentId,topicId,recommendationId,authentication);
 
         assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
-        verify(topicAndParameterLevelAssessmentService).deleteRecommendation(topicLevelRecommendationRequest.getRecommendationId());
+        verify(topicAndParameterLevelAssessmentService).deleteRecommendation(recommendationId);
     }
     @Test
     void testUpdateAssessmentTopicRating() {

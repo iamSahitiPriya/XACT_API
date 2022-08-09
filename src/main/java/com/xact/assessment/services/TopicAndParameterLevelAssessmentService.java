@@ -118,4 +118,12 @@ public class TopicAndParameterLevelAssessmentService {
     public Optional<TopicLevelRecommendation> searchRecommendation(Integer recommendationId) {
         return topicLevelRecommendationRepository.findById(recommendationId);
     }
+
+    public boolean checkRecommendationId(Integer recommendationId) {
+        return topicLevelRecommendationRepository.existsById(recommendationId);
+    }
+
+    public List<TopicLevelRecommendation> getAssessmentRecommendationData(Integer assessmentId) {
+        return  topicLevelRecommendationRepository.findByAssessment(assessmentId);
+    }
 }

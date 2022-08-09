@@ -119,7 +119,9 @@ public class AssessmentController {
         List<String> users = assessmentService.getAssessmentUsers(assessmentId);
 
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
-        List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = getTopicRatingAndRecommendationList(topicLevelAssessmentList, assessment);
+        List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getAssessmentRecommendationData(assessment.getAssessmentId());
+        ArrayList<TopicRatingAndRecommendation> topicRecommendationResponseList = getRecommendationList(topicLevelRecommendationList,assessment.getAssessmentId());
+        List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = getTopicRatingAndRecommendationList(topicLevelAssessmentList, assessment,topicRecommendationResponseList);
 
         List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId());
         List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponseList = getParameterRatingAndRecommendationList(parameterLevelAssessmentList);
@@ -211,8 +213,13 @@ public class AssessmentController {
             }
             topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
             updateAssessment(assessment);
-            topicLevelRecommendationResponse.setRecommendationId(topicLevelRecommendation.getRecommendationId());
-            topicLevelRecommendationResponse.setRecommendation(topicLevelRecommendation.getRecommendation());
+            if(topicAndParameterLevelAssessmentService.checkRecommendationId(topicLevelRecommendation.getRecommendationId())){
+                topicLevelRecommendationResponse.setRecommendationId(topicLevelRecommendation.getRecommendationId());
+                topicLevelRecommendationResponse.setRecommendation(topicLevelRecommendation.getRecommendation());
+            }else {
+                topicLevelRecommendationResponse.setRecommendationId(null);
+            }
+
 
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
@@ -377,18 +384,36 @@ public class AssessmentController {
         return answerResponseList;
     }
 
-    private List<TopicRatingAndRecommendation> getTopicRatingAndRecommendationList(List<TopicLevelAssessment> topicLevelAssessmentList, Assessment assessment) {
+    private List<TopicRatingAndRecommendation> getTopicRatingAndRecommendationList(List<TopicLevelAssessment> topicLevelAssessmentList, Assessment assessment, ArrayList<TopicRatingAndRecommendation> topicRecommendationResponseList) {
         List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = new ArrayList<>();
         for (TopicLevelAssessment eachTopic : topicLevelAssessmentList) {
             TopicRatingAndRecommendation eachTopicRatingAndRecommendation = new TopicRatingAndRecommendation();
             AssessmentTopicDto eachTopicDto = modelMapper.map(eachTopic.getTopicLevelId(), AssessmentTopicDto.class);
             eachTopicRatingAndRecommendation.setTopicId(eachTopicDto.getTopicId());
+            topicRecommendationResponseList.removeIf(recommendation -> recommendation.getTopicId() == eachTopicDto.getTopicId());
             eachTopicRatingAndRecommendation.setRating(eachTopic.getRating());
             List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessment.getAssessmentId(), eachTopicDto.getTopicId());
             List<TopicLevelRecommendationRequest> topicLevelRecommendationRequests = getRecommendationData(topicLevelRecommendationList);
             eachTopicRatingAndRecommendation.setTopicLevelRecommendationRequest(topicLevelRecommendationRequests);
             topicRatingAndRecommendationsResponseList.add(eachTopicRatingAndRecommendation);
         }
+        topicRatingAndRecommendationsResponseList.addAll(topicRecommendationResponseList);
+        return topicRatingAndRecommendationsResponseList;
+    }
+
+    private ArrayList<TopicRatingAndRecommendation> getRecommendationList(List<TopicLevelRecommendation> topicLevelRecommendationList, Integer assessmentId) {
+        ArrayList<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = new ArrayList<>();
+        for (TopicLevelRecommendation eachRecommendation : topicLevelRecommendationList) {
+            TopicRatingAndRecommendation eachTopicRatingAndRecommendation = new TopicRatingAndRecommendation();
+            List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId,eachRecommendation.getTopic().getTopicId());
+            List<TopicLevelRecommendationRequest> topicLevelRecommendationRequests = getRecommendationData(topicLevelRecommendationList1);
+            eachTopicRatingAndRecommendation.setTopicLevelRecommendationRequest(topicLevelRecommendationRequests);
+            eachTopicRatingAndRecommendation.setTopicId(eachRecommendation.getTopic().getTopicId());
+            topicRatingAndRecommendationsResponseList.add(eachTopicRatingAndRecommendation);
+        }
+        HashSet<TopicRatingAndRecommendation> uniqueTopicLevelRecommendation = new HashSet<>(topicRatingAndRecommendationsResponseList);
+        topicRatingAndRecommendationsResponseList.clear();
+        topicRatingAndRecommendationsResponseList.addAll(uniqueTopicLevelRecommendation);
         return topicRatingAndRecommendationsResponseList;
     }
 

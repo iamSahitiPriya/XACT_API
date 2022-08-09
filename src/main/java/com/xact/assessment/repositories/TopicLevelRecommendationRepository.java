@@ -17,4 +17,9 @@ public interface TopicLevelRecommendationRepository extends CrudRepository<Topic
     @Executable
     @Query("SELECT tlr FROM TopicLevelRecommendation tlr WHERE tlr.assessment.assessmentId=:assessmentId and tlr.topic.topicId=:topicId")
     List<TopicLevelRecommendation> findByAssessmentAndTopic(@Parameter("assessmentId") Integer assessmentId,@Parameter("topicId") Integer topicId);
+
+    @Executable
+    @Query("SELECT tlr FROM TopicLevelRecommendation tlr WHERE tlr.assessment.assessmentId=:assessmentId")
+    List<TopicLevelRecommendation> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
+
 }

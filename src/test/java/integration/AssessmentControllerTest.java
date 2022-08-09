@@ -4,10 +4,7 @@
 
 package integration;
 
-import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
-import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
-import com.xact.assessment.dtos.TopicLevelRecommendationTextRequest;
-import com.xact.assessment.dtos.TopicRatingAndRecommendation;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import io.micronaut.http.HttpMethod;
@@ -421,14 +418,15 @@ class AssessmentControllerTest {
 
 
         TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest=new TopicLevelRecommendationTextRequest();
-        topicLevelRecommendationTextRequest.setRecommendation("some text");
-
-
+        topicLevelRecommendationTextRequest.setRecommendation("some recommendation");
+        topicLevelRecommendationTextRequest.setRecommendationId(1);
         TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        when(topicLevelRecommendationRepository.existsById(topicLevelRecommendationTextRequest.getRecommendationId())).thenReturn(false);
+        when(topicLevelRecommendationRepository.findById(topicLevelRecommendationTextRequest.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
-
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-text-value.json");
 
@@ -436,7 +434,6 @@ class AssessmentControllerTest {
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-
     }
 
     @Test
@@ -523,7 +520,7 @@ class AssessmentControllerTest {
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
-        topicLevelRecommendationRequest.setEffort("MEDIUM");
+        topicLevelRecommendationRequest.setEffort("LOW");
 
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);

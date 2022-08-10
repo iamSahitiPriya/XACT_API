@@ -15,6 +15,8 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.Objects;
 
 @Controller("/v1/assessment-master-data")
 public class AssessmentMasterDataController {
+    private final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataController.class);
+
 
     private static ModelMapper mapper = new ModelMapper();
 
@@ -73,6 +77,7 @@ public class AssessmentMasterDataController {
     @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<AssessmentCategoryDto>> getAssessmentMasterData() {
+        LOGGER.info("Get assessment master data");
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
         List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(assessmentCategories)) {

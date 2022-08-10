@@ -58,6 +58,7 @@ class AssessmentServiceTest {
 
         Set<AssessmentUsers> assessmentUsers = new HashSet<>();
         Assessment assessment = new Assessment();
+        assessment.setAssessmentId(123);
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setAssessmentName("assessment1");
         Organisation organisation = new Organisation();
@@ -112,7 +113,14 @@ class AssessmentServiceTest {
         loggedinUser.setProfile(profile);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
+        assessment.setAssessmentName("assessmentName");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
+        Assessment expectedAssessment = new Assessment();
+        expectedAssessment.setAssessmentId(assessmentId);
+        expectedAssessment.setAssessmentName("assessment");
+        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+
+        when(assessmentRepository.update(assessment)).thenReturn(assessment);
 
         Assessment actualAssessment = assessmentService.finishAssessment(assessment);
 
@@ -128,7 +136,15 @@ class AssessmentServiceTest {
         loggedinUser.setProfile(profile);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
+        assessment.setAssessmentName("assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
+
+        Assessment expectedAssessment = new Assessment();
+        expectedAssessment.setAssessmentId(assessmentId);
+        expectedAssessment.setAssessmentName("assessment");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+
+        when(assessmentRepository.update(assessment)).thenReturn(assessment);
 
         Assessment actualAssessment = assessmentService.reopenAssessment(assessment);
 

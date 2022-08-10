@@ -100,14 +100,14 @@ public class AssessmentService {
 
     public Assessment finishAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Completed);
-        assessmentRepository.update(assessment);
-        return assessment;
+        assessment.setUpdatedAt(new Date());
+        return assessmentRepository.update(assessment);
     }
 
     public Assessment reopenAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Active);
-        assessmentRepository.update(assessment);
-        return assessment;
+        assessment.setUpdatedAt(new Date());
+        return assessmentRepository.update(assessment);
     }
 
 

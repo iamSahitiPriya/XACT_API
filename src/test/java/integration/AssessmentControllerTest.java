@@ -27,7 +27,8 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @MicronautTest
 class AssessmentControllerTest {
@@ -83,7 +84,7 @@ class AssessmentControllerTest {
     }
 
     @MockBean(QuestionRepository.class)
-    QuestionRepository questionRepository(){
+    QuestionRepository questionRepository() {
         return mock(QuestionRepository.class);
     }
 
@@ -91,6 +92,7 @@ class AssessmentControllerTest {
     AssessmentTopicRepository assessmentTopicRepository() {
         return mock(AssessmentTopicRepository.class);
     }
+
     @MockBean(AssessmentParameterRepository.class)
     AssessmentParameterRepository assessmentParameterRepository() {
         return mock(AssessmentParameterRepository.class);
@@ -212,7 +214,7 @@ class AssessmentControllerTest {
 
         Assessment expectedAssessment = new Assessment();
         expectedAssessment.setAssessmentId(123);
-        expectedAssessment.setAssessmentStatus(AssessmentStatus.Completed);
+        expectedAssessment.setAssessmentStatus(AssessmentStatus.Active);
         expectedAssessment.setAssessmentName("Mocked Assessment");
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
@@ -289,7 +291,7 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
-        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
 
         Answer answer = new Answer();
 
@@ -333,7 +335,7 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
-        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
 
         Integer questionId = 1;
         Question question = new Question();
@@ -341,7 +343,7 @@ class AssessmentControllerTest {
         question.setQuestionText("Question");
         when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
 
-        AnswerId answerId = new AnswerId(assessment,question);
+        AnswerId answerId = new AnswerId(assessment, question);
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
         answer.setAnswer("Ans");
@@ -357,6 +359,7 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
+
     @Test
     void testUpdateTopicRecommendation() throws IOException {
         UserId userId = new UserId();
@@ -372,7 +375,7 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
-        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
 
 
         Integer topicId = 1;
@@ -420,7 +423,7 @@ class AssessmentControllerTest {
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
         parameterLevelAssessment.setRecommendation("Recommendation");
 
-        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
         when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));
         when(parameterLevelAssessmentRepository.findById(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
         when(parameterLevelAssessmentRepository.save(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
@@ -450,7 +453,7 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
-        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
 
 
         Integer parameterId = 1;
@@ -493,7 +496,7 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
-        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
 
 
         Integer topicId = 1;
@@ -520,7 +523,6 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
-
 
 
 }

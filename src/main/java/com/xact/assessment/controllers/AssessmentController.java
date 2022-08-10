@@ -234,7 +234,7 @@ public class AssessmentController {
             topicLevelRecommendation.setAssessment(assessment);
             topicLevelRecommendation.setTopic(assessmentTopic);
             topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
-            topicLevelRecommendation = saveTopicRecommendationImpact(topicLevelRecommendationRequest,topicLevelRecommendation);
+            saveTopicRecommendationImpact(topicLevelRecommendationRequest,topicLevelRecommendation);
             saveTopicRecommendationEffort(topicLevelRecommendationRequest,topicLevelRecommendation);
             saveTopicRecommendationDeliveryHorizon(topicLevelRecommendationRequest,topicLevelRecommendation);
             topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
@@ -244,7 +244,7 @@ public class AssessmentController {
     }
 
     private void saveTopicRecommendationDeliveryHorizon(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if(topicLevelRecommendationRequest.getDeliveryHorizon() != null) {
+        if(topicLevelRecommendationRequest.getDeliveryHorizon() != "") {
             topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
         }
         else{
@@ -263,7 +263,7 @@ public class AssessmentController {
     }
 
     private void saveTopicRecommendationEffort(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if(topicLevelRecommendationRequest.getEffort()!=null){
+        if(topicLevelRecommendationRequest.getEffort()!=""){
             topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(topicLevelRecommendationRequest.getEffort()));
         }
         else{
@@ -272,7 +272,7 @@ public class AssessmentController {
     }
 
     private TopicLevelRecommendation saveTopicRecommendationImpact(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if(topicLevelRecommendationRequest.getImpact()!=null) {
+        if(topicLevelRecommendationRequest.getImpact()!="") {
             topicLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(topicLevelRecommendationRequest.getImpact()));
         }
         else{

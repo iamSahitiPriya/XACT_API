@@ -8,6 +8,7 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
+import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
@@ -26,13 +27,15 @@ public class AssessmentService {
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
     private final UsersAssessmentsRepository usersAssessmentsRepository;
+    private final AccessControlRepository accessControlRepository;
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
+        this.accessControlRepository = accessControlRepository;
     }
 
     @Transactional
@@ -122,4 +125,8 @@ public class AssessmentService {
     }
 
 
+    public Optional<AccessControlRoles> getUserRole(String email) {
+        return accessControlRepository.getAccessControlRolesByEmail(email);
+
+    }
 }

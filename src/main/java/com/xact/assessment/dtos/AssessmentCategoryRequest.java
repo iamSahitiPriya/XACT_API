@@ -16,4 +16,6 @@ public class AssessmentCategoryRequest {
     @JsonProperty
     private boolean isActive;
 
+
+
 }

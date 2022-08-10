@@ -34,7 +34,7 @@ class AssessmentServiceTest {
         usersAssessmentsService = mock(UsersAssessmentsService.class);
         assessmentRepository = mock(AssessmentRepository.class);
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository);
     }
 
     @Test

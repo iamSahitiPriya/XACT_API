@@ -46,8 +46,16 @@ public class AssessmentCategory {
     private boolean isActive;
 
     public Set<AssessmentModule> getModules() {
-        return modules == null ? null : modules.stream().filter(AssessmentModule::isActive).collect(Collectors.toSet());
+        return modules == null ? null : modules.stream().filter(AssessmentModule::getIsActive).collect(Collectors.toSet());
 
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public double getCategoryAverage(){
@@ -66,8 +74,9 @@ public class AssessmentCategory {
         return moduleSum/moduleCount;
     }
 
-    public AssessmentCategory(Integer categoryId, String categoryName) {
+    public AssessmentCategory(Integer categoryId, String categoryName, boolean isActive) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
+        this.isActive = isActive;
     }
 }

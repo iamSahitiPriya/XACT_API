@@ -49,6 +49,9 @@ public class AssessmentModule {
     @Column(name = "is_active")
     private boolean isActive;
 
+    public boolean getIsActive() {
+        return isActive;
+    }
     public double getModuleAverage() {
         double topicSum = 0;
         int topicCount = 0;
@@ -66,9 +69,10 @@ public class AssessmentModule {
         return topicSum/topicCount;
     }
 
-    public AssessmentModule(Integer moduleId, String moduleName, AssessmentCategory category) {
+    public AssessmentModule(Integer moduleId, String moduleName, AssessmentCategory category, boolean isActive) {
         this.moduleId = moduleId;
         this.moduleName = moduleName;
         this.category = category;
+        this.isActive = isActive;
     }
 }

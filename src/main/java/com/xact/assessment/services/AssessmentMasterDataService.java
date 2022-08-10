@@ -43,15 +43,13 @@ public class AssessmentMasterDataService {
     }
 
     public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
-        AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryId(), assessmentCategoryRequest.getCategoryName());
-        assessmentCategory.setActive(assessmentCategoryRequest.isActive());
+        AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryId(), assessmentCategoryRequest.getCategoryName(),assessmentCategoryRequest.isActive());
         categoryRepository.save(assessmentCategory);
     }
 
     public void createAssessmentModule(AssessmentModuleRequest assessmentModuleRequest) {
         AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());
-        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleId(), assessmentModuleRequest.getModuleName(), assessmentCategory);
-        assessmentModule.setActive(assessmentModuleRequest.isActive());
+        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleId(), assessmentModuleRequest.getModuleName(), assessmentCategory,assessmentModuleRequest.isActive());
         moduleService.createModule(assessmentModule);
     }
 

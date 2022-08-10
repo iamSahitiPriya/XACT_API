@@ -1,4 +1,6 @@
 {
   "recommendationId": 1,
- "impact": "HIGH"
+  "impact": "",
+  "effort": "HIGH",
+  "deliveryHorizon": ""
 }

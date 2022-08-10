@@ -56,13 +56,13 @@ public class ReportService {
     private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendations, Integer assessmentId) {
         Workbook workbook = new XSSFWorkbook();
 
-        writeReport(answers,parameterLevelAssessments,topicLevelAssessments,topicLevelRecommendations,assessmentId,workbook);
+        writeReport(answers,parameterLevelAssessments,topicLevelAssessments,topicLevelRecommendations,workbook);
 
         createDataAndGenerateChart(workbook, assessmentId,parameterLevelAssessments,topicLevelAssessments);
 
         return workbook;
     }
-    public void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendations, Integer assessmentId, Workbook workbook){
+    public void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendations, Workbook workbook){
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
         }

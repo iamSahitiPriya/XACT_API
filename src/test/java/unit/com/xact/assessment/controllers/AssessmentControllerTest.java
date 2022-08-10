@@ -586,6 +586,7 @@ class AssessmentControllerTest {
         TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
         topicLevelRecommendationRequest.setImpact("HIGH");
+        topicLevelRecommendationRequest.setEffort("");
 
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
@@ -642,6 +643,7 @@ class AssessmentControllerTest {
         TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
         topicLevelRecommendationRequest.setEffort("HIGH");
+        topicLevelRecommendationRequest.setImpact("");
 
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
@@ -699,11 +701,14 @@ class AssessmentControllerTest {
         TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
         topicLevelRecommendationRequest.setDeliveryHorizon("some text");
+        topicLevelRecommendationRequest.setImpact("");
+        topicLevelRecommendationRequest.setEffort("");
 
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
         topicLevelRecommendation.setDeliveryHorizon("");
+
 
         HttpResponse<TopicLevelRecommendationRequest> actualResponse=assessmentController.saveTopicRecommendationFields(assessmentId,topicId,topicLevelRecommendationRequest,authentication);
 

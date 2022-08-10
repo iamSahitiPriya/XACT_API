@@ -7,12 +7,7 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
-import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
-import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
-import com.xact.assessment.services.AnswerService;
-import com.xact.assessment.services.ReportService;
-import com.xact.assessment.services.SpiderChartService;
-import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
+import com.xact.assessment.services.*;
 import com.xact.assessment.utils.ChartsUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -24,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
+import static com.xact.assessment.models.RecommendationEffort.HIGH;
+import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -33,8 +30,9 @@ class ReportServiceTest {
     AnswerService answerService = mock(AnswerService.class);
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
+    TopicService topicService = mock(TopicService.class);
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository,topicService);
 
     @Test
     void getWorkbookAssessmentDataSheet() {
@@ -49,6 +47,7 @@ class ReportServiceTest {
         AssessmentParameter parameter = new AssessmentParameter();
         parameter.setParameterName("my param");
         AssessmentTopic topic = new AssessmentTopic();
+        topic.setTopicId(1);
         topic.setTopicName("my topic");
         AssessmentModule module = new AssessmentModule();
         module.setModuleName("my module");
@@ -74,12 +73,27 @@ class ReportServiceTest {
         TopicLevelId topicLevelId = new TopicLevelId(assessment,topic);
         TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId,4,new Date(),new Date());
         topicAssessments.add(topicAssessment);
+
+        HashMap<Integer,List<TopicLevelRecommendation>> topicRecommendationMap = new HashMap<>();
+        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setRecommendation("some text");
+        topicLevelRecommendation.setTopic(topic);
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+
+        topicLevelRecommendationList.add(topicLevelRecommendation);
+
+        topicRecommendationMap.put(1,topicLevelRecommendationList);
+
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
+       when(topicAndParameterLevelAssessmentService.getAssessmentRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
 
 
         Workbook report = new XSSFWorkbook();
-        reportService.writeReport(answers,parameterAssessments,topicAssessments,report);
+       reportService.writeReport(answers,parameterAssessments,topicAssessments, topicRecommendationMap, report);
 
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
 

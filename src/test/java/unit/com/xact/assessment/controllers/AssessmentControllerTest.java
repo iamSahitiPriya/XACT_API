@@ -170,6 +170,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setDeliveryHorizon("some text");
         when(topicService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId,topic.getTopicId())).thenReturn(Collections.singletonList(topicLevelRecommendation));
+        when(topicAndParameterLevelAssessmentService.getAssessmentRecommendationData(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest=new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(topicLevelRecommendation.getRecommendationId());

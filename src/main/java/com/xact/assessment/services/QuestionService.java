@@ -19,4 +19,8 @@ public class QuestionService {
     public void createQuestion(Question question){
         questionRepository.save(question);
     }
+
+    public void updateQuestion(Question question) {
+        questionRepository.update(question);
+    }
 }

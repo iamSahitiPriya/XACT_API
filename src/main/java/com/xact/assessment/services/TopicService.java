@@ -21,4 +21,7 @@ public class TopicService {
     public void createTopic(AssessmentTopic topic){
         assessmentTopicRepository.save(topic);
     }
+    public void updateTopic(AssessmentTopic topic){
+        assessmentTopicRepository.update(topic);
+    }
 }

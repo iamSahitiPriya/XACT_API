@@ -13,10 +13,16 @@ public class ParameterService {
     public ParameterService(AssessmentParameterRepository assessmentParameterRepository) {
         this.assessmentParameterRepository = assessmentParameterRepository;
     }
+
     public Optional<AssessmentParameter> getParameter(Integer parameterId) {
-        return  assessmentParameterRepository.findById(parameterId);
+        return assessmentParameterRepository.findById(parameterId);
     }
-    public void createParameter(AssessmentParameter parameter){
+
+    public void createParameter(AssessmentParameter parameter) {
         assessmentParameterRepository.save(parameter);
+    }
+
+    public void updateParameter(AssessmentParameter assessmentParameter) {
+        assessmentParameterRepository.update(assessmentParameter);
     }
 }

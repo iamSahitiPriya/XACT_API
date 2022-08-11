@@ -16,6 +16,9 @@ public class ModuleService {
         return moduleRepository.findByModuleId(moduleId);
     }
     public void createModule(AssessmentModule assessmentModule){
+        moduleRepository.save(assessmentModule);
+    }
+    public void updateModule(AssessmentModule assessmentModule){
         moduleRepository.update(assessmentModule);
     }
 }

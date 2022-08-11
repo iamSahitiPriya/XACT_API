@@ -18,9 +18,6 @@ import javax.validation.constraints.NotNull;
 @Table(name = "tbl_access_control")
 public class AccessControlList {
     @Id
-    @Column(name = "acl_id", nullable = false, unique = true)
-    private Integer aclId;
-
     @NotNull
     @Column(name = "email", nullable = false)
     private String email;

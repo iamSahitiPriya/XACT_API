@@ -13,10 +13,7 @@ import com.xact.assessment.models.AssessmentModule;
 import com.xact.assessment.models.AssessmentParameter;
 import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.repositories.*;
-import com.xact.assessment.services.AssessmentMasterDataService;
-import com.xact.assessment.services.ParameterService;
-import com.xact.assessment.services.QuestionService;
-import com.xact.assessment.services.TopicService;
+import com.xact.assessment.services.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
@@ -28,14 +25,14 @@ import static org.mockito.Mockito.*;
 class AssessmentMasterDataServiceTest {
 
     private final CategoryRepository categoryRepository = mock(CategoryRepository.class);
-    private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
+    private final ModuleService moduleService = mock(ModuleService.class);
     private final TopicService topicService = mock(TopicService.class);
     private final ParameterService parameterService = mock(ParameterService.class);
     private final QuestionService questionService = mock(QuestionService.class);
     private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository = mock(AssessmentTopicReferenceRepository.class);
     private final AssessmentParameterReferenceRepository assessmentParameterReferenceRepository = mock(AssessmentParameterReferenceRepository.class);
 
-    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleRepository, questionService,assessmentTopicReferenceRepository, parameterService,topicService,assessmentParameterReferenceRepository);
+    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService,assessmentTopicReferenceRepository, parameterService,topicService,assessmentParameterReferenceRepository);
 
     @Test
     void getAllCategories() {
@@ -59,7 +56,7 @@ class AssessmentMasterDataServiceTest {
         categoryRequest.setCategoryName("Dummy category");
         categoryRequest.setActive(false);
         assessmentMasterDataService.createAssessmentCategory(categoryRequest);
-        AssessmentCategory assessmentCategory = new AssessmentCategory(categoryRequest.getCategoryId(),categoryRequest.getCategoryName());
+        AssessmentCategory assessmentCategory = new AssessmentCategory(categoryRequest.getCategoryId(),categoryRequest.getCategoryName(),categoryRequest.isActive());
 
         when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
         verify(categoryRepository).save(assessmentCategory);
@@ -72,14 +69,13 @@ class AssessmentMasterDataServiceTest {
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
         assessmentModuleRequest.setCategory(1);
-        AssessmentCategory category = new AssessmentCategory(1,"Dummy");
+        AssessmentCategory category = new AssessmentCategory(1,"Dummy",false);
         when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
 
 
-        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleId(),assessmentModuleRequest.getModuleName(),category);
-        when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
+        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleId(),assessmentModuleRequest.getModuleName(),category,assessmentModuleRequest.isActive());
         assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest);
-        verify(moduleRepository).save(assessmentModule);
+        verify(moduleService).createModule(assessmentModule);
     }
 
     @Test

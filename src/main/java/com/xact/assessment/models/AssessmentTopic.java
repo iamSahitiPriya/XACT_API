@@ -17,6 +17,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
+import java.util.List;
+
 
 @NoArgsConstructor
 @Getter
@@ -51,11 +53,6 @@ public class AssessmentTopic {
     @ElementCollection()
     private Set<AssessmentTopicReference> references;
 
-    @NotNull
-    @Column(name = "assessment_level")
-    @Enumerated(EnumType.STRING)
-    private AssessmentLevel assessmentLevel;
-
     @Transient
     private Integer rating;
 
@@ -68,7 +65,6 @@ public class AssessmentTopic {
         if (this.hasReferences()) {
             return this.getRating();
         }
-
         double parameterSum = 0;
         int parameterCount = 0;
         for (AssessmentParameter assessmentParameter : this.parameters) {
@@ -87,6 +83,7 @@ public class AssessmentTopic {
     public boolean hasReferences() {
         return references != null && references.size() > 0;
     }
+
     public AssessmentTopic(Integer topicId, String topicName, AssessmentModule module) {
         this.topicId = topicId;
         this.topicName = topicName;

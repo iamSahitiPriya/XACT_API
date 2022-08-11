@@ -127,36 +127,76 @@ public class AssessmentMasterDataController {
         }
         return HttpResponse.ok();
     }
+
     @Post(value = "/topicReferences", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentTopicReference> createTopicReference(@Body List<TopicReferencesRequest> topicReferencesRequests){
-        for(TopicReferencesRequest topicReferencesRequest:topicReferencesRequests) {
+    public HttpResponse<AssessmentTopicReference> createTopicReference(@Body List<TopicReferencesRequest> topicReferencesRequests) {
+        for (TopicReferencesRequest topicReferencesRequest : topicReferencesRequests) {
             assessmentMasterDataService.createAssessmentTopicReferences(topicReferencesRequest);
         }
         return HttpResponse.ok();
     }
+
     @Post(value = "/parameterReferences", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentParameterReference> createParameterReferences(@Body List<ParameterReferencesRequest> parameterReferencesRequests){
-        for(ParameterReferencesRequest parameterReferencesRequest:parameterReferencesRequests){
+    public HttpResponse<AssessmentParameterReference> createParameterReferences(@Body List<ParameterReferencesRequest> parameterReferencesRequests) {
+        for (ParameterReferencesRequest parameterReferencesRequest : parameterReferencesRequests) {
             assessmentMasterDataService.createAssessmentParameterReferences(parameterReferencesRequest);
         }
         return HttpResponse.ok();
     }
+
     @Put(value = "/category/{categoryId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse updateCategory(@PathVariable("categoryId")Integer categoryId, @Body AssessmentCategoryRequest assessmentCategoryRequest){
+    public HttpResponse updateCategory(@PathVariable("categoryId") Integer categoryId, @Body AssessmentCategoryRequest assessmentCategoryRequest) {
         AssessmentCategory assessmentCategory = getCategory(categoryId);
         assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
         assessmentCategory.setActive(assessmentCategoryRequest.isActive());
         assessmentMasterDataService.updateCategory(assessmentCategory);
         return HttpResponse.ok();
     }
+
     @Put(value = "/module/{moduleId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse updateModule(@PathVariable("moduleId")Integer moduleId, @Body AssessmentModuleRequest assessmentModuleRequest){
-        assessmentMasterDataService.updateModule(moduleId,assessmentModuleRequest);
+    public HttpResponse updateModule(@PathVariable("moduleId") Integer moduleId, @Body AssessmentModuleRequest assessmentModuleRequest) {
+        assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
         return HttpResponse.ok();
+    }
+
+    @Put(value = "/topic/{topicId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateTopic(@PathVariable("topicId") Integer topicId, @Body AssessmentTopicRequest assessmentTopicRequest) {
+        assessmentMasterDataService.updateTopic(topicId, assessmentTopicRequest);
+        return HttpResponse.ok();
+    }
+
+    @Put(value = "/parameter/{parameterId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateParameter(@PathVariable("parameterId") Integer parameterId, @Body AssessmentParameterRequest assessmentParameterRequest) {
+        assessmentMasterDataService.updateParameter(parameterId, assessmentParameterRequest);
+        return HttpResponse.ok();
+    }
+
+    @Put(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest) {
+        assessmentMasterDataService.updateQuestion(questionId, questionRequest);
+        return HttpResponse.ok();
+    }
+
+    @Put(value = "/topicReference/{referenceId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateTopicReference(@PathVariable("referenceId") Integer referenceId, TopicReferencesRequest topicReferencesRequest) {
+        assessmentMasterDataService.updateTopicReference(referenceId, topicReferencesRequest);
+        return HttpResponse.ok();
+    }
+
+    @Put(value = "/parameterReference/{referenceId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateParameterReference(@PathVariable("referenceId") Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
+        assessmentMasterDataService.updateParameterReferences(referenceId,parameterReferencesRequest);
+        return HttpResponse.ok();
+
     }
 
     private AssessmentCategory getCategory(Integer categoryId) {

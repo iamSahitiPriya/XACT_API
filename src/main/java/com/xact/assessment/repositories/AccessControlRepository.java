@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface AccessControlRepository extends CrudRepository<AccessControlList,Integer> {
+public interface AccessControlRepository extends CrudRepository<AccessControlList,String> {
     @Executable
     @Query("SELECT acl.accessControlRoles FROM AccessControlList acl WHERE acl.email=:email")
     Optional<AccessControlRoles> getAccessControlRolesByEmail(String email);

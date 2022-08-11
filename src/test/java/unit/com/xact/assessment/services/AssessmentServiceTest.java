@@ -8,6 +8,7 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
+import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.AssessmentService;
@@ -28,12 +29,14 @@ class AssessmentServiceTest {
     private AssessmentService assessmentService;
     private AssessmentRepository assessmentRepository;
     private UsersAssessmentsRepository usersAssessmentsRepository;
+    private AccessControlRepository accessControlRepository;
 
     @BeforeEach
     public void beforeEach() {
         usersAssessmentsService = mock(UsersAssessmentsService.class);
         assessmentRepository = mock(AssessmentRepository.class);
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
+        accessControlRepository = mock(AccessControlRepository.class);
         assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository);
     }
 

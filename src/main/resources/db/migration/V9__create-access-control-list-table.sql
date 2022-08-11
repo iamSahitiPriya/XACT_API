@@ -1,5 +1,4 @@
 create table tbl_access_control (
-                                         acl_id INT PRIMARY KEY,
-                                         email varchar(500) NOT NULL,
+                                         email varchar(500) NOT NULL PRIMARY KEY,
                                          role varchar(50) CHECK(role='Admin')
 );

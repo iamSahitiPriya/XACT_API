@@ -4,20 +4,15 @@
 
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentCategoryRequest;
-import com.xact.assessment.dtos.AssessmentModuleRequest;
-import com.xact.assessment.dtos.AssessmentParameterRequest;
-import com.xact.assessment.dtos.AssessmentTopicRequest;
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.AssessmentModule;
-import com.xact.assessment.models.AssessmentParameter;
-import com.xact.assessment.models.AssessmentTopic;
+import com.xact.assessment.dtos.*;
+import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -105,5 +100,53 @@ class AssessmentMasterDataServiceTest {
 
         parameterService.createParameter(assessmentParameter);
         verify(parameterService).createParameter(assessmentParameter);
+    }
+
+    @Test
+    void shouldCreateQuestion() {
+        QuestionRequest questionRequest = new QuestionRequest();
+        questionRequest.setQuestionId(1);
+        questionRequest.setQuestionText("hello");
+        questionRequest.setParameter(1);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        Question question = new Question(questionRequest.getQuestionId(),questionRequest.getQuestionText(),assessmentParameter);
+
+        questionService.createQuestion(question);
+        verify(questionService).createQuestion(question);
+    }
+
+    @Test
+    void shouldCreateTopicReferences() {
+        TopicReferencesRequest topicReferencesRequest = new TopicReferencesRequest();
+        topicReferencesRequest.setTopic(1);
+        topicReferencesRequest.setReference("reference");
+        topicReferencesRequest.setRating(Rating.valueOf("TWO"));
+        topicReferencesRequest.setReferenceId(1);
+
+        AssessmentTopic topic = new AssessmentTopic();
+        when(topicService.getTopic(1)).thenReturn(Optional.of(topic));
+        assessmentMasterDataService.createAssessmentTopicReferences(topicReferencesRequest);
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(topic,topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
+
+        when(assessmentTopicReferenceRepository.save(assessmentTopicReference)).thenReturn(assessmentTopicReference);
+        verify(assessmentTopicReferenceRepository).save(assessmentTopicReference);
+
+    }
+
+    @Test
+    void shouldCreateParameterReference() {
+        ParameterReferencesRequest parameterReferencesRequest = new ParameterReferencesRequest();
+        parameterReferencesRequest.setParameter(1);
+        parameterReferencesRequest.setReference("reference");
+        parameterReferencesRequest.setRating(Rating.valueOf("TWO"));
+
+        AssessmentParameter parameter = new AssessmentParameter();
+        when(parameterService.getParameter(1)).thenReturn(Optional.of(parameter));
+        assessmentMasterDataService.createAssessmentParameterReferences(parameterReferencesRequest);
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter,parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference());
+
+        when(assessmentParameterReferenceRepository.save(assessmentParameterReference)).thenReturn(assessmentParameterReference);
+        verify(assessmentParameterReferenceRepository).save(assessmentParameterReference);
     }
 }

@@ -2,8 +2,6 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
-import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
-import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import jakarta.inject.Singleton;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -38,19 +36,20 @@ public class ReportService {
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
 
-        return createReport(answers, parameterAssessmentData, topicAssessmentData,assessmentId);
+        return createReport(answers, parameterAssessmentData, topicAssessmentData, assessmentId);
     }
 
-    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments,Integer assessmentId) {
+    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Integer assessmentId) {
         Workbook workbook = new XSSFWorkbook();
 
-        writeReport(answers,parameterLevelAssessments,topicLevelAssessments,workbook);
+        writeReport(answers, parameterLevelAssessments, topicLevelAssessments, workbook);
 
-        createDataAndGenerateChart(workbook, assessmentId,parameterLevelAssessments,topicLevelAssessments);
+        createDataAndGenerateChart(workbook, assessmentId, parameterLevelAssessments, topicLevelAssessments);
 
         return workbook;
     }
-    public void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments,Workbook workbook){
+
+    public void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, Workbook workbook) {
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
         }
@@ -61,36 +60,39 @@ public class ReportService {
             writeTopicRow(workbook, topicLevelAssessment);
         }
     }
-    public void createDataAndGenerateChart(Workbook workbook,Integer assessmentId,List<ParameterLevelAssessment> parameterLevelAssessments,List<TopicLevelAssessment> topicLevelAssessments){
+
+    public void createDataAndGenerateChart(Workbook workbook, Integer assessmentId, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments) {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
 
-        Map<String,List<CategoryMaturity>> dataSet = new HashMap<>();
+        Map<String, List<CategoryMaturity>> dataSet = new HashMap<>();
         List<CategoryMaturity> listOfCurrentScores = new ArrayList<>();
         List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
-        for(AssessmentCategory assessmentCategory: assessmentCategoryList){
+        for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
+            fillInMaturityScore(assessmentCategory, topicLevelAssessments, parameterLevelAssessments);
             CategoryMaturity categoryMaturity = new CategoryMaturity();
-            double avgCategoryScore = assessmentCategory.getCategoryAverage(topicLevelAssessments,parameterLevelAssessments);
+            double avgCategoryScore = assessmentCategory.getCategoryAverage();
             categoryMaturity.setCategory(assessmentCategory.getCategoryName());
             categoryMaturity.setScore(avgCategoryScore);
             listOfCurrentScores.add(categoryMaturity);
         }
-        dataSet.put("Current Maturity",listOfCurrentScores);
+        dataSet.put("Current Maturity", listOfCurrentScores);
         List<CategoryMaturity> listOfDesiredScores = new ArrayList<>();
 
-        for(AssessmentCategory assessmentCategory: assessmentCategoryList){
+        for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
             CategoryMaturity categoryMaturity = new CategoryMaturity();
             double avgCategoryScore = 5.0;
             categoryMaturity.setCategory(assessmentCategory.getCategoryName());
             categoryMaturity.setScore(avgCategoryScore);
             listOfDesiredScores.add(categoryMaturity);
         }
-        dataSet.put("Desired Maturity",listOfDesiredScores);
+        dataSet.put("Desired Maturity", listOfDesiredScores);
 
-        generateCharts(workbook,dataSet);
+        generateCharts(workbook, dataSet);
     }
 
-    public void generateCharts(Workbook workbook,Map<String, List<CategoryMaturity>> dataSet) {
+
+    public void generateCharts(Workbook workbook, Map<String, List<CategoryMaturity>> dataSet) {
         Sheet sheet = workbook.createSheet("Charts");
         //Get the contents of an InputStream as a byte[].
         byte[] bytes = chartService.generateChart(dataSet);
@@ -222,5 +224,29 @@ public class ReportService {
         createStyledCell(row, 7, questionText, style);
         createStyledCell(row, 8, answer, style);
     }
+
+    private void fillInMaturityScore(AssessmentCategory assessmentCategory, List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments) {
+        for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
+            for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
+                if (assessmentTopic.hasReferences()) {
+                    for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
+                        if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(assessmentTopic.getTopicId())) {
+                            assessmentTopic.setRating(topicLevelAssessment.getRating());
+                        }
+                    }
+                } else {
+                    for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
+                        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {
+                            if (parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(assessmentParameter.getParameterId())) {
+                                assessmentParameter.setRating(parameterLevelAssessment.getRating());
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
 
 }

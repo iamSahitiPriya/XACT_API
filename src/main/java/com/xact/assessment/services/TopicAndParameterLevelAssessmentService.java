@@ -5,7 +5,6 @@ import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +21,6 @@ public class TopicAndParameterLevelAssessmentService {
         this.answerService = answerService;
     }
 
-    @Transactional
     public TopicLevelAssessment saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
 
         if (topicLevelAssessmentRepository.existsById(topicLevelAssessment.getTopicLevelId())) {
@@ -38,7 +36,6 @@ public class TopicAndParameterLevelAssessmentService {
         return topicLevelAssessment;
     }
 
-    @Transactional
     public ParameterLevelAssessment saveRatingAndRecommendation(ParameterLevelAssessment parameterLevelAssessment) {
 
         if (parameterLevelAssessmentRepository.existsById(parameterLevelAssessment.getParameterLevelId())) {
@@ -55,7 +52,6 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterLevelAssessment;
     }
 
-    @Transactional
     public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment, List<Answer> answerList) {
         saveRatingAndRecommendation(topicLevelAssessment);
         for (Answer answer : answerList) {
@@ -63,7 +59,6 @@ public class TopicAndParameterLevelAssessmentService {
         }
     }
 
-    @Transactional
     public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<Answer> answerList) {
         for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
             saveRatingAndRecommendation(parameterLevelAssessment);

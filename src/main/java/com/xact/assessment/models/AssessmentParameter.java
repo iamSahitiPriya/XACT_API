@@ -16,8 +16,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -53,14 +51,10 @@ public class AssessmentParameter {
     @ElementCollection()
     private Set<AssessmentParameterReference> references;
 
-    public double getParameterAverage(List<ParameterLevelAssessment> parameterLevelAssessmentList) {
-        if(!this.references.isEmpty()){
-            for(ParameterLevelAssessment parameterLevelAssessment:parameterLevelAssessmentList){
-                if(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(this.getParameterId())){
-                    return (double) parameterLevelAssessment.getRating();
-                }
-            }
-        }
-        return 0;
+    @Transient
+    private Integer rating;
+
+    public Integer getRating() {
+        return rating == null ? 0 : rating;
     }
 }

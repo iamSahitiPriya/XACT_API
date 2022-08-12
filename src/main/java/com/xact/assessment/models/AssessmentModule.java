@@ -49,11 +49,11 @@ public class AssessmentModule {
     @Column(name = "is_active")
     private boolean isActive;
 
-    public double getModuleAverage(List<TopicLevelAssessment> topicLevelAssessmentList,List<ParameterLevelAssessment> parameterLevelAssessmentList) {
+    public double getModuleAverage() {
         double topicSum = 0;
         int topicCount = 0;
         for(AssessmentTopic assessmentTopic : this.topics){
-            double averageTopic = assessmentTopic.getTopicAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+            double averageTopic = assessmentTopic.getTopicAverage();
             if(averageTopic != 0){
                 topicSum += averageTopic;
                 topicCount += 1;

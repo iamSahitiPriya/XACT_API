@@ -28,6 +28,7 @@ public class AssessmentCategoryTest {
         assessmentTopic.setTopicId(1);
         assessmentTopic.setTopicName("Topic One");
         assessmentTopic.setModule(assessmentModule);
+        assessmentTopic.setRating(1);
         assessmentTopicList.add(assessmentTopic);
 
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
@@ -49,6 +50,7 @@ public class AssessmentCategoryTest {
         assessmentParameter.setParameterId(1);
         assessmentParameter.setParameterName("Parameter One");
         assessmentParameter.setTopic(assessmentTopic1);
+        assessmentParameter.setRating(5);
 
         AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference();
         assessmentParameterReference.setParameter(assessmentParameter);
@@ -63,20 +65,7 @@ public class AssessmentCategoryTest {
         assessmentModule.setTopics(assessmentTopicList);
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
 
-
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
-        TopicLevelId topicLevelId = new TopicLevelId();
-        topicLevelId.setAssessment(assessment);
-        topicLevelId.setTopic(assessmentTopic);
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(1);
-
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment,assessmentParameter);
-        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-        parameterLevelAssessment.setRating(5);
-
-        double actualAverageOfModules = assessmentCategory.getCategoryAverage(Collections.singletonList(topicLevelAssessment), Collections.singletonList(parameterLevelAssessment));
+        double actualAverageOfModules = assessmentCategory.getCategoryAverage();
         double expectedAverage = 3.0;
         assertEquals(expectedAverage,actualAverageOfModules);
     }

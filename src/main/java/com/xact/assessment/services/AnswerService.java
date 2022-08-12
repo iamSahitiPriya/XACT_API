@@ -5,7 +5,6 @@ import com.xact.assessment.models.AnswerId;
 import com.xact.assessment.repositories.AnswerRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +16,6 @@ public class AnswerService {
         this.answerRepository = answerRepository;
     }
 
-    @Transactional
     public Answer saveAnswer(Answer answer) {
 
         if (answerRepository.existsById(answer.getAnswerId())) {

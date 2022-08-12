@@ -16,8 +16,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -58,31 +56,35 @@ public class AssessmentTopic {
     @Enumerated(EnumType.STRING)
     private AssessmentLevel assessmentLevel;
 
-    public double getTopicAverage(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList) {
+    @Transient
+    private Integer rating;
+
+    public Integer getRating() {
+        return rating == null ? 0 : rating;
+    }
+
+    public double getTopicAverage() {
+
+        if (this.hasReferences()) {
+            return this.getRating();
+        }
+
         double parameterSum = 0;
         int parameterCount = 0;
-
-        if (this.references != null) {
-            for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessmentList) {
-                if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(this.getTopicId())) {
-                    return topicLevelAssessment.getRating();
-                }
-            }
-        }
         for (AssessmentParameter assessmentParameter : this.parameters) {
-            double parameterAverageScore = assessmentParameter.getParameterAverage(parameterLevelAssessmentList);
+            double parameterAverageScore = assessmentParameter.getRating();
             if (parameterAverageScore != 0) {
                 parameterSum += parameterAverageScore;
                 parameterCount += 1;
             }
         }
-
-
         if (parameterSum == 0 && parameterCount == 0) {
             return 0;
         }
         return parameterSum / parameterCount;
     }
 
-
+    public boolean hasReferences() {
+        return references != null && references.size() > 0;
+    }
 }

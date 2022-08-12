@@ -50,11 +50,11 @@ public class AssessmentCategory {
 
     }
 
-    public double getCategoryAverage(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
+    public double getCategoryAverage(){
         double moduleSum = 0;
         int moduleCount = 0;
         for(AssessmentModule assessmentModule: this.modules){
-            double averageModule = assessmentModule.getModuleAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+            double averageModule = assessmentModule.getModuleAverage();
             if(averageModule != 0){
                 moduleSum += averageModule;
                 moduleCount +=1 ;

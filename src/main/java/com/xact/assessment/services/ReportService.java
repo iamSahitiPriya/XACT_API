@@ -174,7 +174,7 @@ public class ReportService {
                 module,
                 topic,
                 BLANK_STRING,
-                BLANK_STRING,
+                new TopicLevelRecommendation(),
                 parameter,
                 BLANK_STRING,
                 BLANK_STRING,
@@ -201,11 +201,14 @@ public class ReportService {
             createBoldCell(row, 1, "Topic", style);
             createBoldCell(row, 2, "Topic Score", style);
             createBoldCell(row, 3, "Topic Recommendation", style);
-            createBoldCell(row, 4, "Parameter", style);
-            createBoldCell(row, 5, "Parameter Score", style);
-            createBoldCell(row, 6, "Parameter Recommendation", style);
-            createBoldCell(row, 7, "Question", style);
-            createBoldCell(row, 8, "Answer", style);
+            createBoldCell(row, 4, "Impact", style);
+            createBoldCell(row, 5, "Effort", style);
+            createBoldCell(row, 6, "Delivery Horizon", style);
+            createBoldCell(row, 7, "Parameter", style);
+            createBoldCell(row, 8, "Parameter Score", style);
+            createBoldCell(row, 9, "Parameter Recommendation", style);
+            createBoldCell(row, 10, "Question", style);
+            createBoldCell(row, 11, "Answer", style);
         }
     }
 
@@ -227,10 +230,10 @@ public class ReportService {
             topic, String topicRating, List<TopicLevelRecommendation> topicRecommendation) {
         for(int index=0;index<topicRecommendation.size();index++){
             if(index == 0) {
-                writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index).getRecommendation(), new AssessmentParameter(), BLANK_STRING, BLANK_STRING, BLANK_STRING, BLANK_STRING);
+                writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), new AssessmentParameter(), BLANK_STRING, BLANK_STRING, BLANK_STRING, BLANK_STRING);
             }
             else {
-                writeDataOnSheet(workbook, sheet, module, topic, " ", topicRecommendation.get(index).getRecommendation(), new AssessmentParameter(), BLANK_STRING, BLANK_STRING, BLANK_STRING, BLANK_STRING);
+                writeDataOnSheet(workbook, sheet, module, topic, " ", topicRecommendation.get(index), new AssessmentParameter(), BLANK_STRING, BLANK_STRING, BLANK_STRING, BLANK_STRING);
             }
         }
 
@@ -238,11 +241,11 @@ public class ReportService {
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, AssessmentParameter parameter, String paramRating, String paramRecommendation) {
-        writeDataOnSheet(workbook, sheet, module, topic, ReportService.BLANK_STRING, ReportService.BLANK_STRING, parameter, paramRating, paramRecommendation, BLANK_STRING, BLANK_STRING);
+        writeDataOnSheet(workbook, sheet, module, topic, ReportService.BLANK_STRING, new TopicLevelRecommendation(), parameter, paramRating, paramRecommendation, BLANK_STRING, BLANK_STRING);
     }
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
-            topic, String topicRating, String topicRecommendation, AssessmentParameter parameter, String paramRating, String
+            topic, String topicRating, TopicLevelRecommendation topicRecommendation, AssessmentParameter parameter, String paramRating, String
                                           paramRecommendation, String questionText, String answer) {
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
         CellStyle style = workbook.createCellStyle();
@@ -250,12 +253,15 @@ public class ReportService {
         createStyledCell(row, 0, module.getModuleName(), style);
         createStyledCell(row, 1, topic.getTopicName(), style);
         createStyledCell(row, 2, topicRating, style);
-        createStyledCell(row, 3, topicRecommendation, style);
-        createStyledCell(row, 4, parameter.getParameterName(), style);
-        createStyledCell(row, 5, paramRating, style);
-        createStyledCell(row, 6, paramRecommendation, style);
-        createStyledCell(row, 7, questionText, style);
-        createStyledCell(row, 8, answer, style);
+        createStyledCell(row, 3, topicRecommendation.getRecommendation(), style);
+        createStyledCell(row, 4, topicRecommendation.getRecommendationImpact().toString(), style);
+        createStyledCell(row, 5, topicRecommendation.getRecommendationEffort().toString(), style);
+        createStyledCell(row, 6, topicRecommendation.getDeliveryHorizon(), style);
+        createStyledCell(row, 7, parameter.getParameterName(), style);
+        createStyledCell(row, 8, paramRating, style);
+        createStyledCell(row, 9, paramRecommendation, style);
+        createStyledCell(row, 10, questionText, style);
+        createStyledCell(row, 11, answer, style);
     }
 
 }

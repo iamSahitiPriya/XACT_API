@@ -4,6 +4,7 @@ import com.xact.assessment.models.AssessmentParameter;
 import com.xact.assessment.repositories.AssessmentParameterRepository;
 import jakarta.inject.Singleton;
 
+import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -24,5 +25,9 @@ public class ParameterService {
 
     public void updateParameter(AssessmentParameter assessmentParameter) {
         assessmentParameterRepository.update(assessmentParameter);
+    }
+
+    public List<AssessmentParameter> getAllParameters() {
+        return (List<AssessmentParameter>) assessmentParameterRepository.findAll();
     }
 }

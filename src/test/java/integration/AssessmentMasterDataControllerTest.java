@@ -53,7 +53,6 @@ class AssessmentMasterDataControllerTest {
 
         String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/categories")
                 .bearerAuth("anything"), String.class);
-
         assertEquals(expectedResponse, userResponse);
 
     }
@@ -95,6 +94,7 @@ class AssessmentMasterDataControllerTest {
         topic.setModule(module);
         topic.setReferences(topicReferences);
         topic.setParameters(parameters);
+        topic.setActive(true);
         topics.add(topic);
 
         topicReference.setReferenceId(1);
@@ -108,6 +108,7 @@ class AssessmentMasterDataControllerTest {
         assessmentParameter.setTopic(topic);
         assessmentParameter.setQuestions(questions);
         assessmentParameter.setReferences(parameterReferences);
+        assessmentParameter.setActive(true);
         parameters.add(assessmentParameter);
 
         parameterReference.setReferenceId(1);

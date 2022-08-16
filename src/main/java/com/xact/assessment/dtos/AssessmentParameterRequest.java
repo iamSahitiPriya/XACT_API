@@ -15,4 +15,8 @@ public class AssessmentParameterRequest {
     private String parameterName;
     @JsonProperty
     private Integer topic;
+    @JsonProperty
+    private boolean isActive;
+    @JsonProperty
+    private String comments;
 }

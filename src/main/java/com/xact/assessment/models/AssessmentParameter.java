@@ -13,9 +13,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -51,6 +54,27 @@ public class AssessmentParameter {
     @ElementCollection()
     private Set<AssessmentParameterReference> references;
 
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
+    private Date updatedAt;
+
+    @Column(name = "comments")
+    private String comments;
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
     @Transient
     private Integer rating;
 
@@ -58,9 +82,11 @@ public class AssessmentParameter {
         return rating == null ? 0 : rating;
     }
 
-    public AssessmentParameter(Integer parameterId, String parameterName, AssessmentTopic topic) {
+    public AssessmentParameter(Integer parameterId, String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
         this.parameterId = parameterId;
         this.parameterName = parameterName;
         this.topic = topic;
+        this.isActive = isActive;
+        this.comments = comments;
     }
 }

@@ -4,6 +4,8 @@ import com.xact.assessment.models.AssessmentModule;
 import com.xact.assessment.repositories.ModuleRepository;
 import jakarta.inject.Singleton;
 
+import java.util.List;
+
 @Singleton
 
 public class ModuleService {
@@ -20,5 +22,9 @@ public class ModuleService {
     }
     public void updateModule(AssessmentModule assessmentModule){
         moduleRepository.update(assessmentModule);
+    }
+
+    public List<AssessmentModule> getAllModules() {
+        return (List<AssessmentModule>) moduleRepository.findAll();
     }
 }

@@ -10,8 +10,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AssessmentModuleRequest {
-    @JsonProperty
-    private int moduleId;
 
     @JsonProperty
     private String moduleName;
@@ -21,5 +19,8 @@ public class AssessmentModuleRequest {
 
     @JsonProperty
     private boolean isActive;
+
+    @JsonProperty
+    private String comments;
 
 }

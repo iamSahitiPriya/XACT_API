@@ -10,11 +10,11 @@ import lombok.Setter;
 @Setter
 public class AssessmentCategoryRequest {
     @JsonProperty
-    private int categoryId;
-    @JsonProperty
     private String categoryName;
     @JsonProperty
     private boolean isActive;
+    @JsonProperty
+    private String comments;
 
 
 

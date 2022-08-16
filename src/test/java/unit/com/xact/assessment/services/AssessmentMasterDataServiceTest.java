@@ -10,6 +10,7 @@ import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,11 +48,12 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldCreateCategory() {
         AssessmentCategoryRequest categoryRequest = new AssessmentCategoryRequest();
-        categoryRequest.setCategoryId(1);
         categoryRequest.setCategoryName("Dummy category");
         categoryRequest.setActive(false);
+        List<AssessmentCategory> categories = new ArrayList<>();
+        when(categoryRepository.findAll()).thenReturn(categories);
         assessmentMasterDataService.createAssessmentCategory(categoryRequest);
-        AssessmentCategory assessmentCategory = new AssessmentCategory(categoryRequest.getCategoryId(),categoryRequest.getCategoryName(),categoryRequest.isActive());
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1,categoryRequest.getCategoryName(),categoryRequest.isActive(),categoryRequest.getComments());
 
         when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
         verify(categoryRepository).save(assessmentCategory);
@@ -60,15 +62,14 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldCreateModule() {
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
-        assessmentModuleRequest.setModuleId(1);
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
         assessmentModuleRequest.setCategory(1);
-        AssessmentCategory category = new AssessmentCategory(1,"Dummy",false);
+        AssessmentCategory category = new AssessmentCategory(1,"Dummy",false,"");
         when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
-
-
-        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleId(),assessmentModuleRequest.getModuleName(),category,assessmentModuleRequest.isActive());
+        AssessmentModule assessmentModule = new AssessmentModule(1,assessmentModuleRequest.getModuleName(),category,assessmentModuleRequest.isActive(),assessmentModuleRequest.getComments());
+        List<AssessmentModule> assessmentModules  = new ArrayList<>();
+        when(moduleService.getAllModules()).thenReturn(assessmentModules);
         assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest);
         verify(moduleService).createModule(assessmentModule);
     }
@@ -79,11 +80,15 @@ class AssessmentMasterDataServiceTest {
         topicRequest.setTopicId(1);
         topicRequest.setTopicName("topic");
         topicRequest.setModule(1);
+        topicRequest.setComments("");
+        topicRequest.setActive(false);
 
         AssessmentModule assessmentModule = new AssessmentModule();
-        AssessmentTopic assessmentTopic = new AssessmentTopic(topicRequest.getTopicId(),topicRequest.getTopicName(),assessmentModule);
-
-        topicService.createTopic(assessmentTopic);
+        AssessmentTopic assessmentTopic = new AssessmentTopic(topicRequest.getTopicId(),topicRequest.getTopicName(),assessmentModule,topicRequest.isActive(),topicRequest.getComments());
+        List<AssessmentTopic> topics = new ArrayList<>();
+        when(topicService.getAllTopics()).thenReturn(topics);
+        when(moduleService.getModule(1)).thenReturn(assessmentModule);
+        assessmentMasterDataService.createAssessmentTopics(topicRequest);
         verify(topicService).createTopic(assessmentTopic);
 
     }
@@ -94,11 +99,15 @@ class AssessmentMasterDataServiceTest {
         parameterRequest.setParameterId(1);
         parameterRequest.setParameterName("parameter");
         parameterRequest.setTopic(1);
+        parameterRequest.setActive(false);
+        parameterRequest.setComments("");
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
-        AssessmentParameter assessmentParameter = new AssessmentParameter(parameterRequest.getParameterId(),parameterRequest.getParameterName(),assessmentTopic);
-
-        parameterService.createParameter(assessmentParameter);
+        AssessmentParameter assessmentParameter = new AssessmentParameter(parameterRequest.getParameterId(),parameterRequest.getParameterName(),assessmentTopic,parameterRequest.isActive(),parameterRequest.getComments());
+        List<AssessmentParameter> parameters = new ArrayList<>();
+        when(parameterService.getAllParameters()).thenReturn(parameters);
+        when(topicService.getTopic(1)).thenReturn(Optional.of(assessmentTopic));
+        assessmentMasterDataService.createAssessmentParameter(parameterRequest);
         verify(parameterService).createParameter(assessmentParameter);
     }
 
@@ -111,8 +120,12 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();
         Question question = new Question(questionRequest.getQuestionId(),questionRequest.getQuestionText(),assessmentParameter);
+        List<Question> questions = new ArrayList<>();
+        Integer parameterId = 1;
+        when(questionService.getAllQuestion()).thenReturn(questions);
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
-        questionService.createQuestion(question);
+        assessmentMasterDataService.createAssessmentQuestions(questionRequest);
         verify(questionService).createQuestion(question);
     }
 
@@ -149,4 +162,5 @@ class AssessmentMasterDataServiceTest {
         when(assessmentParameterReferenceRepository.save(assessmentParameterReference)).thenReturn(assessmentParameterReference);
         verify(assessmentParameterReferenceRepository).save(assessmentParameterReference);
     }
+
 }

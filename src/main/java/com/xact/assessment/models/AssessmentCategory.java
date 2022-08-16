@@ -11,9 +11,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -45,6 +48,20 @@ public class AssessmentCategory {
     @Column(name = "is_active")
     private boolean isActive;
 
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
+    private Date updatedAt;
+
+    @Column(name = "comments")
+    private String comments;
+
+
     public Set<AssessmentModule> getModules() {
         return modules == null ? null : modules.stream().filter(AssessmentModule::getIsActive).collect(Collectors.toSet());
 
@@ -74,9 +91,10 @@ public class AssessmentCategory {
         return moduleSum/moduleCount;
     }
 
-    public AssessmentCategory(Integer categoryId, String categoryName, boolean isActive) {
+    public AssessmentCategory(Integer categoryId, String categoryName, boolean isActive, String comments) {
         this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.isActive = isActive;
+        this.comments = comments;
     }
 }

@@ -13,10 +13,16 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.List;
 
 
@@ -53,6 +59,31 @@ public class AssessmentTopic {
     @ElementCollection()
     private Set<AssessmentTopicReference> references;
 
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
+    private Date updatedAt;
+
+    @Column(name = "comments")
+    private String comments;
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public Set<AssessmentParameter> getParameters() {
+        return parameters == null ? null : parameters.stream().filter(AssessmentParameter::getIsActive).collect(Collectors.toSet());
+    }
+
     @Transient
     private Integer rating;
 
@@ -84,9 +115,11 @@ public class AssessmentTopic {
         return references != null && references.size() > 0;
     }
 
-    public AssessmentTopic(Integer topicId, String topicName, AssessmentModule module) {
+    public AssessmentTopic(Integer topicId, String topicName, AssessmentModule module, boolean isActive, String comments) {
         this.topicId = topicId;
         this.topicName = topicName;
         this.module = module;
+        this.isActive = isActive;
+        this.comments = comments;
     }
 }

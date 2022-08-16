@@ -15,4 +15,8 @@ public class AssessmentTopicRequest {
     private String topicName;
     @JsonProperty
     private Integer module;
+    @JsonProperty
+    private boolean isActive;
+    @JsonProperty
+    private String comments;
 }

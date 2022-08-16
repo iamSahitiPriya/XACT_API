@@ -153,10 +153,16 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
 
-    public List<TopicLevelRecommendation> getAssessmentRecommendationData(Integer assessmentId) {
+    public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
         return  topicLevelRecommendationRepository.findByAssessment(assessmentId);
     }
 
 
+    public List<ParameterLevelRecommendation> getAssessmentParameterRecommendationData(Integer assessmentId) {
+        return parameterLevelRecommendationRepository.findByAssessment(assessmentId);
+    }
 
+    public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId,Integer parameterId) {
+        return  parameterLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId,parameterId);
+    }
 }

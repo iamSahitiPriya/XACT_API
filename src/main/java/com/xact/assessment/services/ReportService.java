@@ -13,7 +13,7 @@ import java.util.*;
 public class ReportService {
 
     public static final String BLANK_STRING = "";
-    public static int index = 0;
+    public static int recommendationCount = 0;
     public static final String FORMULA_STRING = "=-+@";
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final AnswerService answerService;
@@ -252,34 +252,15 @@ public class ReportService {
             topic, String topicRating, TopicLevelRecommendation topicRecommendation, int recommendationCount ,AssessmentParameter parameter, String paramRating, String
                                           paramRecommendation, String questionText, String answer) {
         String impact, effort;
-        if(topicRecommendation.getRecommendationImpact() != null) {
-            impact = topicRecommendation.getRecommendationImpact().toString();
-        } else {
-            impact = " ";
-        }
-        if(topicRecommendation.getRecommendationEffort() != null) {
-            effort = topicRecommendation.getRecommendationEffort().toString();
-        } else {
-            effort = " ";
-        }
+        impact = getImpact(topicRecommendation);
+        effort = getEffort(topicRecommendation);
 
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
         CellStyle style = workbook.createCellStyle();
         style.setQuotePrefixed(true);
         createStyledCell(row, 0, module.getModuleName(), style);
         createStyledCell(row, 1, topic.getTopicName(), style);
-        if(topicRating.equals(" ")) {
-            index +=1;
-        } else {
-            if(recommendationCount > 1) {
-                index+=1;
-            }
-        }
-
-        if(index == recommendationCount && index>0) {
-            index=0;
-            sheet.addMergedRegion(new CellRangeAddress(sheet.getLastRowNum()-(recommendationCount-1), sheet.getLastRowNum()+(1-1),2,2));
-        }
+        checkToMergeCells(sheet, topicRating, recommendationCount);
         createStyledCell(row, 2, topicRating, style);
         createStyledCell(row, 3, topicRecommendation.getRecommendation(), style);
         createStyledCell(row, 4, impact, style);
@@ -290,6 +271,45 @@ public class ReportService {
         createStyledCell(row, 9, paramRecommendation, style);
         createStyledCell(row, 10, questionText, style);
         createStyledCell(row, 11, answer, style);
+    }
+
+    private String getEffort(TopicLevelRecommendation topicRecommendation) {
+        String effort;
+        if(topicRecommendation.getRecommendationEffort() != null) {
+            effort = topicRecommendation.getRecommendationEffort().toString();
+        } else {
+            effort = " ";
+        }
+        return effort;
+    }
+
+    private String getImpact(TopicLevelRecommendation topicRecommendation) {
+        String impact;
+        if(topicRecommendation.getRecommendationImpact() != null) {
+            impact = topicRecommendation.getRecommendationImpact().toString();
+        } else {
+            impact = " ";
+        }
+        return impact;
+    }
+
+    private void checkToMergeCells(Sheet sheet, String topicRating, int count) {
+        if(topicRating.equals(" ")) {
+            recommendationCount +=1;
+        } else {
+            if(count > 1) {
+                recommendationCount +=1;
+            }
+        }
+
+        mergeCells(sheet, count);
+    }
+
+    private void mergeCells(Sheet sheet, int count) {
+        if(recommendationCount == count && recommendationCount >0) {
+            recommendationCount =0;
+            sheet.addMergedRegion(new CellRangeAddress(sheet.getLastRowNum()-(count -1), sheet.getLastRowNum()+(1-1),2,2));
+        }
     }
 
 }

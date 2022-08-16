@@ -2,16 +2,14 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
+import com.xact.assessment.repositories.ParameterLevelRecommendationRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import jakarta.inject.Singleton;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.hibernate.sql.InFragment.NULL;
 
 @Singleton
 public class TopicAndParameterLevelAssessmentService {
@@ -19,12 +17,15 @@ public class TopicAndParameterLevelAssessmentService {
     private final TopicLevelAssessmentRepository topicLevelAssessmentRepository;
     private final ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
     private final TopicLevelRecommendationRepository topicLevelRecommendationRepository;
+
+    private final ParameterLevelRecommendationRepository parameterLevelRecommendationRepository;
     private final AnswerService answerService;
 
-    public TopicAndParameterLevelAssessmentService(TopicLevelAssessmentRepository topicLevelAssessmentRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository, TopicLevelRecommendationRepository topicLevelRecommendationRepository, AnswerService answerService) {
+    public TopicAndParameterLevelAssessmentService(TopicLevelAssessmentRepository topicLevelAssessmentRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository, TopicLevelRecommendationRepository topicLevelRecommendationRepository, ParameterLevelRecommendationRepository parameterLevelRecommendationRepository, AnswerService answerService) {
         this.topicLevelAssessmentRepository = topicLevelAssessmentRepository;
         this.parameterLevelAssessmentRepository = parameterLevelAssessmentRepository;
         this.topicLevelRecommendationRepository = topicLevelRecommendationRepository;
+        this.parameterLevelRecommendationRepository = parameterLevelRecommendationRepository;
         this.answerService = answerService;
     }
 
@@ -87,13 +88,33 @@ public class TopicAndParameterLevelAssessmentService {
        return topicLevelRecommendation;
     }
 
-    public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<Answer> answerList) {
+    public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<ParameterLevelRecommendation> parameterLevelRecommendationList,List<Answer> answerList) {
         for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
             saveRatingAndRecommendation(parameterLevelAssessment);
         }
+        for (ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendationList) {
+            saveParameterLevelRecommendation(parameterLevelRecommendation);
+        }
+
         for (Answer answer : answerList) {
             answerService.saveAnswer(answer);
         }
+    }
+
+    private ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
+        if (parameterLevelRecommendation.getRecommendationId()!=null) {
+            if(parameterLevelRecommendation.hasRecommendation()){
+                parameterLevelRecommendationRepository.update(parameterLevelRecommendation);
+            }
+            else{
+                parameterLevelRecommendationRepository.delete(parameterLevelRecommendation);
+            }
+        }else{
+            if(parameterLevelRecommendation.hasRecommendation()){
+                parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
+            }
+        }
+        return parameterLevelRecommendation;
     }
 
     public List<ParameterLevelAssessment> getParameterAssessmentData(Integer assessmentId) {

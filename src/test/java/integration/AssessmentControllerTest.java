@@ -157,7 +157,7 @@ class AssessmentControllerTest {
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
         parameterLevelAssessment.setRating(4);
-        parameterLevelAssessment.setRecommendation("recommendation");
+//        parameterLevelAssessment.setRecommendation("recommendation");
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(2);
@@ -614,7 +614,7 @@ class AssessmentControllerTest {
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
         ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-        parameterLevelAssessment.setRecommendation("Recommendation");
+//        parameterLevelAssessment.setRecommendation("Recommendation");
 
         when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
         when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));

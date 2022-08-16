@@ -152,7 +152,7 @@ public class ReportService {
     }
 
     private void writeParameterRow(Workbook workbook, ParameterLevelAssessment parameterLevelAssessment) {
-        String recommendation = parameterLevelAssessment.getRecommendation();
+//        String recommendation = parameterLevelAssessment.getRecommendation();
         String rating = String.valueOf(parameterLevelAssessment.getRating());
         AssessmentParameter parameter = parameterLevelAssessment.getParameterLevelId().getParameter();
         AssessmentTopic topic = parameter.getTopic();
@@ -161,7 +161,7 @@ public class ReportService {
 
         Sheet sheet = getMatchingSheet(workbook, category);
         generateHeaderIfNotExist(sheet, workbook);
-        writeDataOnSheet(workbook, sheet, module, topic, parameter, rating, recommendation);
+//        writeDataOnSheet(workbook, sheet, module, topic, parameter, rating, recommendation);
     }
 
     private void writeAnswerRow(Workbook workbook, Answer answer) {

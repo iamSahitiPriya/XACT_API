@@ -56,7 +56,6 @@ create table tbl_assessment_parameter (
                                assessment_id int references tbl_assessment(assessment_id),
                                parameter_id  int references tbm_assessment_parameter(parameter_id),
                                score int ,
-                               recommendation text,
                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                primary key (assessment_id,parameter_id)

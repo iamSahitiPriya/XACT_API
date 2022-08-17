@@ -5,14 +5,18 @@
 package integration;
 
 import com.xact.assessment.models.*;
+import com.xact.assessment.repositories.AssessmentTopicRepository;
 import com.xact.assessment.repositories.CategoryRepository;
+import com.xact.assessment.repositories.ModuleRepository;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.reactive.resource.HttpResource;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -36,9 +40,24 @@ class AssessmentMasterDataControllerTest {
     @Inject
     CategoryRepository categoryRepository;
 
+    @Inject
+    ModuleRepository moduleRepository;
+
+    @Inject
+    AssessmentTopicRepository assessmentTopicRepository;
+
     @MockBean(CategoryRepository.class)
     CategoryRepository categoryRepository() {
         return mock(CategoryRepository.class);
+    }
+
+    @MockBean(ModuleRepository.class)
+    ModuleRepository moduleRepository() {
+        return mock(ModuleRepository.class);
+    }
+    @MockBean(AssessmentTopicRepository.class)
+    AssessmentTopicRepository topicRepository(){
+        return mock(AssessmentTopicRepository.class);
     }
 
 
@@ -56,6 +75,7 @@ class AssessmentMasterDataControllerTest {
         assertEquals(expectedResponse, userResponse);
 
     }
+
 
     private AssessmentCategory getAssessmentCategory() {
         Set<AssessmentModule> modules = new HashSet<>();
@@ -125,5 +145,64 @@ class AssessmentMasterDataControllerTest {
         return category;
     }
 
+    @Test
+    void shouldCreateCategory() throws IOException {
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+        assessmentCategory.setCategoryName("Hello");
+        assessmentCategory.setActive(false);
 
+        when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-category-reponse.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/category", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+
+    }
+
+    @Test
+    void shouldCreateModule() throws IOException {
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setActive(false);
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+        assessmentCategory.setCategoryName("Hello");
+        assessmentCategory.setActive(false);
+
+        when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
+        when(categoryRepository.findCategoryById(1)).thenReturn(assessmentCategory);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-module-response.json");
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/modules", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+    @Test
+    void shouldCreateTopic() throws IOException {
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("This is a module");
+        assessmentTopic.setActive(false);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setActive(false);
+
+        when(moduleRepository.findByModuleId(1)).thenReturn(assessmentModule);
+        when(assessmentTopicRepository.save(assessmentTopic)).thenReturn(assessmentTopic);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-topic-response.json");
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topics", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
 }

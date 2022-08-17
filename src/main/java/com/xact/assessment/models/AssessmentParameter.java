@@ -33,6 +33,7 @@ import java.util.Set;
         property = "parameterId")
 public class AssessmentParameter {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "parameter_id", nullable = false, unique = true)
     private Integer parameterId;
 
@@ -82,8 +83,7 @@ public class AssessmentParameter {
         return rating == null ? 0 : rating;
     }
 
-    public AssessmentParameter(Integer parameterId, String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
-        this.parameterId = parameterId;
+    public AssessmentParameter(String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
         this.parameterName = parameterName;
         this.topic = topic;
         this.isActive = isActive;

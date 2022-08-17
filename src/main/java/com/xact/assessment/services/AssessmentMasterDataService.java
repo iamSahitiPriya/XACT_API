@@ -45,47 +45,33 @@ public class AssessmentMasterDataService {
     }
 
     public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
-        List<AssessmentCategory> categories = getAllCategories();
-        categories.sort((a, b) -> a.getCategoryId() - b.getCategoryId());
-        Integer categoryId = categories.size() > 1 ? ((categories.get(categories.size() - 1).getCategoryId()) + 1) : 1;
-        AssessmentCategory assessmentCategory = new AssessmentCategory(categoryId, assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
+        AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
         categoryRepository.save(assessmentCategory);
     }
 
     public void createAssessmentModule(AssessmentModuleRequest assessmentModuleRequest) {
-        List<AssessmentModule> modules = moduleService.getAllModules();
-        modules.sort((a, b) -> a.getModuleId() - b.getModuleId());
-        Integer moduleId = modules.size() > 1 ? (modules.get(modules.size() - 1).getModuleId()) + 1 : 1;
         AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());
-        AssessmentModule assessmentModule = new AssessmentModule(moduleId, assessmentModuleRequest.getModuleName(), assessmentCategory, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
+        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), assessmentCategory, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
         moduleService.createModule(assessmentModule);
     }
 
     public void createAssessmentTopics(AssessmentTopicRequest assessmentTopicRequest) {
-        List<AssessmentTopic> topics = topicService.getAllTopics();
-        topics.sort((a, b) -> a.getTopicId() - b.getTopicId());
-        Integer topicId = topics.size() > 1 ? (topics.get(topics.size() - 1).getTopicId()) + 1 : 1;
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
-        AssessmentTopic assessmentTopic = new AssessmentTopic(topicId, assessmentTopicRequest.getTopicName(), assessmentModule, assessmentTopicRequest.isActive(), assessmentTopicRequest.getComments());
+        AssessmentTopic assessmentTopic = new AssessmentTopic(assessmentTopicRequest.getTopicName(), assessmentModule, assessmentTopicRequest.isActive(), assessmentTopicRequest.getComments());
         topicService.createTopic(assessmentTopic);
     }
 
 
     public void createAssessmentParameter(AssessmentParameterRequest assessmentParameter) {
-        List<AssessmentParameter> parameters = parameterService.getAllParameters();
-        parameters.sort((a, b) -> a.getParameterId() - b.getParameterId());
-        Integer parameterId = parameters.size() > 1 ? (parameters.get(parameters.size() - 1).getParameterId()) + 1 : 1;
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameter.getTopic()).orElseThrow();
-        AssessmentParameter assessmentParameter1 = new AssessmentParameter(parameterId, assessmentParameter.getParameterName(), assessmentTopic, assessmentParameter.isActive(), assessmentParameter.getComments());
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter(assessmentParameter.getParameterName(), assessmentTopic, assessmentParameter.isActive(), assessmentParameter.getComments());
         parameterService.createParameter(assessmentParameter1);
 
     }
 
     public void createAssessmentQuestions(QuestionRequest questionRequest) {
-        List<Question> questions = questionService.getAllQuestion();
-        Integer questionId = questions.size() > 1 ? (questions.get(questions.size() - 1).getQuestionId()) + 1 : 1;
         AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
-        Question question = new Question(questionId, questionRequest.getQuestionText(), assessmentParameter);
+        Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
         questionService.createQuestion(question);
     }
 

@@ -38,6 +38,7 @@ import java.util.List;
         property = "topicId")
 public class AssessmentTopic {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "topic_id", nullable = false, unique = true)
     private Integer topicId;
 
@@ -115,8 +116,7 @@ public class AssessmentTopic {
         return references != null && references.size() > 0;
     }
 
-    public AssessmentTopic(Integer topicId, String topicName, AssessmentModule module, boolean isActive, String comments) {
-        this.topicId = topicId;
+    public AssessmentTopic(String topicName, AssessmentModule module, boolean isActive, String comments) {
         this.topicName = topicName;
         this.module = module;
         this.isActive = isActive;

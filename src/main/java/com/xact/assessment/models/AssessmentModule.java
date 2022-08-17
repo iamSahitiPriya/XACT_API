@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
         property = "moduleId")
 public class AssessmentModule {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "module_id", nullable = false, unique = true)
     private Integer moduleId;
 
@@ -91,8 +92,7 @@ public class AssessmentModule {
     }
 
 
-    public AssessmentModule(Integer moduleId, String moduleName, AssessmentCategory category, boolean isActive, String comments) {
-        this.moduleId = moduleId;
+    public AssessmentModule(String moduleName, AssessmentCategory category, boolean isActive, String comments) {
         this.moduleName = moduleName;
         this.category = category;
         this.isActive = isActive;

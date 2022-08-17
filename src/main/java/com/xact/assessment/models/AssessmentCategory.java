@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
         property = "categoryId")
 public class AssessmentCategory {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id", nullable = false, unique = true)
     private Integer categoryId;
 
@@ -91,8 +92,7 @@ public class AssessmentCategory {
         return moduleSum/moduleCount;
     }
 
-    public AssessmentCategory(Integer categoryId, String categoryName, boolean isActive, String comments) {
-        this.categoryId = categoryId;
+    public AssessmentCategory( String categoryName, boolean isActive, String comments) {
         this.categoryName = categoryName;
         this.isActive = isActive;
         this.comments = comments;

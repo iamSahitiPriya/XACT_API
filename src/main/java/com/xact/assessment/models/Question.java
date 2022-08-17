@@ -29,6 +29,7 @@ import javax.validation.constraints.NotNull;
         property = "questionId")
 public class Question {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_id", nullable = false, unique = true)
     private Integer questionId;
 
@@ -42,8 +43,7 @@ public class Question {
     @JoinColumn(name = "parameter", referencedColumnName = "parameter_id")
     private AssessmentParameter parameter;
 
-    public Question(Integer questionId, String questionText, AssessmentParameter parameter) {
-        this.questionId = questionId;
+    public Question(String questionText, AssessmentParameter parameter) {
         this.questionText = questionText;
         this.parameter = parameter;
     }

@@ -138,7 +138,7 @@ public class TopicAndParameterLevelAssessmentService {
         return topicLevelAssessmentRepository.findById(topicLevelId);
     }
 
-    public Optional<TopicLevelRecommendation> searchRecommendation(Integer recommendationId) {
+    public Optional<TopicLevelRecommendation> searchTopicRecommendation(Integer recommendationId) {
         return topicLevelRecommendationRepository.findById(recommendationId);
     }
 
@@ -148,7 +148,7 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
 
-    public boolean checkRecommendationId(Integer recommendationId) {
+    public boolean checkTopicRecommendationId(Integer recommendationId) {
         return topicLevelRecommendationRepository.existsById(recommendationId);
     }
 
@@ -164,5 +164,13 @@ public class TopicAndParameterLevelAssessmentService {
 
     public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId,Integer parameterId) {
         return  parameterLevelRecommendationRepository.findByAssessmentAndParameter(assessmentId,parameterId);
+    }
+
+    public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
+        return parameterLevelRecommendationRepository.findById(recommendationId);
+    }
+
+    public boolean checkParameterRecommendationId(Integer recommendationId) {
+        return parameterLevelRecommendationRepository.existsById(recommendationId);
     }
 }

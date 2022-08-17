@@ -17,7 +17,6 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-import org.mockito.stubbing.OngoingStubbing;
 import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
@@ -63,6 +62,9 @@ class AssessmentControllerTest {
     @Inject
     TopicLevelRecommendationRepository topicLevelRecommendationRepository;
 
+    @Inject
+    ParameterLevelRecommendationRepository parameterLevelRecommendationRepository;
+
     @MockBean(UsersAssessmentsRepository.class)
     UsersAssessmentsRepository usersAssessmentsRepository() {
         return mock(UsersAssessmentsRepository.class);
@@ -105,6 +107,11 @@ class AssessmentControllerTest {
     @MockBean(TopicLevelRecommendationRepository.class)
     TopicLevelRecommendationRepository topicLevelRecommendationRepository() {
         return mock(TopicLevelRecommendationRepository.class);
+    }
+
+    @MockBean(ParameterLevelRecommendationRepository.class)
+    ParameterLevelRecommendationRepository parameterLevelRecommendationRepository() {
+        return mock(ParameterLevelRecommendationRepository.class);
     }
 
     @Test
@@ -157,7 +164,16 @@ class AssessmentControllerTest {
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
         parameterLevelAssessment.setRating(4);
-//        parameterLevelAssessment.setRecommendation("recommendation");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setRecommendationId(1);
+        parameterLevelRecommendation.setRecommendation("some recommendation");
+        parameterLevelRecommendation.setDeliveryHorizon("some text");
+        parameterLevelRecommendation.setRecommendationImpact(LOW);
+        parameterLevelRecommendation.setRecommendationEffort(HIGH);
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(2);
@@ -180,6 +196,7 @@ class AssessmentControllerTest {
         when(usersAssessmentsRepository.findUserByAssessmentId(1, AssessmentRole.Owner)).thenReturn(singletonList(assessmentUsers));
         when(answerRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(answer));
         when(parameterLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(parameterLevelAssessment));
+        when(parameterLevelRecommendationRepository.findByAssessmentAndParameter(assessment.getAssessmentId(),assessmentParameter.getParameterId())).thenReturn(singletonList(parameterLevelRecommendation));
         when(topicLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(topicLevelAssessment));
         when(topicLevelRecommendationRepository.findByAssessmentAndTopic(assessment.getAssessmentId(),assessmentTopic.getTopicId())).thenReturn(singletonList(topicLevelRecommendation));
 
@@ -330,17 +347,32 @@ class AssessmentControllerTest {
 
         when(answerRepository.save(answer)).thenReturn(answer);
 
-
         ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
         parameterRatingAndRecommendation.setParameterId(1);
-
         parameterRatingAndRecommendation.setRating(1);
-//        parameterRatingAndRecommendation.setRecommendation("some text");
 
         ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation, ParameterLevelId.class);
         parameterLevelId.setAssessment(assessment);
         ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterRatingAndRecommendation, ParameterLevelAssessment.class);
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendation("some recommendation");
+        parameterLevelRecommendationRequest.setEffort("HIGH");
+        parameterLevelRecommendationRequest.setImpact("MEDIUM");
+        parameterLevelRecommendationRequest.setDeliveryHorizon("some text");
+
+
+        ParameterLevelRecommendation parameterLevelRecommendation=mapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
+        parameterLevelRecommendation.setAssessment(assessment);
+        AssessmentParameter assessmentParameter =new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+
+
+        when(assessmentParameterRepository.findById(assessmentParameter.getParameterId())).thenReturn(Optional.of(assessmentParameter));
+        when(parameterLevelRecommendationRepository.save(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
 
         when(parameterLevelAssessmentRepository.save(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
 
@@ -484,7 +516,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-impact-value.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationImpact/1/1", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationFields/1/1", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -535,7 +567,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-effort-value.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationImpact/1/1", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationFields/1/1", dataRequest)
                 .bearerAuth("anything"));
 
 
@@ -588,7 +620,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-deliveryHorizon-value.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationImpact/1/1", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationFields/1/1", dataRequest)
                 .bearerAuth("anything"));
 
 

@@ -204,7 +204,6 @@ public class AssessmentController {
                 saveParameterRecommendationEffort(parameterLevelRecommendationRequest,parameterLevelRecommendation);
                 saveParameterRecommendationDeliveryHorizon(parameterLevelRecommendationRequest,parameterLevelRecommendation);
             }
-            System.out.println("///////////////controller");
            topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
             updateAssessment(assessment);
             if(topicAndParameterLevelAssessmentService.checkParameterRecommendationId(parameterLevelRecommendation.getRecommendationId())){

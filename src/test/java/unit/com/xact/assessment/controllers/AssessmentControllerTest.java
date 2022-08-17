@@ -569,7 +569,6 @@ class AssessmentControllerTest {
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
-
         TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest=new TopicLevelRecommendationTextRequest();
         topicLevelRecommendationTextRequest.setRecommendation("some text");
         topicLevelRecommendationTextRequest.setRecommendationId(1);
@@ -821,6 +820,297 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
         verify(topicAndParameterLevelAssessmentService).deleteRecommendation(recommendationId);
     }
+
+    @Test
+    void testUpdateAssessmentParameterRecommendationTextWithOutRecommendationId() {
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        Integer parameterId = 1;
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Topic Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendation("some text");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
+
+        HttpResponse<ParameterLevelRecommendationResponse> actualResponse=assessmentController.saveParameterRecommendation(assessmentId,parameterId,parameterLevelRecommendationRequest,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+
+        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+    }
+
+    @Test
+    void testUpdateAssessmentParameterRecommendationTextWithRecommendationId() {
+        Integer assessmentId = 1;
+        Integer parameterId=1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        AssessmentParameter assessmentParameter= new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationId(1);
+        parameterLevelRecommendationRequest.setEffort("");
+        parameterLevelRecommendationRequest.setImpact("");
+        parameterLevelRecommendationRequest.setDeliveryHorizon("");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+
+        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
+
+        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+        HttpResponse<ParameterLevelRecommendationResponse> actualResponse=assessmentController.saveParameterRecommendation(assessmentId,parameterId,parameterLevelRecommendationRequest,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+
+        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+    }
+
+
+    @Test
+    void testUpdateAssessmentParameterRecommendationImpact() {
+        Integer assessmentId = 1;
+        Integer parameterId =1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+
+        AssessmentParameter assessmentParameter= new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationId(1);
+        parameterLevelRecommendationRequest.setEffort("");
+        parameterLevelRecommendationRequest.setImpact("HIGH");
+        parameterLevelRecommendationRequest.setDeliveryHorizon("");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+
+
+        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
+        parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(parameterLevelRecommendationRequest.getImpact()));
+
+        HttpResponse<ParameterLevelRecommendationResponse> actualResponse=assessmentController.saveParameterRecommendation(assessmentId,parameterId,parameterLevelRecommendationRequest,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+
+        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+    }
+
+    @Test
+    void testUpdateAssessmentParameterRecommendationEffort() {
+        Integer assessmentId = 1;
+        Integer parameterId =1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+
+        AssessmentParameter assessmentParameter= new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationId(1);
+        parameterLevelRecommendationRequest.setEffort("LOW");
+        parameterLevelRecommendationRequest.setImpact("HIGH");
+        parameterLevelRecommendationRequest.setDeliveryHorizon("");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+
+
+        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
+        parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(parameterLevelRecommendationRequest.getEffort()));
+
+        HttpResponse<ParameterLevelRecommendationResponse> actualResponse=assessmentController.saveParameterRecommendation(assessmentId,parameterId,parameterLevelRecommendationRequest,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+
+        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+    }
+
+    @Test
+    void testUpdateAssessmentParameterRecommendationDeliveryHorizon() {
+        Integer assessmentId = 1;
+        Integer parameterId =1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+
+        AssessmentParameter assessmentParameter= new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationId(1);
+        parameterLevelRecommendationRequest.setEffort("");
+        parameterLevelRecommendationRequest.setImpact("");
+        parameterLevelRecommendationRequest.setDeliveryHorizon("some text");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+
+
+        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
+        parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
+
+        HttpResponse<ParameterLevelRecommendationResponse> actualResponse=assessmentController.saveParameterRecommendation(assessmentId,parameterId,parameterLevelRecommendationRequest,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+
+        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+    }
+
     @Test
     void testUpdateAssessmentTopicRating() {
         Integer assessmentId = 1;
@@ -871,55 +1161,6 @@ class AssessmentControllerTest {
 
 
     }
-
-//    @Test
-//    void testUpdateAssessmentParameterRecommendation() {
-//        Integer assessmentId = 1;
-//
-//        User user = new User();
-//        String userEmail = "hello@thoughtworks.com";
-//        Profile profile = new Profile();
-//        profile.setEmail(userEmail);
-//        user.setProfile(profile);
-//
-//        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
-//
-//        UserId userId = new UserId();
-//        userId.setUserEmail("hello@thoughtworks.com");
-//
-//        Date created = new Date(2022 - 4 - 13);
-//        Date updated = new Date(2022 - 4 - 13);
-//        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-//
-//        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
-//        userId.setAssessment(assessment);
-//
-//        AssessmentUsers assessmentUsers = new AssessmentUsers();
-//        assessmentUsers.setUserId(userId);
-//
-//        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
-//
-//        Integer parameterId = 1;
-//        AssessmentParameter assessmentParameter = new AssessmentParameter();
-//        assessmentParameter.setParameterId(parameterId);
-//        assessmentParameter.setParameterName("Parameter Name");
-//
-//        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
-//
-//        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
-//        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-//        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-////        parameterLevelAssessment.setRecommendation("Recommendation");
-//
-//        when(topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
-//
-//        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, "Note", authentication);
-//
-//        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-//
-//        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation(parameterLevelAssessment);
-//
-//    }
 
     @Test
     void testUpdateAssessmentParameterRating() {

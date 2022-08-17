@@ -101,7 +101,7 @@ public class TopicAndParameterLevelAssessmentService {
         }
     }
 
-    private ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
         if (parameterLevelRecommendation.getRecommendationId()!=null) {
             if(parameterLevelRecommendation.hasRecommendation()){
                 parameterLevelRecommendationRepository.update(parameterLevelRecommendation);
@@ -163,6 +163,6 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
     public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId,Integer parameterId) {
-        return  parameterLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId,parameterId);
+        return  parameterLevelRecommendationRepository.findByAssessmentAndParameter(assessmentId,parameterId);
     }
 }

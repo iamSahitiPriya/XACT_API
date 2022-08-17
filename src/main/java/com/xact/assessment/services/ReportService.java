@@ -36,7 +36,7 @@ public class ReportService {
         List<Answer> answers = answerService.getAnswers(assessmentId);
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
-        List<TopicLevelRecommendation> topicLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentRecommendationData(assessmentId);
+        List<TopicLevelRecommendation> topicLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId);
         HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendationList = getTopicWiseRecommendations(topicLevelRecommendationData,assessmentId);
 
         return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationList, assessmentId);

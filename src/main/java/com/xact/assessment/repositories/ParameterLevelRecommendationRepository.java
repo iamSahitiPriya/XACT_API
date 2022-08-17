@@ -1,7 +1,6 @@
 package com.xact.assessment.repositories;
 
 import com.xact.assessment.models.ParameterLevelRecommendation;
-import com.xact.assessment.models.TopicLevelRecommendation;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.data.annotation.Query;
@@ -16,7 +15,7 @@ public interface ParameterLevelRecommendationRepository extends CrudRepository<P
 
     @Executable
     @Query("SELECT tlr FROM ParameterLevelRecommendation tlr WHERE tlr.assessment.assessmentId=:assessmentId and tlr.parameter.parameterId=:parameterId order by tlr.recommendationId")
-    List<ParameterLevelRecommendation> findByAssessmentAndTopic(@Parameter("assessmentId") Integer assessmentId, @Parameter("parameterId") Integer parameterId);
+    List<ParameterLevelRecommendation> findByAssessmentAndParameter(@Parameter("assessmentId") Integer assessmentId, @Parameter("parameterId") Integer parameterId);
 
     @Executable
     @Query("SELECT tlr FROM ParameterLevelRecommendation tlr WHERE tlr.assessment.assessmentId=:assessmentId order by tlr.recommendationId")

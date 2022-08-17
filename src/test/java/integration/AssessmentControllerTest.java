@@ -335,7 +335,7 @@ class AssessmentControllerTest {
         parameterRatingAndRecommendation.setParameterId(1);
 
         parameterRatingAndRecommendation.setRating(1);
-        parameterRatingAndRecommendation.setRecommendation("some text");
+//        parameterRatingAndRecommendation.setRecommendation("some text");
 
         ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation, ParameterLevelId.class);
         parameterLevelId.setAssessment(assessment);

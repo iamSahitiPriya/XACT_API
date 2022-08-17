@@ -230,7 +230,7 @@ public class AssessmentController {
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }
 
-    @Patch(value = "/topicRecommendationImpact/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/topicRecommendationFields/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelRecommendationRequest> saveTopicRecommendationFields(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);

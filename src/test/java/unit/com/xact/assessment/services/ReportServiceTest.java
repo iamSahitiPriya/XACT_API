@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -66,7 +65,7 @@ class ReportServiceTest {
         List<TopicLevelAssessment> topicAssessments = new ArrayList<>();
         ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment();
         parameterAssessment.setRating(3);
-        parameterAssessment.setRecommendation("recommendation");
+//        parameterAssessment.setRecommendation("recommendation");
         parameterAssessment.setParameterLevelId(new ParameterLevelId(assessment,parameter));
         parameterAssessments.add(parameterAssessment);
 
@@ -89,7 +88,7 @@ class ReportServiceTest {
 
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
-       when(topicAndParameterLevelAssessmentService.getAssessmentRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
+       when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
 
 
         Workbook report = new XSSFWorkbook();

@@ -205,4 +205,24 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
+
+    @Test
+    void shouldCreateParameter() throws IOException {
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("This is a module");
+        assessmentTopic.setActive(false);
+
+        AssessmentParameter parameter = new AssessmentParameter();
+        parameter.setParameterId(1);
+        parameter.setParameterName("parameter");
+
+        when(assessmentTopicRepository.findByTopicId(1)).thenReturn(assessmentTopic);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-response.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topics", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
 }

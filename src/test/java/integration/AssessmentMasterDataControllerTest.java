@@ -5,9 +5,7 @@
 package integration;
 
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AssessmentTopicRepository;
-import com.xact.assessment.repositories.CategoryRepository;
-import com.xact.assessment.repositories.ModuleRepository;
+import com.xact.assessment.repositories.*;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
@@ -19,10 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.resource.HttpResource;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -46,6 +41,15 @@ class AssessmentMasterDataControllerTest {
     @Inject
     AssessmentTopicRepository assessmentTopicRepository;
 
+    @Inject
+    AssessmentParameterRepository assessmentParameterRepository;
+
+    @Inject
+    AssessmentParameterReferenceRepository assessmentParameterReferenceRepository;
+
+    @Inject
+    AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
+
     @MockBean(CategoryRepository.class)
     CategoryRepository categoryRepository() {
         return mock(CategoryRepository.class);
@@ -55,9 +59,22 @@ class AssessmentMasterDataControllerTest {
     ModuleRepository moduleRepository() {
         return mock(ModuleRepository.class);
     }
+
     @MockBean(AssessmentTopicRepository.class)
-    AssessmentTopicRepository topicRepository(){
+    AssessmentTopicRepository topicRepository() {
         return mock(AssessmentTopicRepository.class);
+    }
+    @MockBean(AssessmentParameterRepository.class)
+    AssessmentParameterRepository parameterRepository() {
+        return mock(AssessmentParameterRepository.class);
+    }
+    @MockBean(AssessmentParameterReferenceRepository.class)
+    AssessmentParameterReferenceRepository parameterReferenceRepository() {
+        return mock(AssessmentParameterReferenceRepository.class);
+    }
+    @MockBean(AssessmentTopicReferenceRepository.class)
+    AssessmentTopicReferenceRepository topicReferenceRepository() {
+        return mock(AssessmentTopicReferenceRepository.class);
     }
 
 
@@ -218,11 +235,55 @@ class AssessmentMasterDataControllerTest {
         parameter.setParameterName("parameter");
 
         when(assessmentTopicRepository.findByTopicId(1)).thenReturn(assessmentTopic);
+        when(assessmentParameterRepository.save(parameter)).thenReturn(parameter);
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-response.json");
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topics", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+    @Test
+    void shouldCreateTopicReference() throws IOException {
+        AssessmentTopicReference topicReference = new AssessmentTopicReference();
+        topicReference.setReference("Hello this is a reference");
+        topicReference.setReferenceId(1);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("This is a module");
+        assessmentTopic.setActive(false);
+
+        when(assessmentTopicRepository.findById(1)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentTopicReferenceRepository.save(topicReference)).thenReturn(topicReference);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-topicReference-response.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topicReferences", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+    @Test
+    void shouldCreateParameterReference() throws IOException {
+        AssessmentParameterReference parameterReference = new AssessmentParameterReference();
+        parameterReference.setReference("Hello this is a reference");
+        parameterReference.setReferenceId(1);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("This is a module");
+        assessmentParameter.setActive(false);
+
+        when(assessmentParameterRepository.findById(1)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentParameterReferenceRepository.save(parameterReference)).thenReturn(parameterReference);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-parameterReference-response.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/parameterReferences", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
     }
 }

@@ -20,4 +20,5 @@ public class TopicLevelRecommendationTest {
         assertEquals(false, topicLevelRecommendation.hasRecommendation());
     }
 
+
 }

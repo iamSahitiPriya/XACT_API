@@ -19,8 +19,10 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
+import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class ReportServiceTest {
@@ -35,7 +37,7 @@ class ReportServiceTest {
     private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository,topicService,parameterService);
 
     @Test
-    void getWorkbookAssessmentDataSheet() {
+    void getWorkbookAssessmentDataSheetWithRating() {
         Integer assessmentId = 123;
         List<Answer> answers = new ArrayList<>();
 
@@ -67,7 +69,6 @@ class ReportServiceTest {
         List<TopicLevelAssessment> topicAssessments = new ArrayList<>();
         ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment();
         parameterAssessment.setRating(3);
-//        parameterAssessment.setRecommendation("recommendation");
         parameterAssessment.setParameterLevelId(new ParameterLevelId(assessment,parameter));
         parameterAssessments.add(parameterAssessment);
 
@@ -83,10 +84,11 @@ class ReportServiceTest {
         topicLevelRecommendation.setTopic(topic);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setRecommendationEffort(HIGH);
 
         topicLevelRecommendationList.add(topicLevelRecommendation);
 
-        topicRecommendationMap.put(1,topicLevelRecommendationList);
+        topicRecommendationMap.put(topic.getTopicId(),topicLevelRecommendationList);
 
         HashMap<Integer,List<ParameterLevelRecommendation>> parameterRecommendationMap = new HashMap<>();
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
@@ -96,14 +98,15 @@ class ReportServiceTest {
         parameterLevelRecommendation.setParameter(parameter);
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setRecommendationImpact(LOW);
+        parameterLevelRecommendation.setRecommendationEffort(HIGH);
 
         parameterLevelRecommendationList.add(parameterLevelRecommendation);
 
-        parameterRecommendationMap.put(1,parameterLevelRecommendationList);
+        parameterRecommendationMap.put(parameter.getParameterId(),parameterLevelRecommendationList);
 
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
-       when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
         when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(parameterLevelRecommendationList);
 
 
@@ -112,6 +115,61 @@ class ReportServiceTest {
 
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
 
+    }
+
+    @Test
+    void shouldCreateHashMapForTopicLevelRecommendation() {
+        AssessmentParameter parameter = new AssessmentParameter();
+        parameter.setParameterName("my param");
+        parameter.setParameterId(1);
+
+        Integer assessmentId = 123;
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+
+        HashMap<Integer,List<ParameterLevelRecommendation>> parameterRecommendationMap = new HashMap<>();
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setRecommendationId(1);
+        parameterLevelRecommendation.setRecommendation("some text");
+        parameterLevelRecommendation.setParameter(parameter);
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setRecommendationImpact(LOW);
+        parameterLevelRecommendation.setRecommendationEffort(HIGH);
+
+        parameterLevelRecommendationList.add(parameterLevelRecommendation);
+
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId,parameterLevelRecommendation.getParameter().getParameterId())).thenReturn(parameterLevelRecommendationList);
+        HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = reportService.getParameterWiseRecommendations(parameterLevelRecommendationList,assessmentId);
+
+        assertEquals(1,parameterLevelRecommendationMap.size());
+    }
+
+    @Test
+    void shouldCreateHashMapForParameterLevelRecommendation() {
+        AssessmentTopic topic = new AssessmentTopic();
+        topic.setTopicId(1);
+        topic.setTopicName("my topic");
+
+        Integer assessmentId = 123;
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+
+        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setRecommendation("some text");
+        topicLevelRecommendation.setTopic(topic);
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setRecommendationEffort(HIGH);
+
+        topicLevelRecommendationList.add(topicLevelRecommendation);
+
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId,topicLevelRecommendation.getTopic().getTopicId())).thenReturn(topicLevelRecommendationList);
+        HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendationMap = reportService.getTopicWiseRecommendations(topicLevelRecommendationList,assessmentId);
+
+        assertEquals(1,topicLevelRecommendationMap.size());
     }
 
     private Workbook getMockWorkbook() {
@@ -195,5 +253,4 @@ class ReportServiceTest {
         verify(chartService).generateChart(any());
         assertEquals(workbook.getSheetAt(0).getSheetName(), getMockWorkbookForChart().getSheetAt(0).getSheetName());
     }
-
 }

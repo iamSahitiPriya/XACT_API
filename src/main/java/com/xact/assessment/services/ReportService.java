@@ -46,7 +46,7 @@ public class ReportService {
         return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap,parameterLevelRecommendationMap, assessmentId);
     }
 
-    private HashMap<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
+    public HashMap<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
         HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = new HashMap<>();
         List <ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
         for(ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
@@ -58,20 +58,19 @@ public class ReportService {
         return parameterLevelRecommendationMap;
     }
 
-    private HashMap<Integer,List<TopicLevelRecommendation>> getTopicWiseRecommendations(List<TopicLevelRecommendation> topicLevelRecommendations, Integer assessmentId) {
+    public HashMap<Integer,List<TopicLevelRecommendation>> getTopicWiseRecommendations(List<TopicLevelRecommendation> topicLevelRecommendations, Integer assessmentId) {
         HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendationMap = new HashMap<>();
         List <TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
+
         for(TopicLevelRecommendation topicLevelRecommendation : topicLevelRecommendations) {
             List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId,topicLevelRecommendation.getTopic().getTopicId());
             topicLevelRecommendationList.addAll(topicLevelRecommendationList1);
             topicLevelRecommendationMap.put(topicLevelRecommendation.getTopic().getTopicId(),topicLevelRecommendationList1);
-
         }
-
         return topicLevelRecommendationMap;
     }
 
-    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId) {
+    public Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId) {
         Workbook workbook = new XSSFWorkbook();
 
         writeReport(answers,parameterLevelAssessments,topicLevelAssessments,topicLevelRecommendations,parameterLevelRecommendations,workbook);

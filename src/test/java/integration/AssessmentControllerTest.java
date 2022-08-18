@@ -473,6 +473,54 @@ class AssessmentControllerTest {
     }
 
     @Test
+    void testUpdateParameterRecommendationText() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer parameterId = 1;
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationTextRequest=new ParameterLevelRecommendationRequest();
+
+        parameterLevelRecommendationTextRequest.setRecommendation("some recommendation");
+        parameterLevelRecommendationTextRequest.setRecommendationId(1);
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        when(parameterLevelRecommendationRepository.existsById(parameterLevelRecommendationTextRequest.getRecommendationId())).thenReturn(false);
+        when(parameterLevelRecommendationRepository.findById(parameterLevelRecommendationTextRequest.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationTextRequest.getRecommendation());
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationTextRequest.getRecommendationId());
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-parameter-recommendation-text-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+    @Test
     void testUpdateTopicRecommendationImpact() throws IOException {
         UserId userId = new UserId();
         userId.setUserEmail("hello@email.com");
@@ -521,6 +569,55 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
+    }
+    @Test
+    void testUpdateParameterRecommendationImpact() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer parameterId = 1;
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationTextRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationTextRequest.setRecommendation("some recommendation");
+        parameterLevelRecommendationTextRequest.setRecommendationId(1);
+        parameterLevelRecommendationTextRequest.setImpact("LOW");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        when(parameterLevelRecommendationRepository.existsById(parameterLevelRecommendationTextRequest.getRecommendationId())).thenReturn(false);
+        when(parameterLevelRecommendationRepository.findById(parameterLevelRecommendationTextRequest.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationTextRequest.getRecommendation());
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationTextRequest.getRecommendationId());
+        parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(parameterLevelRecommendationTextRequest.getImpact()));
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-parameter-recommendation-text-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
 
     @Test
@@ -576,6 +673,57 @@ class AssessmentControllerTest {
     }
 
     @Test
+    void testUpdateParameterRecommendationEffort() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer parameterId = 1;
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationTextRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationTextRequest.setRecommendation("some recommendation");
+        parameterLevelRecommendationTextRequest.setRecommendationId(1);
+        parameterLevelRecommendationTextRequest.setImpact("");
+        parameterLevelRecommendationTextRequest.setEffort("HIGH");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        when(parameterLevelRecommendationRepository.existsById(parameterLevelRecommendationTextRequest.getRecommendationId())).thenReturn(false);
+        when(parameterLevelRecommendationRepository.findById(parameterLevelRecommendationTextRequest.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationTextRequest.getRecommendation());
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationTextRequest.getRecommendationId());
+        parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(parameterLevelRecommendationTextRequest.getEffort()));
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-parameter-recommendation-text-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+
+    @Test
     void testUpdateTopicRecommendationDeliveryHorizon() throws IOException {
         UserId userId = new UserId();
         userId.setUserEmail("hello@email.com");
@@ -627,40 +775,53 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
-
     @Test
-    void testUpdateParameterRecommendation() throws IOException {
+    void testUpdateParameterRecommendationDeliveryHorizon() throws IOException {
         UserId userId = new UserId();
         userId.setUserEmail("hello@email.com");
+
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
         Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
+
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
         Integer parameterId = 1;
         AssessmentParameter assessmentParameter = new AssessmentParameter();
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
-        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-//        parameterLevelAssessment.setRecommendation("Recommendation");
 
-        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
         when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));
-        when(parameterLevelAssessmentRepository.findById(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
-        when(parameterLevelAssessmentRepository.save(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
-        when(assessmentRepository.update(any(Assessment.class))).thenReturn(assessment);
 
 
-        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-text-value.json");
+        ParameterLevelRecommendationRequest parameterLevelRecommendationTextRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationTextRequest.setRecommendation("some recommendation");
+        parameterLevelRecommendationTextRequest.setRecommendationId(1);
+        parameterLevelRecommendationTextRequest.setDeliveryHorizon("dummy text");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        when(parameterLevelRecommendationRepository.existsById(parameterLevelRecommendationTextRequest.getRecommendationId())).thenReturn(false);
+        when(parameterLevelRecommendationRepository.findById(parameterLevelRecommendationTextRequest.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationTextRequest.getRecommendation());
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationTextRequest.getRecommendationId());
+        parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationTextRequest.getDeliveryHorizon());
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-parameter-recommendation-text-value.json");
+
         var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/1/1", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-
     }
 
     @Test

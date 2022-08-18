@@ -173,4 +173,8 @@ public class TopicAndParameterLevelAssessmentService {
     public boolean checkParameterRecommendationId(Integer recommendationId) {
         return parameterLevelRecommendationRepository.existsById(recommendationId);
     }
+
+    public void deleteParameterRecommendation(Integer recommendationId) {
+        parameterLevelRecommendationRepository.deleteById(recommendationId);
+    }
 }

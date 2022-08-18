@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     tools { nodejs "nodejs" }
-
     stages {
         stage("Security check"){
                           steps{
@@ -10,8 +9,8 @@ pipeline {
                                        try{
                                           sh "set +e"
                                           sh 'docker rm $(docker ps -a -q)'
-                                          sh "docker run --rm -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common filesystem --directory ${env.WORKSPACE} --debug"
-                                          ERROR_COUNT = sh(returnStdout: true, script: "docker run -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common filesystem --directory ${env.WORKSPACE} --json | grep -c Filesystem")
+                                          sh "docker run --rm -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common git file://${env.WORKSPACE} --debug"
+                                          ERROR_COUNT = sh(returnStdout: true, script: "docker run -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common git file://${env.WORKSPACE} --json | grep -c commit")
                                           if(ERROR_COUNT != 0){
                                                 throw new Exception("Build failed due to security issues. Please check the above logs.")
                                           }

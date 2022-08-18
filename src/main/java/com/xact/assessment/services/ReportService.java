@@ -40,10 +40,10 @@ public class ReportService {
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
         List<TopicLevelRecommendation> topicLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId);
         List<ParameterLevelRecommendation> parameterLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId);
-        HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendationList = getTopicWiseRecommendations(topicLevelRecommendationData,assessmentId);
-        HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationList = getParameterWiseRecommendations(parameterLevelRecommendationData,assessmentId);
+        HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendationMap = getTopicWiseRecommendations(topicLevelRecommendationData,assessmentId);
+        HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = getParameterWiseRecommendations(parameterLevelRecommendationData,assessmentId);
 
-        return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationList,parameterLevelRecommendationList, assessmentId);
+        return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap,parameterLevelRecommendationMap, assessmentId);
     }
 
     private HashMap<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {

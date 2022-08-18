@@ -30,8 +30,9 @@ class ReportServiceTest {
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
     TopicService topicService = mock(TopicService.class);
+    ParameterService parameterService = mock(ParameterService.class);
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository,topicService);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository,topicService,parameterService);
 
     @Test
     void getWorkbookAssessmentDataSheet() {
@@ -45,6 +46,7 @@ class ReportServiceTest {
         question.setQuestionId(1);
         AssessmentParameter parameter = new AssessmentParameter();
         parameter.setParameterName("my param");
+        parameter.setParameterId(1);
         AssessmentTopic topic = new AssessmentTopic();
         topic.setTopicId(1);
         topic.setTopicName("my topic");
@@ -86,13 +88,27 @@ class ReportServiceTest {
 
         topicRecommendationMap.put(1,topicLevelRecommendationList);
 
+        HashMap<Integer,List<ParameterLevelRecommendation>> parameterRecommendationMap = new HashMap<>();
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setRecommendationId(1);
+        parameterLevelRecommendation.setRecommendation("some text");
+        parameterLevelRecommendation.setParameter(parameter);
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setRecommendationImpact(LOW);
+
+        parameterLevelRecommendationList.add(parameterLevelRecommendation);
+
+        parameterRecommendationMap.put(1,parameterLevelRecommendationList);
+
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
        when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(parameterLevelRecommendationList);
 
 
         Workbook report = new XSSFWorkbook();
-       reportService.writeReport(answers,parameterAssessments,topicAssessments, topicRecommendationMap, report);
+       reportService.writeReport(answers,parameterAssessments,topicAssessments, topicRecommendationMap, parameterRecommendationMap,report);
 
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
 

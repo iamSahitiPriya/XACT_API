@@ -202,6 +202,7 @@ public class AssessmentController {
                 parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
                 saveParameterRecommendationImpact(parameterLevelRecommendationRequest,parameterLevelRecommendation);
                 saveParameterRecommendationEffort(parameterLevelRecommendationRequest,parameterLevelRecommendation);
+                System.out.println("..................................."+parameterLevelRecommendation.getRecommendationEffort());
                 saveParameterRecommendationDeliveryHorizon(parameterLevelRecommendationRequest,parameterLevelRecommendation);
             }
            topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
@@ -551,10 +552,14 @@ public class AssessmentController {
     }
 
     private void saveParameterRecommendationEffort(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
+        System.out.println("effort calllll");
         if(parameterLevelRecommendationRequest.getEffort()!=""){
+            System.out.println("...................."+parameterLevelRecommendationRequest.getEffort());
             parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(parameterLevelRecommendationRequest.getEffort()));
+            System.out.println("..............."+parameterLevelRecommendation.getRecommendationEffort().toString());
         }
         else{
+            System.out.println("AssessmentController.saveParameterRecommendationEffort");
             parameterLevelRecommendation.setRecommendationEffort(null);
         }
     }
@@ -573,7 +578,7 @@ public class AssessmentController {
             parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
         }
         else{
-            parameterLevelRecommendation.setRecommendationEffort(null);
+            parameterLevelRecommendation.setDeliveryHorizon(null);
         }
     }
 

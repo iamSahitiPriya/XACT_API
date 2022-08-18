@@ -271,6 +271,16 @@ public class AssessmentController {
 
 
 
+    @Delete(value = "/deleteParameterRecommendation/{assessmentId}/{parameterId}/{recommendationId}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<ParameterLevelRecommendationRequest> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId,@PathVariable("recommendationId") Integer recommendationId , Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if (assessment.isEditable()) {
+            topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
+        }
+        return HttpResponse.ok();
+    }
+
     @Delete(value = "/deleteRecommendation/{assessmentId}/{topicId}/{recommendationId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelRecommendationRequest> deleteRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId,@PathVariable("recommendationId") Integer recommendationId , Authentication authentication) {

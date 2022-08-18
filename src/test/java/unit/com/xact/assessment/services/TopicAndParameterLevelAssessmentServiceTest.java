@@ -13,11 +13,13 @@ import com.xact.assessment.services.AnswerService;
 import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 
-import java.lang.reflect.Parameter;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -342,4 +344,49 @@ class TopicAndParameterLevelAssessmentServiceTest {
         topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
         verify(parameterLevelAssessmentRepository).delete(parameterLevelAssessment);
     }
+
+    @Test
+    void shouldDeleteRecommendationForParameterLevel() {
+
+        Integer assessmentId1 = 1;
+        Integer parameterId = 1;
+        Integer recommendationId=1;
+
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation.setParameterId(1);
+        parameterRatingAndRecommendation.setRating(1);
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendationId(recommendationId);
+        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setDeliveryHorizon("some other teext");
+        parameterLevelRecommendationRequest.setImpact("HIGH");
+        parameterLevelRecommendationRequest.setEffort("LOW");
+
+
+        Assessment assessment1 = new Assessment();
+        assessment1.setAssessmentId(assessmentId1);
+
+
+        ParameterLevelRecommendation parameterLevelRecommendation = mapper.map(parameterLevelRecommendationRequest, ParameterLevelRecommendation.class);
+        parameterLevelRecommendation.setAssessment(assessment1);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+
+        parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
+
+        when(parameterLevelRecommendationRepository.existsById(parameterLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
+        when(parameterLevelRecommendationRepository.update(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
+//        when(parameterLevelRecommendationRepository.deleteById(parameterLevelRecommendation.getRecommendationId())).thenCallRealMethod();
+
+//        Stream<Object> RecommendationException;
+//        doThrow(RecommendationException.builder().build()) .when(parameterLevelRecommendationRepository.deleteById(parameterLevelRecommendation.getRecommendationId())) .validate(any());
+
+        ParameterLevelRecommendation actualResponse1 = topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
+
+        assertEquals(parameterLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
+
+    }
+
 }

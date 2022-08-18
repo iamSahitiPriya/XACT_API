@@ -20,14 +20,16 @@ public class ReportService {
     private final ChartService chartService;
     private final CategoryRepository categoryRepository;
     private final TopicService topicService;
+    private final ParameterService parameterService;
 
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository,TopicService topicService) {
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository,TopicService topicService,ParameterService parameterService) {
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
         this.chartService = chartService;
         this.categoryRepository = categoryRepository;
         this.topicService = topicService;
+        this.parameterService = parameterService;
 
 
     }
@@ -37,9 +39,23 @@ public class ReportService {
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
         List<TopicLevelRecommendation> topicLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId);
+        List<ParameterLevelRecommendation> parameterLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId);
         HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendationList = getTopicWiseRecommendations(topicLevelRecommendationData,assessmentId);
+        HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationList = getParameterWiseRecommendations(parameterLevelRecommendationData,assessmentId);
 
-        return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationList, assessmentId);
+        return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationList,parameterLevelRecommendationList, assessmentId);
+    }
+
+    private HashMap<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
+        HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = new HashMap<>();
+        List <ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
+        for(ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
+            List<ParameterLevelRecommendation> parameterLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId,parameterLevelRecommendation.getParameter().getParameterId());
+            parameterLevelRecommendationList.addAll(parameterLevelRecommendationList1);
+            parameterLevelRecommendationMap.put(parameterLevelRecommendation.getParameter().getParameterId(),parameterLevelRecommendationList1);
+
+        }
+        return parameterLevelRecommendationMap;
     }
 
     private HashMap<Integer,List<TopicLevelRecommendation>> getTopicWiseRecommendations(List<TopicLevelRecommendation> topicLevelRecommendations, Integer assessmentId) {
@@ -55,21 +71,37 @@ public class ReportService {
         return topicLevelRecommendationMap;
     }
 
-    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendations, Integer assessmentId) {
+    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId) {
         Workbook workbook = new XSSFWorkbook();
 
-        writeReport(answers,parameterLevelAssessments,topicLevelAssessments,topicLevelRecommendations,workbook);
+        writeReport(answers,parameterLevelAssessments,topicLevelAssessments,topicLevelRecommendations,parameterLevelRecommendations,workbook);
 
         createDataAndGenerateChart(workbook, assessmentId,parameterLevelAssessments,topicLevelAssessments);
 
         return workbook;
     }
-    public void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendations, Workbook workbook){
+    public void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendations,HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook){
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
         }
         for (ParameterLevelAssessment parameterLevelAssessment : parameterAssessments) {
-            writeParameterRow(workbook, parameterLevelAssessment);
+            List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterLevelRecommendations.get(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
+            parameterLevelRecommendations.remove(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
+            writeParameterRow(workbook, parameterLevelAssessment,parameterLevelRecommendationList);
+        }
+        for (Map.Entry<Integer, List<ParameterLevelRecommendation>> entry : parameterLevelRecommendations.entrySet()) {
+            Integer key = entry.getKey();
+            AssessmentParameter assessmentParameter = parameterService.getParameter(key).orElse(new AssessmentParameter());
+            AssessmentTopic assessmentTopic = assessmentParameter.getTopic();
+            AssessmentModule assessmentModule = assessmentTopic.getModule();
+            List<ParameterLevelRecommendation> parameterLevelRecommendationList = entry.getValue();
+            AssessmentCategory category = assessmentModule.getCategory();
+
+            Sheet sheet = getMatchingSheet(workbook, category);
+
+            generateHeaderIfNotExist(sheet, workbook);
+            writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, assessmentParameter, "", parameterLevelRecommendationList);
+
         }
         for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
             List<TopicLevelRecommendation> topicLevelRecommendationList = topicLevelRecommendations.get(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
@@ -151,8 +183,7 @@ public class ReportService {
         writeDataOnSheet(workbook, sheet, module, topic, rating, topicLevelRecommendations);
     }
 
-    private void writeParameterRow(Workbook workbook, ParameterLevelAssessment parameterLevelAssessment) {
-//        String recommendation = parameterLevelAssessment.getRecommendation();
+    private void writeParameterRow(Workbook workbook, ParameterLevelAssessment parameterLevelAssessment, List <ParameterLevelRecommendation> parameterLevelRecommendations) {
         String rating = String.valueOf(parameterLevelAssessment.getRating());
         AssessmentParameter parameter = parameterLevelAssessment.getParameterLevelId().getParameter();
         AssessmentTopic topic = parameter.getTopic();
@@ -160,8 +191,9 @@ public class ReportService {
         AssessmentCategory category = module.getCategory();
 
         Sheet sheet = getMatchingSheet(workbook, category);
+
         generateHeaderIfNotExist(sheet, workbook);
-//        writeDataOnSheet(workbook, sheet, module, topic, parameter, rating, recommendation);
+        writeDataOnSheet(workbook, sheet, module, topic, parameter, rating, parameterLevelRecommendations);
     }
 
     private void writeAnswerRow(Workbook workbook, Answer answer) {
@@ -181,7 +213,8 @@ public class ReportService {
                 0,
                 parameter,
                 BLANK_STRING,
-                BLANK_STRING,
+                new ParameterLevelRecommendation(),
+                0,
                 question.getQuestionText(),
                 answer.getAnswer());
     }
@@ -211,8 +244,11 @@ public class ReportService {
             createBoldCell(row, 7, "Parameter", style);
             createBoldCell(row, 8, "Parameter Score", style);
             createBoldCell(row, 9, "Parameter Recommendation", style);
-            createBoldCell(row, 10, "Question", style);
-            createBoldCell(row, 11, "Answer", style);
+            createBoldCell(row, 10, "Impact", style);
+            createBoldCell(row, 11, "Effort", style);
+            createBoldCell(row, 12, "Delivery Horizon", style);
+            createBoldCell(row, 13, "Question", style);
+            createBoldCell(row, 14, "Answer", style);
         }
     }
 
@@ -235,45 +271,86 @@ public class ReportService {
             topic, String topicRating, List<TopicLevelRecommendation> topicRecommendation) {
         for(int index=0;index<topicRecommendation.size();index++){
             if(index == 0) {
-                writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, BLANK_STRING, BLANK_STRING, BLANK_STRING);
+                writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0,BLANK_STRING, BLANK_STRING);
             }
             else {
-                writeDataOnSheet(workbook, sheet, module, topic, " ", topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, BLANK_STRING, BLANK_STRING, BLANK_STRING);
+                writeDataOnSheet(workbook, sheet, module, topic, " ", topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(),0, BLANK_STRING, BLANK_STRING);
             }
         }
     }
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
-            topic, AssessmentParameter parameter, String paramRating, String paramRecommendation) {
-        writeDataOnSheet(workbook, sheet, module, topic, ReportService.BLANK_STRING, new TopicLevelRecommendation(),0, parameter, paramRating, paramRecommendation, BLANK_STRING, BLANK_STRING);
+            topic, AssessmentParameter parameter, String paramRating, List<ParameterLevelRecommendation> parameterRecommendation) {
+
+        for(int index=0;index<parameterRecommendation.size();index++){
+            if(index == 0) {
+                writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(),0, parameter, paramRating, parameterRecommendation.get(index),parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+            }
+            else {
+                writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(),0, parameter,BLANK_STRING, parameterRecommendation.get(index),parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+            }
+        }
     }
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
-            topic, String topicRating, TopicLevelRecommendation topicRecommendation, int recommendationCount ,AssessmentParameter parameter, String paramRating, String
-                                          paramRecommendation, String questionText, String answer) {
-        String impact, effort;
-        impact = getImpact(topicRecommendation);
-        effort = getEffort(topicRecommendation);
+            topic, String topicRating, TopicLevelRecommendation topicRecommendation, int topicRecommendationCount ,AssessmentParameter parameter, String paramRating, ParameterLevelRecommendation
+                                          paramRecommendation, int paramRecommendationCount, String questionText, String answer) {
+        String topicImpact, topicEffort, paramImpact, paramEffort;
+        topicImpact = getTopicRecommendationImpact(topicRecommendation);
+        topicEffort = getTopicRecommendationEffort(topicRecommendation);
+        paramImpact = getParameterRecommendationImpact(paramRecommendation);
+        paramEffort = getParameterRecommendationEffort(paramRecommendation);
 
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+
         CellStyle style = workbook.createCellStyle();
         style.setQuotePrefixed(true);
+
         createStyledCell(row, 0, module.getModuleName(), style);
         createStyledCell(row, 1, topic.getTopicName(), style);
-        checkToMergeCells(sheet, topicRating, recommendationCount);
+
+        checkToMergeRatingColumn(sheet, topicRating, topicRecommendationCount,2);
+
         createStyledCell(row, 2, topicRating, style);
         createStyledCell(row, 3, topicRecommendation.getRecommendation(), style);
-        createStyledCell(row, 4, impact, style);
-        createStyledCell(row, 5, effort, style);
+        createStyledCell(row, 4, topicImpact, style);
+        createStyledCell(row, 5, topicEffort, style);
         createStyledCell(row, 6, topicRecommendation.getDeliveryHorizon(), style);
+
         createStyledCell(row, 7, parameter.getParameterName(), style);
+
+        checkToMergeRatingColumn(sheet,paramRating,paramRecommendationCount,8);
+
         createStyledCell(row, 8, paramRating, style);
-        createStyledCell(row, 9, paramRecommendation, style);
-        createStyledCell(row, 10, questionText, style);
-        createStyledCell(row, 11, answer, style);
+        createStyledCell(row, 9, paramRecommendation.getRecommendation(), style);
+        createStyledCell(row, 10, paramImpact, style);
+        createStyledCell(row, 11, paramEffort, style);
+        createStyledCell(row, 12, paramRecommendation.getDeliveryHorizon(), style);
+        createStyledCell(row, 13, questionText, style);
+        createStyledCell(row, 14, answer, style);
     }
 
-    private String getEffort(TopicLevelRecommendation topicRecommendation) {
+    private String getParameterRecommendationImpact(ParameterLevelRecommendation paramRecommendation) {
+        String impact;
+        if(paramRecommendation.getRecommendationImpact() != null) {
+            impact = paramRecommendation.getRecommendationImpact().toString();
+        } else {
+            impact = " ";
+        }
+        return impact;
+    }
+
+    private String getParameterRecommendationEffort(ParameterLevelRecommendation parameterRecommendation) {
+        String effort;
+        if(parameterRecommendation.getRecommendationEffort() != null) {
+            effort = parameterRecommendation.getRecommendationEffort().toString();
+        } else {
+            effort = " ";
+        }
+        return effort;
+    }
+
+    private String getTopicRecommendationEffort(TopicLevelRecommendation topicRecommendation) {
         String effort;
         if(topicRecommendation.getRecommendationEffort() != null) {
             effort = topicRecommendation.getRecommendationEffort().toString();
@@ -283,7 +360,7 @@ public class ReportService {
         return effort;
     }
 
-    private String getImpact(TopicLevelRecommendation topicRecommendation) {
+    private String getTopicRecommendationImpact(TopicLevelRecommendation topicRecommendation) {
         String impact;
         if(topicRecommendation.getRecommendationImpact() != null) {
             impact = topicRecommendation.getRecommendationImpact().toString();
@@ -293,22 +370,22 @@ public class ReportService {
         return impact;
     }
 
-    private void checkToMergeCells(Sheet sheet, String topicRating, int count) {
-        if(topicRating.equals(" ")) {
+    private void checkToMergeRatingColumn(Sheet sheet, String rating, int totalRecommendationCount, int columnNo) {
+        if(rating.equals(" ")) {
             recommendationCount +=1;
         } else {
-            if(count > 1) {
+            if(totalRecommendationCount > 1) {
                 recommendationCount +=1;
             }
         }
 
-        mergeCells(sheet, count);
+        mergeCells(sheet, totalRecommendationCount, recommendationCount,columnNo);
     }
 
-    private void mergeCells(Sheet sheet, int count) {
-        if(recommendationCount == count && recommendationCount >0) {
+    private void mergeCells(Sheet sheet, int totalRecommendationCount, int count, int columnNo) {
+        if(count == totalRecommendationCount && count >0) {
             recommendationCount =0;
-            sheet.addMergedRegion(new CellRangeAddress(sheet.getLastRowNum()-(count -1), sheet.getLastRowNum()+(1-1),2,2));
+            sheet.addMergedRegion(new CellRangeAddress(sheet.getLastRowNum()-(totalRecommendationCount -1), sheet.getLastRowNum()+(1-1),columnNo,columnNo));
         }
     }
 

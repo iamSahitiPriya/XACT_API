@@ -553,7 +553,7 @@ public class AssessmentController {
 
     private void saveParameterRecommendationEffort(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
         System.out.println("effort calllll");
-        if(parameterLevelRecommendationRequest.getEffort()!=""){
+        if(parameterLevelRecommendationRequest.getEffort()!="" && parameterLevelRecommendationRequest.getEffort()!=null){
             System.out.println("...................."+parameterLevelRecommendationRequest.getEffort());
             parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(parameterLevelRecommendationRequest.getEffort()));
             System.out.println("..............."+parameterLevelRecommendation.getRecommendationEffort().toString());
@@ -565,7 +565,7 @@ public class AssessmentController {
     }
 
     private void saveParameterRecommendationImpact(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
-        if(parameterLevelRecommendationRequest.getImpact()!=""){
+        if(parameterLevelRecommendationRequest.getImpact()!="" && parameterLevelRecommendationRequest.getImpact() != null){
             parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(parameterLevelRecommendationRequest.getImpact()));
         }
         else{
@@ -574,7 +574,7 @@ public class AssessmentController {
     }
 
     private void saveParameterRecommendationDeliveryHorizon(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
-        if(parameterLevelRecommendationRequest.getDeliveryHorizon()!=""){
+        if(parameterLevelRecommendationRequest.getDeliveryHorizon()!="" && parameterLevelRecommendationRequest.getDeliveryHorizon() != null){
             parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
         }
         else{

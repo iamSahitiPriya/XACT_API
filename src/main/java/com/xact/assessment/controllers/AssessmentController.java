@@ -523,7 +523,7 @@ public class AssessmentController {
     }
 
     private void saveTopicRecommendationEffort(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if(topicLevelRecommendationRequest.getEffort()!=""){
+        if(topicLevelRecommendationRequest.getEffort()!="" && topicLevelRecommendationRequest.getEffort()!= null){
             topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(topicLevelRecommendationRequest.getEffort()));
         }
         else{
@@ -532,7 +532,7 @@ public class AssessmentController {
     }
 
     private TopicLevelRecommendation saveTopicRecommendationImpact(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if(topicLevelRecommendationRequest.getImpact()!="") {
+        if(topicLevelRecommendationRequest.getImpact()!="" && topicLevelRecommendationRequest.getImpact()!= null) {
             topicLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(topicLevelRecommendationRequest.getImpact()));
         }
         else{
@@ -542,7 +542,7 @@ public class AssessmentController {
     }
 
     private void saveTopicRecommendationDeliveryHorizon(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if(topicLevelRecommendationRequest.getDeliveryHorizon() != "") {
+        if(topicLevelRecommendationRequest.getDeliveryHorizon() != "" && topicLevelRecommendationRequest.getDeliveryHorizon()!= null) {
             topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
         }
         else{
@@ -551,7 +551,7 @@ public class AssessmentController {
     }
 
     private void saveParameterRecommendationEffort(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
-        if(parameterLevelRecommendationRequest.getEffort()!=""){
+        if(parameterLevelRecommendationRequest.getEffort()!="" && parameterLevelRecommendationRequest.getEffort()!=null){
             parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(parameterLevelRecommendationRequest.getEffort()));
         }
         else{
@@ -560,7 +560,7 @@ public class AssessmentController {
     }
 
     private void saveParameterRecommendationImpact(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
-        if(parameterLevelRecommendationRequest.getImpact()!=""){
+        if(parameterLevelRecommendationRequest.getImpact()!="" && parameterLevelRecommendationRequest.getImpact()!=null){
             parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(parameterLevelRecommendationRequest.getImpact()));
         }
         else{
@@ -569,7 +569,7 @@ public class AssessmentController {
     }
 
     private void saveParameterRecommendationDeliveryHorizon(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
-        if(parameterLevelRecommendationRequest.getDeliveryHorizon()!=""){
+        if(parameterLevelRecommendationRequest.getDeliveryHorizon()!="" && parameterLevelRecommendationRequest.getDeliveryHorizon()!=null){
             parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
         }
         else{

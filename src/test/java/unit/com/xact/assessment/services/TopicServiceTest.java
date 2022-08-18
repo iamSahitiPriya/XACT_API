@@ -47,6 +47,19 @@ class TopicServiceTest {
 
         verify(assessmentTopicRepository).save(assessmentTopic);
     }
+
+    @Test
+    void shouldUpdateTopic() {
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.update(assessmentTopic)).thenReturn(assessmentTopic);
+        topicService.updateTopic(assessmentTopic);
+
+        verify(assessmentTopicRepository).update(assessmentTopic);
+
+    }
 }
 
 

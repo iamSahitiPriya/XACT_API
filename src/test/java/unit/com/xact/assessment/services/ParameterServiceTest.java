@@ -47,4 +47,16 @@ class ParameterServiceTest {
 
         verify(assessmentParameterRepository).save(assessmentParameter);
     }
+
+    @Test
+    void shouldUpdateParameter() {
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(assessmentParameterRepository.update(assessmentParameter)).thenReturn(assessmentParameter);
+        parameterService.updateParameter(assessmentParameter);
+
+        verify(assessmentParameterRepository).update(assessmentParameter);
+    }
 }

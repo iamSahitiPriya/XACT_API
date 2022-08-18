@@ -25,6 +25,7 @@ class AssessmentMasterDataServiceTest {
     private final TopicService topicService = mock(TopicService.class);
     private final ParameterService parameterService = mock(ParameterService.class);
     private final QuestionService questionService = mock(QuestionService.class);
+    private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
     private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository = mock(AssessmentTopicReferenceRepository.class);
     private final AssessmentParameterReferenceRepository assessmentParameterReferenceRepository = mock(AssessmentParameterReferenceRepository.class);
 
@@ -188,6 +189,7 @@ class AssessmentMasterDataServiceTest {
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
         List<AssessmentModule> assessmentModules = new ArrayList<>();
         when(moduleService.getAllModules()).thenReturn(assessmentModules);
+        when(moduleRepository.update(assessmentModule)).thenReturn(assessmentModule);
         assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest);
 
         AssessmentModuleRequest assessmentModule1 = new AssessmentModuleRequest();

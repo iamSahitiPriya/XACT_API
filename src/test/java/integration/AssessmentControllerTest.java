@@ -28,8 +28,7 @@ import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @MicronautTest
 class AssessmentControllerTest {
@@ -908,6 +907,107 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
+    }
+
+    @Test
+    void testDeleteParameterRecommendation() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+
+        Integer parameterId = 1;
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationTextRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationTextRequest.setRecommendation("some recommendation");
+        parameterLevelRecommendationTextRequest.setRecommendationId(1);
+        parameterLevelRecommendationTextRequest.setDeliveryHorizon("dummy text");
+
+        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        parameterLevelRecommendation.setAssessment(assessment);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationTextRequest.getRecommendation());
+        parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationTextRequest.getRecommendationId());
+        parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationTextRequest.getDeliveryHorizon());
+
+        when(parameterLevelRecommendationRepository.save(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
+        doNothing().when(parameterLevelRecommendationRepository).deleteById(parameterLevelRecommendationTextRequest.getRecommendationId());
+
+        parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
+        parameterLevelRecommendationRepository.deleteById(parameterLevelRecommendationTextRequest.getRecommendationId());
+
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/deleteParameterRecommendation/1/1/1")
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+    @Test
+    void testDeleteTopicRecommendation() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+
+        Integer topicId = 1;
+        Integer recommendationId =1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        assessmentTopic.setTopicName("Topic Name");
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest= new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendationId(recommendationId);
+        topicLevelRecommendationRequest.setEffort("LOW");
+        topicLevelRecommendationRequest.setImpact("HIGH");
+        topicLevelRecommendationRequest.setRecommendation("some recommendation");
+        topicLevelRecommendationRequest.setDeliveryHorizon("dummy text");
+
+        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+        topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
+
+        when(topicLevelRecommendationRepository.save(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
+        doNothing().when(parameterLevelRecommendationRepository).deleteById(topicLevelRecommendationRequest.getRecommendationId());
+
+        topicLevelRecommendationRepository.save(topicLevelRecommendation);
+        topicLevelRecommendationRepository.deleteById(topicLevelRecommendationRequest.getRecommendationId());
+
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/deleteParameterRecommendation/1/1/1")
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
 
 }

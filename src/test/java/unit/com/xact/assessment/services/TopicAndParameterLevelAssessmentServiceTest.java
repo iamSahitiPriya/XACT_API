@@ -374,19 +374,51 @@ class TopicAndParameterLevelAssessmentServiceTest {
         assessmentParameter.setParameterId(parameterId);
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
+        when(parameterLevelRecommendationRepository.save(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
+        doNothing().when(parameterLevelRecommendationRepository).deleteById(parameterLevelRecommendationRequest.getRecommendationId());
+
+
         parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
+        parameterLevelRecommendationRepository.deleteById(parameterLevelRecommendationRequest.getRecommendationId());
 
-        when(parameterLevelRecommendationRepository.existsById(parameterLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
-        when(parameterLevelRecommendationRepository.update(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
-//        when(parameterLevelRecommendationRepository.deleteById(parameterLevelRecommendation.getRecommendationId())).thenCallRealMethod();
-
-//        Stream<Object> RecommendationException;
-//        doThrow(RecommendationException.builder().build()) .when(parameterLevelRecommendationRepository.deleteById(parameterLevelRecommendation.getRecommendationId())) .validate(any());
-
-        ParameterLevelRecommendation actualResponse1 = topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
-
-        assertEquals(parameterLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
-
+       verify(parameterLevelRecommendationRepository).deleteById(parameterLevelRecommendationRequest.getRecommendationId());
     }
+
+    @Test
+    void shouldDeleteRecommendationForTopicLevel() {
+
+        Integer assessmentId1 = 1;
+        Integer topicId = 1;
+        TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+        topicRatingAndRecommendation.setTopicId(topicId);
+
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendationId(1);
+        topicLevelRecommendationRequest.setRecommendation("some text");
+        topicLevelRecommendationRequest.setDeliveryHorizon("some other teext");
+        topicLevelRecommendationRequest.setImpact("HIGH");
+        topicLevelRecommendationRequest.setEffort("LOW");
+
+        Assessment assessment1 = new Assessment();
+        assessment1.setAssessmentId(assessmentId1);
+
+
+        TopicLevelRecommendation topicLevelRecommendation = mapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
+        topicLevelRecommendation.setAssessment(assessment1);
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(topicId);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+
+
+        when(topicLevelRecommendationRepository.save(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
+        doNothing().when(topicLevelRecommendationRepository).deleteById(topicLevelRecommendationRequest.getRecommendationId());
+
+
+        topicLevelRecommendationRepository.save(topicLevelRecommendation);
+        topicLevelRecommendationRepository.deleteById(topicLevelRecommendationRequest.getRecommendationId());
+
+        verify(topicLevelRecommendationRepository).deleteById(topicLevelRecommendationRequest.getRecommendationId());
+    }
+
 
 }

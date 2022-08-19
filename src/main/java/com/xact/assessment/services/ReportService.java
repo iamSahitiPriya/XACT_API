@@ -85,8 +85,13 @@ public class ReportService {
         }
         for (ParameterLevelAssessment parameterLevelAssessment : parameterAssessments) {
             List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterLevelRecommendations.get(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
-            parameterLevelRecommendations.remove(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
-            writeParameterRow(workbook, parameterLevelAssessment,parameterLevelRecommendationList);
+            if(parameterLevelRecommendationList != null) {
+                parameterLevelRecommendations.remove(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
+                writeParameterRow(workbook, parameterLevelAssessment,parameterLevelRecommendationList);
+            } else {
+                writeParameterRow(workbook, parameterLevelAssessment,new ArrayList<>());
+            }
+
         }
         for (Map.Entry<Integer, List<ParameterLevelRecommendation>> entry : parameterLevelRecommendations.entrySet()) {
             Integer key = entry.getKey();
@@ -104,8 +109,14 @@ public class ReportService {
         }
         for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
             List<TopicLevelRecommendation> topicLevelRecommendationList = topicLevelRecommendations.get(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
-            topicLevelRecommendations.remove(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
-            writeTopicRow(workbook, topicLevelAssessment,topicLevelRecommendationList);
+            if(topicLevelRecommendationList != null) {
+                topicLevelRecommendations.remove(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
+                writeTopicRow(workbook, topicLevelAssessment,topicLevelRecommendationList);
+            }
+            else {
+                writeTopicRow(workbook, topicLevelAssessment,new ArrayList<>());
+            }
+
         }
         for (Map.Entry<Integer, List<TopicLevelRecommendation>> entry : topicLevelRecommendations.entrySet()) {
             Integer key = entry.getKey();
@@ -268,28 +279,34 @@ public class ReportService {
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, String topicRating, List<TopicLevelRecommendation> topicRecommendation) {
-        for(int index=0;index<topicRecommendation.size();index++){
-            if(index == 0) {
-                writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0,BLANK_STRING, BLANK_STRING);
-            }
-            else {
-                writeDataOnSheet(workbook, sheet, module, topic, " ", topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(),0, BLANK_STRING, BLANK_STRING);
+        if(topicRecommendation.size() == 0) {
+            writeDataOnSheet(workbook, sheet, module, topic, topicRating, new TopicLevelRecommendation(), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0,BLANK_STRING, BLANK_STRING);
+        } else {
+            for (int index = 0; index < topicRecommendation.size(); index++) {
+                if (index == 0) {
+                    writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
+                } else {
+                    writeDataOnSheet(workbook, sheet, module, topic, " ", topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
+                }
             }
         }
     }
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, AssessmentParameter parameter, String paramRating, List<ParameterLevelRecommendation> parameterRecommendation) {
-
-        for(int index=0;index<parameterRecommendation.size();index++){
-            if(index == 0) {
-                writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(),0, parameter, paramRating, parameterRecommendation.get(index),parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
-            }
-            else {
-                writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(),0, parameter,BLANK_STRING, parameterRecommendation.get(index),parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+        if(parameterRecommendation.size() == 0) {
+            writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(),0, parameter, paramRating, new ParameterLevelRecommendation(),parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+        }else {
+            for (int index = 0; index < parameterRecommendation.size(); index++) {
+                if (index == 0) {
+                    writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(), 0, parameter, paramRating, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+                } else {
+                    writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(), 0, parameter, BLANK_STRING, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+                }
             }
         }
     }
+
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, String topicRating, TopicLevelRecommendation topicRecommendation, int topicRecommendationCount ,AssessmentParameter parameter, String paramRating, ParameterLevelRecommendation

@@ -20,6 +20,7 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
@@ -108,9 +109,10 @@ class AssessmentControllerTest {
         assessmentUsers.setUserId(userId);
         assessment.setAssessmentId(23);
         assessment.setAssessmentName("Mocked Assessment");
+        Organisation org = new Organisation(12, "testorg", "IT", "Telecom", 10);
+        assessment.setOrganisation(org);
 
 
-        when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(singletonList(assessmentUsers));
         when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(singletonList(assessmentUsers));
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessments-response.json");
 
@@ -187,10 +189,13 @@ class AssessmentControllerTest {
         Assessment expectedAssessment = new Assessment();
         expectedAssessment.setAssessmentId(123);
         expectedAssessment.setAssessmentStatus(AssessmentStatus.Completed);
+        Organisation org = new Organisation();
+        org.setOrganisationName("Org");
+        expectedAssessment.setOrganisation(org);
         expectedAssessment.setAssessmentName("Mocked Assessment");
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
-        when(assessmentRepository.update(expectedAssessment)).thenReturn(expectedAssessment);
+        when(assessmentRepository.update(assessment)).thenReturn(expectedAssessment);
         String expectedResponse = resourceFileUtil.getJsonString("dto/finish-assessment-response.json");
         MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/123/statuses/finish").contentLength(0)
                 .bearerAuth("anything");
@@ -215,10 +220,13 @@ class AssessmentControllerTest {
         Assessment expectedAssessment = new Assessment();
         expectedAssessment.setAssessmentId(123);
         expectedAssessment.setAssessmentStatus(AssessmentStatus.Active);
+        Organisation org = new Organisation();
+        org.setOrganisationName("Org");
+        expectedAssessment.setOrganisation(org);
         expectedAssessment.setAssessmentName("Mocked Assessment");
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
-        when(assessmentRepository.update(expectedAssessment)).thenReturn(expectedAssessment);
+        when(assessmentRepository.update(assessment)).thenReturn(expectedAssessment);
         String expectedResponse = resourceFileUtil.getJsonString("dto/reopen-assessment-response.json");
         MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/123/statuses/open").contentLength(0)
                 .bearerAuth("anything");

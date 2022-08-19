@@ -10,7 +10,6 @@ import io.micronaut.http.annotation.Filter;
 import io.micronaut.http.filter.HttpServerFilter;
 import io.micronaut.http.filter.ServerFilterChain;
 import org.reactivestreams.Publisher;
-import org.slf4j.MDC;
 import reactor.core.publisher.Flux;
 
 import java.util.UUID;

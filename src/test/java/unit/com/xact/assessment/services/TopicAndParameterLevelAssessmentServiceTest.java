@@ -13,13 +13,10 @@ import com.xact.assessment.services.AnswerService;
 import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -4,15 +4,6 @@
 
 package unit.com.xact.assessment.services;
 
-<<<<<<< HEAD
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.repositories.CategoryRepository;
-import com.xact.assessment.services.AssessmentMasterDataService;
-import org.junit.jupiter.api.Test;
-
-import java.util.Collections;
-import java.util.List;
-=======
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
@@ -23,17 +14,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class AssessmentMasterDataServiceTest {
 
-<<<<<<< HEAD
-    private CategoryRepository categoryRepository = mock(CategoryRepository.class);
-    private AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository);
-=======
     private final CategoryRepository categoryRepository = mock(CategoryRepository.class);
     private final ModuleService moduleService = mock(ModuleService.class);
     private final TopicService topicService = mock(TopicService.class);
@@ -44,7 +30,6 @@ class AssessmentMasterDataServiceTest {
     private final AssessmentParameterReferenceRepository assessmentParameterReferenceRepository = mock(AssessmentParameterReferenceRepository.class);
 
     private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService, assessmentTopicReferenceRepository, parameterService, topicService, assessmentParameterReferenceRepository);
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
     @Test
     void getAllCategories() {
@@ -60,8 +45,6 @@ class AssessmentMasterDataServiceTest {
 
         verify(categoryRepository).findAll();
     }
-<<<<<<< HEAD
-=======
 
     @Test
     void shouldCreateCategory() {
@@ -319,5 +302,4 @@ class AssessmentMasterDataServiceTest {
         assessmentMasterDataService.updateParameterReferences(1,referencesRequest);
         verify(assessmentParameterReferenceRepository).update(parameterReference);
     }
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 }

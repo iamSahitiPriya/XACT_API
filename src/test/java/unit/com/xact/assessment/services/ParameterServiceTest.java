@@ -9,12 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-<<<<<<< HEAD
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-=======
 import static org.mockito.Mockito.*;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 class ParameterServiceTest {
     private ParameterService parameterService;
@@ -41,8 +36,6 @@ class ParameterServiceTest {
 
     }
 
-<<<<<<< HEAD
-=======
     @Test
     void shouldSaveParameterWhenInputsAreGiven() {
         AssessmentParameter assessmentParameter = new AssessmentParameter();
@@ -66,5 +59,4 @@ class ParameterServiceTest {
 
         verify(assessmentParameterRepository).update(assessmentParameter);
     }
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 }

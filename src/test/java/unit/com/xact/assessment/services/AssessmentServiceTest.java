@@ -8,10 +8,7 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
-<<<<<<< HEAD
-=======
 import com.xact.assessment.repositories.AccessControlRepository;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.AssessmentService;
@@ -32,22 +29,15 @@ class AssessmentServiceTest {
     private AssessmentService assessmentService;
     private AssessmentRepository assessmentRepository;
     private UsersAssessmentsRepository usersAssessmentsRepository;
-<<<<<<< HEAD
-=======
     private AccessControlRepository accessControlRepository;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
     @BeforeEach
     public void beforeEach() {
         usersAssessmentsService = mock(UsersAssessmentsService.class);
         assessmentRepository = mock(AssessmentRepository.class);
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
-<<<<<<< HEAD
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository);
-=======
         accessControlRepository = mock(AccessControlRepository.class);
         assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository);
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     }
 
     @Test
@@ -71,10 +61,7 @@ class AssessmentServiceTest {
 
         Set<AssessmentUsers> assessmentUsers = new HashSet<>();
         Assessment assessment = new Assessment();
-<<<<<<< HEAD
-=======
         assessment.setAssessmentId(123);
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setAssessmentName("assessment1");
         Organisation organisation = new Organisation();
@@ -129,9 +116,6 @@ class AssessmentServiceTest {
         loggedinUser.setProfile(profile);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
-<<<<<<< HEAD
-        assessment.setAssessmentStatus(AssessmentStatus.Active);
-=======
         assessment.setAssessmentName("assessmentName");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         Assessment expectedAssessment = new Assessment();
@@ -140,7 +124,6 @@ class AssessmentServiceTest {
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
 
         when(assessmentRepository.update(assessment)).thenReturn(assessment);
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         Assessment actualAssessment = assessmentService.finishAssessment(assessment);
 
@@ -156,10 +139,6 @@ class AssessmentServiceTest {
         loggedinUser.setProfile(profile);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
-<<<<<<< HEAD
-        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-
-=======
         assessment.setAssessmentName("assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
 
@@ -170,7 +149,6 @@ class AssessmentServiceTest {
 
         when(assessmentRepository.update(assessment)).thenReturn(assessment);
 
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         Assessment actualAssessment = assessmentService.reopenAssessment(assessment);
 
         assertEquals( AssessmentStatus.Active,actualAssessment.getAssessmentStatus());

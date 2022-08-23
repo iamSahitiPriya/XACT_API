@@ -5,13 +5,12 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AssessmentMasterDataController;
-<<<<<<< HEAD
+
 import com.xact.assessment.dtos.AssessmentCategoryDto;
 import com.xact.assessment.models.AssessmentCategory;
-=======
+
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import com.xact.assessment.services.AssessmentMasterDataService;
 import io.micronaut.http.HttpResponse;
 import org.junit.jupiter.api.Test;
@@ -21,10 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-<<<<<<< HEAD
-=======
-import static org.mockito.Mockito.verify;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
+
 import static org.mockito.Mockito.when;
 
 class AssessmentMasterDataControllerTest {
@@ -47,8 +43,7 @@ class AssessmentMasterDataControllerTest {
         assertEquals(firstAssessmentCategory.getCategoryId(), category.getCategoryId());
         assertEquals(firstAssessmentCategory.getCategoryName(), category.getCategoryName());
     }
-<<<<<<< HEAD
-=======
+
 
     @Test
     void createAssessmentCategory() {
@@ -221,5 +216,5 @@ class AssessmentMasterDataControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
+
 }

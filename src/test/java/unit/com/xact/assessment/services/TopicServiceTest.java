@@ -9,12 +9,10 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-<<<<<<< HEAD
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-=======
 import static org.mockito.Mockito.*;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
+
 
 class TopicServiceTest {
     private TopicService topicService;
@@ -41,8 +39,6 @@ class TopicServiceTest {
 
     }
 
-<<<<<<< HEAD
-=======
     @Test
     void shouldSaveTopicsWhenInputIsGiven() {
         AssessmentTopic assessmentTopic = new AssessmentTopic();
@@ -67,7 +63,7 @@ class TopicServiceTest {
         verify(assessmentTopicRepository).update(assessmentTopic);
 
     }
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
+
 }
 
 

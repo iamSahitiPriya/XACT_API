@@ -5,33 +5,28 @@
 package integration;
 
 import com.xact.assessment.models.*;
-<<<<<<< HEAD
 import com.xact.assessment.repositories.CategoryRepository;
 import io.micronaut.http.HttpRequest;
-=======
 import com.xact.assessment.repositories.*;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-<<<<<<< HEAD
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-=======
+
 import org.springframework.web.reactive.resource.HttpResource;
 
 import java.io.IOException;
 import java.util.*;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -49,8 +44,6 @@ class AssessmentMasterDataControllerTest {
     @Inject
     CategoryRepository categoryRepository;
 
-<<<<<<< HEAD
-=======
     @Inject
     ModuleRepository moduleRepository;
 
@@ -66,14 +59,12 @@ class AssessmentMasterDataControllerTest {
     @Inject
     AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
 
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     @MockBean(CategoryRepository.class)
     CategoryRepository categoryRepository() {
         return mock(CategoryRepository.class);
     }
 
-<<<<<<< HEAD
-=======
+
     @MockBean(ModuleRepository.class)
     ModuleRepository moduleRepository() {
         return mock(ModuleRepository.class);
@@ -96,7 +87,6 @@ class AssessmentMasterDataControllerTest {
         return mock(AssessmentTopicReferenceRepository.class);
     }
 
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
     @Test
     void testGetMasterDataCategoryResponse() throws IOException {
@@ -109,18 +99,11 @@ class AssessmentMasterDataControllerTest {
 
         String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/categories")
                 .bearerAuth("anything"), String.class);
-<<<<<<< HEAD
 
-=======
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         assertEquals(expectedResponse, userResponse);
 
     }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     private AssessmentCategory getAssessmentCategory() {
         Set<AssessmentModule> modules = new HashSet<>();
         Set<AssessmentTopic> topics = new HashSet<>();
@@ -158,10 +141,8 @@ class AssessmentMasterDataControllerTest {
         topic.setModule(module);
         topic.setReferences(topicReferences);
         topic.setParameters(parameters);
-<<<<<<< HEAD
-=======
+
         topic.setActive(true);
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         topics.add(topic);
 
         topicReference.setReferenceId(1);
@@ -175,10 +156,8 @@ class AssessmentMasterDataControllerTest {
         assessmentParameter.setTopic(topic);
         assessmentParameter.setQuestions(questions);
         assessmentParameter.setReferences(parameterReferences);
-<<<<<<< HEAD
-=======
+
         assessmentParameter.setActive(true);
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         parameters.add(assessmentParameter);
 
         parameterReference.setReferenceId(1);
@@ -195,9 +174,6 @@ class AssessmentMasterDataControllerTest {
         return category;
     }
 
-<<<<<<< HEAD
-
-=======
     @Test
     void shouldCreateCategory() throws IOException {
         AssessmentCategory assessmentCategory = new AssessmentCategory();
@@ -322,5 +298,5 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
+
 }

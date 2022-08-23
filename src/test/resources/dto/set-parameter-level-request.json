@@ -14,7 +14,6 @@
       "parameterRatingAndRecommendation": {
         "parameterId": 1,
         "rating": 1,
-<<<<<<< HEAD
         "parameterLevelRecommendation":[
           {
             "recommendation":"some recommendation",
@@ -29,9 +28,6 @@
             "deliveryHorizon":"some more text"
           }
         ]
-=======
-        "recommendation": "text"
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
       }
     }
   ]

@@ -9,21 +9,13 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-<<<<<<< HEAD
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-=======
 import io.micronaut.http.annotation.*;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-<<<<<<< HEAD
-=======
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +23,10 @@ import java.util.Objects;
 
 @Controller("/v1/assessment-master-data")
 public class AssessmentMasterDataController {
-<<<<<<< HEAD
-
-    private static ModelMapper mapper = new ModelMapper();
-=======
     private final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataController.class);
 
 
     private static final ModelMapper mapper = new ModelMapper();
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
     static {
         PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
@@ -80,11 +67,7 @@ public class AssessmentMasterDataController {
         mapper.addMappings(parameterReferenceMap);
     }
 
-<<<<<<< HEAD
-    private AssessmentMasterDataService assessmentMasterDataService;
-=======
     private final AssessmentMasterDataService assessmentMasterDataService;
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
     public AssessmentMasterDataController(AssessmentMasterDataService assessmentMasterDataService) {
         this.assessmentMasterDataService = assessmentMasterDataService;
@@ -93,10 +76,7 @@ public class AssessmentMasterDataController {
     @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<AssessmentCategoryDto>> getAssessmentMasterData() {
-<<<<<<< HEAD
-=======
         LOGGER.info("Get assessment master data");
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
         List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(assessmentCategories)) {
@@ -105,8 +85,6 @@ public class AssessmentMasterDataController {
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
 
-<<<<<<< HEAD
-=======
     @Post(value = "/category", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body AssessmentCategoryRequest assessmentCategory) {
@@ -225,5 +203,4 @@ public class AssessmentMasterDataController {
         return assessmentMasterDataService.getCategory(categoryId);
     }
 
->>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 }

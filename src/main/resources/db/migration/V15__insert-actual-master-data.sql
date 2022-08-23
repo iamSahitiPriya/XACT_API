@@ -206,3 +206,9 @@ INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 56, 'THREE', 'Some of exception handled but application still can raise and propagate exception which goes back to consumer/logs without handing.');
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 56, 'FIVE', 'Exception handling is implemented, checked exception are propagated and handled via throw early catch late principle, unchecked exception are handled at top level layer to avoid unintentionally revelation of code/logic/stacktrace. ');
+
+SELECT setval('category_seq',(select max(category_id)+1 from tbm_assessment_category),false);
+SELECT setval('module_seq',(select max(module_id)+1 from tbm_assessment_module),false);
+SELECT setval('topic_seq',(select max(topic_id)+1 from tbm_assessment_topic),false);
+SELECT setval('parameter_seq',(select max(parameter_id)+1 from tbm_assessment_parameter),false);
+SELECT setval('question_seq',(select max(question_id)+1 from tbm_assessment_question),false);

@@ -123,11 +123,7 @@ VALUES (352, 'Are exceptions being propagated? Throw early Catch Late', 142);
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 48, 'ONE', 'No coding standard followed, Code is difficult to convey functional meaning.');
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
-VALUES ( 48, 'TWO', '');
-INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 48, 'THREE', 'Partly following coding standards, code is modular but all other standards are not in place.');
-INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
-VALUES ( 48, 'FOUR', '');
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 48, 'FIVE', 'following almost all coding standards, code is modular and follow strict style guide and naming conventions. methods/classes represent function/responsibility efficiently.');
 
@@ -145,11 +141,7 @@ VALUES ( 49, 'FIVE', 'Single Responsibility Principle has been followed and nami
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 50, 'ONE', 'Components are tightly coupled, Support only specific formats. Very difficult to onboard new integration/consumer.');
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
-VALUES ( 50, 'TWO', '');
-INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 50, 'THREE', 'Components are coupled, Support some formats and integration protocols. Fairly difficult to onboard new integration/consumer.');
-INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
-VALUES ( 50, 'FOUR', '');
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 50, 'FIVE', 'Components are loosely coupled, Support most of formats and integration protocols. Fairly easy to onboard new integration/consumer.');
 
@@ -211,10 +203,6 @@ VALUES ( 55, 'FIVE', 'Logging framework is in place and logs are consistent in a
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 56, 'ONE', 'No exception handling.');
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
-VALUES ( 56, 'TWO', '');
-INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 56, 'THREE', 'Some of exception handled but application still can raise and propagate exception which goes back to consumer/logs without handing.');
-INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
-VALUES ( 56, 'FOUR', '');
 INSERT INTO tbm_assessment_topic_reference(topic, rating, reference)
 VALUES ( 56, 'FIVE', 'Exception handling is implemented, checked exception are propagated and handled via throw early catch late principle, unchecked exception are handled at top level layer to avoid unintentionally revelation of code/logic/stacktrace. ');

@@ -7,29 +7,38 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @Singleton
 public class ReportService {
 
     public static final String BLANK_STRING = "";
+
     public static int recommendationCount = 0;
+
     public static final String FORMULA_STRING = "=-+@";
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final AnswerService answerService;
     private final ChartService chartService;
     private final CategoryRepository categoryRepository;
+
     private final TopicService topicService;
     private final ParameterService parameterService;
 
 
     public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository,TopicService topicService,ParameterService parameterService) {
+
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
         this.chartService = chartService;
         this.categoryRepository = categoryRepository;
         this.topicService = topicService;
         this.parameterService = parameterService;
+
 
 
     }
@@ -79,6 +88,9 @@ public class ReportService {
 
         return workbook;
     }
+
+
+
     public void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer,List<TopicLevelRecommendation>> topicLevelRecommendations,HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook){
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
@@ -133,36 +145,36 @@ public class ReportService {
         }
 
     }
-    public void createDataAndGenerateChart(Workbook workbook,Integer assessmentId,List<ParameterLevelAssessment> parameterLevelAssessments,List<TopicLevelAssessment> topicLevelAssessments){
+    public void createDataAndGenerateChart(Workbook workbook, Integer assessmentId, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments) {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
 
-        Map<String,List<CategoryMaturity>> dataSet = new HashMap<>();
+        Map<String, List<CategoryMaturity>> dataSet = new HashMap<>();
         List<CategoryMaturity> listOfCurrentScores = new ArrayList<>();
         List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
-        for(AssessmentCategory assessmentCategory: assessmentCategoryList){
+        for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
+            fillInMaturityScore(assessmentCategory, topicLevelAssessments, parameterLevelAssessments);
             CategoryMaturity categoryMaturity = new CategoryMaturity();
-            double avgCategoryScore = assessmentCategory.getCategoryAverage(topicLevelAssessments,parameterLevelAssessments);
+            double avgCategoryScore = assessmentCategory.getCategoryAverage();
             categoryMaturity.setCategory(assessmentCategory.getCategoryName());
             categoryMaturity.setScore(avgCategoryScore);
             listOfCurrentScores.add(categoryMaturity);
         }
-        dataSet.put("Current Maturity",listOfCurrentScores);
+        dataSet.put("Current Maturity", listOfCurrentScores);
         List<CategoryMaturity> listOfDesiredScores = new ArrayList<>();
 
-        for(AssessmentCategory assessmentCategory: assessmentCategoryList){
+        for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
             CategoryMaturity categoryMaturity = new CategoryMaturity();
             double avgCategoryScore = 5.0;
             categoryMaturity.setCategory(assessmentCategory.getCategoryName());
             categoryMaturity.setScore(avgCategoryScore);
             listOfDesiredScores.add(categoryMaturity);
         }
-        dataSet.put("Desired Maturity",listOfDesiredScores);
+        dataSet.put("Desired Maturity", listOfDesiredScores);
 
-        generateCharts(workbook,dataSet);
+        generateCharts(workbook, dataSet);
     }
-
-    public void generateCharts(Workbook workbook,Map<String, List<CategoryMaturity>> dataSet) {
+    public void generateCharts(Workbook workbook, Map<String, List<CategoryMaturity>> dataSet) {
         Sheet sheet = workbook.createSheet("Charts");
         //Get the contents of an InputStream as a byte[].
         byte[] bytes = chartService.generateChart(dataSet);
@@ -190,6 +202,7 @@ public class ReportService {
         Sheet sheet = getMatchingSheet(workbook, category);
 
         generateHeaderIfNotExist(sheet, workbook);
+
         writeDataOnSheet(workbook, sheet, module, topic, rating, topicLevelRecommendations);
     }
 
@@ -248,6 +261,7 @@ public class ReportService {
             createBoldCell(row, 1, "Topic", style);
             createBoldCell(row, 2, "Topic Score", style);
             createBoldCell(row, 3, "Topic Recommendation", style);
+
             createBoldCell(row, 4, "Impact", style);
             createBoldCell(row, 5, "Effort", style);
             createBoldCell(row, 6, "Delivery Horizon", style);
@@ -259,6 +273,7 @@ public class ReportService {
             createBoldCell(row, 12, "Delivery Horizon", style);
             createBoldCell(row, 13, "Question", style);
             createBoldCell(row, 14, "Answer", style);
+
         }
     }
 
@@ -269,7 +284,6 @@ public class ReportService {
     }
 
     private void createStyledCell(Row row, int i, String value, CellStyle style) {
-
         Cell cell = row.createCell(i, CellType.STRING);
         cell.setCellValue(value);
         if (value != null && !value.isBlank() && FORMULA_STRING.indexOf(value.trim().charAt(0)) >= 0) {
@@ -277,8 +291,7 @@ public class ReportService {
         }
     }
 
-    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
-            topic, String topicRating, List<TopicLevelRecommendation> topicRecommendation) {
+    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic topic, String topicRating, List<TopicLevelRecommendation> topicRecommendation) {
         if(topicRecommendation.size() == 0) {
             writeDataOnSheet(workbook, sheet, module, topic, topicRating, new TopicLevelRecommendation(), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0,BLANK_STRING, BLANK_STRING);
         } else {
@@ -404,5 +417,50 @@ public class ReportService {
             sheet.addMergedRegion(new CellRangeAddress(sheet.getLastRowNum()-(totalRecommendationCount -1), sheet.getLastRowNum()+(1-1),columnNo,columnNo));
         }
     }
+    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
+            topic, AssessmentParameter parameter, String paramRating, String paramRecommendation) {
+        writeDataOnSheet(workbook, sheet, module, topic, ReportService.BLANK_STRING, ReportService.BLANK_STRING, parameter, paramRating, paramRecommendation, BLANK_STRING, BLANK_STRING);
+    }
+
+    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
+            topic, String topicRating, String topicRecommendation, AssessmentParameter parameter, String paramRating, String
+                                          paramRecommendation, String questionText, String answer) {
+        Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+        CellStyle style = workbook.createCellStyle();
+        style.setQuotePrefixed(true);
+        createStyledCell(row, 0, module.getModuleName(), style);
+        createStyledCell(row, 1, topic.getTopicName(), style);
+        createStyledCell(row, 2, topicRating, style);
+        createStyledCell(row, 3, topicRecommendation, style);
+        createStyledCell(row, 4, parameter.getParameterName(), style);
+        createStyledCell(row, 5, paramRating, style);
+        createStyledCell(row, 6, paramRecommendation, style);
+        createStyledCell(row, 7, questionText, style);
+        createStyledCell(row, 8, answer, style);
+    }
+
+    private void fillInMaturityScore(AssessmentCategory assessmentCategory, List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments) {
+        for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
+            for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
+                if (assessmentTopic.hasReferences()) {
+                    for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
+                        if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(assessmentTopic.getTopicId())) {
+                            assessmentTopic.setRating(topicLevelAssessment.getRating());
+                        }
+                    }
+                } else {
+                    for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
+                        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {
+                            if (parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(assessmentParameter.getParameterId())) {
+                                assessmentParameter.setRating(parameterLevelAssessment.getRating());
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
 
 }

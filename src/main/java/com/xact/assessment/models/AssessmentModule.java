@@ -11,11 +11,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
@@ -29,6 +33,7 @@ import java.util.Set;
         property = "moduleId")
 public class AssessmentModule {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "module_id", nullable = false, unique = true)
     private Integer moduleId;
 
@@ -49,11 +54,31 @@ public class AssessmentModule {
     @Column(name = "is_active")
     private boolean isActive;
 
-    public double getModuleAverage(List<TopicLevelAssessment> topicLevelAssessmentList,List<ParameterLevelAssessment> parameterLevelAssessmentList) {
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
+    private Date updatedAt;
+
+    @Column(name = "comments")
+    private String comments;
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+    public Set<AssessmentTopic> getTopics() {
+        return topics == null ? null : topics.stream().filter(AssessmentTopic::getIsActive).collect(Collectors.toSet());
+    }
+
+    public double getModuleAverage() {
         double topicSum = 0;
         int topicCount = 0;
         for(AssessmentTopic assessmentTopic : this.topics){
-            double averageTopic = assessmentTopic.getTopicAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+            double averageTopic = assessmentTopic.getTopicAverage();
             if(averageTopic != 0){
                 topicSum += averageTopic;
                 topicCount += 1;
@@ -64,5 +89,13 @@ public class AssessmentModule {
             return 0;
         }
         return topicSum/topicCount;
+    }
+
+
+    public AssessmentModule(String moduleName, AssessmentCategory category, boolean isActive, String comments) {
+        this.moduleName = moduleName;
+        this.category = category;
+        this.isActive = isActive;
+        this.comments = comments;
     }
 }

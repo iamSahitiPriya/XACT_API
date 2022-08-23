@@ -16,6 +16,8 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.util.*;
@@ -23,6 +25,10 @@ import java.util.*;
 
 @Controller("/v1/assessments")
 public class AssessmentController {
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentController.class);
+
     private final AnswerService answerService;
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final UsersAssessmentsService usersAssessmentsService;
@@ -37,11 +43,25 @@ public class AssessmentController {
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
 
+    private ModelMapper modelMapper = new ModelMapper();
+
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService) {
+        this.usersAssessmentsService = usersAssessmentsService;
+        this.userAuthService = userAuthService;
+        this.assessmentService = assessmentService;
+        this.answerService = answerService;
+        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
+        this.parameterService = parameterService;
+        this.topicService = topicService;
+        this.questionService = questionService;
+    }
+
+
     @Get(produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<AssessmentResponse>> getAssessments(Authentication authentication) {
+        LOGGER.info("Get all assessments");
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
-
         List<Assessment> assessments = usersAssessmentsService.findAssessments(loggedInUser.getUserEmail());
         List<AssessmentResponse> assessmentResponses = new ArrayList<>();
         if (Objects.nonNull(assessments))
@@ -52,6 +72,7 @@ public class AssessmentController {
     @Post(produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> createAssessment(@Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
+        LOGGER.info("Create new assessment");
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         assessmentRequest.validate(emailPattern);
 
@@ -64,6 +85,7 @@ public class AssessmentController {
     @Put(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse updateAssessment(@PathVariable("assessmentId") Integer assessmentId, @Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
+        LOGGER.info("Update assessment : {}", assessmentId);
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         assessmentRequest.validate(emailPattern);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
@@ -76,6 +98,7 @@ public class AssessmentController {
 
             Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
+
             UserId userID = new UserId();
             userID.setAssessment(assessment);
             assessmentService.updateAssessment(assessment, assessmentUsers);
@@ -87,11 +110,12 @@ public class AssessmentController {
     @Put(value = "/{assessmentId}/statuses/open", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse reopenAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+
+        LOGGER.info("Reopen assessment : {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
-
-        Assessment finishedAssessment = assessmentService.reopenAssessment(assessment);
-        AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
+        Assessment openedAssessment = assessmentService.reopenAssessment(assessment);
+        AssessmentResponse assessmentResponse = modelMapper.map(openedAssessment, AssessmentResponse.class);
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -99,11 +123,11 @@ public class AssessmentController {
     @Put(value = "/{assessmentId}/statuses/finish", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> finishAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        LOGGER.info("Finish assessment : {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         Assessment finishedAssessment = assessmentService.finishAssessment(assessment);
         AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
-
         return HttpResponse.ok(assessmentResponse);
     }
 
@@ -111,6 +135,8 @@ public class AssessmentController {
     @Get(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> getAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        LOGGER.info("Get assessment : {}", assessmentId);
+
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
@@ -119,6 +145,7 @@ public class AssessmentController {
         List<String> users = assessmentService.getAssessmentUsers(assessmentId);
 
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
+
         List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessment.getAssessmentId());
         ArrayList<TopicRatingAndRecommendation> topicRecommendationResponseList = getRecommendationList(topicLevelRecommendationList,assessment.getAssessmentId());
         List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponseList = getTopicRatingAndRecommendationList(topicLevelAssessmentList, assessment,topicRecommendationResponseList);
@@ -141,16 +168,17 @@ public class AssessmentController {
     }
 
 
-
     @Post(value = "/notes/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelAssessmentRequest> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body TopicLevelAssessmentRequest topicLevelAssessmentRequests, Authentication authentication) {
+        LOGGER.info("Save assessment data : {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         if (assessment.isEditable()) {
             List<Answer> answerList = setAnswerListToSave(topicLevelAssessmentRequests, assessment);
             if (topicLevelAssessmentRequests.isRatedAtTopicLevel()) {
-                TopicLevelAssessment topicLevelRatingAndRecommendation = setTopicLevelRating(topicLevelAssessmentRequests, assessment);
+
+                TopicLevelAssessment topicLevelRatingAndRecommendation = setTopicLevelRatingAndRecommendation(topicLevelAssessmentRequests, assessment);
                 List<TopicLevelRecommendation> topicLevelRecommendationList = setTopicLevelRecommendation(topicLevelAssessmentRequests, assessment);
                 topicAndParameterLevelAssessmentService.saveTopicLevelAssessment(topicLevelRatingAndRecommendation, topicLevelRecommendationList, answerList);
             } else {
@@ -164,11 +192,10 @@ public class AssessmentController {
     }
 
 
-
-
     @Patch(value = "/answers/{assessmentId}/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelAssessmentRequest> saveNotesAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable String notes, Authentication authentication) {
+    public HttpResponse saveNotesAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable String notes, Authentication authentication) {
+        LOGGER.info("Update individual notes. assessment: {}, question:{}", assessmentId, questionId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
             Question question = questionService.getQuestion(questionId).orElseThrow();
@@ -186,6 +213,7 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterLevelRecommendationResponse> saveParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+            LOGGER.info("Update individual parameter maturity recommendation. assessment: {}, parameter: {}", assessmentId, parameterId);
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         ParameterLevelRecommendationResponse parameterLevelRecommendationResponse = new ParameterLevelRecommendationResponse();
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
@@ -270,82 +298,62 @@ public class AssessmentController {
     }
 
 
-
-    @Delete(value = "/deleteParameterRecommendation/{assessmentId}/{parameterId}/{recommendationId}")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<ParameterLevelRecommendationRequest> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId,@PathVariable("recommendationId") Integer recommendationId , Authentication authentication) {
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable()) {
-            topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
-        }
-        return HttpResponse.ok();
-    }
-
     @Delete(value = "/deleteRecommendation/{assessmentId}/{topicId}/{recommendationId}")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelRecommendationRequest> deleteRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId,@PathVariable("recommendationId") Integer recommendationId , Authentication authentication) {
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable()) {
-            topicAndParameterLevelAssessmentService.deleteRecommendation(recommendationId);
-        }
-        return HttpResponse.ok();
-    }
+            @Secured(SecurityRule.IS_AUTHENTICATED)
+            public HttpResponse<TopicLevelRecommendationRequest> deleteRecommendation
+            (@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer
+            topicId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication){
+                Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+                if (assessment.isEditable()) {
+                    topicAndParameterLevelAssessmentService.deleteRecommendation(recommendationId);
+                }
+                return HttpResponse.ok();
+            }
+            @Patch(value = "/topicRating/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+            @Secured(SecurityRule.IS_AUTHENTICATED)
+            public HttpResponse saveTopicRating (@PathVariable("assessmentId") Integer
+            assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String rating, Authentication
+            authentication){
+                LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, topicId);
+                Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+                if (assessment.isEditable()) {
+                    AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
+                    TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+                    TopicLevelAssessment topicLevelAssessment = topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).orElse(new TopicLevelAssessment());
+                    topicLevelAssessment.setTopicLevelId(topicLevelId);
+                    Integer topicRating = rating != null ? Integer.valueOf(rating) : null;
+                    topicLevelAssessment.setRating(topicRating);
+                    topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+                    updateAssessment(assessment);
+                }
+                return HttpResponse.ok();
+            }
 
+            @Patch(value = "/parameterRating/{assessmentId}/{parameterId}")
+            @Secured(SecurityRule.IS_AUTHENTICATED)
+            public HttpResponse saveParameterRating (@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String rating, Authentication authentication){
+                LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, parameterId);
+                Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+                if (assessment.isEditable()) {
+                    AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
+                    ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+                    ParameterLevelAssessment parameterLevelAssessment = topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId).orElse(new ParameterLevelAssessment());
+                    parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+                    Integer parameterRating = rating != null ? Integer.valueOf(rating) : null;
+                    parameterLevelAssessment.setRating(parameterRating);
+                    topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+                    updateAssessment(assessment);
+                }
+                return HttpResponse.ok();
+            }
 
-    @Patch(value = "/topicRating/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelAssessmentRequest> saveTopicRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String rating, Authentication authentication) {
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable()) {
-            AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
-            TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
-            TopicLevelAssessment topicLevelAssessment = topicAndParameterLevelAssessmentService.searchTopic(topicLevelId).orElse(new TopicLevelAssessment());
-            topicLevelAssessment.setTopicLevelId(topicLevelId);
-            Integer topicRating = rating != null ? Integer.valueOf(rating) : null;
-            topicLevelAssessment.setRating(topicRating);
-            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
-            updateAssessment(assessment);
-        }
-        return HttpResponse.ok();
-    }
-
-    @Patch(value = "/parameterRating/{assessmentId}/{parameterId}")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelAssessmentRequest> saveParameterRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String rating, Authentication authentication) {
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable()) {
-            AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
-            ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
-            ParameterLevelAssessment parameterLevelAssessment = topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId).orElse(new ParameterLevelAssessment());
-            parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-            Integer parameterRating = rating != null ? Integer.valueOf(rating) : null;
-            parameterLevelAssessment.setRating(parameterRating);
-            topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
-            updateAssessment(assessment);
-        }
-        return HttpResponse.ok();
-    }
-
-
-    private ModelMapper modelMapper = new ModelMapper();
-
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService) {
-        this.usersAssessmentsService = usersAssessmentsService;
-        this.userAuthService = userAuthService;
-        this.assessmentService = assessmentService;
-        this.answerService = answerService;
-        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
-        this.parameterService = parameterService;
-        this.topicService = topicService;
-        this.questionService = questionService;
-    }
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         return assessmentService.getAssessment(assessmentId, loggedInUser);
     }
 
-    private TopicLevelAssessment setTopicLevelRating(TopicLevelAssessmentRequest topicLevelAssessmentRequests, Assessment assessment) {
+    private TopicLevelAssessment setTopicLevelRatingAndRecommendation(TopicLevelAssessmentRequest topicLevelAssessmentRequests, Assessment assessment) {
         TopicLevelId topicLevelId = modelMapper.map(topicLevelAssessmentRequests.getTopicRatingAndRecommendation(), TopicLevelId.class);
         topicLevelId.setAssessment(assessment);
         TopicLevelAssessment topicLevelAssessment = modelMapper.map(topicLevelAssessmentRequests.getTopicRatingAndRecommendation(), TopicLevelAssessment.class);
@@ -383,7 +391,6 @@ public class AssessmentController {
             parameterLevelRecommendation.setParameter(assessmentParameter);
         return parameterLevelRecommendation;
     }
-
 
     private List<ParameterLevelAssessment> setParameterLevelRatingAndResommendationList(TopicLevelAssessmentRequest topicLevelAssessmentRequests, Assessment assessment) {
         List<ParameterLevelAssessment> parameterLevelAssessmentList = new ArrayList<>();
@@ -476,6 +483,7 @@ public class AssessmentController {
         }
         return topicLevelRecommendationRequestList;
     }
+
 
 
     private List<ParameterRatingAndRecommendation> getParameterRatingAndRecommendationList(List<ParameterLevelAssessment> parameterLevelAssessmentList,Assessment assessment,List<ParameterRatingAndRecommendation> parameterRecommendationResponseList) {
@@ -592,6 +600,7 @@ public class AssessmentController {
 
     private void updateAssessment(Assessment assessment) {
         assessment.setUpdatedAt(new Date());
+        LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessmentService.updateAssessment(assessment);
     }
 }

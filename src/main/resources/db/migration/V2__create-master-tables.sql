@@ -68,4 +68,5 @@ create table tbl_assessment_question (
                                           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                           primary key (assessment_id,question_id)
+
 );

@@ -44,4 +44,10 @@ public class AssessmentParameterReference {
 
     @Column(name = "reference")
     private String reference;
+
+    public AssessmentParameterReference(AssessmentParameter parameter, Rating rating, String reference) {
+        this.parameter = parameter;
+        this.rating = rating;
+        this.reference = reference;
+    }
 }

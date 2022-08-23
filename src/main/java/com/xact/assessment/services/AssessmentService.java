@@ -8,6 +8,7 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
+import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import java.util.*;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
@@ -30,12 +33,15 @@ public class AssessmentService {
     private final AssessmentRepository assessmentRepository;
     private final UsersAssessmentsRepository usersAssessmentsRepository;
 
+    private final AccessControlRepository accessControlRepository;
+
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
+        this.accessControlRepository = accessControlRepository;
     }
 
     @Transactional
@@ -55,18 +61,31 @@ public class AssessmentService {
         assessmentRepository.save(assessment);
     }
 
-    public Set<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedinUser, Assessment assessment) {
+    public Set<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedInUser, Assessment assessment) {
         List<UserDto> users = assessmentRequest.getUsers();
 
+
+        Optional<AssessmentUsers> assessmentOwner = Optional.empty();
+        if (assessment.getAssessmentId() != null) {
+            assessmentOwner = usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId());
+        }
+
         Set<AssessmentUsers> assessmentUsers = new HashSet<>();
-        for (UserDto eachUser : users) {
-            if (!eachUser.getEmail().isBlank()) {
-                eachUser.setRole(UserRole.Facilitator);
-                if (loggedinUser.getUserEmail().equals(eachUser.getEmail())) {
-                    eachUser.setRole(UserRole.Owner);
+        assessmentOwner.ifPresent(assessmentUsers::add);
+        for (UserDto user : users) {
+            if (!user.getEmail().isBlank()) {
+                user.setRole(UserRole.Facilitator);
+                if (assessmentOwner.isEmpty()) {
+                    if (loggedInUser.getUserEmail().equals(user.getEmail())) {
+                        user.setRole(UserRole.Owner);
+                    }
+                } else {
+                    if (user.getEmail().equals(assessmentOwner.get().getUserId().getUserEmail())) {
+                        continue;
+                    }
                 }
-                AssessmentUsers assessmentUser = mapper.map(eachUser, AssessmentUsers.class);
-                assessmentUser.setUserId(new UserId(eachUser.getEmail(), assessment));
+                AssessmentUsers assessmentUser = mapper.map(user, AssessmentUsers.class);
+                assessmentUser.setUserId(new UserId(user.getEmail(), assessment));
                 assessmentUsers.add(assessmentUser);
             }
         }
@@ -90,14 +109,14 @@ public class AssessmentService {
 
     public Assessment finishAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Completed);
-        assessmentRepository.update(assessment);
-        return assessment;
+        assessment.setUpdatedAt(new Date());
+        return assessmentRepository.update(assessment);
     }
 
     public Assessment reopenAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Active);
-        assessmentRepository.update(assessment);
-        return assessment;
+        assessment.setUpdatedAt(new Date());
+        return assessmentRepository.update(assessment);
     }
 
 
@@ -106,9 +125,13 @@ public class AssessmentService {
         assessmentRepository.update(assessment);
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
     }
-    public void updateAssessment(Assessment assessment){
+    public void updateAssessment(Assessment assessment) {
         assessmentRepository.update(assessment);
     }
 
 
+    public Optional<AccessControlRoles> getUserRole(String email) {
+        return accessControlRepository.getAccessControlRolesByEmail(email);
+
+    }
 }

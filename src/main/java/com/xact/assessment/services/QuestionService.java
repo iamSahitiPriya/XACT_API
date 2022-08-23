@@ -4,6 +4,7 @@ import com.xact.assessment.models.Question;
 import com.xact.assessment.repositories.QuestionRepository;
 import jakarta.inject.Singleton;
 
+import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -16,4 +17,16 @@ public class QuestionService {
     public Optional<Question> getQuestion(Integer questionId){
         return questionRepository.findById(questionId);
     }
+    public void createQuestion(Question question){
+        questionRepository.save(question);
+    }
+
+    public void updateQuestion(Question question) {
+        questionRepository.update(question);
+    }
+
+    public List<Question> getAllQuestion() {
+        return (List<Question>) questionRepository.findAll();
+    }
+
 }

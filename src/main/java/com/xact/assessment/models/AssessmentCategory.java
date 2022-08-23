@@ -11,9 +11,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
         property = "categoryId")
 public class AssessmentCategory {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id", nullable = false, unique = true)
     private Integer categoryId;
 
@@ -45,16 +49,38 @@ public class AssessmentCategory {
     @Column(name = "is_active")
     private boolean isActive;
 
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
+    private Date updatedAt;
+
+    @Column(name = "comments")
+    private String comments;
+
+
     public Set<AssessmentModule> getModules() {
-        return modules == null ? null : modules.stream().filter(AssessmentModule::isActive).collect(Collectors.toSet());
+        return modules == null ? null : modules.stream().filter(AssessmentModule::getIsActive).collect(Collectors.toSet());
 
     }
 
-    public double getCategoryAverage(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
+    public double getCategoryAverage(){
         double moduleSum = 0;
         int moduleCount = 0;
         for(AssessmentModule assessmentModule: this.modules){
-            double averageModule = assessmentModule.getModuleAverage(topicLevelAssessmentList,parameterLevelAssessmentList);
+            double averageModule = assessmentModule.getModuleAverage();
             if(averageModule != 0){
                 moduleSum += averageModule;
                 moduleCount +=1 ;
@@ -66,4 +92,9 @@ public class AssessmentCategory {
         return moduleSum/moduleCount;
     }
 
+    public AssessmentCategory( String categoryName, boolean isActive, String comments) {
+        this.categoryName = categoryName;
+        this.isActive = isActive;
+        this.comments = comments;
+    }
 }

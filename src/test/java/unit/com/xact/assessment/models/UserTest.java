@@ -16,7 +16,11 @@ class UserTest {
     void getUserEmail() {
         Profile profile = new Profile();
         profile.setEmail("test@test.com");
+<<<<<<< HEAD
         User user = new User(profile, "Active");
+=======
+        User user = new User("assxsww",profile, "Active");
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         assertEquals(user.getUserEmail(), "test@test.com");
     }

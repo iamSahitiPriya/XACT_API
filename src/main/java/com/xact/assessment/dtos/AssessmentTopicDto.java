@@ -28,5 +28,10 @@ public class AssessmentTopicDto implements Comparable<AssessmentTopicDto> {
         return topicId - currentTopic.topicId;
     }
 
+    public AssessmentTopicDto(Integer topicId, String topicName, Integer module) {
+        this.topicId = topicId;
+        this.topicName = topicName;
+        this.module = module;
+    }
 
 }

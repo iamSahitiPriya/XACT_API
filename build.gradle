@@ -45,6 +45,7 @@ dependencies {
     runtimeOnly("org.postgresql:postgresql")
     implementation("io.micronaut.flyway:micronaut-flyway")
 
+
     implementation("io.micronaut.security:micronaut-security-oauth2")
     implementation("io.micronaut.security:micronaut-security-jwt")
 
@@ -128,7 +129,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum =0.90
+                minimum = 0.90
             }
         }
     }

@@ -15,7 +15,8 @@ import lombok.Setter;
 @Setter
 public class User {
 
-    Profile profile;
+    private String userId;
+    private Profile profile;
     private String status;
 
     public String getUserEmail() {

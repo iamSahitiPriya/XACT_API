@@ -8,7 +8,7 @@ micronaut:
       configurations:
         web:
           allowedOrigins:
-            - https://qa.project-xact.in
+            - https://qa.xact.thoughtworks.net
   security:
     enabled: true
     token:

@@ -4,7 +4,12 @@
 
 package integration;
 
+<<<<<<< HEAD
 import com.xact.assessment.dtos.*;
+=======
+import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
+import com.xact.assessment.dtos.TopicRatingAndRecommendation;
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import io.micronaut.http.HttpMethod;
@@ -19,16 +24,28 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+<<<<<<< HEAD
+=======
+import javax.validation.constraints.NotNull;
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
+<<<<<<< HEAD
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
+=======
+import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 @MicronautTest
 class AssessmentControllerTest {
@@ -37,7 +54,11 @@ class AssessmentControllerTest {
 
     @Inject
     @Client("/")
+<<<<<<< HEAD
     HttpClient client;
+=======
+    HttpClient client; //
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
     ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
 
@@ -58,12 +79,15 @@ class AssessmentControllerTest {
     @Inject
     AssessmentTopicRepository assessmentTopicRepository;
 
+<<<<<<< HEAD
     @Inject
     TopicLevelRecommendationRepository topicLevelRecommendationRepository;
 
     @Inject
     ParameterLevelRecommendationRepository parameterLevelRecommendationRepository;
 
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     @MockBean(UsersAssessmentsRepository.class)
     UsersAssessmentsRepository usersAssessmentsRepository() {
         return mock(UsersAssessmentsRepository.class);
@@ -90,7 +114,11 @@ class AssessmentControllerTest {
     }
 
     @MockBean(QuestionRepository.class)
+<<<<<<< HEAD
     QuestionRepository questionRepository(){
+=======
+    QuestionRepository questionRepository() {
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         return mock(QuestionRepository.class);
     }
 
@@ -98,11 +126,16 @@ class AssessmentControllerTest {
     AssessmentTopicRepository assessmentTopicRepository() {
         return mock(AssessmentTopicRepository.class);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     @MockBean(AssessmentParameterRepository.class)
     AssessmentParameterRepository assessmentParameterRepository() {
         return mock(AssessmentParameterRepository.class);
     }
 
+<<<<<<< HEAD
     @MockBean(TopicLevelRecommendationRepository.class)
     TopicLevelRecommendationRepository topicLevelRecommendationRepository() {
         return mock(TopicLevelRecommendationRepository.class);
@@ -113,6 +146,8 @@ class AssessmentControllerTest {
         return mock(ParameterLevelRecommendationRepository.class);
     }
 
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     @Test
     void testGetAssessmentsResponse() throws IOException {
 
@@ -123,10 +158,18 @@ class AssessmentControllerTest {
         assessmentUsers.setUserId(userId);
         assessment.setAssessmentId(23);
         assessment.setAssessmentName("Mocked Assessment");
+<<<<<<< HEAD
 
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(singletonList(assessmentUsers));
         when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(singletonList(assessmentUsers));
+=======
+        Organisation org = new Organisation(12, "testorg", "IT", "Telecom", 10);
+        assessment.setOrganisation(org);
+
+
+        when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(singletonList(assessmentUsers));
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessments-response.json");
 
         String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments")
@@ -163,6 +206,7 @@ class AssessmentControllerTest {
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
         parameterLevelAssessment.setRating(4);
+<<<<<<< HEAD
 
         ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(1);
@@ -173,6 +217,9 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
+=======
+        parameterLevelAssessment.setRecommendation("recommendation");
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(2);
@@ -181,6 +228,7 @@ class AssessmentControllerTest {
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         topicLevelAssessment.setRating(4);
 
+<<<<<<< HEAD
         TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setRecommendation("some recommendation");
@@ -191,13 +239,19 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setTopic(assessmentTopic);
 
 
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
         when(usersAssessmentsRepository.findUserByAssessmentId(1, AssessmentRole.Owner)).thenReturn(singletonList(assessmentUsers));
         when(answerRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(answer));
         when(parameterLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(parameterLevelAssessment));
+<<<<<<< HEAD
         when(parameterLevelRecommendationRepository.findByAssessmentAndParameter(assessment.getAssessmentId(),assessmentParameter.getParameterId())).thenReturn(singletonList(parameterLevelRecommendation));
         when(topicLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(topicLevelAssessment));
         when(topicLevelRecommendationRepository.findByAssessmentAndTopic(assessment.getAssessmentId(),assessmentTopic.getTopicId())).thenReturn(singletonList(topicLevelRecommendation));
+=======
+        when(topicLevelAssessmentRepository.findByAssessment(assessment.getAssessmentId())).thenReturn(singletonList(topicLevelAssessment));
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-assessment-response.json");
 
@@ -223,10 +277,20 @@ class AssessmentControllerTest {
         Assessment expectedAssessment = new Assessment();
         expectedAssessment.setAssessmentId(123);
         expectedAssessment.setAssessmentStatus(AssessmentStatus.Completed);
+<<<<<<< HEAD
         expectedAssessment.setAssessmentName("Mocked Assessment");
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
         when(assessmentRepository.update(expectedAssessment)).thenReturn(expectedAssessment);
+=======
+        Organisation org = new Organisation();
+        org.setOrganisationName("Org");
+        expectedAssessment.setOrganisation(org);
+        expectedAssessment.setAssessmentName("Mocked Assessment");
+
+        when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
+        when(assessmentRepository.update(assessment)).thenReturn(expectedAssessment);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         String expectedResponse = resourceFileUtil.getJsonString("dto/finish-assessment-response.json");
         MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/123/statuses/finish").contentLength(0)
                 .bearerAuth("anything");
@@ -250,11 +314,22 @@ class AssessmentControllerTest {
 
         Assessment expectedAssessment = new Assessment();
         expectedAssessment.setAssessmentId(123);
+<<<<<<< HEAD
         expectedAssessment.setAssessmentStatus(AssessmentStatus.Completed);
         expectedAssessment.setAssessmentName("Mocked Assessment");
 
         when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
         when(assessmentRepository.update(expectedAssessment)).thenReturn(expectedAssessment);
+=======
+        expectedAssessment.setAssessmentStatus(AssessmentStatus.Active);
+        Organisation org = new Organisation();
+        org.setOrganisationName("Org");
+        expectedAssessment.setOrganisation(org);
+        expectedAssessment.setAssessmentName("Mocked Assessment");
+
+        when(usersAssessmentsRepository.findByUserEmail(userEmail, 123)).thenReturn(assessmentUsers);
+        when(assessmentRepository.update(assessment)).thenReturn(expectedAssessment);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         String expectedResponse = resourceFileUtil.getJsonString("dto/reopen-assessment-response.json");
         MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/123/statuses/open").contentLength(0)
                 .bearerAuth("anything");
@@ -289,6 +364,7 @@ class AssessmentControllerTest {
 
         TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation.setTopicId(1);
+<<<<<<< HEAD
         topicRatingAndRecommendation.setRating(1);
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest=new TopicLevelRecommendationRequest();
@@ -296,6 +372,11 @@ class AssessmentControllerTest {
         topicLevelRecommendationRequest.setEffort("HIGH");
         topicLevelRecommendationRequest.setImpact("MEDIUM");
         topicLevelRecommendationRequest.setDeliveryHorizon("some text");
+=======
+
+        topicRatingAndRecommendation.setRating(1);
+        topicRatingAndRecommendation.setRecommendation("text");
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         TopicLevelId topicLevelId = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
         topicLevelId.setAssessment(assessment);
@@ -305,6 +386,7 @@ class AssessmentControllerTest {
 
         when(topicLevelAssessmentRepository.save(topicLevelAssessment)).thenReturn(topicLevelAssessment);
 
+<<<<<<< HEAD
         TopicLevelRecommendation topicLevelRecommendation=mapper.map(topicLevelRecommendationRequest,TopicLevelRecommendation.class);
         topicLevelRecommendation.setAssessment(assessment);
         AssessmentTopic assessmentTopic=new AssessmentTopic();
@@ -314,6 +396,8 @@ class AssessmentControllerTest {
         when(assessmentTopicRepository.findById(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
         when(topicLevelRecommendationRepository.save(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
 
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         String dataRequest = resourceFileUtil.getJsonString("dto/set-topic-level-request.json");
 
@@ -340,21 +424,35 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
+<<<<<<< HEAD
         when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+=======
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         Answer answer = new Answer();
 
         when(answerRepository.save(answer)).thenReturn(answer);
 
+<<<<<<< HEAD
         ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
         parameterRatingAndRecommendation.setParameterId(1);
         parameterRatingAndRecommendation.setRating(1);
+=======
+
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation.setParameterId(1);
+
+        parameterRatingAndRecommendation.setRating(1);
+        parameterRatingAndRecommendation.setRecommendation("some text");
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation, ParameterLevelId.class);
         parameterLevelId.setAssessment(assessment);
         ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterRatingAndRecommendation, ParameterLevelAssessment.class);
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
 
+<<<<<<< HEAD
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some recommendation");
@@ -373,6 +471,8 @@ class AssessmentControllerTest {
         when(assessmentParameterRepository.findById(assessmentParameter.getParameterId())).thenReturn(Optional.of(assessmentParameter));
         when(parameterLevelRecommendationRepository.save(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
 
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         when(parameterLevelAssessmentRepository.save(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
 
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-level-request.json");
@@ -399,7 +499,11 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
+<<<<<<< HEAD
         when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+=======
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         Integer questionId = 1;
         Question question = new Question();
@@ -407,7 +511,11 @@ class AssessmentControllerTest {
         question.setQuestionText("Question");
         when(questionRepository.findById(questionId)).thenReturn(Optional.of(question));
 
+<<<<<<< HEAD
         AnswerId answerId = new AnswerId(assessment,question);
+=======
+        AnswerId answerId = new AnswerId(assessment, question);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
         answer.setAnswer("Ans");
@@ -423,8 +531,14 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
+<<<<<<< HEAD
     @Test
     void testUpdateTopicRecommendationText() throws IOException {
+=======
+
+    @Test
+    void testUpdateTopicRecommendation() throws IOException {
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         UserId userId = new UserId();
         userId.setUserEmail("hello@email.com");
 
@@ -438,7 +552,11 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
+<<<<<<< HEAD
         when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+=======
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 
         Integer topicId = 1;
@@ -448,6 +566,7 @@ class AssessmentControllerTest {
 
         when(assessmentTopicRepository.findById(topicId)).thenReturn(Optional.of(assessmentTopic));
 
+<<<<<<< HEAD
 
         TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest=new TopicLevelRecommendationTextRequest();
 
@@ -489,10 +608,42 @@ class AssessmentControllerTest {
         when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
 
 
+=======
+        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRecommendation("Recommendation");
+
+        when(topicLevelAssessmentRepository.findById(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
+        when(topicLevelAssessmentRepository.save(topicLevelAssessment)).thenReturn(topicLevelAssessment);
+
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-value.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendation/1/1", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
+
+    @Test
+    void testUpdateParameterRecommendation() throws IOException {
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@email.com");
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         Integer parameterId = 1;
         AssessmentParameter assessmentParameter = new AssessmentParameter();
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
+<<<<<<< HEAD
 
         when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
@@ -513,10 +664,26 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-parameter-recommendation-text-value.json");
 
+=======
+        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRecommendation("Recommendation");
+
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
+        when(assessmentParameterRepository.findById(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(parameterLevelAssessmentRepository.findById(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
+        when(parameterLevelAssessmentRepository.save(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
+        when(assessmentRepository.update(any(Assessment.class))).thenReturn(assessment);
+
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-recommendation-value.json");
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/1/1", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+<<<<<<< HEAD
     }
 
     @Test
@@ -821,6 +988,9 @@ class AssessmentControllerTest {
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+=======
+
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     }
 
     @Test
@@ -838,7 +1008,11 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
+<<<<<<< HEAD
         when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+=======
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 
         Integer parameterId = 1;
@@ -881,7 +1055,11 @@ class AssessmentControllerTest {
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         assessmentUsers.setUserId(userId);
 
+<<<<<<< HEAD
         when(usersAssessmentsRepository.findByUserEmail(any(),any())).thenReturn(assessmentUsers);
+=======
+        when(usersAssessmentsRepository.findByUserEmail(any(), any())).thenReturn(assessmentUsers);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 
         Integer topicId = 1;
@@ -909,6 +1087,7 @@ class AssessmentControllerTest {
 
     }
 
+<<<<<<< HEAD
     @Test
     void testDeleteParameterRecommendation() throws IOException {
         UserId userId = new UserId();
@@ -1009,5 +1188,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 }

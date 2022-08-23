@@ -13,11 +13,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Objects;
+import java.util.Date;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -32,6 +33,7 @@ import java.util.Set;
         property = "parameterId")
 public class AssessmentParameter {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "parameter_id", nullable = false, unique = true)
     private Integer parameterId;
 
@@ -53,14 +55,38 @@ public class AssessmentParameter {
     @ElementCollection()
     private Set<AssessmentParameterReference> references;
 
-    public double getParameterAverage(List<ParameterLevelAssessment> parameterLevelAssessmentList) {
-        if(!this.references.isEmpty()){
-            for(ParameterLevelAssessment parameterLevelAssessment:parameterLevelAssessmentList){
-                if(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(this.getParameterId())){
-                    return (double) parameterLevelAssessment.getRating();
-                }
-            }
-        }
-        return 0;
+    @NotNull
+    @Column(name = "is_active")
+    private boolean isActive;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at", nullable = false)
+    private Date createdAt;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "updated_at", nullable = false)
+    private Date updatedAt;
+
+    @Column(name = "comments")
+    private String comments;
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    @Transient
+    private Integer rating;
+
+    public Integer getRating() {
+        return rating == null ? 0 : rating;
+    }
+
+    public AssessmentParameter(String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
+        this.parameterName = parameterName;
+        this.topic = topic;
+        this.isActive = isActive;
+        this.comments = comments;
     }
 }

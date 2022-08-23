@@ -8,6 +8,9 @@ import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import jakarta.inject.Singleton;
 
 import javax.transaction.Transactional;
+import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
+import jakarta.inject.Singleton;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +42,7 @@ public class TopicAndParameterLevelAssessmentService {
             }
         } else {
             if (topicLevelAssessment.getRating() != null)
+
                 topicLevelAssessmentRepository.save(topicLevelAssessment);
         }
         return topicLevelAssessment;
@@ -49,12 +53,14 @@ public class TopicAndParameterLevelAssessmentService {
 
         if (parameterLevelAssessmentRepository.existsById(parameterLevelAssessment.getParameterLevelId())) {
             if (parameterLevelAssessment.getRating() == null) {
+
                 parameterLevelAssessmentRepository.delete(parameterLevelAssessment);
             } else {
                 parameterLevelAssessmentRepository.update(parameterLevelAssessment);
             }
         } else {
             if (parameterLevelAssessment.getRating() != null) {
+
                 parameterLevelAssessmentRepository.save(parameterLevelAssessment);
             }
         }
@@ -64,8 +70,8 @@ public class TopicAndParameterLevelAssessmentService {
     @Transactional
     public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment,List<TopicLevelRecommendation> topicLevelRecommendationList, List<Answer> answerList) {
         saveRatingAndRecommendation(topicLevelAssessment);
-        for(TopicLevelRecommendation topicLevelRecommendation :topicLevelRecommendationList){
-                    saveTopicLevelRecommendation(topicLevelRecommendation);
+        for(TopicLevelRecommendation topicLevelRecommendation :topicLevelRecommendationList) {
+            saveTopicLevelRecommendation(topicLevelRecommendation);
         }
         for (Answer answer : answerList) {
             answerService.saveAnswer(answer);
@@ -95,7 +101,6 @@ public class TopicAndParameterLevelAssessmentService {
         for (ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendationList) {
             saveParameterLevelRecommendation(parameterLevelRecommendation);
         }
-
         for (Answer answer : answerList) {
             answerService.saveAnswer(answer);
         }

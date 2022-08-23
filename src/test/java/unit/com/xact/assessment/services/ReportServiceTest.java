@@ -7,7 +7,16 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
+<<<<<<< HEAD
 import com.xact.assessment.services.*;
+=======
+import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
+import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
+import com.xact.assessment.services.AnswerService;
+import com.xact.assessment.services.ReportService;
+import com.xact.assessment.services.SpiderChartService;
+import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import com.xact.assessment.utils.ChartsUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,8 +28,11 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
+<<<<<<< HEAD
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -30,6 +42,7 @@ class ReportServiceTest {
     AnswerService answerService = mock(AnswerService.class);
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
+<<<<<<< HEAD
     TopicService topicService = mock(TopicService.class);
     ParameterService parameterService = mock(ParameterService.class);
 
@@ -37,6 +50,13 @@ class ReportServiceTest {
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() {
+=======
+
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService,chartService,categoryRepository);
+
+    @Test
+    void getWorkbookAssessmentDataSheet() {
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         Integer assessmentId = 123;
         List<Answer> answers = new ArrayList<>();
 
@@ -47,9 +67,13 @@ class ReportServiceTest {
         question.setQuestionId(1);
         AssessmentParameter parameter = new AssessmentParameter();
         parameter.setParameterName("my param");
+<<<<<<< HEAD
         parameter.setParameterId(1);
         AssessmentTopic topic = new AssessmentTopic();
         topic.setTopicId(1);
+=======
+        AssessmentTopic topic = new AssessmentTopic();
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         topic.setTopicName("my topic");
         AssessmentModule module = new AssessmentModule();
         module.setModuleName("my module");
@@ -68,6 +92,7 @@ class ReportServiceTest {
         List<TopicLevelAssessment> topicAssessments = new ArrayList<>();
         ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment();
         parameterAssessment.setRating(3);
+<<<<<<< HEAD
         parameterAssessment.setParameterLevelId(new ParameterLevelId(assessment, parameter));
         parameterAssessments.add(parameterAssessment);
 
@@ -130,11 +155,27 @@ class ReportServiceTest {
 
         Workbook report = new XSSFWorkbook();
         reportService.writeReport(answers, parameterAssessments, topicAssessments, topicRecommendationMap, parameterRecommendationMap, report);
+=======
+        parameterAssessment.setRecommendation("recommendation");
+        parameterAssessment.setParameterLevelId(new ParameterLevelId(assessment,parameter));
+        parameterAssessments.add(parameterAssessment);
+
+        TopicLevelId topicLevelId = new TopicLevelId(assessment,topic);
+        TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId,4,"recom",new Date(),new Date());
+        topicAssessments.add(topicAssessment);
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
+
+
+        Workbook report = new XSSFWorkbook();
+        reportService.writeReport(answers,parameterAssessments,topicAssessments,report);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
 
     }
 
+<<<<<<< HEAD
     @Test
     void getWorkbookAssessmentDataSheetWithoutRating() {
         Integer assessmentId = 123;
@@ -297,6 +338,8 @@ class ReportServiceTest {
         assertEquals(1, topicLevelRecommendationMap.size());
     }
 
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     private Workbook getMockWorkbook() {
         Workbook workbook = new XSSFWorkbook();
         Sheet categorySheet = workbook.createSheet("my category");
@@ -378,4 +421,8 @@ class ReportServiceTest {
         verify(chartService).generateChart(any());
         assertEquals(workbook.getSheetAt(0).getSheetName(), getMockWorkbookForChart().getSheetAt(0).getSheetName());
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 }

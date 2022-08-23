@@ -1,5 +1,6 @@
 package com.xact.assessment.dtos;
 
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.Setter;
 import java.util.List;
 import java.util.Objects;
 
+
 @Introspected
 @NoArgsConstructor
 @Getter
@@ -19,6 +21,7 @@ public class ParameterRatingAndRecommendation {
 
     private Integer parameterId;
     private Integer rating;
+
     @JsonProperty("parameterLevelRecommendation")
     private List<ParameterLevelRecommendationRequest> parameterLevelRecommendationRequest;
 
@@ -34,5 +37,6 @@ public class ParameterRatingAndRecommendation {
     public int hashCode() {
         return Objects.hash(parameterId);
     }
+
 
 }

@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 [{"assessmentId":23,"assessmentName":"Mocked Assessment"}]
+=======
+[{"assessmentId":23,"assessmentName":"mocked assessment","organisationName":"testorg"}]
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148

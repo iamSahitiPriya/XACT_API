@@ -13,10 +13,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 @EqualsAndHashCode
 @Introspected
 @Entity
@@ -51,6 +54,21 @@ public class Assessment {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Assessment that = (Assessment) o;
+        return assessmentId.equals(that.assessmentId) &&
+                assessmentName.equals(that.assessmentName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(assessmentId, assessmentName);
+    }
 
 
     public boolean isEditable() {

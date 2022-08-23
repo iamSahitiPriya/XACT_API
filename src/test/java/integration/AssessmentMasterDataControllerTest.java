@@ -5,20 +5,33 @@
 package integration;
 
 import com.xact.assessment.models.*;
+<<<<<<< HEAD
 import com.xact.assessment.repositories.CategoryRepository;
 import io.micronaut.http.HttpRequest;
+=======
+import com.xact.assessment.repositories.*;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+<<<<<<< HEAD
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+=======
+import org.springframework.web.reactive.resource.HttpResource;
+
+import java.io.IOException;
+import java.util.*;
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -36,11 +49,54 @@ class AssessmentMasterDataControllerTest {
     @Inject
     CategoryRepository categoryRepository;
 
+<<<<<<< HEAD
+=======
+    @Inject
+    ModuleRepository moduleRepository;
+
+    @Inject
+    AssessmentTopicRepository assessmentTopicRepository;
+
+    @Inject
+    AssessmentParameterRepository assessmentParameterRepository;
+
+    @Inject
+    AssessmentParameterReferenceRepository assessmentParameterReferenceRepository;
+
+    @Inject
+    AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
+
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     @MockBean(CategoryRepository.class)
     CategoryRepository categoryRepository() {
         return mock(CategoryRepository.class);
     }
 
+<<<<<<< HEAD
+=======
+    @MockBean(ModuleRepository.class)
+    ModuleRepository moduleRepository() {
+        return mock(ModuleRepository.class);
+    }
+
+    @MockBean(AssessmentTopicRepository.class)
+    AssessmentTopicRepository topicRepository() {
+        return mock(AssessmentTopicRepository.class);
+    }
+    @MockBean(AssessmentParameterRepository.class)
+    AssessmentParameterRepository parameterRepository() {
+        return mock(AssessmentParameterRepository.class);
+    }
+    @MockBean(AssessmentParameterReferenceRepository.class)
+    AssessmentParameterReferenceRepository parameterReferenceRepository() {
+        return mock(AssessmentParameterReferenceRepository.class);
+    }
+    @MockBean(AssessmentTopicReferenceRepository.class)
+    AssessmentTopicReferenceRepository topicReferenceRepository() {
+        return mock(AssessmentTopicReferenceRepository.class);
+    }
+
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
     @Test
     void testGetMasterDataCategoryResponse() throws IOException {
@@ -53,11 +109,18 @@ class AssessmentMasterDataControllerTest {
 
         String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/categories")
                 .bearerAuth("anything"), String.class);
+<<<<<<< HEAD
 
+=======
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         assertEquals(expectedResponse, userResponse);
 
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
     private AssessmentCategory getAssessmentCategory() {
         Set<AssessmentModule> modules = new HashSet<>();
         Set<AssessmentTopic> topics = new HashSet<>();
@@ -95,6 +158,10 @@ class AssessmentMasterDataControllerTest {
         topic.setModule(module);
         topic.setReferences(topicReferences);
         topic.setParameters(parameters);
+<<<<<<< HEAD
+=======
+        topic.setActive(true);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         topics.add(topic);
 
         topicReference.setReferenceId(1);
@@ -108,6 +175,10 @@ class AssessmentMasterDataControllerTest {
         assessmentParameter.setTopic(topic);
         assessmentParameter.setQuestions(questions);
         assessmentParameter.setReferences(parameterReferences);
+<<<<<<< HEAD
+=======
+        assessmentParameter.setActive(true);
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
         parameters.add(assessmentParameter);
 
         parameterReference.setReferenceId(1);
@@ -124,5 +195,132 @@ class AssessmentMasterDataControllerTest {
         return category;
     }
 
+<<<<<<< HEAD
 
+=======
+    @Test
+    void shouldCreateCategory() throws IOException {
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+        assessmentCategory.setCategoryName("Hello");
+        assessmentCategory.setActive(false);
+
+        when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
+
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-category-reponse.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/category", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+
+    }
+
+    @Test
+    void shouldCreateModule() throws IOException {
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setActive(false);
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+        assessmentCategory.setCategoryName("Hello");
+        assessmentCategory.setActive(false);
+
+        when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
+        when(categoryRepository.findCategoryById(1)).thenReturn(assessmentCategory);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-module-response.json");
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/modules", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+    @Test
+    void shouldCreateTopic() throws IOException {
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("This is a module");
+        assessmentTopic.setActive(false);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setActive(false);
+
+        when(moduleRepository.findByModuleId(1)).thenReturn(assessmentModule);
+        when(assessmentTopicRepository.save(assessmentTopic)).thenReturn(assessmentTopic);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-topic-response.json");
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topics", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
+
+    @Test
+    void shouldCreateParameter() throws IOException {
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("This is a module");
+        assessmentTopic.setActive(false);
+
+        AssessmentParameter parameter = new AssessmentParameter();
+        parameter.setParameterId(1);
+        parameter.setParameterName("parameter");
+
+        when(assessmentTopicRepository.findByTopicId(1)).thenReturn(assessmentTopic);
+        when(assessmentParameterRepository.save(parameter)).thenReturn(parameter);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-response.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topics", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+    @Test
+    void shouldCreateTopicReference() throws IOException {
+        AssessmentTopicReference topicReference = new AssessmentTopicReference();
+        topicReference.setReference("Hello this is a reference");
+        topicReference.setReferenceId(1);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("This is a module");
+        assessmentTopic.setActive(false);
+
+        when(assessmentTopicRepository.findById(1)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentTopicReferenceRepository.save(topicReference)).thenReturn(topicReference);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-topicReference-response.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topicReferences", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+
+    @Test
+    void shouldCreateParameterReference() throws IOException {
+        AssessmentParameterReference parameterReference = new AssessmentParameterReference();
+        parameterReference.setReference("Hello this is a reference");
+        parameterReference.setReferenceId(1);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("This is a module");
+        assessmentParameter.setActive(false);
+
+        when(assessmentParameterRepository.findById(1)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentParameterReferenceRepository.save(parameterReference)).thenReturn(parameterReference);
+        String dataRequest = resourceFileUtil.getJsonString("dto/set-parameterReference-response.json");
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/parameterReferences", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+    }
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 }

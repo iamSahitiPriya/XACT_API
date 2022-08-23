@@ -40,4 +40,12 @@ public class AssessmentResponse {
 
     private List<TopicRatingAndRecommendation> topicRatingAndRecommendation;
 
+    public String getAssessmentName() {
+        return assessmentName.toLowerCase();
+    }
+
+    public String getOrganisationName() {
+        return organisationName.toLowerCase();
+    }
+
 }

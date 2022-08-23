@@ -9,8 +9,12 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+<<<<<<< HEAD
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+=======
+import static org.mockito.Mockito.*;
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 
 class TopicServiceTest {
     private TopicService topicService;
@@ -37,6 +41,33 @@ class TopicServiceTest {
 
     }
 
+<<<<<<< HEAD
+=======
+    @Test
+    void shouldSaveTopicsWhenInputIsGiven() {
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.save(assessmentTopic)).thenReturn(assessmentTopic);
+        topicService.createTopic(assessmentTopic);
+
+        verify(assessmentTopicRepository).save(assessmentTopic);
+    }
+
+    @Test
+    void shouldUpdateTopic() {
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic Name");
+
+        when(assessmentTopicRepository.update(assessmentTopic)).thenReturn(assessmentTopic);
+        topicService.updateTopic(assessmentTopic);
+
+        verify(assessmentTopicRepository).update(assessmentTopic);
+
+    }
+>>>>>>> b93eb638144e893f11f41aa65c0cc5a13e1ab148
 }
 
 

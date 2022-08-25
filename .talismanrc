@@ -11,6 +11,8 @@ fileignoreconfig:
   checksum: 021f1a9ce1d872e0a80556a1ffdb2477722349eafa38edbb7938116caaea7fdf
 - filename: src/main/resources/db/migration/V7__alter-master-table.sql
   checksum: eb5a9f29b364f8d9be01ab70036e001e63ccc3d3bc794c80798b98dc8601efde
+- filename: src/main/resources/db/migration/V14__alter-master-data.sql
+  checksum: 6eb320a6a250bad1c1773e3c956345f2deb10b68f24ee4a4327a73e84d93a2c0
 
 
 version: ""

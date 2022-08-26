@@ -5,6 +5,10 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AssessmentMasterDataController;
+
+import com.xact.assessment.dtos.AssessmentCategoryDto;
+import com.xact.assessment.models.AssessmentCategory;
+
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
@@ -16,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
+
 import static org.mockito.Mockito.when;
 
 class AssessmentMasterDataControllerTest {
@@ -39,6 +43,7 @@ class AssessmentMasterDataControllerTest {
         assertEquals(firstAssessmentCategory.getCategoryId(), category.getCategoryId());
         assertEquals(firstAssessmentCategory.getCategoryName(), category.getCategoryName());
     }
+
 
     @Test
     void createAssessmentCategory() {
@@ -211,4 +216,5 @@ class AssessmentMasterDataControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
 }

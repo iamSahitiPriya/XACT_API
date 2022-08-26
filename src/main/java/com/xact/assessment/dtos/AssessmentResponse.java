@@ -47,4 +47,5 @@ public class AssessmentResponse {
     public String getOrganisationName() {
         return organisationName.toLowerCase();
     }
+
 }

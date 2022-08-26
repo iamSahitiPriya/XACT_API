@@ -8,7 +8,17 @@ fileignoreconfig:
 - filename: src/main/resources/db/migration/V14__alter-master-data.sql
   checksum: 311d0055f5fea002f2287b28f070847ea67e1a592105d94612b7b51496ca21b3
 - filename: src/main/resources/db/migration/V2__create-master-tables.sql
-  checksum: 65e22aad1758633cdba01e06f05c90160b0272c124ef17e4572fc80512b0a117
+  checksum: 4580c24f1f551b48aa7796e3e3f53c9c40b12b07edf531e326b0fb66bd84ed6f
+- filename: src/main/resources/db/migration/V4__create_index.sql
+  checksum: 3c068d4116e6803168aafae326a44ae6673bda0985961a87fee5488f88be21f3
+- filename: src/main/resources/db/migration/V5__insert-actual-master-data.sql
+  checksum: 6739f133902f00d4aefedc348ae439986b814f722d869c27905a8ac57fae3065
+- filename: src/main/resources/db/migration/V3__insert-actual-master-data.sql
+  checksum: 021f1a9ce1d872e0a80556a1ffdb2477722349eafa38edbb7938116caaea7fdf
+- filename: src/main/resources/db/migration/V7__alter-master-table.sql
+  checksum: eb5a9f29b364f8d9be01ab70036e001e63ccc3d3bc794c80798b98dc8601efde
+- filename: src/main/resources/db/migration/V14__alter-master-data.sql
+  checksum: 6eb320a6a250bad1c1773e3c956345f2deb10b68f24ee4a4327a73e84d93a2c0
 - filename: src/main/resources/db/migration/V9__create-access-control-list-table.sql
   checksum: 88e04d78ec573c8af7db5529728fcdd813e65f675d6091622a5c98909d48b548
 - filename: src/main/java/com/xact/assessment/controllers/AssessmentMasterDataController.java

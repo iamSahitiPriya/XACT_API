@@ -67,7 +67,6 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterLevelAssessment;
     }
 
-    @Transactional
     public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment,List<TopicLevelRecommendation> topicLevelRecommendationList, List<Answer> answerList) {
         saveRatingAndRecommendation(topicLevelAssessment);
         for(TopicLevelRecommendation topicLevelRecommendation :topicLevelRecommendationList) {

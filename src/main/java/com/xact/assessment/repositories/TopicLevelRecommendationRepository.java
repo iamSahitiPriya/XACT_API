@@ -1,7 +1,6 @@
 package com.xact.assessment.repositories;
 
 
-import com.xact.assessment.models.TopicLevelAssessment;
 import com.xact.assessment.models.TopicLevelRecommendation;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;

@@ -150,4 +150,11 @@ public class AssessmentMasterDataService {
 
         assessmentParameterRRepository.update(assessmentParameterReference);
     }
+
+
+    public List<AssessmentCategory> getCategories() {
+        return categoryRepository.findCategories();
+    }
+
 }
+

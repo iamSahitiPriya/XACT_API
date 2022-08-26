@@ -44,6 +44,7 @@ public class AssessmentRequest {
         this.industry = industry.toLowerCase();
     }
 
+
     @NotBlank
     private String industry;
     @Min(1)

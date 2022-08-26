@@ -20,4 +20,5 @@ public interface AssessmentParameterRepository extends CrudRepository<Assessment
     @Executable
     @Query("SELECT parameter FROM AssessmentParameter parameter WHERE parameter.parameterId=:parameterId")
     AssessmentParameter findByParameterId(Integer parameterId);
+
 }

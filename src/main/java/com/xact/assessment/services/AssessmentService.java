@@ -15,6 +15,11 @@ import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import java.util.*;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
@@ -27,6 +32,7 @@ public class AssessmentService {
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
     private final UsersAssessmentsRepository usersAssessmentsRepository;
+
     private final AccessControlRepository accessControlRepository;
 
     ModelMapper mapper = new ModelMapper();
@@ -119,7 +125,6 @@ public class AssessmentService {
         assessmentRepository.update(assessment);
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
     }
-
     public void updateAssessment(Assessment assessment) {
         assessmentRepository.update(assessment);
     }

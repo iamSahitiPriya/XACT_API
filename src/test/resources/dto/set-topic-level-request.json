@@ -16,7 +16,20 @@
   "topicRatingAndRecommendation": {
     "topicId":1,
     "rating":1,
-    "recommendation":"text"
-
+    "topicLevelRecommendation":[
+      {
+        "recommendation":"some recommendation",
+        "impact":"LOW",
+        "effort":"HIGH",
+        "deliveryHorizon":"some text"
+      },
+      {
+        "recommendation":"some more recommendation",
+        "impact":"LOW",
+        "effort":"HIGH",
+        "deliveryHorizon":"some more text"
+      }
+    ]
   }
-}]
+  }]
+

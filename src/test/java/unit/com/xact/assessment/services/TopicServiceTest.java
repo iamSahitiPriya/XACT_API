@@ -9,7 +9,10 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.*;
+
 
 class TopicServiceTest {
     private TopicService topicService;
@@ -60,6 +63,7 @@ class TopicServiceTest {
         verify(assessmentTopicRepository).update(assessmentTopic);
 
     }
+
 }
 
 

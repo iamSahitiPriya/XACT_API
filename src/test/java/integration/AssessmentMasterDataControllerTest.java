@@ -5,6 +5,8 @@
 package integration;
 
 import com.xact.assessment.models.*;
+import com.xact.assessment.repositories.CategoryRepository;
+import io.micronaut.http.HttpRequest;
 import com.xact.assessment.repositories.*;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -14,6 +16,13 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.springframework.web.reactive.resource.HttpResource;
 
 import java.io.IOException;
@@ -55,6 +64,7 @@ class AssessmentMasterDataControllerTest {
         return mock(CategoryRepository.class);
     }
 
+
     @MockBean(ModuleRepository.class)
     ModuleRepository moduleRepository() {
         return mock(ModuleRepository.class);
@@ -89,10 +99,10 @@ class AssessmentMasterDataControllerTest {
 
         String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/categories")
                 .bearerAuth("anything"), String.class);
+
         assertEquals(expectedResponse, userResponse);
 
     }
-
 
     private AssessmentCategory getAssessmentCategory() {
         Set<AssessmentModule> modules = new HashSet<>();
@@ -131,6 +141,7 @@ class AssessmentMasterDataControllerTest {
         topic.setModule(module);
         topic.setReferences(topicReferences);
         topic.setParameters(parameters);
+
         topic.setActive(true);
         topics.add(topic);
 
@@ -145,6 +156,7 @@ class AssessmentMasterDataControllerTest {
         assessmentParameter.setTopic(topic);
         assessmentParameter.setQuestions(questions);
         assessmentParameter.setReferences(parameterReferences);
+
         assessmentParameter.setActive(true);
         parameters.add(assessmentParameter);
 
@@ -286,4 +298,5 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
+
 }

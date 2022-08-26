@@ -63,4 +63,9 @@ fileignoreconfig:
   checksum: 43f37dd272b1dc5778ad597e9c6b6f35bef986fba66b2d7fd9c8c4392331c661
 - filename: src/test/java/unit/com/xact/assessment/services/AssessmentMasterDataServiceTest.java
   checksum: 1dc43463d20215a9e095f7efac8f7d06605c83b9179b5a0bb36cafd349231f33
+- filename: src/main/resources/application.yml
+  checksum: af6fa04c004bfc3ed8915dd435815bce79f35a01626d87455b21cd1c5ba3c8b4
+- filename: src/main/resources/db/migration/V14__alter-master-data.sql
+  checksum: 6eb320a6a250bad1c1773e3c956345f2deb10b68f24ee4a4327a73e84d93a2c0
 version: ""
+

@@ -19,4 +19,14 @@ public class ParameterLevelRecommendationTest {
         assertEquals(false, parameterLevelRecommendation.hasRecommendation());
     }
 
+    @Test
+    void hasNullRecommendationImpact(){
+        assertEquals(false, parameterLevelRecommendation.hasRecommendation());
+    }
+
+    @Test
+    void hasNullRecommendationDeliveryHorizon(){
+        assertEquals(false, parameterLevelRecommendation.hasRecommendation());
+    }
+
 }

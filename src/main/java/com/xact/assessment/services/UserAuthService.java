@@ -4,7 +4,6 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.controllers.AssessmentController;
 import com.xact.assessment.models.Profile;
 import com.xact.assessment.models.User;
 import io.micronaut.security.authentication.Authentication;

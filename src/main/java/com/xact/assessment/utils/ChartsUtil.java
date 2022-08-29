@@ -14,10 +14,12 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.ui.RectangleEdge;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
 public class ChartsUtil {
+    public ChartsUtil() {
+    }
+
     /**
      * Creates a sample chart.
      *
@@ -44,8 +46,6 @@ public class ChartsUtil {
     public static byte[] getSpiderChart(int width, int height, CategoryDataset dataset) throws IOException {
         JFreeChart chart = createChart(dataset);
         chart.getPlot().setBackgroundPaint(Color.white);
-//        File file = new File("spider-chart.png");
-//        ChartUtilities.saveChartAsPNG(file, chart, width, height);
         return ChartUtilities.encodeAsPNG(chart.createBufferedImage(width, height));
 
     }

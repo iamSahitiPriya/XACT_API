@@ -61,11 +61,11 @@ class AssessmentControllerTest {
         expectedAssessment.setUpdatedAt(updated);
         HttpResponse<List<AssessmentResponse>> actualAssessments = assessmentController.getAssessments(authentication);
 
-        assertEquals(expectedAssessment.getAssessmentId(), actualAssessments.body().get(0).getAssessmentId());
-        assertEquals(expectedAssessment.getAssessmentName(), actualAssessments.body().get(0).getAssessmentName());
-        assertEquals(expectedAssessment.getAssessmentStatus(), actualAssessments.body().get(0).getAssessmentStatus());
-        assertEquals(expectedAssessment.getOrganisationName(), actualAssessments.body().get(0).getOrganisationName());
-        assertEquals(expectedAssessment.getUpdatedAt(), actualAssessments.body().get(0).getUpdatedAt());
+        assertEquals(expectedAssessment.getAssessmentId(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentId());
+        assertEquals(expectedAssessment.getAssessmentName(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentName());
+        assertEquals(expectedAssessment.getAssessmentStatus(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentStatus());
+        assertEquals(expectedAssessment.getOrganisationName(), Objects.requireNonNull(actualAssessments.body()).get(0).getOrganisationName());
+        assertEquals(expectedAssessment.getUpdatedAt(), Objects.requireNonNull(actualAssessments.body()).get(0).getUpdatedAt());
         verify(usersAssessmentsService).findAssessments(userEmail);
     }
 
@@ -98,10 +98,10 @@ class AssessmentControllerTest {
 
         HttpResponse<AssessmentResponse> actualAssessments = assessmentController.createAssessment(assessmentRequest, authentication);
 
-        assertNotNull(actualAssessments.body().getAssessmentId());
-        assertEquals(assessment.getAssessmentName(), actualAssessments.body().getAssessmentName());
-        assertEquals(assessment.getAssessmentStatus().name(), actualAssessments.body().getAssessmentStatus().name());
-        assertEquals(assessment.getOrganisation().getOrganisationName(), actualAssessments.body().getOrganisationName());
+        assertNotNull(Objects.requireNonNull(actualAssessments.body()).getAssessmentId());
+        assertEquals(assessment.getAssessmentName(), Objects.requireNonNull(actualAssessments.body()).getAssessmentName());
+        assertEquals(assessment.getAssessmentStatus().name(), Objects.requireNonNull(actualAssessments.body()).getAssessmentStatus().name());
+        assertEquals(assessment.getOrganisation().getOrganisationName(), Objects.requireNonNull(actualAssessments.body()).getOrganisationName());
     }
 
     @Test
@@ -168,7 +168,8 @@ class AssessmentControllerTest {
 
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
-        parameterLevelRecommendationRequest.setRecommendationId(parameterLevelRecommendation.getRecommendationId());
+        Integer recommendationTextId = parameterLevelRecommendationRequest.getRecommendationId() != null ? parameterLevelRecommendationRequest.getRecommendationId() : null ;
+        parameterLevelRecommendationRequest.setRecommendationId(recommendationTextId);
         parameterLevelRecommendationRequest.setRecommendation(parameterLevelRecommendation.getRecommendation());
         parameterLevelRecommendationRequest.setImpact(parameterLevelRecommendationRequest.getImpact());
         parameterLevelRecommendationRequest.setEffort(parameterLevelRecommendationRequest.getEffort());
@@ -202,7 +203,8 @@ class AssessmentControllerTest {
         when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest=new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendationId(topicLevelRecommendation.getRecommendationId());
+        Integer recommendationTextId1 =topicLevelRecommendationRequest.getRecommendationId() != null ? topicLevelRecommendationRequest.getRecommendationId() : null ;
+        topicLevelRecommendationRequest.setRecommendationId(recommendationTextId1);
         topicLevelRecommendationRequest.setRecommendation(topicLevelRecommendation.getRecommendation());
         topicLevelRecommendationRequest.setImpact(topicLevelRecommendationRequest.getImpact());
         topicLevelRecommendationRequest.setEffort(topicLevelRecommendationRequest.getEffort());
@@ -227,11 +229,11 @@ class AssessmentControllerTest {
         expectedAssessment.setParameterRatingAndRecommendation(parameterRatingAndRecommendationList);
         HttpResponse<AssessmentResponse> actualAssessment = assessmentController.getAssessment(assessmentId, authentication);
 
-        assertEquals(expectedAssessment.getAssessmentId(), actualAssessment.body().getAssessmentId());
-        assertEquals(expectedAssessment.getAssessmentName(), actualAssessment.body().getAssessmentName());
-        assertEquals(expectedAssessment.getAssessmentStatus(), actualAssessment.body().getAssessmentStatus());
-        assertEquals(expectedAssessment.getOrganisationName(), actualAssessment.body().getOrganisationName());
-        assertEquals(expectedAssessment.getUpdatedAt(), actualAssessment.body().getUpdatedAt());
+        assertEquals(expectedAssessment.getAssessmentId(), Objects.requireNonNull(actualAssessment.body()).getAssessmentId());
+        assertEquals(expectedAssessment.getAssessmentName(), Objects.requireNonNull(actualAssessment.body()).getAssessmentName());
+        assertEquals(expectedAssessment.getAssessmentStatus(), Objects.requireNonNull(actualAssessment.body()).getAssessmentStatus());
+        assertEquals(expectedAssessment.getOrganisationName(), Objects.requireNonNull(actualAssessment.body()).getOrganisationName());
+        assertEquals(expectedAssessment.getUpdatedAt(), Objects.requireNonNull(actualAssessment.body()).getUpdatedAt());
         verify(assessmentService).getAssessment(assessmentId, user);
     }
 
@@ -261,9 +263,9 @@ class AssessmentControllerTest {
 
         HttpResponse<AssessmentResponse> actualAssessment = assessmentController.finishAssessment(assessmentId, authentication);
 
-        assertEquals(expectedAssessment.getAssessmentId(), actualAssessment.body().getAssessmentId());
-        assertEquals(expectedAssessment.getAssessmentName(), actualAssessment.body().getAssessmentName());
-        assertEquals(expectedAssessment.getAssessmentStatus().name(), actualAssessment.body().getAssessmentStatus().name());
+        assertEquals(expectedAssessment.getAssessmentId(), Objects.requireNonNull(actualAssessment.body()).getAssessmentId());
+        assertEquals(expectedAssessment.getAssessmentName(), Objects.requireNonNull(actualAssessment.body()).getAssessmentName());
+        assertEquals(expectedAssessment.getAssessmentStatus().name(), Objects.requireNonNull(actualAssessment.body()).getAssessmentStatus().name());
         verify(assessmentService).finishAssessment(assessment);
     }
 
@@ -293,9 +295,9 @@ class AssessmentControllerTest {
 
         HttpResponse<AssessmentResponse> actualAssessment = assessmentController.reopenAssessment(assessmentId, authentication);
 
-        assertEquals(expectedAssessment.getAssessmentId(), actualAssessment.body().getAssessmentId());
-        assertEquals(expectedAssessment.getAssessmentName(), actualAssessment.body().getAssessmentName());
-        assertEquals(expectedAssessment.getAssessmentStatus().name(), actualAssessment.body().getAssessmentStatus().name());
+        assertEquals(expectedAssessment.getAssessmentId(), Objects.requireNonNull(actualAssessment.body()).getAssessmentId());
+        assertEquals(expectedAssessment.getAssessmentName(), Objects.requireNonNull(actualAssessment.body()).getAssessmentName());
+        assertEquals(expectedAssessment.getAssessmentStatus().name(), Objects.requireNonNull(actualAssessment.body()).getAssessmentStatus().name());
         verify(assessmentService).reopenAssessment(assessment);
     }
 
@@ -482,7 +484,7 @@ class AssessmentControllerTest {
         when(answerService.saveAnswer(answer)).thenReturn(answer);
 
 
-        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveNotesAnswer(assessmentId, questionId, "Note", authentication);
+        HttpResponse actualResponse = assessmentController.saveNotesAnswer(assessmentId, questionId, "Note", authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
@@ -764,7 +766,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
 
-        assertEquals(topicLevelRecommendation.getRecommendationEffort().toString(),"HIGH");
+        assertEquals("HIGH",topicLevelRecommendation.getRecommendationEffort().toString());
         verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
@@ -824,7 +826,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
 
-        assertEquals(topicLevelRecommendation.getDeliveryHorizon(),"some text");
+        assertEquals("some text",topicLevelRecommendation.getDeliveryHorizon());
         verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
@@ -1338,7 +1340,7 @@ class AssessmentControllerTest {
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
-        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveTopicRating(assessmentId, topicId, "1", authentication);
+        HttpResponse actualResponse = assessmentController.saveTopicRating(assessmentId, topicId, "1", authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
@@ -1388,7 +1390,7 @@ class AssessmentControllerTest {
 
         when(topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
 
-        HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveParameterRating(assessmentId, parameterId, "2", authentication);
+        HttpResponse actualResponse = assessmentController.saveParameterRating(assessmentId, parameterId, "2", authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 

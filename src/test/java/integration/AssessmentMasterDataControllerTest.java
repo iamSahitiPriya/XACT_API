@@ -5,8 +5,6 @@
 package integration;
 
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.CategoryRepository;
-import io.micronaut.http.HttpRequest;
 import com.xact.assessment.repositories.*;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -16,14 +14,6 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.web.reactive.resource.HttpResource;
 
 import java.io.IOException;
 import java.util.*;

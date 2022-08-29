@@ -407,9 +407,10 @@ class TopicAndParameterLevelAssessmentServiceTest {
         Integer topicId = 1;
         TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation.setTopicId(topicId);
+        topicRatingAndRecommendation.setRating(1);
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendationId(1);
+        topicLevelRecommendationRequest.setRecommendationId(2);
         topicLevelRecommendationRequest.setRecommendation("some text");
         topicLevelRecommendationRequest.setDeliveryHorizon("some other teext");
         topicLevelRecommendationRequest.setImpact("HIGH");

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
 import java.util.SortedSet;
 
 @NoArgsConstructor
@@ -19,6 +20,15 @@ public class AssessmentModuleDto implements Comparable<AssessmentModuleDto> {
     private String moduleName;
     private Integer category;
     private SortedSet<AssessmentTopicDto> topics;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AssessmentModuleDto that = (AssessmentModuleDto) o;
+        return Objects.equals(moduleId, that.moduleId);
+    }
+
 
     @Override
     public int compareTo(AssessmentModuleDto currentModule) {

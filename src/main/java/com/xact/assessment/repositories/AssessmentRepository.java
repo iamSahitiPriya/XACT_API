@@ -17,15 +17,5 @@ import java.util.List;
 
 @Repository
 public interface AssessmentRepository extends CrudRepository<Assessment,Integer> {
-    @Executable
-    @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate)")
-    List<Assessment> TotalAssessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
 
-    @Executable
-    @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate) and tla.assessmentStatus='Active'")
-    List<Assessment> TotalActiveAssessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
-
-    @Executable
-    @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate) and tla.assessmentStatus='Completed'")
-    List<Assessment> TotalCompletedAssessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
 }

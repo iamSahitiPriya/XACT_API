@@ -128,8 +128,23 @@ class ReportServiceTest {
         when(parameterService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
         when(topicService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
 
-        Workbook report = new XSSFWorkbook();
-        reportService.writeReport(answers, parameterAssessments, topicAssessments, topicRecommendationMap, parameterRecommendationMap, report);
+        String series1 = "Current Maturity";
+        String series2 = "Desired Maturity";
+
+        String category1 = "First Category";
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        dataset.addValue(1.0, series1, category1);
+        dataset.addValue(1.0, series2, category1);
+
+        try {
+            when(chartService.generateChart(any())).thenReturn(ChartsUtil.getSpiderChart(680, 480, dataset));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Workbook report = reportService.generateReport(assessmentId);
 
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
 
@@ -229,11 +244,25 @@ class ReportServiceTest {
         when(parameterService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
         when(topicService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
 
-        Workbook report = new XSSFWorkbook();
-        reportService.writeReport(answers, parameterAssessments, topicAssessments, topicRecommendationMap, parameterRecommendationMap, report);
+        String series1 = "Current Maturity";
+        String series2 = "Desired Maturity";
+
+        String category1 = "First Category";
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        dataset.addValue(1.0, series1, category1);
+        dataset.addValue(1.0, series2, category1);
+
+        try {
+            when(chartService.generateChart(any())).thenReturn(ChartsUtil.getSpiderChart(680, 480, dataset));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Workbook report = reportService.generateReport(assessment.getAssessmentId());
 
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
-
     }
 
     @Test
@@ -273,15 +302,6 @@ class ReportServiceTest {
         Answer answer = new Answer(answerId, "my answer", new Date(), new Date());
         answers.add(answer);
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
-        List<ParameterLevelAssessment> parameterAssessments = new ArrayList<>();
-        List<TopicLevelAssessment> topicAssessments = new ArrayList<>();
-        ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment();
-        parameterAssessment.setParameterLevelId(new ParameterLevelId(assessment, parameter1));
-        parameterAssessments.add(parameterAssessment);
-
-        TopicLevelId topicLevelId = new TopicLevelId(assessment, topic1);
-        TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId, 4, new Date(), new Date());
-        topicAssessments.add(topicAssessment);
 
         HashMap<Integer, List<TopicLevelRecommendation>> topicRecommendationMap = new HashMap<>();
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
@@ -330,73 +350,35 @@ class ReportServiceTest {
         parameterRecommendationMap.put(parameter.getParameterId(), parameterLevelRecommendationList);
 
 
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
         when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
         when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(parameterLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId,parameter.getParameterId())).thenReturn(parameterLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId,topic.getTopicId())).thenReturn(topicLevelRecommendationList);
         when(parameterService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
         when(topicService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
 
-        Workbook report = new XSSFWorkbook();
-        reportService.writeReport(answers, parameterAssessments, topicAssessments, topicRecommendationMap, parameterRecommendationMap, report);
+        String series1 = "Current Maturity";
+        String series2 = "Desired Maturity";
+
+        String category1 = "First Category";
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        dataset.addValue(1.0, series1, category1);
+        dataset.addValue(1.0, series2, category1);
+
+        try {
+            when(chartService.generateChart(any())).thenReturn(ChartsUtil.getSpiderChart(680, 480, dataset));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Workbook report = reportService.generateReport(assessment.getAssessmentId());
 
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
 
     }
 
-    @Test
-    void shouldCreateHashMapForParameterLevelRecommendation() {
-        AssessmentParameter parameter = new AssessmentParameter();
-        parameter.setParameterName("my param");
-        parameter.setParameterId(1);
-
-        Integer assessmentId = 123;
-        Assessment assessment = new Assessment();
-        assessment.setAssessmentId(assessmentId);
-
-        List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
-        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
-        parameterLevelRecommendation.setRecommendationId(1);
-        parameterLevelRecommendation.setRecommendation("some text");
-        parameterLevelRecommendation.setParameter(parameter);
-        parameterLevelRecommendation.setAssessment(assessment);
-        parameterLevelRecommendation.setRecommendationImpact(LOW);
-        parameterLevelRecommendation.setRecommendationEffort(HIGH);
-
-        parameterLevelRecommendationList.add(parameterLevelRecommendation);
-
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId, parameterLevelRecommendation.getParameter().getParameterId())).thenReturn(parameterLevelRecommendationList);
-        HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = reportService.getParameterWiseRecommendations(parameterLevelRecommendationList, assessmentId);
-
-        assertEquals(1, parameterLevelRecommendationMap.size());
-    }
-
-    @Test
-    void shouldCreateHashMapForTopicLevelRecommendation() {
-        AssessmentTopic topic = new AssessmentTopic();
-        topic.setTopicId(1);
-        topic.setTopicName("my topic");
-
-        Integer assessmentId = 123;
-        Assessment assessment = new Assessment();
-        assessment.setAssessmentId(assessmentId);
-
-        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setRecommendation("some text");
-        topicLevelRecommendation.setTopic(topic);
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setRecommendationImpact(LOW);
-        topicLevelRecommendation.setRecommendationEffort(HIGH);
-
-        topicLevelRecommendationList.add(topicLevelRecommendation);
-
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId, topicLevelRecommendation.getTopic().getTopicId())).thenReturn(topicLevelRecommendationList);
-        HashMap<Integer, List<TopicLevelRecommendation>> topicLevelRecommendationMap = reportService.getTopicWiseRecommendations(topicLevelRecommendationList, assessmentId);
-
-        assertEquals(1, topicLevelRecommendationMap.size());
-    }
 
     private Workbook getMockWorkbook() {
         Workbook workbook = new XSSFWorkbook();
@@ -409,7 +391,7 @@ class ReportServiceTest {
 
     private Workbook getMockWorkbookForChart() {
         Workbook workbook = new XSSFWorkbook();
-        workbook.createSheet("Charts");
+        workbook.createSheet("First Category");
         return workbook;
     }
 
@@ -456,6 +438,11 @@ class ReportServiceTest {
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         topicLevelAssessment.setRating(1);
 
+
+        List<TopicLevelAssessment> topicLevelAssessments = new ArrayList<>();
+        topicLevelAssessments.add(topicLevelAssessment);
+
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(topicLevelAssessments);
         when(categoryRepository.findAll()).thenReturn(assessmentCategories);
 
         String series1 = "Current Maturity";
@@ -474,9 +461,9 @@ class ReportServiceTest {
             e.printStackTrace();
         }
 
-        Workbook workbook = new XSSFWorkbook();
-        reportService.createDataAndGenerateChart(workbook, assessment.getAssessmentId(), Collections.singletonList(parameterLevelAssessment), Collections.singletonList(topicLevelAssessment));
+        Workbook workbook =  reportService.generateReport(assessment.getAssessmentId());
+
         verify(chartService).generateChart(any());
-        assertEquals(workbook.getSheetAt(0).getSheetName(), getMockWorkbookForChart().getSheetAt(0).getSheetName());
+       assertEquals(workbook.getSheetAt(0).getSheetName(), getMockWorkbookForChart().getSheetAt(0).getSheetName());
     }
 }

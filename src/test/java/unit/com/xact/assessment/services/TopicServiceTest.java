@@ -11,6 +11,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+
 class TopicServiceTest {
     private TopicService topicService;
     private AssessmentTopicRepository assessmentTopicRepository;
@@ -60,6 +61,7 @@ class TopicServiceTest {
         verify(assessmentTopicRepository).update(assessmentTopic);
 
     }
+
 }
 
 

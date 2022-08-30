@@ -85,17 +85,6 @@ public class AssessmentMasterDataController {
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
 
-    @Get(value = "/admin/categories", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<CategoryDto>> getMasterData() {
-        LOGGER.info("Get master data");
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getCategories();
-        List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(assessmentCategories)) {
-            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(mapper.map(assessmentCategory, CategoryDto.class)));
-        }
-        return HttpResponse.ok(assessmentCategoriesResponse);
-    }
 
     @Post(value = "/category", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)

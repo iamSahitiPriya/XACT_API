@@ -5,15 +5,18 @@
 package com.xact.assessment.dtos;
 
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
 import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class AssessmentParameterDto implements Comparable<AssessmentParameterDto> {
 
     private Integer parameterId;

@@ -1,8 +1,10 @@
 package integration;
 
-import com.xact.assessment.models.*;
+import com.xact.assessment.models.AccessControlRoles;
+import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.AssessmentUsers;
+import com.xact.assessment.models.UserId;
 import com.xact.assessment.repositories.AccessControlRepository;
-import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;

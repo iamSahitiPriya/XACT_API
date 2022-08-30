@@ -19,6 +19,7 @@ public class TopicService {
     public Optional<AssessmentTopic> getTopic(Integer topicId) {
         return assessmentTopicRepository.findById(topicId);
     }
+
     public void createTopic(AssessmentTopic topic){
         assessmentTopicRepository.save(topic);
     }
@@ -29,4 +30,5 @@ public class TopicService {
     public List<AssessmentTopic> getAllTopics() {
         return (List<AssessmentTopic>) assessmentTopicRepository.findAll();
     }
+
 }

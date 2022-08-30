@@ -1,0 +1,7 @@
+{
+  "recommendationId" : 1,
+  "recommendation": "some recommendation",
+  "impact": "LOW",
+  "effort": "HIGH",
+  "deliveryHorizon": "dummy text"
+}

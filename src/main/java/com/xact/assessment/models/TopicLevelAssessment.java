@@ -29,9 +29,6 @@ public class TopicLevelAssessment implements Serializable {
     @Column(name = "score")
     private Integer rating;
 
-    @Column(name = "recommendation")
-    private String recommendation;
-
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_at", nullable = false)

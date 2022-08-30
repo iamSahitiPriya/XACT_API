@@ -6,18 +6,14 @@ import com.xact.assessment.models.CategoryMaturity;
 import com.xact.assessment.services.SpiderChartService;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class SpiderChartServiceTest {
+  class SpiderChartServiceTest {
 
     private final SpiderChartService chartService = new SpiderChartService();
 

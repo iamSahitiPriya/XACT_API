@@ -15,9 +15,6 @@ import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
@@ -30,6 +27,7 @@ public class AssessmentService {
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
     private final UsersAssessmentsRepository usersAssessmentsRepository;
+
     private final AccessControlRepository accessControlRepository;
 
 
@@ -124,7 +122,6 @@ public class AssessmentService {
         assessmentRepository.update(assessment);
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
     }
-
     public void updateAssessment(Assessment assessment) {
         assessmentRepository.update(assessment);
     }
@@ -135,21 +132,5 @@ public class AssessmentService {
 
     }
 
-    public Integer getTotalAssessments(String startDate,String endDate) throws ParseException {
-        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-      List<Assessment> assessmentList=assessmentRepository.TotalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
-      return assessmentList.size();
-    }
 
-    public Integer getTotalActiveAssessments(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-        List<Assessment> assessmentList= assessmentRepository.TotalActiveAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
-        return assessmentList.size();
-    }
-
-    public Integer getTotalCompletedAssessments(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-        List<Assessment> assessmentList= assessmentRepository.TotalCompletedAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
-        return assessmentList.size();
-    }
 }

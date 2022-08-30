@@ -11,8 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AdminAssessmentRequest {
-    private String startDate;
-    private String endDate;
-
+public class TopicLevelRecommendationResponse {
+    private Integer recommendationId;
+    private String recommendation;
 }

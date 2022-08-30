@@ -11,8 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AdminAssessmentResponse {
-    private Integer totalAssessments;
-    private Integer totalActiveAssessments;
-    private Integer totalCompleteAssessments;
+public class ParameterLevelRecommendationResponse {
+    private Integer recommendationId;
+    private String recommendation;
 }

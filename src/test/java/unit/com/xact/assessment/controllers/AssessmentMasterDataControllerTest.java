@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AssessmentMasterDataControllerTest {
@@ -39,6 +38,7 @@ class AssessmentMasterDataControllerTest {
         assertEquals(firstAssessmentCategory.getCategoryId(), category.getCategoryId());
         assertEquals(firstAssessmentCategory.getCategoryName(), category.getCategoryName());
     }
+
 
     @Test
     void createAssessmentCategory() {
@@ -211,4 +211,5 @@ class AssessmentMasterDataControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
 }

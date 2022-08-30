@@ -18,6 +18,7 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+
 @Introspected
 @Entity
 @Table(name = "tbl_assessment")
@@ -52,6 +53,7 @@ public class Assessment {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -65,6 +67,7 @@ public class Assessment {
     public int hashCode() {
         return Objects.hash(assessmentId, assessmentName);
     }
+
 
     public boolean isEditable() {
         return assessmentStatus == AssessmentStatus.Active;

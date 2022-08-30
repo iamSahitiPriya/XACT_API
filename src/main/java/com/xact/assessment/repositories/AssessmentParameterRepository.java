@@ -2,7 +2,6 @@ package com.xact.assessment.repositories;
 
 
 import com.xact.assessment.models.AssessmentParameter;
-import com.xact.assessment.models.AssessmentTopic;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.data.annotation.Query;
@@ -20,4 +19,5 @@ public interface AssessmentParameterRepository extends CrudRepository<Assessment
     @Executable
     @Query("SELECT parameter FROM AssessmentParameter parameter WHERE parameter.parameterId=:parameterId")
     AssessmentParameter findByParameterId(Integer parameterId);
+
 }

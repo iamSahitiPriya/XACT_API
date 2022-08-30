@@ -42,6 +42,7 @@ public class ReportController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<byte[]> getReport(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Get report for assessment: {}", assessmentId);
+
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment != null) {
             String reportName = "Report_x-act_" + assessmentId + ".xlsx";

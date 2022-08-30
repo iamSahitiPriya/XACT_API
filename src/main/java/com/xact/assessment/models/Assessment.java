@@ -19,7 +19,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@EqualsAndHashCode
 @Introspected
 @Entity
 @Table(name = "tbl_assessment")

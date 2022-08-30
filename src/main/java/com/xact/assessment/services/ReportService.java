@@ -414,7 +414,7 @@ public class ReportService {
     private void mergeCells(Sheet sheet, int totalRecommendationCount, int count, int columnNo) {
         if(count == totalRecommendationCount && count >0) {
             recommendationCount =0;
-            sheet.addMergedRegion(new CellRangeAddress(sheet.getLastRowNum()-(totalRecommendationCount -1), sheet.getLastRowNum()+(1-1),columnNo,columnNo));
+            sheet.addMergedRegion(new CellRangeAddress(sheet.getLastRowNum()-(totalRecommendationCount -1), sheet.getLastRowNum(),columnNo,columnNo));
         }
     }
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic

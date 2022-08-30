@@ -451,7 +451,7 @@ public class AssessmentController {
             TopicRatingAndRecommendation eachTopicRatingAndRecommendation = new TopicRatingAndRecommendation();
             AssessmentTopicDto eachTopicDto = modelMapper.map(eachTopic.getTopicLevelId(), AssessmentTopicDto.class);
             eachTopicRatingAndRecommendation.setTopicId(eachTopicDto.getTopicId());
-            topicRecommendationResponseList.removeIf(recommendation -> recommendation.getTopicId() == eachTopicDto.getTopicId());
+            topicRecommendationResponseList.removeIf(recommendation -> Objects.equals(recommendation.getTopicId(), eachTopicDto.getTopicId()));
             eachTopicRatingAndRecommendation.setRating(eachTopic.getRating());
             List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessment.getAssessmentId(), eachTopicDto.getTopicId());
             List<TopicLevelRecommendationRequest> topicLevelRecommendationRequests = getTopicRecommendationData(topicLevelRecommendationList);
@@ -572,11 +572,7 @@ public class AssessmentController {
     }
 
     private void saveTopicRecommendationDeliveryHorizon(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if (!Objects.equals(topicLevelRecommendationRequest.getDeliveryHorizon(), "") && topicLevelRecommendationRequest.getDeliveryHorizon() != null) {
-            topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
-        } else {
-            topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
-        }
+        topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
     }
 
     private void saveParameterRecommendationEffort(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {

@@ -5,6 +5,7 @@
 package com.xact.assessment.dtos;
 
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import java.util.Objects;
 
 @NoArgsConstructor
+@EqualsAndHashCode
 @Getter
 @Setter
 public class AssessmentTopicReferenceDto implements Comparable<AssessmentTopicReferenceDto> {
@@ -20,14 +22,6 @@ public class AssessmentTopicReferenceDto implements Comparable<AssessmentTopicRe
     private Integer topic;
     private RatingDto rating;
     private String reference;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-       AssessmentTopicReferenceDto that = (AssessmentTopicReferenceDto) o;
-        return Objects.equals(referenceId, that.referenceId);
-    }
 
     @Override
     public int compareTo(AssessmentTopicReferenceDto reference) {

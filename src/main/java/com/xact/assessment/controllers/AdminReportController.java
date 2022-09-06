@@ -1,6 +1,7 @@
 package com.xact.assessment.controllers;
 
 
+import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.services.AdminReportService;
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpResponse;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 
 @Controller("/v1/reports")
+@AdminAuth
 public class AdminReportController {
 
     private final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);

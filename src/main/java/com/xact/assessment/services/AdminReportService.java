@@ -10,16 +10,21 @@ import java.util.List;
 
 @Singleton
 public class AdminReportService {
-    public static final String BLANK_STRING = "";
+
     public static final String FORMULA_STRING = "=-+@";
 
     private final AssessmentService assessmentService;
+
+    private String assessmentStartDate;
+    private String assessmentEndDate;
 
     public AdminReportService(AssessmentService assessmentService) {
         this.assessmentService = assessmentService;
     }
 
     public Workbook generateAdminReport(String startDate, String endDate) throws ParseException {
+        assessmentStartDate=startDate;
+        assessmentEndDate=endDate;
         List<Assessment> assessmentList = assessmentService.getAdminAssessmentsData(startDate,endDate);
         return createAdminReport(assessmentList);
     }
@@ -41,14 +46,14 @@ public class AdminReportService {
 
     private void writeAssessmentRow(Workbook workbook, Assessment assessment) {
 
-        Sheet sheet = getMatchingSheet(workbook, assessment);
+        Sheet sheet = getMatchingSheet(workbook);
         generateHeaderIfNotExist(sheet, workbook);
         writeDataOnSheet(workbook, sheet, assessment);
     }
 
-    private Sheet getMatchingSheet(Workbook workbook, Assessment assessment) {
-        Sheet sheet = workbook.getSheet("Admin");
-        return (sheet == null) ? workbook.createSheet("Admin") : sheet;
+    private Sheet getMatchingSheet(Workbook workbook) {
+        Sheet sheet = workbook.getSheet( assessmentEndDate+" to "+assessmentStartDate);
+        return (sheet == null) ? workbook.createSheet( assessmentEndDate+" to "+assessmentStartDate) : sheet;
     }
 
     private void generateHeaderIfNotExist(Sheet sheet, Workbook workbook) {
@@ -96,8 +101,10 @@ public class AdminReportService {
         CellStyle style = workbook.createCellStyle();
         style.setQuotePrefixed(true);
 
+        int rowNum =row.getRowNum();
+        String sNum = Integer.toString(rowNum);
 
-        createStyledCell(row, 0, assessment.getAssessmentId().toString(), style);
+        createStyledCell(row, 0,sNum , style);
         createStyledCell(row, 1, assessment.getAssessmentName(), style);
         createStyledCell(row, 2, assessment.getOrganisation().getOrganisationName(), style);
         createStyledCell(row, 3, assessment.getOrganisation().getIndustry(), style);

@@ -10,6 +10,7 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
+import com.xact.assessment.repositories.OrganisationRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
@@ -32,15 +33,17 @@ public class AssessmentService {
     private final UsersAssessmentsRepository usersAssessmentsRepository;
 
     private final AccessControlRepository accessControlRepository;
+    private final OrganisationRepository organisationRepository;
 
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, OrganisationRepository organisationRepository) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
         this.accessControlRepository = accessControlRepository;
+        this.organisationRepository=organisationRepository;
 
     }
 
@@ -123,6 +126,7 @@ public class AssessmentService {
     @Transactional
     public void updateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
         assessmentRepository.update(assessment);
+
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
     }
     public void updateAssessment(Assessment assessment) {
@@ -146,12 +150,17 @@ public class AssessmentService {
         return assessmentList.size();
     }
 
+    public List<Assessment> getAdminAssessmentsData(String startDate, String endDate) throws ParseException {
+        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        List<Assessment> assessmentList= assessmentRepository.TotalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
+        return assessmentList;
+    }
+
     public Integer getTotalCompletedAssessments(String startDate, String endDate) throws ParseException {
         DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
         List<Assessment> assessmentList= assessmentRepository.TotalCompletedAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
         return assessmentList.size();
     }
-
 
 
 }

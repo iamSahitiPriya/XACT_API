@@ -4,8 +4,10 @@
 
 package integration;
 
+import io.micronaut.security.authentication.Authentication;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
@@ -14,10 +16,13 @@ import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.util.*;
 
+import static com.xact.assessment.constants.AppConstants.EMAIL;
+import static com.xact.assessment.constants.AppConstants.USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,6 +33,7 @@ class AssessmentMasterDataControllerTest {
     @Inject
     @Client("/")
     HttpClient client; //
+    private final Authentication authentication = Mockito.mock(Authentication.class);
 
     ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
 
@@ -48,6 +54,12 @@ class AssessmentMasterDataControllerTest {
 
     @Inject
     AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
+
+    @Inject
+    AccessControlRepository accessControlRepository;
+
+    @Inject
+    UserAuthService userAuthService;
 
     @MockBean(CategoryRepository.class)
     CategoryRepository categoryRepository() {
@@ -75,6 +87,10 @@ class AssessmentMasterDataControllerTest {
     @MockBean(AssessmentTopicReferenceRepository.class)
     AssessmentTopicReferenceRepository topicReferenceRepository() {
         return mock(AssessmentTopicReferenceRepository.class);
+    }
+    @MockBean(AccessControlRepository.class)
+    AccessControlRepository accessControlRepository(){
+        return mock(AccessControlRepository.class);
     }
 
 
@@ -170,12 +186,18 @@ class AssessmentMasterDataControllerTest {
         assessmentCategory.setCategoryId(1);
         assessmentCategory.setCategoryName("Hello");
         assessmentCategory.setActive(false);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
 
         when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
-
+        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-category-reponse.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/category", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/category", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -196,8 +218,9 @@ class AssessmentMasterDataControllerTest {
 
         when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
         when(categoryRepository.findCategoryById(1)).thenReturn(assessmentCategory);
+        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-module-response.json");
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/modules", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/modules", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -217,8 +240,9 @@ class AssessmentMasterDataControllerTest {
 
         when(moduleRepository.findByModuleId(1)).thenReturn(assessmentModule);
         when(assessmentTopicRepository.save(assessmentTopic)).thenReturn(assessmentTopic);
+        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-topic-response.json");
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topics", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/topics", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -237,10 +261,11 @@ class AssessmentMasterDataControllerTest {
         parameter.setParameterName("parameter");
 
         when(assessmentTopicRepository.findByTopicId(1)).thenReturn(assessmentTopic);
+        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         when(assessmentParameterRepository.save(parameter)).thenReturn(parameter);
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-response.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topics", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/topics", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -258,10 +283,11 @@ class AssessmentMasterDataControllerTest {
         assessmentTopic.setActive(false);
 
         when(assessmentTopicRepository.findById(1)).thenReturn(Optional.of(assessmentTopic));
+        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         when(assessmentTopicReferenceRepository.save(topicReference)).thenReturn(topicReference);
         String dataRequest = resourceFileUtil.getJsonString("dto/set-topicReference-response.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/topicReferences", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/topicReferences", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -279,10 +305,11 @@ class AssessmentMasterDataControllerTest {
         assessmentParameter.setActive(false);
 
         when(assessmentParameterRepository.findById(1)).thenReturn(Optional.of(assessmentParameter));
+        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         when(assessmentParameterReferenceRepository.save(parameterReference)).thenReturn(parameterReference);
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameterReference-response.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessment-master-data/parameterReferences", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/parameterReferences", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

@@ -285,7 +285,7 @@ class AssessmentServiceTest {
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
         Assessment assessment2 = new Assessment(1, "Name", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
-        Assessment assessment1 = new Assessment(2, "Name", organisation, Active, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
+        Assessment assessment1 = new Assessment(2, "Name", organisation,Completed, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
 
         List<Assessment> assessments=new ArrayList<>();
         assessments.add(assessment1);

@@ -1472,8 +1472,6 @@ class AssessmentControllerTest {
         HttpResponse actualResponse = assessmentController.getAssessmentsCount(startDate,endDate,authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-//        AdminAssessmentResponse adminAssessmentResponse=new AdminAssessmentResponse();
-//        assertEquals(HttpResponse.ok().body(adminAssessmentResponse).getBody().get().getTotalAssessments(),2);
 
         verify(assessmentService).getTotalAssessments(startDate,endDate);
 
@@ -1529,7 +1527,6 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-//        assertEquals(HttpResponse.ok(adminAssessmentResponse).getBody().get().getTotalAssessments(),2);
         verify(assessmentService).getTotalCompletedAssessments(startDate,endDate);
     }
 

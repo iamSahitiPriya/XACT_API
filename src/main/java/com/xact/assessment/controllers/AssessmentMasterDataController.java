@@ -4,17 +4,15 @@
 
 package com.xact.assessment.controllers;
 
-import au.com.dius.pact.core.support.Either;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.*;
+import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;

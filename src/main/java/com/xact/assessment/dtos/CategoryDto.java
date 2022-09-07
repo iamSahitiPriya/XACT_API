@@ -20,6 +20,7 @@ public class CategoryDto implements Comparable<CategoryDto> {
     private String categoryName;
     private boolean isActive;
     private Date updatedAt;
+    private String comments;
     private SortedSet<AssessmentModuleDto> modules;
 
 

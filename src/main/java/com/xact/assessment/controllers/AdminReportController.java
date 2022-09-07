@@ -37,7 +37,7 @@ public class AdminReportController {
     @Get(value = "/admin/{assessmentId}/{startDate}/{endDate}", produces = MediaType.APPLICATION_OCTET_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<byte[]> getAdminReport(@PathVariable("startDate") String startDate,@PathVariable("endDate") String endDate,Authentication authentication) {
-            String reportName = "Report_x-act_.xlsx";
+            String reportName = "Admin-Report_x-act_.xlsx";
             try {
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 Workbook workbook = adminReportService.generateAdminReport(startDate,endDate); // creates the workbook

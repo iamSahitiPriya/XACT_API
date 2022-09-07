@@ -55,6 +55,19 @@ public class ReportService {
         return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap,parameterLevelRecommendationMap, assessmentId);
     }
 
+    public List<AssessmentCategory> generateSunburstData(Integer assessmentId){
+        List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+        List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+        List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
+        for (AssessmentCategory assessmentCategory : assessmentCategoryList){
+            fillInMaturityScore(assessmentCategory,topicAssessmentData,parameterAssessmentData);
+        }
+        return assessmentCategoryList;
+
+
+
+    }
+
     public HashMap<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
         HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = new HashMap<>();
         List <ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();

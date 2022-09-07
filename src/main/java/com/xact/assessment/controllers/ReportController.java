@@ -1,8 +1,8 @@
 package com.xact.assessment.controllers;
 
 
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.User;
+import com.xact.assessment.dtos.*;
+import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.ReportService;
 import com.xact.assessment.services.UserAuthService;
@@ -17,13 +17,18 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller("/v1/reports")
 public class ReportController {
+
+    private ModelMapper modelMapper = new ModelMapper();
 
     private final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
 
@@ -65,5 +70,55 @@ public class ReportController {
         return assessmentService.getAssessment(assessmentId, loggedInUser);
     }
 
-}
+    @Get(value = "/sunburst/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public MutableHttpResponse<ReportDataResponse> getAssessmentReportData(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
+        List<AssessmentCategory> assessmentCategories = reportService.generateSunburstData(assessment.getAssessmentId());
+        ReportDataResponse reportDataResponse = new ReportDataResponse();
+        reportDataResponse.setName(assessment.getAssessmentName());
+        List<ReportCategoryResponse> reportCategoryResponseList  = new ArrayList<>();
+        for(AssessmentCategory assessmentCategory: assessmentCategories){
+            ReportCategoryResponse reportCategoryResponse = new ReportCategoryResponse();
+            reportCategoryResponse.setName(assessmentCategory.getCategoryName());
+            reportCategoryResponse.setRating(assessmentCategory.getCategoryAverage());
+            List<ReportModuleResponse> reportModuleResponseList = new ArrayList<>();
+            for(AssessmentModule assessmentModule: assessmentCategory.getModules()){
+                ReportModuleResponse reportModuleResponse = new ReportModuleResponse();
+                reportModuleResponse.setName(assessmentModule.getModuleName());
+                reportModuleResponse.setRating(assessmentModule.getModuleAverage());
+                List<ReportTopicResponse> reportTopicResponseList = new ArrayList<>();
+                for(AssessmentTopic assessmentTopic: assessmentModule.getTopics()){
+                    ReportTopicResponse reportTopicResponse = new ReportTopicResponse();
+                    reportTopicResponse.setName(assessmentTopic.getTopicName());
+                    if(assessmentTopic.hasReferences()){
+                        reportTopicResponse.setValue(assessmentTopic.getRating());
+                    }
+                    else{
+                        reportTopicResponse.setRating(assessmentTopic.getTopicAverage());
+                        List<ReportParameterResponse> reportParameterResponseList = new ArrayList<>();
+                        for(AssessmentParameter assessmentParameter : assessmentTopic.getParameters()){
+                            ReportParameterResponse reportParameterResponse = new ReportParameterResponse();
+                            reportParameterResponse.setName(assessmentParameter.getParameterName());
+                            reportParameterResponse.setValue(assessmentParameter.getRating());
+                            reportParameterResponseList.add(reportParameterResponse);
+                        }
+                        reportTopicResponse.setChildren(reportParameterResponseList);
+                    }
+                    reportTopicResponseList.add(reportTopicResponse);
+                }
+                reportModuleResponse.setChildren(reportTopicResponseList);
+                reportModuleResponseList.add(reportModuleResponse);
+            }
+            reportCategoryResponse.setChildren(reportModuleResponseList);
+            reportCategoryResponseList.add(reportCategoryResponse);
+
+        }
+        reportDataResponse.setChildren(reportCategoryResponseList);
+
+        return HttpResponse.ok(reportDataResponse);
+
+    }
+
+    }
 

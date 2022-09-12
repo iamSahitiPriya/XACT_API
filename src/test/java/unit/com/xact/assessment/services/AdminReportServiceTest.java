@@ -5,11 +5,13 @@
 package unit.com.xact.assessment.services;
 
 
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentStatus;
-import com.xact.assessment.models.Organisation;
+import au.com.dius.pact.core.support.expressions.SystemPropertyResolver;
+import com.xact.assessment.dtos.UserDto;
+import com.xact.assessment.dtos.UserRole;
+import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminReportService;
 import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.UsersAssessmentsService;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -20,6 +22,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -29,26 +32,30 @@ class AdminReportServiceTest {
 
     AssessmentService assessmentService = mock(AssessmentService.class);
 
+    UsersAssessmentsService usersAssessmentsService=mock(UsersAssessmentsService.class);
+
     private final AdminReportService adminReportService = new AdminReportService(assessmentService, usersAssessmentsService);
 
     @Test
-    void getWorkbookAssessmentDataSheetWithRating() throws ParseException {
+    void getWorkbookAssessmentData() throws ParseException {
 
         Date created1 = new Date(2022 - 7 - 13);
         Date updated1 = new Date(2022 - 9 - 24);
-        Date created2 = new Date(2022 - 6 - 01);
-        Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
         Assessment assessment1 = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created1, updated1);
-        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
 
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
-        assessments.add(assessment2);
+
+        AssessmentUsers assessmentUsers=new AssessmentUsers();
+        UserId userId=new UserId("test@gmail.com",assessment1);
+        assessmentUsers.setUserId(userId);
+        assessmentUsers.setRole(AssessmentRole.Owner);
+
 
         when(assessmentService.getAdminAssessmentsData("2022-05-30", "2022-09-30")).thenReturn(assessments);
-
+        when(usersAssessmentsService.findOwnerByAssessmentId(assessment1.getAssessmentId())).thenReturn(Optional.of(assessmentUsers));
 
         Workbook report = adminReportService.generateAdminReport("2022-05-30", "2022-09-30");
 

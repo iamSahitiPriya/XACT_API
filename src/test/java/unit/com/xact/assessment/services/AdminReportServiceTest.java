@@ -29,7 +29,7 @@ class AdminReportServiceTest {
 
     AssessmentService assessmentService = mock(AssessmentService.class);
 
-    private final AdminReportService adminReportService = new AdminReportService(assessmentService);
+    private final AdminReportService adminReportService = new AdminReportService(assessmentService, usersAssessmentsService);
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() throws ParseException {

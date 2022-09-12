@@ -4,7 +4,6 @@
 
 package integration;
 
-import io.micronaut.security.authentication.Authentication;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.UserAuthService;
@@ -12,6 +11,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
+import io.micronaut.security.authentication.Authentication;
 import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
@@ -21,8 +21,6 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.*;
 
-import static com.xact.assessment.constants.AppConstants.EMAIL;
-import static com.xact.assessment.constants.AppConstants.USER_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -186,18 +184,13 @@ class AssessmentMasterDataControllerTest {
         assessmentCategory.setCategoryId(1);
         assessmentCategory.setCategoryName("Hello");
         assessmentCategory.setActive(false);
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
 
 
         when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
         when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-category-reponse.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/category", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/categories", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -220,6 +213,7 @@ class AssessmentMasterDataControllerTest {
         when(categoryRepository.findCategoryById(1)).thenReturn(assessmentCategory);
         when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-module-response.json");
+        System.out.println(dataRequest);
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/modules", dataRequest)
                 .bearerAuth("anything"));
 
@@ -259,13 +253,14 @@ class AssessmentMasterDataControllerTest {
         AssessmentParameter parameter = new AssessmentParameter();
         parameter.setParameterId(1);
         parameter.setParameterName("parameter");
+        parameter.setTopic(assessmentTopic);
 
-        when(assessmentTopicRepository.findByTopicId(1)).thenReturn(assessmentTopic);
+        when(assessmentTopicRepository.findById(1)).thenReturn(Optional.of(assessmentTopic));
         when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         when(assessmentParameterRepository.save(parameter)).thenReturn(parameter);
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-response.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/topics", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/parameters", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

@@ -346,7 +346,6 @@ public class ReportService {
         paramImpact = getParameterRecommendationImpact(paramRecommendation);
         paramEffort = getParameterRecommendationEffort(paramRecommendation);
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
-
         CellStyle style = workbook.createCellStyle();
         style.setQuotePrefixed(true);
 
@@ -442,6 +441,7 @@ public class ReportService {
             topic, String topicRating, String topicRecommendation, AssessmentParameter parameter, String paramRating, String
                                           paramRecommendation, String questionText, String answer) {
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
+
         CellStyle style = workbook.createCellStyle();
         style.setQuotePrefixed(true);
         createStyledCell(row, 0, module.getModuleName(), style);

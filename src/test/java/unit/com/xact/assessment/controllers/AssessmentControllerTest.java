@@ -12,7 +12,9 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.mockito.stubbing.OngoingStubbing;
 
+import java.text.ParseException;
 import java.util.*;
 
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
@@ -1446,6 +1448,89 @@ class AssessmentControllerTest {
 
 
     }
+    @Test
+    void shouldGetTheTotalAssessmentCount() throws ParseException {
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+        Date created2 = new Date(2022 - 6 - 01);
+        Date updated2 = new Date(2022 - 6 - 11);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
+
+        List<Assessment> assessments=new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+
+        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments.size());
+
+        HttpResponse actualResponse = assessmentController.getAssessmentsCount(startDate,endDate,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(assessmentService).getTotalAssessments(startDate,endDate);
+
+    }
+    @Test
+    void shouldGetTheTotalActiveAssessmentCount() throws ParseException {
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+        Date created2 = new Date(2022 - 6 - 01);
+        Date updated2 = new Date(2022 - 6 - 11);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
+
+        List<Assessment> assessments=new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+        when(assessmentService.getTotalActiveAssessments(startDate, endDate)).thenReturn(assessments.size());
+        AdminAssessmentResponse adminAssessmentResponse=new AdminAssessmentResponse();
+        HttpResponse<AdminAssessmentResponse> actualResponse = assessmentController.getAssessmentsCount(startDate,endDate,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+//        assertEquals(HttpResponse.ok().body(adminAssessmentResponse).getBody().get().getTotalActiveAssessments(),2);
+        verify(assessmentService).getTotalActiveAssessments(startDate,endDate);
+    }
+    @Test
+    void shouldGetTheTotalCompleteAssessmentCount() throws ParseException {
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+        Date created2 = new Date(2022 - 6 - 01);
+        Date updated2 = new Date(2022 - 6 - 11);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
+
+        List<Assessment> assessments=new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+        when(assessmentService.getTotalCompletedAssessments(startDate, endDate)).thenReturn(assessments.size());
+        AdminAssessmentResponse adminAssessmentResponse=new AdminAssessmentResponse();
+        HttpResponse actualResponse = assessmentController.getAssessmentsCount(startDate,endDate,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(assessmentService).getTotalCompletedAssessments(startDate,endDate);
+    }
+
+
 }
 
 

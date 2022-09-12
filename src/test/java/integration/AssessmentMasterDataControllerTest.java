@@ -190,7 +190,7 @@ class AssessmentMasterDataControllerTest {
         when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-category-reponse.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/category", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/categories", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

@@ -86,7 +86,7 @@ public class AdminController {
         }
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
-    @Post(value = "/category", produces = MediaType.APPLICATION_JSON)
+    @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
         assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
@@ -147,7 +147,7 @@ public class AdminController {
         return HttpResponse.ok();
     }
 
-    @Put(value = "/category/{categoryId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/categories/{categoryId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body  @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
         AssessmentCategory assessmentCategory = getCategory(categoryId);
@@ -158,42 +158,42 @@ public class AdminController {
         return HttpResponse.ok();
     }
 
-    @Put(value = "/module/{moduleId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/modules/{moduleId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentModule> updateModule(@PathVariable("moduleId") Integer moduleId, @Body @Valid AssessmentModuleRequest assessmentModuleRequest, Authentication authentication) {
         assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
         return HttpResponse.ok();
     }
 
-    @Put(value = "/topic/{topicId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopic> updateTopic(@PathVariable("topicId") Integer topicId, @Body  @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
         assessmentMasterDataService.updateTopic(topicId, assessmentTopicRequest);
         return HttpResponse.ok();
     }
 
-    @Put(value = "/parameter/{parameterId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/parameters/{parameterId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameter> updateParameter(@PathVariable("parameterId") Integer parameterId, @Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
         assessmentMasterDataService.updateParameter(parameterId, assessmentParameterRequest);
         return HttpResponse.ok();
     }
 
-    @Put(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest, Authentication authentication) {
         assessmentMasterDataService.updateQuestion(questionId, questionRequest);
         return HttpResponse.ok();
     }
 
-    @Put(value = "/topicReference/{referenceId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/topicReferences/{referenceId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopicReference> updateTopicReference(@PathVariable("referenceId") Integer referenceId, TopicReferencesRequest topicReferencesRequest, Authentication authentication) {
         assessmentMasterDataService.updateTopicReference(referenceId, topicReferencesRequest);
         return HttpResponse.ok();
     }
 
-    @Put(value = "/parameterReference/{referenceId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/parameterReferences/{referenceId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameterReference> updateParameterReference(@PathVariable("referenceId") Integer referenceId, ParameterReferencesRequest parameterReferencesRequest, Authentication authentication) {
         assessmentMasterDataService.updateParameterReferences(referenceId, parameterReferencesRequest);

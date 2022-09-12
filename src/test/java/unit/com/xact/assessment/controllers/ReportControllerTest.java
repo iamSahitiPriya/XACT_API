@@ -11,6 +11,7 @@ import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.ReportService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
+import com.xact.assessment.services.*;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -37,6 +38,9 @@ class ReportControllerTest {
     private final ReportService reportService = Mockito.mock(ReportService.class);
     private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
+
+    private  final AnswerService answerService=Mockito.mock(AnswerService.class);
+    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService=Mockito.mock(TopicAndParameterLevelAssessmentService.class);
     private ReportController reportController = new ReportController(reportService, assessmentService, userAuthService);
 
     @Test
@@ -65,7 +69,12 @@ class ReportControllerTest {
 
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(reportService.generateReport(assessmentId)).thenReturn(getMockWorkbook());
-
+        List<ParameterLevelAssessment> parameterLevelAssessments=new ArrayList<>();
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterLevelAssessments);
+        List<Answer> answers=new ArrayList<>();
+        when(answerService.getAnswers(assessmentId)).thenReturn(answers);
+        List<TopicLevelAssessment> topicLevelAssessments=new ArrayList<>();
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicLevelAssessments);
 
         MutableHttpResponse<byte[]> xlsDataResponse = reportController.getReport(assessmentId, authentication);
 

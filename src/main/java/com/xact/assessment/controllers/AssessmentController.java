@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
-import java.text.ParseException;
 import java.util.*;
 
 
@@ -222,8 +221,7 @@ public class AssessmentController {
         parameterLevelRecommendation.setParameter(assessmentParameter);
         if (assessment.isEditable()) {
             if (parameterLevelRecommendationRequest.getRecommendationId() == null) {
-                Integer recommendationTextId = parameterLevelRecommendationRequest.getRecommendationId() != null ? parameterLevelRecommendationRequest.getRecommendationId() : null;
-                parameterLevelRecommendation.setRecommendationId(recommendationTextId);
+                parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
                 parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
             } else {
                 parameterLevelRecommendation = topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendationRequest.getRecommendationId()).orElse(new ParameterLevelRecommendation());
@@ -258,8 +256,8 @@ public class AssessmentController {
         topicLevelRecommendation.setTopic(assessmentTopic);
         if (assessment.isEditable()) {
             if (topicLevelRecommendationTextRequest.getRecommendationId() == null) {
-                Integer recommendationTextId = topicLevelRecommendationTextRequest.getRecommendationId() != null ? topicLevelRecommendationTextRequest.getRecommendationId() : null;
-                topicLevelRecommendation.setRecommendationId(recommendationTextId);
+//                Integer recommendationTextId = topicLevelRecommendationTextRequest.getRecommendationId() != null ? topicLevelRecommendationTextRequest.getRecommendationId() : null;
+                topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
                 topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
             } else {
                 topicLevelRecommendation = topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendationTextRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
@@ -362,16 +360,6 @@ public class AssessmentController {
 
 
 
-    @Get(value = "/{assessmentId}/{startDate}/{endDate}/admin")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate,@PathVariable("endDate") String endDate,Authentication authentication) throws ParseException {
-        AdminAssessmentResponse adminAssessmentResponse= new AdminAssessmentResponse();
-       adminAssessmentResponse.setTotalAssessments(assessmentService.getTotalAssessments(startDate,endDate));
-       adminAssessmentResponse.setTotalActiveAssessments(assessmentService.getTotalActiveAssessments(startDate,endDate));
-       adminAssessmentResponse.setTotalCompleteAssessments(assessmentService.getTotalCompletedAssessments(startDate,endDate));
-        return HttpResponse.ok(adminAssessmentResponse);
-    }
-
 
 
 
@@ -463,7 +451,7 @@ public class AssessmentController {
             TopicRatingAndRecommendation eachTopicRatingAndRecommendation = new TopicRatingAndRecommendation();
             AssessmentTopicDto eachTopicDto = modelMapper.map(eachTopic.getTopicLevelId(), AssessmentTopicDto.class);
             eachTopicRatingAndRecommendation.setTopicId(eachTopicDto.getTopicId());
-            topicRecommendationResponseList.removeIf(recommendation -> recommendation.getTopicId() == eachTopicDto.getTopicId());
+            topicRecommendationResponseList.removeIf(recommendation -> Objects.equals(recommendation.getTopicId(), eachTopicDto.getTopicId()));
             eachTopicRatingAndRecommendation.setRating(eachTopic.getRating());
             List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessment.getAssessmentId(), eachTopicDto.getTopicId());
             List<TopicLevelRecommendationRequest> topicLevelRecommendationRequests = getTopicRecommendationData(topicLevelRecommendationList);
@@ -518,7 +506,7 @@ public class AssessmentController {
             ParameterRatingAndRecommendation eachParameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
             AssessmentParameterDto eachParameterDto = modelMapper.map(eachParameter.getParameterLevelId(), AssessmentParameterDto.class);
             eachParameterRatingAndRecommendation.setParameterId(eachParameterDto.getParameterId());
-            parameterRecommendationResponseList.removeIf(recommendation -> recommendation.getParameterId() == eachParameterDto.getParameterId());
+            parameterRecommendationResponseList.removeIf(recommendation -> Objects.equals(recommendation.getParameterId(), eachParameterDto.getParameterId()));
             eachParameterRatingAndRecommendation.setRating(eachParameter.getRating());
             List<ParameterLevelRecommendation> parameterLevelRecommendationList = topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessment.getAssessmentId(), eachParameter.getParameterLevelId().getParameter().getParameterId());
             List<ParameterLevelRecommendationRequest> parameterLevelRecommendationRequests = getParameterRecommendationData(parameterLevelRecommendationList);
@@ -567,7 +555,7 @@ public class AssessmentController {
     }
 
     private void saveTopicRecommendationEffort(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if (topicLevelRecommendationRequest.getEffort() != "" && topicLevelRecommendationRequest.getEffort() != null) {
+        if (!Objects.equals(topicLevelRecommendationRequest.getEffort(), "") && topicLevelRecommendationRequest.getEffort() != null) {
             topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(topicLevelRecommendationRequest.getEffort()));
         } else {
             topicLevelRecommendation.setRecommendationEffort(null);
@@ -575,7 +563,7 @@ public class AssessmentController {
     }
 
     private TopicLevelRecommendation saveTopicRecommendationImpact(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if (topicLevelRecommendationRequest.getImpact() != "" && topicLevelRecommendationRequest.getImpact() != null) {
+        if (!Objects.equals(topicLevelRecommendationRequest.getImpact(), "") && topicLevelRecommendationRequest.getImpact() != null) {
             topicLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(topicLevelRecommendationRequest.getImpact()));
         } else {
             topicLevelRecommendation.setRecommendationImpact(null);
@@ -584,15 +572,11 @@ public class AssessmentController {
     }
 
     private void saveTopicRecommendationDeliveryHorizon(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
-        if (topicLevelRecommendationRequest.getDeliveryHorizon() != "" && topicLevelRecommendationRequest.getDeliveryHorizon() != null) {
-            topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
-        } else {
-            topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
-        }
+        topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
     }
 
     private void saveParameterRecommendationEffort(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
-        if (parameterLevelRecommendationRequest.getEffort() != "" && parameterLevelRecommendationRequest.getEffort() != null) {
+        if (!Objects.equals(parameterLevelRecommendationRequest.getEffort(), "") && parameterLevelRecommendationRequest.getEffort() != null) {
             parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(parameterLevelRecommendationRequest.getEffort()));
         } else {
             parameterLevelRecommendation.setRecommendationEffort(null);
@@ -601,7 +585,7 @@ public class AssessmentController {
 
     private void saveParameterRecommendationImpact(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
 
-        if (parameterLevelRecommendationRequest.getImpact() != "" && parameterLevelRecommendationRequest.getImpact() != null) {
+        if (!Objects.equals(parameterLevelRecommendationRequest.getImpact(), "") && parameterLevelRecommendationRequest.getImpact() != null) {
             parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(parameterLevelRecommendationRequest.getImpact()));
         } else {
             parameterLevelRecommendation.setRecommendationImpact(null);
@@ -609,7 +593,7 @@ public class AssessmentController {
     }
 
     private void saveParameterRecommendationDeliveryHorizon(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, ParameterLevelRecommendation parameterLevelRecommendation) {
-        if (parameterLevelRecommendationRequest.getDeliveryHorizon() != "" && parameterLevelRecommendationRequest.getDeliveryHorizon() != null) {
+        if (!Objects.equals(parameterLevelRecommendationRequest.getDeliveryHorizon(), "") && parameterLevelRecommendationRequest.getDeliveryHorizon() != null) {
 
             parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
         } else {

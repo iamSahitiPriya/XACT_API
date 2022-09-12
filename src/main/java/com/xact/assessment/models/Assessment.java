@@ -12,7 +12,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-
 import java.util.Objects;
 
 @Getter
@@ -20,7 +19,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@EqualsAndHashCode
 @Introspected
 @Entity
 @Table(name = "tbl_assessment")

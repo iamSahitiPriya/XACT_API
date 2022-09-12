@@ -5,11 +5,15 @@
 package com.xact.assessment.dtos;
 
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @NoArgsConstructor
+@EqualsAndHashCode
 @Getter
 @Setter
 public class AssessmentTopicReferenceDto implements Comparable<AssessmentTopicReferenceDto> {

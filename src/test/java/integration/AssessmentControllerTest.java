@@ -1045,7 +1045,7 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.deleteById(topicLevelRecommendationRequest.getRecommendationId());
 
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/deleteParameterRecommendation/1/1/1")
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/deleteRecommendation/1/1/1")
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

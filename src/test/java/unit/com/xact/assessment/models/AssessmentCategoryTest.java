@@ -3,12 +3,14 @@ package unit.com.xact.assessment.models;
 import com.xact.assessment.models.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class AssessmentCategoryTest {
+class AssessmentCategoryTest {
     @Test
     void shouldReturnCategoryAverageScore(){
         Assessment assessment = new Assessment();

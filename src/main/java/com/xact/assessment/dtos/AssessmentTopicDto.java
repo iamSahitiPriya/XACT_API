@@ -5,15 +5,18 @@
 package com.xact.assessment.dtos;
 
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
 import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
 @Setter
+@EqualsAndHashCode
 public class AssessmentTopicDto implements Comparable<AssessmentTopicDto> {
 
     private Integer topicId;
@@ -26,12 +29,6 @@ public class AssessmentTopicDto implements Comparable<AssessmentTopicDto> {
     @Override
     public int compareTo(AssessmentTopicDto currentTopic) {
         return topicId - currentTopic.topicId;
-    }
-
-    public AssessmentTopicDto(Integer topicId, String topicName, Integer module) {
-        this.topicId = topicId;
-        this.topicName = topicName;
-        this.module = module;
     }
 
 }

@@ -407,9 +407,10 @@ class TopicAndParameterLevelAssessmentServiceTest {
         Integer topicId = 1;
         TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
         topicRatingAndRecommendation.setTopicId(topicId);
+        topicRatingAndRecommendation.setRating(1);
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendationId(1);
+        topicLevelRecommendationRequest.setRecommendationId(2);
         topicLevelRecommendationRequest.setRecommendation("some text");
         topicLevelRecommendationRequest.setDeliveryHorizon("some other teext");
         topicLevelRecommendationRequest.setImpact("HIGH");
@@ -436,6 +437,59 @@ class TopicAndParameterLevelAssessmentServiceTest {
         verify(topicLevelRecommendationRepository).deleteById(topicLevelRecommendationRequest.getRecommendationId());
     }
 
+    @Test
+    void shouldUpdateAssessmentRatingAndRecommendationForParameterLevelWhenRecommendationIsEAmpty() {
+
+        Integer assessmentId1 = 1;
+
+        Integer parameterId = 1;
+
+        ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+        parameterRatingAndRecommendation.setParameterId(1);
+        parameterRatingAndRecommendation.setRating(1);
+
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendationId(1);
+        parameterLevelRecommendationRequest.setRecommendation("");
+        parameterLevelRecommendationRequest.setDeliveryHorizon("");
+        parameterLevelRecommendationRequest.setImpact("");
+        parameterLevelRecommendationRequest.setEffort("");
+
+        Assessment assessment1 = new Assessment();
+        assessment1.setAssessmentId(assessmentId1);
+
+
+        ParameterLevelId parameterLevelId = mapper.map(parameterRatingAndRecommendation, ParameterLevelId.class);
+        parameterLevelId.setAssessment(assessment1);
+        ParameterLevelAssessment parameterLevelAssessment = mapper.map(parameterRatingAndRecommendation, ParameterLevelAssessment.class);
+
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+
+        parameterLevelAssessmentRepository.save(parameterLevelAssessment);
+
+
+        ParameterLevelRecommendation parameterLevelRecommendation = mapper.map(parameterLevelRecommendationRequest, ParameterLevelRecommendation.class);
+        parameterLevelRecommendation.setAssessment(assessment1);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        parameterLevelRecommendation.setParameter(assessmentParameter);
+
+        parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
+
+
+        when(parameterLevelAssessmentRepository.existsById(parameterLevelId)).thenReturn(true);
+        when(parameterLevelAssessmentRepository.update(parameterLevelAssessment)).thenReturn(parameterLevelAssessment);
+        ParameterLevelAssessment actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+
+
+        when(parameterLevelRecommendationRepository.existsById(parameterLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
+        when(parameterLevelRecommendationRepository.update(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation actualResponse1 = topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
+
+        assertEquals(parameterLevelAssessment.getRating(), actualResponse.getRating());
+        assertEquals(parameterLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
+
+    }
 
 }
 

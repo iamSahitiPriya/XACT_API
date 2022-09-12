@@ -466,4 +466,62 @@ class ReportServiceTest {
         verify(chartService).generateChart(any());
        assertEquals(workbook.getSheetAt(0).getSheetName(), getMockWorkbookForChart().getSheetAt(0).getSheetName());
     }
+
+    @Test
+    void shouldCreateSunBurstChartData(){
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+
+        List<AssessmentCategory> assessmentCategories = new ArrayList<>();
+        AssessmentCategory assessmentCategory1 = new AssessmentCategory();
+        assessmentCategory1.setCategoryId(1);
+        assessmentCategory1.setCategoryName("First Category");
+        assessmentCategory1.setActive(true);
+        assessmentCategories.add(assessmentCategory1);
+
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("First Module");
+        assessmentModule.setCategory(assessmentCategory1);
+        assessmentModule.setActive(true);
+
+        assessmentCategory1.setModules(Collections.singleton(assessmentModule));
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("First Topic");
+        assessmentTopic.setModule(assessmentModule);
+        assessmentTopic.setActive(true);
+
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
+        assessmentTopicReference.setReferenceId(1);
+        assessmentTopicReference.setReference("First Reference");
+        assessmentTopicReference.setRating(Rating.FIVE);
+        assessmentTopicReference.setTopic(assessmentTopic);
+
+        assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));
+
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        TopicLevelId topicLevelId = new TopicLevelId();
+        topicLevelId.setAssessment(assessment);
+        topicLevelId.setTopic(assessmentTopic);
+
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(5);
+
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelAssessment));
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelAssessment));
+        when(categoryRepository.findAll()).thenReturn(assessmentCategories);
+
+        List<AssessmentCategory> actualAssessmentCategoryList = reportService.generateSunburstData(assessment.getAssessmentId());
+        double expectedDataAverageRating = 5;
+        double actualDataAverageRating = actualAssessmentCategoryList.get(0).getCategoryAverage();
+
+        assertEquals(expectedDataAverageRating, actualDataAverageRating);
+
+    }
 }

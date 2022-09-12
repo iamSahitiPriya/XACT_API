@@ -53,11 +53,24 @@ public class ReportService {
         return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap, parameterLevelRecommendationMap, assessmentId);
     }
 
-    private HashMap<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
-        HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = new HashMap<>();
-        List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
-        for (ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
-            List<ParameterLevelRecommendation> parameterLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId, parameterLevelRecommendation.getParameter().getParameterId());
+    public List<AssessmentCategory> generateSunburstData(Integer assessmentId){
+        List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+        List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+        List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
+        for (AssessmentCategory assessmentCategory : assessmentCategoryList){
+            fillInMaturityScore(assessmentCategory,topicAssessmentData,parameterAssessmentData);
+        }
+        return assessmentCategoryList;
+
+
+
+    }
+
+    public HashMap<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
+        HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = new HashMap<>();
+        List <ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
+        for(ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
+            List<ParameterLevelRecommendation> parameterLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId,parameterLevelRecommendation.getParameter().getParameterId());
             parameterLevelRecommendationList.addAll(parameterLevelRecommendationList1);
             parameterLevelRecommendationMap.put(parameterLevelRecommendation.getParameter().getParameterId(), parameterLevelRecommendationList1);
 

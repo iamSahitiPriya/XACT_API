@@ -74,7 +74,7 @@ fileignoreconfig:
 - filename: src/main/resources/db/migration/V18__insert-actual-master-data.sql
   checksum: 90f929ea635917629925ae9674e3a8cf5b57d5f122f4add7d44d51827e4a90ec
 - filename: src/main/java/com/xact/assessment/services/ReportService.java
-  checksum: 75a98ee7cdf10d200efce0ed8ef129fa3fc193b77aa23996aaf65d56471a8480
+  checksum: 475f5daeb356f6268d7d06a65d255a39275bf7ef752ce34c80378f980c67e3a4
 
 version: ""
 

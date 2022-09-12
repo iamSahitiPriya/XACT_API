@@ -69,19 +69,20 @@ public class AdminReportService {
             Row row = sheet.createRow(0);
             CellStyle style = workbook.createCellStyle();
             Font font = workbook.createFont();
+            font.setFontHeightInPoints((short) 13);
             font.setBold(true);
             style.setFont(font);
-            createBoldCell(row, 0, "S.No", style);
+
+            createBoldCell(row, 0, "Assessment Id", style);
             createBoldCell(row, 1, "Assessment Name", style);
             createBoldCell(row, 2, "Organisation Name", style);
-            createBoldCell(row, 3, "Industry", style);
-
-            createBoldCell(row, 4, "Domain", style);
-            createBoldCell(row, 5, "Size", style);
-            createBoldCell(row, 6, "Status", style);
+            createBoldCell(row, 3, "Industry of Organisation", style);
+            createBoldCell(row, 4, "Domain of Target", style);
+            createBoldCell(row, 5, "Size of Target Team", style);
+            createBoldCell(row, 6, "Assessment Status", style);
             createBoldCell(row, 7, "Created At", style);
-            createBoldCell(row, 8, "Completed At", style);
-            createBoldCell(row, 9, "Owner", style);
+            createBoldCell(row, 8, "Updated At", style);
+            createBoldCell(row, 9, "Owner of Assessment", style);
         }
     }
 
@@ -106,15 +107,12 @@ public class AdminReportService {
 
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
         CellStyle style = workbook.createCellStyle();
-        style.setQuotePrefixed(true);
 
-        int rowNum = row.getRowNum();
-        String sNum = Integer.toString(rowNum);
 
         String UserEmail = getEmail(assessment.getAssessmentId());
 
 
-        createStyledCell(row, 0, sNum, style);
+        createStyledCell(row, 0, assessment.getAssessmentId().toString(), style);
         createStyledCell(row, 1, assessment.getAssessmentName(), style);
         createStyledCell(row, 2, assessment.getOrganisation().getOrganisationName(), style);
         createStyledCell(row, 3, assessment.getOrganisation().getIndustry(), style);

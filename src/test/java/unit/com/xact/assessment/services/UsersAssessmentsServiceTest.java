@@ -67,4 +67,40 @@ class UsersAssessmentsServiceTest {
         verify(usersAssessmentsRepository).saveAll(users);
     }
 
+    @Test
+    void shouldGetTheOwnerOfTheAssessment() {
+        Date created = new Date(22 - 10 - 2022);
+        Date updated = new Date(22 - 10 - 2022);
+
+        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
+        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
+        UserId userId = new UserId("hello@thoughtworks.com", assessment);
+        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
+
+        when(usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId())).thenReturn(Optional.of(assessmentUsers));
+
+        Optional<AssessmentUsers> assessmentUsers1=usersAssessmentsService.findOwnerByAssessmentId(assessment.getAssessmentId());
+        assertEquals(assessmentUsers1.get().getUserId().getUserEmail(),"hello@thoughtworks.com");
+
+    }
+
+    @Test
+    void shouldUpdateUserInAssessment() {
+        Date created = new Date(22 - 10 - 2022);
+        Date updated = new Date(22 - 10 - 2022);
+
+        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
+        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
+        UserId userId = new UserId("hello@thoughtworks.com", assessment);
+        AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
+
+        List<AssessmentUsers> assessmentUsers1=new ArrayList<>();
+        assessmentUsers1.add(assessmentUsers);
+
+        doNothing().when(usersAssessmentsRepository).deleteById(assessment.getAssessmentId());
+
+        usersAssessmentsRepository.deleteById(assessment.getAssessmentId());
+        verify(usersAssessmentsRepository).deleteById(assessment.getAssessmentId());
+
+    }
 }

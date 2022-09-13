@@ -4,6 +4,7 @@
 
 package com.xact.assessment.controllers;
 
+import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -20,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.*;
 
 
@@ -168,7 +170,6 @@ public class AssessmentController {
     }
 
 
-
     @Post(value = "/notes/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelAssessmentRequest> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body TopicLevelAssessmentRequest topicLevelAssessmentRequests, Authentication authentication) {
@@ -311,7 +312,7 @@ public class AssessmentController {
 
     @Delete(value = "/deleteParameterRecommendation/{assessmentId}/{parameterId}/{recommendationId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<ParameterLevelRecommendationRequest> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId,@PathVariable("recommendationId") Integer recommendationId , Authentication authentication) {
+    public HttpResponse<ParameterLevelRecommendationRequest> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
             topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
@@ -359,8 +360,16 @@ public class AssessmentController {
     }
 
 
-
-
+    @Get(value = "/admin/{assessmentId}/{startDate}/{endDate}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    @AdminAuth
+    public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, Authentication authentication) throws ParseException {
+        AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
+        adminAssessmentResponse.setTotalAssessments(assessmentService.getTotalAssessments(startDate, endDate));
+        adminAssessmentResponse.setTotalActiveAssessments(assessmentService.getTotalActiveAssessments(startDate, endDate));
+        adminAssessmentResponse.setTotalCompleteAssessments(assessmentService.getTotalCompletedAssessments(startDate, endDate));
+        return HttpResponse.ok(adminAssessmentResponse);
+    }
 
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {

@@ -67,5 +67,14 @@ fileignoreconfig:
   checksum: af6fa04c004bfc3ed8915dd435815bce79f35a01626d87455b21cd1c5ba3c8b4
 - filename: src/main/resources/db/migration/V14__alter-master-data.sql
   checksum: 6eb320a6a250bad1c1773e3c956345f2deb10b68f24ee4a4327a73e84d93a2c0
+- filename: src/main/resources/db/migration/V13__insert-actual-master-data.sql
+  checksum: abf5bfc75a15ead8d206a0206212b254135ef04bd5ae0911a8b5f8f7e6b6d673
+- filename: src/main/resources/db/migration/V17__insert-actual-master-data.sql
+  checksum: 28745b3e724ee2ca1a7187a9c30aa31617ec22d8da8eb71587953d3aee0defb8
+- filename: src/main/resources/db/migration/V18__insert-actual-master-data.sql
+  checksum: 90f929ea635917629925ae9674e3a8cf5b57d5f122f4add7d44d51827e4a90ec
+- filename: src/main/java/com/xact/assessment/services/ReportService.java
+  checksum: 475f5daeb356f6268d7d06a65d255a39275bf7ef752ce34c80378f980c67e3a4
+
 version: ""
 

@@ -23,7 +23,7 @@ import java.io.ByteArrayOutputStream;
 @AdminAuth
 public class AdminReportController {
 
-    private final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
+    private static  final Logger LOGGER = LoggerFactory.getLogger(AdminReportController.class);
 
     private final AdminReportService adminReportService;
 

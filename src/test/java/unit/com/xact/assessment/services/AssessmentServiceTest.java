@@ -13,7 +13,6 @@ import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
-import io.micronaut.http.HttpResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -226,7 +225,7 @@ class AssessmentServiceTest {
     void shouldGetTheTotalAssessmentCount() throws ParseException {
         Date created1 = new Date(2022 - 7 - 13);
         Date updated1 = new Date(2022 - 9 - 24);
-        Date created2 = new Date(2022 - 6 - 01);
+        Date created2 = new Date(2022 - 6 - 1);
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
@@ -242,9 +241,9 @@ class AssessmentServiceTest {
 
         DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
 
-        when(assessmentRepository.TotalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
-        assertEquals(assessmentService.getTotalAssessments(startDate,endDate),2);
+        assertEquals(2,assessmentService.getTotalAssessments(startDate,endDate));
 
     }
 
@@ -252,7 +251,7 @@ class AssessmentServiceTest {
     void shouldGetTheTotalActiveAssessmentCount() throws ParseException {
         Date created1 = new Date(2022 - 7 - 13);
         Date updated1 = new Date(2022 - 9 - 24);
-        Date created2 = new Date(2022 - 6 - 01);
+        Date created2 = new Date(2022 - 6 - 1);
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
@@ -268,9 +267,9 @@ class AssessmentServiceTest {
 
         DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
 
-        when(assessmentRepository.TotalActiveAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.Total_Active_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
-        assertEquals(assessmentService.getTotalActiveAssessments(startDate,endDate),2);
+        assertEquals(2,assessmentService.getTotalActiveAssessments(startDate,endDate));
 
     }
 
@@ -295,9 +294,9 @@ class AssessmentServiceTest {
         String endDate = "2022-05-13";
 
 
-        when(assessmentRepository.TotalCompletedAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.Total_Completed_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
-        assertEquals(assessmentService.getTotalCompletedAssessments(startDate,endDate),2);
+        assertEquals(2,assessmentService.getTotalCompletedAssessments(startDate,endDate));
 
     }
 
@@ -322,9 +321,9 @@ class AssessmentServiceTest {
         String endDate = "2022-05-13";
 
 
-        when(assessmentRepository.TotalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
-        assertEquals(assessmentService.getAdminAssessmentsData(startDate,endDate).size(),2);
+        assertEquals(2,assessmentService.getAdminAssessmentsData(startDate,endDate).size());
 
 
 

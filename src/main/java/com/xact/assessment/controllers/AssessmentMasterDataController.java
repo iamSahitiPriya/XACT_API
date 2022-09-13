@@ -4,10 +4,8 @@
 
 package com.xact.assessment.controllers;
 
-import au.com.dius.pact.core.support.Either;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
@@ -15,7 +13,6 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -29,7 +26,7 @@ import java.util.Objects;
 @Introspected
 @Controller("/v1/assessment-master-data")
 public class AssessmentMasterDataController {
-    private final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataController.class);
 
 
     private static final ModelMapper mapper = new ModelMapper();

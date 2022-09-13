@@ -5,8 +5,8 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AssessmentMasterDataController;
-import com.xact.assessment.dtos.*;
-import com.xact.assessment.models.*;
+import com.xact.assessment.dtos.AssessmentCategoryDto;
+import com.xact.assessment.models.AssessmentCategory;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import io.micronaut.http.HttpResponse;
 import org.junit.jupiter.api.Test;

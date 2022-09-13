@@ -1,7 +1,6 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AdminController;
-import com.xact.assessment.controllers.AssessmentMasterDataController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
@@ -16,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-public class AdminControllerTest {
+class AdminControllerTest {
     AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 

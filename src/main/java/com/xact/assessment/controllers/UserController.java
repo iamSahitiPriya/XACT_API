@@ -4,7 +4,6 @@ import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
-import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;

@@ -10,7 +10,6 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.repositories.OrganisationRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
@@ -34,7 +33,7 @@ public class AssessmentService {
 
     private final AccessControlRepository accessControlRepository;
 
-
+   private final String datePattern = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
@@ -141,26 +140,25 @@ public class AssessmentService {
     }
 
     public Integer getTotalAssessments(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<Assessment> assessmentList = assessmentRepository.TotalAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
+        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        List<Assessment> assessmentList = assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
         return assessmentList.size();
     }
 
     public Integer getTotalActiveAssessments(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<Assessment> assessmentList = assessmentRepository.TotalActiveAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
+        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        List<Assessment> assessmentList = assessmentRepository.Total_Active_Assessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
         return assessmentList.size();
     }
 
     public List<Assessment> getAdminAssessmentsData(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-        List<Assessment> assessmentList= assessmentRepository.TotalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
-        return assessmentList;
+        DateFormat simpleDateFormat=new SimpleDateFormat(datePattern);
+         return assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
     }
 
     public Integer getTotalCompletedAssessments(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        List<Assessment> assessmentList = assessmentRepository.TotalCompletedAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
+        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        List<Assessment> assessmentList = assessmentRepository.Total_Completed_Assessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
         return assessmentList.size();
     }
 

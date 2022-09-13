@@ -109,7 +109,7 @@ public class AdminReportService {
         CellStyle style = workbook.createCellStyle();
 
 
-        String UserEmail = getEmail(assessment.getAssessmentId());
+        String User_Email = getEmail(assessment.getAssessmentId());
 
 
         createStyledCell(row, 0, assessment.getAssessmentId().toString(), style);
@@ -121,7 +121,7 @@ public class AdminReportService {
         createStyledCell(row, 6, assessment.getAssessmentStatus().toString(), style);
         createStyledCell(row, 7, assessment.getCreatedAt().toString(), style);
         createStyledCell(row, 8, assessment.getUpdatedAt().toString(), style);
-        createStyledCell(row, 9, UserEmail, style);
+        createStyledCell(row, 9, User_Email, style);
 
     }
 

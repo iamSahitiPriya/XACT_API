@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,7 +27,7 @@ import java.util.Objects;
 public class AdminController {
     private static final ModelMapper mapper = new ModelMapper();
 
-    private final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+    private static  final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
     static {
         PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {

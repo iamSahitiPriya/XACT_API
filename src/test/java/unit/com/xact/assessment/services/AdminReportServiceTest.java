@@ -5,9 +5,6 @@
 package unit.com.xact.assessment.services;
 
 
-import au.com.dius.pact.core.support.expressions.SystemPropertyResolver;
-import com.xact.assessment.dtos.UserDto;
-import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminReportService;
 import com.xact.assessment.services.AssessmentService;

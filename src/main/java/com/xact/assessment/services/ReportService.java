@@ -20,7 +20,7 @@ public class ReportService {
 
     private int recommendationCount = 0;
 
-    private final String FORMULA_STRING = "=-+@";
+    private static final String FORMULA_STRING = "=-+@";
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final AnswerService answerService;
     private final ChartService chartService;
@@ -105,7 +105,7 @@ public class ReportService {
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
         }
-        if(parameterAssessments.size() > 0) {
+        if(!parameterAssessments.isEmpty()) {
             for (ParameterLevelAssessment parameterLevelAssessment : parameterAssessments) {
                 List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterLevelRecommendations.get(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
                 if (parameterLevelRecommendationList != null) {
@@ -132,7 +132,7 @@ public class ReportService {
 
             }
         }
-        if(topicLevelAssessments.size() > 0) {
+        if(!topicLevelAssessments.isEmpty()) {
             for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
                 List<TopicLevelRecommendation> topicLevelRecommendationList = topicLevelRecommendations.get(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
                 if (topicLevelRecommendationList != null) {
@@ -308,7 +308,7 @@ public class ReportService {
     }
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic topic, String topicRating, List<TopicLevelRecommendation> topicRecommendation) {
-        if (topicRecommendation.size() == 0) {
+        if (topicRecommendation.isEmpty()) {
             writeDataOnSheet(workbook, sheet, module, topic, topicRating, new TopicLevelRecommendation(), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
         } else {
             for (int index = 0; index < topicRecommendation.size(); index++) {
@@ -323,7 +323,7 @@ public class ReportService {
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, AssessmentParameter parameter, String paramRating, List<ParameterLevelRecommendation> parameterRecommendation) {
-        if (parameterRecommendation.size() == 0) {
+        if (parameterRecommendation.isEmpty()) {
             writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(), 0, parameter, paramRating, new ParameterLevelRecommendation(), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
         } else {
             for (int index = 0; index < parameterRecommendation.size(); index++) {
@@ -340,7 +340,8 @@ public class ReportService {
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, String topicRating, TopicLevelRecommendation topicRecommendation, int topicRecommendationCount, AssessmentParameter parameter, String paramRating, ParameterLevelRecommendation
                                           paramRecommendation, int paramRecommendationCount, String questionText, String answer) {
-        String topicImpact, topicEffort, paramImpact, paramEffort;
+        String topicImpact, paramImpact, paramEffort;
+        String topicEffort;
         topicImpact = getTopicRecommendationImpact(topicRecommendation);
         topicEffort = getTopicRecommendationEffort(topicRecommendation);
         paramImpact = getParameterRecommendationImpact(paramRecommendation);
@@ -432,10 +433,6 @@ public class ReportService {
         }
     }
 
-    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
-            topic, AssessmentParameter parameter, String paramRating, String paramRecommendation) {
-        writeDataOnSheet(workbook, sheet, module, topic, ReportService.BLANK_STRING, ReportService.BLANK_STRING, parameter, paramRating, paramRecommendation, BLANK_STRING, BLANK_STRING);
-    }
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, String topicRating, String topicRecommendation, AssessmentParameter parameter, String paramRating, String

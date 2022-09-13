@@ -105,7 +105,7 @@ jacocoTestReport {
     dependsOn test
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class','com/xact/assessment/exceptions/GlobalErrorResponseProcessor.class'])
         }))
     }
 }
@@ -123,7 +123,7 @@ jar {
 jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class','com/xact/assessment/exceptions/GlobalErrorResponseProcessor.class'])
         }))
     }
     violationRules {

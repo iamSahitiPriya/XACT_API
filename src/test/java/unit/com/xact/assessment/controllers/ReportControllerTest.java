@@ -5,6 +5,7 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.ReportController;
+import com.xact.assessment.dtos.ReportCategoryResponse;
 import com.xact.assessment.dtos.ReportDataResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentService;
@@ -23,10 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -124,6 +122,9 @@ class ReportControllerTest {
         assessmentCategory1.setCategoryName("First Category");
         assessmentCategory1.setActive(true);
         assessmentCategories.add(assessmentCategory1);
+        AssessmentCategory assessmentCategory2 = new AssessmentCategory("Second Category",true,"2");
+        assessmentCategory2.setCategoryId(2);
+        assessmentCategories.add(assessmentCategory2);
 
 
         AssessmentModule assessmentModule = new AssessmentModule();
@@ -132,7 +133,10 @@ class ReportControllerTest {
         assessmentModule.setCategory(assessmentCategory1);
         assessmentModule.setActive(true);
 
-        assessmentCategory1.setModules(Collections.singleton(assessmentModule));
+        AssessmentModule assessmentModule1 = new AssessmentModule("Second Module",assessmentCategory2,true,"");
+
+        assessmentCategory1.setModules(Set.of(assessmentModule));
+        assessmentCategory2.setModules(Set.of(assessmentModule1));
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
@@ -140,7 +144,7 @@ class ReportControllerTest {
         assessmentTopic.setModule(assessmentModule);
         assessmentTopic.setActive(true);
 
-        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        assessmentModule.setTopics(Set.of(assessmentTopic));
 
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
         assessmentTopicReference.setReferenceId(1);
@@ -148,12 +152,35 @@ class ReportControllerTest {
         assessmentTopicReference.setRating(Rating.FIVE);
         assessmentTopicReference.setTopic(assessmentTopic);
 
-        assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));
+        assessmentTopic.setReferences(Set.of(assessmentTopicReference));
         assessmentTopic.setRating(5);
 
-        when(reportService.generateSunburstData(assessmentId)).thenReturn(assessmentCategories);
-        MutableHttpResponse<ReportDataResponse>  actualResponse = reportController.getAssessmentReportData(assessmentId,authentication);
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        assessmentTopic1.setTopicName("Second Topic");
+        assessmentTopic1.setModule(assessmentModule1);
+        assessmentTopic1.setActive(true);
 
+        assessmentModule1.setTopics(Set.of(assessmentTopic1));
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("First Parameter");
+        assessmentParameter.setActive(true);
+        assessmentParameter.setTopic(assessmentTopic1);
+        assessmentTopic1.setParameters(Set.of(assessmentParameter));
+
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference();
+        assessmentParameterReference.setReference("Second Reference");
+        assessmentParameterReference.setRating(Rating.FIVE);
+        assessmentParameterReference.setParameter(assessmentParameter);
+
+        assessmentParameter.setReferences(Set.of(assessmentParameterReference));
+        assessmentParameter.setRating(5);
+
+        when(reportService.generateSunburstData(assessment.getAssessmentId())).thenReturn(assessmentCategories);
+
+        MutableHttpResponse<ReportDataResponse>  actualResponse = reportController.getAssessmentReportData(assessmentId,authentication);
         MutableHttpResponse<ReportDataResponse> expectedResponse = HttpResponse.ok();
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
     }

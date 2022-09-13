@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.repositories;
 
 import com.xact.assessment.models.AccessControlList;

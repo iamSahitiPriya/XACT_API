@@ -16,11 +16,13 @@ import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
+import static com.xact.assessment.models.AssessmentStatus.Active;
+import static com.xact.assessment.models.AssessmentStatus.Completed;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -62,7 +64,7 @@ class AssessmentServiceTest {
         Set<AssessmentUsers> assessmentUsers = new HashSet<>();
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(123);
-        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        assessment.setAssessmentStatus(Active);
         assessment.setAssessmentName("assessment1");
         Organisation organisation = new Organisation();
         organisation.setOrganisationName("org1");
@@ -117,7 +119,7 @@ class AssessmentServiceTest {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
         assessment.setAssessmentName("assessmentName");
-        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        assessment.setAssessmentStatus(Active);
         Assessment expectedAssessment = new Assessment();
         expectedAssessment.setAssessmentId(assessmentId);
         expectedAssessment.setAssessmentName("assessment");
@@ -145,13 +147,13 @@ class AssessmentServiceTest {
         Assessment expectedAssessment = new Assessment();
         expectedAssessment.setAssessmentId(assessmentId);
         expectedAssessment.setAssessmentName("assessment");
-        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        assessment.setAssessmentStatus(Active);
 
         when(assessmentRepository.update(assessment)).thenReturn(assessment);
 
         Assessment actualAssessment = assessmentService.reopenAssessment(assessment);
 
-        assertEquals( AssessmentStatus.Active,actualAssessment.getAssessmentStatus());
+        assertEquals( Active,actualAssessment.getAssessmentStatus());
     }
 
     @Test
@@ -187,7 +189,7 @@ class AssessmentServiceTest {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
         assessment.setAssessmentName("Assessment");
-        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        assessment.setAssessmentStatus(Active);
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
 
@@ -216,6 +218,114 @@ class AssessmentServiceTest {
         Assessment expectedAssessment = assessmentService.getAssessment(1, user);
 
         assertEquals(expectedAssessment.getAssessmentName(), assessment.getAssessmentName());
+
+    }
+
+    @Test
+    void shouldGetTheTotalAssessmentCount() throws ParseException {
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+        Date created2 = new Date(2022 - 6 - 1);
+        Date updated2 = new Date(2022 - 6 - 11);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", organisation, Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
+
+        List<Assessment> assessments=new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+
+        when(assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+
+        assertEquals(2,assessmentService.getTotalAssessments(startDate,endDate));
+
+    }
+
+    @Test
+    void shouldGetTheTotalActiveAssessmentCount() throws ParseException {
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+        Date created2 = new Date(2022 - 6 - 1);
+        Date updated2 = new Date(2022 - 6 - 11);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "First_Name", organisation,Active, created2, updated2);
+        Assessment assessment2 = new Assessment(2, "Second_Name", organisation,Active, created1, updated1);
+
+        List<Assessment> assessments=new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+
+        when(assessmentRepository.Total_Active_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+
+        assertEquals(2,assessmentService.getTotalActiveAssessments(startDate,endDate));
+
+    }
+
+    @Test
+    void shouldGetTheTotalCompletedAssessmentCount() throws ParseException {
+         DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        String createdAt1="2022-07-13";
+        String updatedAt1="2022-09-24";
+        String createdAt2="2022-06-01";
+        String updatedAt2="2022-06-11";
+
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment2 = new Assessment(1, "Name", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
+        Assessment assessment1 = new Assessment(2, "Name", organisation,Completed, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
+
+        List<Assessment> assessments=new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+
+        when(assessmentRepository.Total_Completed_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+
+        assertEquals(2,assessmentService.getTotalCompletedAssessments(startDate,endDate));
+
+    }
+
+    @Test
+    void shouldGetTheAdminAssessmentData() throws ParseException {
+        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        String createdAt1="2022-07-13";
+        String updatedAt1="2022-09-24";
+        String createdAt2="2022-06-01";
+        String updatedAt2="2022-06-11";
+
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment2 = new Assessment(1, "Name", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
+        Assessment assessment1 = new Assessment(2, "Name", organisation, Active, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
+
+        List<Assessment> assessments=new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+
+        when(assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+
+        assertEquals(2,assessmentService.getAdminAssessmentsData(startDate,endDate).size());
+
+
 
     }
 

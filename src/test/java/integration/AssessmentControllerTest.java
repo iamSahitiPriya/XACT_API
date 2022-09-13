@@ -20,11 +20,15 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static java.util.Collections.singletonList;
@@ -67,6 +71,9 @@ class AssessmentControllerTest {
 
     @Inject
     ParameterLevelRecommendationRepository parameterLevelRecommendationRepository;
+    @Inject
+    AccessControlRepository accessControlRepository;
+
 
     @MockBean(UsersAssessmentsRepository.class)
     UsersAssessmentsRepository usersAssessmentsRepository() {
@@ -118,6 +125,10 @@ class AssessmentControllerTest {
     ParameterLevelRecommendationRepository parameterLevelRecommendationRepository() {
         return mock(ParameterLevelRecommendationRepository.class);
     }
+
+    @MockBean(AccessControlRepository.class)
+    AccessControlRepository accessControlRepository(){return mock(AccessControlRepository.class);}
+
 
     @Test
     void testGetAssessmentsResponse() throws IOException {
@@ -1049,6 +1060,37 @@ class AssessmentControllerTest {
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+    }
+    @Test
+    void testGetAdminAssessmentsResponse() throws IOException, ParseException {
+
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+
+        List<Assessment> assessments=new ArrayList<>();
+
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", organisation, Active, created1, updated1);
+
+        assessments.add(assessment1);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+
+        when(assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
+
+
+        String expectedResponse = resourceFileUtil.getJsonString("dto/get-admin-assessments-response.json");
+
+        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/admin/1/2022-10-13/2022-05-13")
+                .bearerAuth("anything"), String.class);
+
+        assertEquals(expectedResponse, assessmentResponse);
+
     }
 
 

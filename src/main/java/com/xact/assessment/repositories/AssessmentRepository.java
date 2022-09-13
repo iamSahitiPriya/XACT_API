@@ -5,11 +5,29 @@
 package com.xact.assessment.repositories;
 
 import com.xact.assessment.models.Assessment;
+import io.micronaut.context.annotation.Executable;
+import io.micronaut.context.annotation.Parameter;
+import io.micronaut.data.annotation.Query;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 
+import java.util.Date;
+import java.util.List;
+
 
 @Repository
-public interface AssessmentRepository extends CrudRepository<Assessment,Integer> {
+public interface AssessmentRepository extends CrudRepository<Assessment, Integer> {
+
+    @Executable
+    @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate)")
+    List<Assessment> Total_Assessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
+
+    @Executable
+    @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate) and tla.assessmentStatus='Active'")
+    List<Assessment> Total_Active_Assessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
+
+    @Executable
+    @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate) and tla.assessmentStatus='Completed'")
+    List<Assessment> Total_Completed_Assessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
 
 }

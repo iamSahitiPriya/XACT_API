@@ -1,3 +1,7 @@
+/*
+ *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.controllers;
 
 
@@ -17,7 +21,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +31,8 @@ import java.util.List;
 @Controller("/v1/reports")
 public class ReportController {
 
-    private ModelMapper modelMapper = new ModelMapper();
 
-    private final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReportController.class);
 
     private final ReportService reportService;
     private final UserAuthService userAuthService;

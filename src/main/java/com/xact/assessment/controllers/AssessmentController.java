@@ -45,7 +45,7 @@ public class AssessmentController {
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
 
-    private ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService) {
         this.usersAssessmentsService = usersAssessmentsService;
@@ -257,7 +257,6 @@ public class AssessmentController {
         topicLevelRecommendation.setTopic(assessmentTopic);
         if (assessment.isEditable()) {
             if (topicLevelRecommendationTextRequest.getRecommendationId() == null) {
-//                Integer recommendationTextId = topicLevelRecommendationTextRequest.getRecommendationId() != null ? topicLevelRecommendationTextRequest.getRecommendationId() : null;
                 topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
                 topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
             } else {
@@ -408,8 +407,7 @@ public class AssessmentController {
     }
 
     private ParameterLevelRecommendation setRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest1, Assessment assessment, ParameterLevelAssessmentRequest parameterLevelAssessmentRequest) {
-        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
-        parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest1, ParameterLevelRecommendation.class);
+        ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest1, ParameterLevelRecommendation.class);
         parameterLevelRecommendation.setAssessment(assessment);
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterLevelAssessmentRequest.getParameterRatingAndRecommendation().getParameterId()).orElseThrow();
         parameterLevelRecommendation.setParameter(assessmentParameter);

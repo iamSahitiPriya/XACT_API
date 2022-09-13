@@ -1080,7 +1080,7 @@ class AssessmentControllerTest {
 
         DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
 
-        when(assessmentRepository.TotalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
         when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
 
 

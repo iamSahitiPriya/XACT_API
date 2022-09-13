@@ -28,7 +28,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @MicronautTest
-public class UserControllerTest {
+class UserControllerTest {
     private ModelMapper mapper = new ModelMapper();
 
     @Inject

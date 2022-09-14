@@ -92,8 +92,8 @@ public class AdminController {
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
-        assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
-        return HttpResponse.ok();
+            assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
+            return HttpResponse.ok();
     }
 
     @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)

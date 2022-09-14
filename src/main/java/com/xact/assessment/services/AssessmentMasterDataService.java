@@ -5,6 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.exceptions.DuplicateRecordException;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterReferenceRepository;
 import com.xact.assessment.repositories.AssessmentTopicReferenceRepository;
@@ -12,6 +13,7 @@ import com.xact.assessment.repositories.CategoryRepository;
 import jakarta.inject.Singleton;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 public class AssessmentMasterDataService {
@@ -45,8 +47,22 @@ public class AssessmentMasterDataService {
     }
 
     public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
-        AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
-        categoryRepository.save(assessmentCategory);
+        if(!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
+            AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
+            categoryRepository.save(assessmentCategory);
+        }
+        else {
+            throw new DuplicateRecordException("Duplicate records are not allowed");
+        }
+
+    }
+
+    private boolean checkIfUnique(String categoryName) {
+        List<String> categories = categoryRepository.getAllCategories();
+        List<String> result = categories.stream()
+                .map(String::toLowerCase).map(String :: trim)
+                .collect(Collectors.toList());
+        return result.contains(categoryName.trim().toLowerCase());
     }
 
     public void createAssessmentModule(AssessmentModuleRequest assessmentModuleRequest) {
@@ -90,7 +106,11 @@ public class AssessmentMasterDataService {
     }
 
     public void updateCategory(AssessmentCategory assessmentCategory) {
-        categoryRepository.update(assessmentCategory);
+        if(!checkIfUnique(assessmentCategory.getCategoryName())) {
+            categoryRepository.update(assessmentCategory);
+        } else {
+            throw new DuplicateRecordException("Duplicate records are not allowed");
+        }
     }
 
     public void updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {

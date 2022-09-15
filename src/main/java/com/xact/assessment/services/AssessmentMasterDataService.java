@@ -105,11 +105,21 @@ public class AssessmentMasterDataService {
 
     }
 
-    public void updateCategory(AssessmentCategory assessmentCategory) {
-        if(!checkIfUnique(assessmentCategory.getCategoryName())) {
+    public void updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
+        if(assessmentCategory.getCategoryName().equals(assessmentCategoryRequest.getCategoryName())){
+            assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
+            assessmentCategory.setActive(assessmentCategoryRequest.isActive());
+            assessmentCategory.setComments(assessmentCategoryRequest.getComments());
             categoryRepository.update(assessmentCategory);
-        } else {
-            throw new DuplicateRecordException("Duplicate records are not allowed");
+        }else {
+            if (!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
+                assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
+                assessmentCategory.setActive(assessmentCategoryRequest.isActive());
+                assessmentCategory.setComments(assessmentCategoryRequest.getComments());
+                categoryRepository.update(assessmentCategory);
+            } else {
+                throw new DuplicateRecordException("Duplicate records are not allowed");
+            }
         }
     }
 

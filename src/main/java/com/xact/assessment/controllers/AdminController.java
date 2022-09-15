@@ -157,7 +157,7 @@ public class AdminController {
         assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
         assessmentCategory.setActive(assessmentCategoryRequest.isActive());
         assessmentCategory.setComments(assessmentCategoryRequest.getComments());
-        assessmentMasterDataService.updateCategory(assessmentCategory);
+        assessmentMasterDataService.updateCategory(assessmentCategory,assessmentCategoryRequest);
         return HttpResponse.ok();
     }
 

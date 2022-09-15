@@ -30,6 +30,7 @@ micronaut:
 #    password: ''
 #    dialect: POSTGRES
 
+
 flyway:
   datasources:
     default:

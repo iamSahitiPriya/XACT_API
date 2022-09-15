@@ -177,7 +177,7 @@ class AssessmentMasterDataServiceTest {
         assessmentMasterDataService.createAssessmentCategory(categoryRequest);
         AssessmentCategory assessmentCategory = new AssessmentCategory(categoryRequest.getCategoryName(), categoryRequest.isActive(), categoryRequest.getComments());
         assessmentCategory.setCategoryName("this is a category");
-        assessmentMasterDataService.updateCategory(assessmentCategory);
+        assessmentMasterDataService.updateCategory(assessmentCategory, categoryRequest);
         verify(categoryRepository).update(assessmentCategory);
     }
 

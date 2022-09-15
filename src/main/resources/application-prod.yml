@@ -1,0 +1,37 @@
+micronaut:
+  application:
+    name: XAct_Assessment_API
+  server:
+    port: 8080
+    cors:
+      enabled: true
+      configurations:
+        web:
+          allowedOrigins:
+            - https://xact.thoughtworks.net
+  security:
+    enabled: true
+    token:
+      jwt:
+        enabled: true
+        claims-validators:
+          issuer: '${OIDC_ISSUER:`https://thoughtworks.okta.com/oauth2/default`}'
+        signatures:
+          jwks:
+            okta:
+              url: '${OIDC_ISSUER:`https://thoughtworks.okta.com/oauth2/default`}/v1/keys'
+
+datasources:
+  default:
+    url: jdbc:postgresql://xact-db-prod.cs3hcgchak2w.ap-south-1.rds.amazonaws.com:5432/xactprod?sslmode=require
+    driverClassName: org.postgresql.Driver
+    username: ${DB_USER}
+    password: ${DB_PWD}
+
+flyway:
+  datasources:
+    default:
+      enabled: true
+
+validation:
+  email: '^([_A-Za-z0-9-+]+\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$'

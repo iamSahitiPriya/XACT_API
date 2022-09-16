@@ -166,10 +166,17 @@ public class AssessmentService {
 
 
     public UserAssessmentModule saveUserModules(UserAssessmentModule userAssessmentModule) {
-
-             userAssessmentModuleRepository.save(userAssessmentModule);
-
-        return userAssessmentModule;
+     if(userAssessmentModule.getId()!=null){
+         if(userAssessmentModule.getModule().getModuleId()!=null){
+             System.out.println(userAssessmentModule.getModule().getModuleId());
+             userAssessmentModuleRepository.update(userAssessmentModule);
+         }
+         else{
+             userAssessmentModuleRepository.delete(userAssessmentModule);
+         }
+     }else{
+             userAssessmentModuleRepository.save(userAssessmentModule);}
+         return userAssessmentModule;
     }
 
     public AssessmentModule getModule(Integer moduleId) {

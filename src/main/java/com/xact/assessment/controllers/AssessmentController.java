@@ -374,10 +374,11 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId,@Body UserAssessmentModuleRequest userAssessmentModuleRequest,Authentication authentication){
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        for ( Integer moduleId : userAssessmentModuleRequest.getModuleId()) {
+        for (ModuleRequest moduleRequest : userAssessmentModuleRequest.getModuleRequests()) {
             UserAssessmentModule userAssessmentModule=new UserAssessmentModule();
+            userAssessmentModule.setId(moduleRequest.getId());
             userAssessmentModule.setAssessment(assessment);
-            AssessmentModule assessmentModule=assessmentService.getModule(moduleId);
+            AssessmentModule assessmentModule=assessmentService.getModule(moduleRequest.getModuleId());
             userAssessmentModule.setModule(assessmentModule);
             assessmentService.saveUserModules(userAssessmentModule);
         }

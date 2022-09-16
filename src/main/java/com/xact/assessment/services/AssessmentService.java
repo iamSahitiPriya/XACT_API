@@ -8,9 +8,7 @@ import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AccessControlRepository;
-import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.repositories.UsersAssessmentsRepository;
+import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
@@ -32,18 +30,22 @@ public class AssessmentService {
     private final UsersAssessmentsRepository usersAssessmentsRepository;
 
     private final AccessControlRepository accessControlRepository;
+    private final UserAssessmentModuleRepository userAssessmentModuleRepository;
 
+    private final ModuleRepository moduleRepository;
    private final String datePattern = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
         this.accessControlRepository = accessControlRepository;
 
+        this.userAssessmentModuleRepository = userAssessmentModuleRepository;
+        this.moduleRepository = moduleRepository;
     }
 
     @Transactional
@@ -163,4 +165,14 @@ public class AssessmentService {
     }
 
 
+    public UserAssessmentModule saveUserModules(UserAssessmentModule userAssessmentModule) {
+
+             userAssessmentModuleRepository.save(userAssessmentModule);
+
+        return userAssessmentModule;
+    }
+
+    public AssessmentModule getModule(Integer moduleId) {
+        return moduleRepository.findByModuleId(moduleId);
+    }
 }

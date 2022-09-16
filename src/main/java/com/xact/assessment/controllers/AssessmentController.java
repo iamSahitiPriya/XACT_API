@@ -370,6 +370,19 @@ public class AssessmentController {
         return HttpResponse.ok(adminAssessmentResponse);
     }
 
+    @Post(value="/user/modules/{assessmentId}",produces=MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId,@Body UserAssessmentModuleRequest userAssessmentModuleRequest,Authentication authentication){
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        for ( Integer moduleId : userAssessmentModuleRequest.getModuleId()) {
+            UserAssessmentModule userAssessmentModule=new UserAssessmentModule();
+            userAssessmentModule.setAssessment(assessment);
+            AssessmentModule assessmentModule=assessmentService.getModule(moduleId);
+            userAssessmentModule.setModule(assessmentModule);
+            assessmentService.saveUserModules(userAssessmentModule);
+        }
+        return HttpResponse.ok();
+    }
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);

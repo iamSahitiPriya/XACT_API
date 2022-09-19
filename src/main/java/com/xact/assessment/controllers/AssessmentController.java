@@ -372,9 +372,9 @@ public class AssessmentController {
 
     @Post(value="/user/modules/{assessmentId}",produces=MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId,@Body UserAssessmentModuleRequest userAssessmentModuleRequest,Authentication authentication){
+    public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId,@Body List<ModuleRequest> moduleRequests,Authentication authentication){
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        for (ModuleRequest moduleRequest : userAssessmentModuleRequest.getModuleRequests()) {
+        for (ModuleRequest moduleRequest : moduleRequests) {
             UserAssessmentModule userAssessmentModule=new UserAssessmentModule();
             userAssessmentModule.setId(moduleRequest.getId());
             userAssessmentModule.setAssessment(assessment);

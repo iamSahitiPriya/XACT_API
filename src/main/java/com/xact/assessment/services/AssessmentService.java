@@ -174,8 +174,9 @@ public class AssessmentService {
          else{
              userAssessmentModuleRepository.delete(userAssessmentModule);
          }
-     }else{
-             userAssessmentModuleRepository.save(userAssessmentModule);}
+     }else {
+         userAssessmentModuleRepository.save(userAssessmentModule);
+     }
          return userAssessmentModule;
     }
 

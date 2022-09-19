@@ -26,6 +26,7 @@ public class UserAssessmentModule {
     @JoinColumn(name = "assessment", referencedColumnName = "assessment_id")
     private Assessment assessment;
 
+    @NotNull
     @ManyToOne()
     @JoinColumn(name="module", referencedColumnName = "module_id")
     private AssessmentModule module;

@@ -26,6 +26,7 @@ public class UserAuthService {
         profile.setEmail((String) authentication.getAttributes().get(EMAIL));
         String userId = (String) authentication.getAttributes().get(USER_ID);
         LOG.info("Logged in : {}",userId);
+
         return new User(userId, profile, ACTIVE);
     }
 

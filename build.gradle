@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'au.com.dius.pact.provider:junit5spring:4.3.7'
+    implementation 'io.projectreactor:reactor-core:3.4.23'
     compileOnly "io.micronaut:micronaut-aop:3.6.1"
     compileOnly "org.projectlombok:lombok:1.18.22"
     annotationProcessor "org.projectlombok:lombok:1.18.22"
@@ -105,7 +105,7 @@ jacocoTestReport {
     dependsOn test
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class','com/xact/assessment/exceptions/GlobalErrorResponseProcessor.class'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class', 'com/xact/assessment/exceptions/GlobalErrorResponseProcessor.class'])
         }))
     }
 }
@@ -123,7 +123,7 @@ jar {
 jacocoTestCoverageVerification {
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class','com/xact/assessment/exceptions/GlobalErrorResponseProcessor.class'])
+            fileTree(dir: it, exclude: ['com/xact/assessment/Application.class', 'com/xact/assessment/models/Rating.class', 'com/xact/assessment/exceptions/GlobalErrorResponseProcessor.class'])
         }))
     }
     violationRules {

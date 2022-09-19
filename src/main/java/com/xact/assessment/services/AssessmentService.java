@@ -5,10 +5,12 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.AssessmentRequest;
+import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
+import io.micronaut.data.model.query.QueryModel;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
@@ -33,7 +35,7 @@ public class AssessmentService {
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
 
     private final ModuleRepository moduleRepository;
-   private final String datePattern = "yyyy-MM-dd";
+    private final String datePattern = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
@@ -154,8 +156,8 @@ public class AssessmentService {
     }
 
     public List<Assessment> getAdminAssessmentsData(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat=new SimpleDateFormat(datePattern);
-         return assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
+        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        return assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
     }
 
     public Integer getTotalCompletedAssessments(String startDate, String endDate) throws ParseException {
@@ -164,23 +166,35 @@ public class AssessmentService {
         return assessmentList.size();
     }
 
-
-    public UserAssessmentModule saveUserModules(UserAssessmentModule userAssessmentModule) {
-     if(userAssessmentModule.getId()!=null){
-         if(userAssessmentModule.getModule().getModuleId()!=null){
-             System.out.println(userAssessmentModule.getModule().getModuleId());
-             userAssessmentModuleRepository.update(userAssessmentModule);
-         }
-         else{
-             userAssessmentModuleRepository.delete(userAssessmentModule);
-         }
-     }else {
-         userAssessmentModuleRepository.save(userAssessmentModule);
-     }
-         return userAssessmentModule;
+    public void saveUserModules(List<ModuleRequest> moduleRequests, Assessment assessment) {
+        List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessment.getAssessmentId());
+        for (ModuleRequest moduleRequest1 : moduleRequests) {
+            UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+            userAssessmentModule.setId(moduleRequest1.getId());
+            userAssessmentModule.setAssessment(assessment);
+            AssessmentModule assessmentModule = getModule(moduleRequest1.getModuleId());
+            userAssessmentModule.setModule(assessmentModule);
+            if (!assessmentModules.contains(userAssessmentModule.getModule())) {
+                userAssessmentModuleRepository.save(userAssessmentModule);
+            }
+        }
     }
 
     public AssessmentModule getModule(Integer moduleId) {
         return moduleRepository.findByModuleId(moduleId);
+    }
+
+    public void deleteUserModules(List<ModuleRequest> deleteRequest, Assessment assessment) {
+        List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessment.getAssessmentId());
+        for (ModuleRequest moduleRequest1 : deleteRequest) {
+            UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+            userAssessmentModule.setId(moduleRequest1.getId());
+            userAssessmentModule.setAssessment(assessment);
+            AssessmentModule assessmentModule = getModule(moduleRequest1.getModuleId());
+            userAssessmentModule.setModule(assessmentModule);
+            if (assessmentModules.contains(userAssessmentModule.getModule())) {
+                userAssessmentModuleRepository.deleteByModule(userAssessmentModule.getAssessment().getAssessmentId(),userAssessmentModule.getModule().getModuleId());
+            }
+        }
     }
 }

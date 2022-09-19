@@ -10,8 +10,10 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterReferenceRepository;
 import com.xact.assessment.repositories.AssessmentTopicReferenceRepository;
 import com.xact.assessment.repositories.CategoryRepository;
+import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,17 +25,20 @@ public class AssessmentMasterDataService {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
+
+    private final UserAssessmentModuleRepository userAssessmentModuleRepository;
     AssessmentParameterReferenceRepository assessmentParameterRRepository;
     private final ModuleService moduleService;
 
 
-    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
+    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
         this.categoryRepository = categoryRepository;
         this.moduleService = moduleService;
         this.questionService = questionService;
         this.assessmentTopicReferenceRepository = assessmentTopicReferenceRepository;
         this.parameterService = parameterService;
         this.topicService = topicService;
+        this.userAssessmentModuleRepository = userAssessmentModuleRepository;
         this.assessmentParameterRRepository = assessmentParameterRRepository;
 
     }
@@ -44,6 +49,16 @@ public class AssessmentMasterDataService {
 
     public AssessmentCategory getCategory(Integer categoryId) {
         return categoryRepository.findCategoryById(categoryId);
+    }
+
+    public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId){
+        List<AssessmentCategory> categories = new ArrayList<>();
+        List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
+        for(AssessmentModule assessmentModule:assessmentModules){
+            AssessmentCategory category = categoryRepository.findCategoryById(assessmentModule.getCategory().getCategoryId());
+            categories.add(category);
+        }
+        return categories;
     }
 
     public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {

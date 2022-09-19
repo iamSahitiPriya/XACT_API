@@ -12,6 +12,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
@@ -77,11 +78,11 @@ public class AssessmentMasterDataController {
 
     }
 
-    @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
+    @Get(value = "/categories/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AssessmentCategoryDto>> getAssessmentMasterData() {
+    public HttpResponse<List<AssessmentCategoryDto>> getAssessmentMasterData(@PathVariable("assessmentId")Integer assessmentId) {
         LOGGER.info("Get assessment master data");
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
+        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(assessmentCategories)) {
             assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(mapper.map(assessmentCategory, AssessmentCategoryDto.class)));

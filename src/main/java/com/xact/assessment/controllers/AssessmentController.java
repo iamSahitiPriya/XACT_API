@@ -370,18 +370,19 @@ public class AssessmentController {
         return HttpResponse.ok(adminAssessmentResponse);
     }
 
-    @Post(value="/user/modules/{assessmentId}",produces=MediaType.APPLICATION_JSON)
+    @Post(value = "/user/modules/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId,@Body List<ModuleRequest> moduleRequests,Authentication authentication){
+    public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
+        LOGGER.info("Save modules: "+assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        for (ModuleRequest moduleRequest : moduleRequests) {
-            UserAssessmentModule userAssessmentModule=new UserAssessmentModule();
-            userAssessmentModule.setId(moduleRequest.getId());
-            userAssessmentModule.setAssessment(assessment);
-            AssessmentModule assessmentModule=assessmentService.getModule(moduleRequest.getModuleId());
-            userAssessmentModule.setModule(assessmentModule);
-            assessmentService.saveUserModules(userAssessmentModule);
-        }
+        assessmentService.saveUserModules(moduleRequests,assessment);
+        return HttpResponse.ok();
+    }
+    @Delete(value = "/user/modules/{assessmentId}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse deleteModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> deleteRequest, Authentication authentication){
+        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
+        assessmentService.deleteUserModules(deleteRequest,assessment);
         return HttpResponse.ok();
     }
 

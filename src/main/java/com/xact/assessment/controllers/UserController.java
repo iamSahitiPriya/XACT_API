@@ -32,6 +32,7 @@ public class UserController {
     public HttpResponse<Optional<AccessControlRoles>> getRole(Authentication authentication){
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         Optional<AccessControlRoles> accessControlRoles = assessmentService.getUserRole(loggedInUser.getUserEmail());
+        System.out.println("-----"+accessControlRoles);
         return HttpResponse.ok(accessControlRoles);
     }
 }

@@ -10,7 +10,6 @@ import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
-import io.micronaut.data.model.query.QueryModel;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
@@ -167,16 +166,14 @@ public class AssessmentService {
     }
 
     public void saveUserModules(List<ModuleRequest> moduleRequests, Assessment assessment) {
-        List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessment.getAssessmentId());
         for (ModuleRequest moduleRequest1 : moduleRequests) {
             UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
-            userAssessmentModule.setId(moduleRequest1.getId());
             userAssessmentModule.setAssessment(assessment);
             AssessmentModule assessmentModule = getModule(moduleRequest1.getModuleId());
+            AssessmentModuleId assessmentModuleId=new AssessmentModuleId(assessment,assessmentModule);
+            userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
             userAssessmentModule.setModule(assessmentModule);
-            if (!assessmentModules.contains(userAssessmentModule.getModule())) {
-                userAssessmentModuleRepository.save(userAssessmentModule);
-            }
+            userAssessmentModuleRepository.save(userAssessmentModule);
         }
     }
 
@@ -184,17 +181,8 @@ public class AssessmentService {
         return moduleRepository.findByModuleId(moduleId);
     }
 
-    public void deleteUserModules(List<ModuleRequest> deleteRequest, Assessment assessment) {
-        List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessment.getAssessmentId());
-        for (ModuleRequest moduleRequest1 : deleteRequest) {
-            UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
-            userAssessmentModule.setId(moduleRequest1.getId());
-            userAssessmentModule.setAssessment(assessment);
-            AssessmentModule assessmentModule = getModule(moduleRequest1.getModuleId());
-            userAssessmentModule.setModule(assessmentModule);
-            if (assessmentModules.contains(userAssessmentModule.getModule())) {
-                userAssessmentModuleRepository.deleteByModule(userAssessmentModule.getAssessment().getAssessmentId(),userAssessmentModule.getModule().getModuleId());
-            }
-        }
+    public void updateUserModules(List<ModuleRequest> moduleRequest, Assessment assessment) {
+            userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
+            saveUserModules(moduleRequest,assessment);
     }
 }

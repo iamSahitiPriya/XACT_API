@@ -375,14 +375,18 @@ public class AssessmentController {
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
         LOGGER.info("Save modules: "+assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        assessmentService.saveUserModules(moduleRequests,assessment);
+        if(assessment.isEditable()) {
+            assessmentService.saveUserModules(moduleRequests, assessment);
+        }
         return HttpResponse.ok();
     }
-    @Delete(value = "/user/modules/{assessmentId}")
+    @Put(value = "/user/modules/{assessmentId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse deleteModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> deleteRequest, Authentication authentication){
+    public HttpResponse updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication){
         Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
-        assessmentService.deleteUserModules(deleteRequest,assessment);
+        if(assessment.isEditable()) {
+            assessmentService.updateUserModules(moduleRequest, assessment);
+        }
         return HttpResponse.ok();
     }
 

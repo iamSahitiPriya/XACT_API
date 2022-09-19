@@ -78,9 +78,21 @@ public class AssessmentMasterDataController {
 
     }
 
+    @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<List<AssessmentCategoryDto>> getAssessmentMasterData() {
+        LOGGER.info("Get assessment master data");
+        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
+        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(assessmentCategories)) {
+            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(mapper.map(assessmentCategory, AssessmentCategoryDto.class)));
+        }
+        return HttpResponse.ok(assessmentCategoriesResponse);
+    }
+
     @Get(value = "/categories/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AssessmentCategoryDto>> getAssessmentMasterData(@PathVariable("assessmentId")Integer assessmentId) {
+    public HttpResponse<List<AssessmentCategoryDto>> getUserAssessmentMasterData(@PathVariable("assessmentId")Integer assessmentId) {
         LOGGER.info("Get assessment master data");
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
@@ -89,7 +101,6 @@ public class AssessmentMasterDataController {
         }
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
-
 
 
 

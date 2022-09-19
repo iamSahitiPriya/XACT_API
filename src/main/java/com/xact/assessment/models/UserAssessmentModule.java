@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -14,21 +15,22 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 @Entity
 @Table(name="tbl_user_assessment_modules")
-public class UserAssessmentModule {
+public class UserAssessmentModule implements Serializable {
 
-    @Id
-    @Column(name="id",unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @EmbeddedId
+    @AttributeOverride(name = "assessment", column = @Column(name = "assessment"))
+    @AttributeOverride(name = "module", column = @Column(name = "module"))
+    public AssessmentModuleId assessmentModuleId;
+
 
     @NotNull
     @ManyToOne()
-    @JoinColumn(name = "assessment", referencedColumnName = "assessment_id")
+    @JoinColumn(name = "assessment", referencedColumnName = "assessment_id",insertable = false,updatable = false)
     private Assessment assessment;
 
     @NotNull
     @ManyToOne()
-    @JoinColumn(name="module", referencedColumnName = "module_id")
+    @JoinColumn(name="module", referencedColumnName = "module_id",insertable = false,updatable = false)
     private AssessmentModule module;
 
 }

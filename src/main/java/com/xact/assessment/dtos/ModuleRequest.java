@@ -12,6 +12,5 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ModuleRequest {
-    private Integer id;
     private Integer moduleId;
 }

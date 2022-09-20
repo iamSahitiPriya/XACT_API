@@ -4,6 +4,7 @@
 
 package com.xact.assessment.repositories;
 
+import com.xact.assessment.dtos.AssessmentCategoryDto;
 import com.xact.assessment.models.AssessmentCategory;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.data.annotation.Query;

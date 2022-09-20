@@ -13,8 +13,7 @@ import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -51,22 +50,32 @@ public class AssessmentMasterDataService {
         return categoryRepository.findCategoryById(categoryId);
     }
 
-    public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId){
+    public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
         List<AssessmentCategory> categories = new ArrayList<>();
+        Set<AssessmentCategory> categorySet = new HashSet<>();
         List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
-        for(AssessmentModule assessmentModule:assessmentModules){
+        for (AssessmentModule assessmentModule : assessmentModules) {
             AssessmentCategory category = categoryRepository.findCategoryById(assessmentModule.getCategory().getCategoryId());
+            categorySet.add(category);
+        }
+        for (AssessmentCategory category : categorySet) {
+            Set<AssessmentModule> assessmentModuleSet = new HashSet<>();
+            category.getModules().forEach(module -> {
+                if (assessmentModules.contains(module)) {
+                    assessmentModuleSet.add(module);
+                }
+            });
+            category.setModules(assessmentModuleSet);
             categories.add(category);
         }
         return categories;
     }
 
     public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
-        if(!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
+        if (!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
             AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
             categoryRepository.save(assessmentCategory);
-        }
-        else {
+        } else {
             throw new DuplicateRecordException("Duplicate records are not allowed");
         }
 
@@ -75,7 +84,7 @@ public class AssessmentMasterDataService {
     private boolean checkIfUnique(String categoryName) {
         List<String> categories = categoryRepository.getAllCategories();
         List<String> result = categories.stream()
-                .map(String::toLowerCase).map(String :: trim)
+                .map(String::toLowerCase).map(String::trim)
                 .collect(Collectors.toList());
         return result.contains(categoryName.trim().toLowerCase());
     }
@@ -121,12 +130,12 @@ public class AssessmentMasterDataService {
     }
 
     public void updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
-        if(assessmentCategory.getCategoryName().equals(assessmentCategoryRequest.getCategoryName())){
+        if (assessmentCategory.getCategoryName().equals(assessmentCategoryRequest.getCategoryName())) {
             assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
             assessmentCategory.setActive(assessmentCategoryRequest.isActive());
             assessmentCategory.setComments(assessmentCategoryRequest.getComments());
             categoryRepository.update(assessmentCategory);
-        }else {
+        } else {
             if (!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
                 assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
                 assessmentCategory.setActive(assessmentCategoryRequest.isActive());

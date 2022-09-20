@@ -78,30 +78,25 @@ public class AssessmentMasterDataController {
 
     }
 
-    @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
+    @Get(value = "/categories/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AssessmentCategoryDto>> getAssessmentMasterData() {
+    public HttpResponse<UserAssessmentResponse> getAssessmentMasterData(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get assessment master data");
+        List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+        List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(userAssessmentCategories)) {
+            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(mapper.map(assessmentCategory, AssessmentCategoryDto.class)));
+        }
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
         List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(assessmentCategories)) {
             assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(mapper.map(assessmentCategory, AssessmentCategoryDto.class)));
         }
-        return HttpResponse.ok(assessmentCategoriesResponse);
+        UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
+        userAssessmentResponse.setAssessmentCategories(assessmentCategoriesResponse);
+        userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
+        return HttpResponse.ok(userAssessmentResponse);
     }
-
-    @Get(value = "/categories/{assessmentId}", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AssessmentCategoryDto>> getUserAssessmentMasterData(@PathVariable("assessmentId")Integer assessmentId) {
-        LOGGER.info("Get assessment master data");
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
-        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(assessmentCategories)) {
-            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(mapper.map(assessmentCategory, AssessmentCategoryDto.class)));
-        }
-        return HttpResponse.ok(assessmentCategoriesResponse);
-    }
-
 
 
 }

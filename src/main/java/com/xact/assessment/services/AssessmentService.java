@@ -135,10 +135,7 @@ public class AssessmentService {
 
 
     public Optional<AccessControlRoles> getUserRole(String email) {
-        List<AccessControlList> accessControlLists = (List<AccessControlList>) accessControlRepository.findAll();
-        System.out.println(accessControlLists.size());
         return accessControlRepository.getAccessControlRolesByEmail(email);
-
     }
 
     public Integer getTotalAssessments(String startDate, String endDate) throws ParseException {

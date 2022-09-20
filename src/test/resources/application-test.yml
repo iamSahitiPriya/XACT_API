@@ -29,7 +29,7 @@ datasources:
     username: ${USER}
     password: ''
     dialect: POSTGRES
-#    schema-generate: CREATE_DROP
+    #    schema-generate: CREATE_DROP
     schema: test_schema
     auto-commit: true
 

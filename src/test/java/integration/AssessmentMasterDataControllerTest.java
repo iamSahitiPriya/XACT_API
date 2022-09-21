@@ -11,19 +11,19 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.security.authentication.Authentication;
-import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @MicronautTest
 class AssessmentMasterDataControllerTest {
@@ -31,7 +31,6 @@ class AssessmentMasterDataControllerTest {
     @Inject
     @Client("/")
     HttpClient client; //
-    private final Authentication authentication = Mockito.mock(Authentication.class);
 
     ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
 
@@ -59,255 +58,117 @@ class AssessmentMasterDataControllerTest {
     @Inject
     UserAuthService userAuthService;
 
-    @MockBean(CategoryRepository.class)
-    CategoryRepository categoryRepository() {
-        return mock(CategoryRepository.class);
+
+    @Inject
+    EntityManager entityManager;
+
+    @BeforeEach
+    public void beforeEach() {
+        String userEmail = "dummy@test.com";
+        AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.Admin);
+        accessControlRepository.save(accessControlList);
     }
 
-
-    @MockBean(ModuleRepository.class)
-    ModuleRepository moduleRepository() {
-        return mock(ModuleRepository.class);
+    @AfterEach
+    public void afterEach() {
+        accessControlRepository.deleteAll();
     }
-
-    @MockBean(AssessmentTopicRepository.class)
-    AssessmentTopicRepository topicRepository() {
-        return mock(AssessmentTopicRepository.class);
-    }
-    @MockBean(AssessmentParameterRepository.class)
-    AssessmentParameterRepository parameterRepository() {
-        return mock(AssessmentParameterRepository.class);
-    }
-    @MockBean(AssessmentParameterReferenceRepository.class)
-    AssessmentParameterReferenceRepository parameterReferenceRepository() {
-        return mock(AssessmentParameterReferenceRepository.class);
-    }
-    @MockBean(AssessmentTopicReferenceRepository.class)
-    AssessmentTopicReferenceRepository topicReferenceRepository() {
-        return mock(AssessmentTopicReferenceRepository.class);
-    }
-    @MockBean(AccessControlRepository.class)
-    AccessControlRepository accessControlRepository(){
-        return mock(AccessControlRepository.class);
-    }
-
 
     @Test
     void testGetMasterDataCategoryResponse() throws IOException {
-
-        AssessmentCategory category = getAssessmentCategory();
-
-        List<AssessmentCategory> allCategories = Collections.singletonList(category);
-        when(categoryRepository.findAll()).thenReturn(allCategories);
-        String expectedResponse = resourceFileUtil.getJsonString("dto/get-master-data-category-response.json");
-
         String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/categories")
                 .bearerAuth("anything"), String.class);
 
-        assertEquals(expectedResponse, userResponse);
-
-    }
-
-    private AssessmentCategory getAssessmentCategory() {
-        Set<AssessmentModule> modules = new HashSet<>();
-        Set<AssessmentTopic> topics = new HashSet<>();
-        Set<AssessmentTopicReference> topicReferences = new HashSet<>();
-        Set<AssessmentParameterReference> parameterReferences = new HashSet<>();
-        Set<AssessmentParameter> parameters = new HashSet<>();
-        Set<Question> questions = new HashSet<>();
-
-
-        AssessmentCategory category = new AssessmentCategory();
-        AssessmentModule module = new AssessmentModule();
-        AssessmentTopic topic = new AssessmentTopic();
-        AssessmentTopicReference topicReference = new AssessmentTopicReference();
-        AssessmentParameterReference parameterReference = new AssessmentParameterReference();
-        AssessmentParameter assessmentParameter = new AssessmentParameter();
-        Question question = new Question();
-
-
-        category.setCategoryId(3);
-        category.setCategoryName("My category");
-        category.setActive(true);
-        category.setModules(modules);
-
-
-        module.setModuleId(3);
-        module.setModuleName("My module");
-        module.setCategory(category);
-        module.setTopics(topics);
-        module.setActive(true);
-        modules.add(module);
-
-
-        topic.setTopicId(5);
-        topic.setTopicName("My topic");
-        topic.setModule(module);
-        topic.setReferences(topicReferences);
-        topic.setParameters(parameters);
-
-        topic.setActive(true);
-        topics.add(topic);
-
-        topicReference.setReferenceId(1);
-        topicReference.setRating(Rating.ONE);
-        topicReference.setReference("One Reference topic");
-        topicReference.setTopic(topic);
-        topicReferences.add(topicReference);
-
-        assessmentParameter.setParameterId(1);
-        assessmentParameter.setParameterName("My parameter");
-        assessmentParameter.setTopic(topic);
-        assessmentParameter.setQuestions(questions);
-        assessmentParameter.setReferences(parameterReferences);
-
-        assessmentParameter.setActive(true);
-        parameters.add(assessmentParameter);
-
-        parameterReference.setReferenceId(1);
-        parameterReference.setRating(Rating.ONE);
-        parameterReference.setReference("One Reference parameter");
-        parameterReference.setParameter(assessmentParameter);
-        parameterReferences.add(parameterReference);
-
-        question.setParameter(assessmentParameter);
-        question.setQuestionId(1);
-        question.setQuestionText("My question");
-        questions.add(question);
-
-        return category;
+        assertNotEquals(userResponse,null);
     }
 
     @Test
     void shouldCreateCategory() throws IOException {
-        AssessmentCategory assessmentCategory = new AssessmentCategory();
-        assessmentCategory.setCategoryId(1);
-        assessmentCategory.setCategoryName("Hello");
-        assessmentCategory.setActive(false);
-
-
-        when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
-        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-category-reponse.json");
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/categories", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-
-
+        List<AssessmentCategory> assessmentCategories = categoryRepository.findCategories();
+        AssessmentCategory assessmentCategory = assessmentCategories.get(0);
+        categoryRepository.delete(assessmentCategory);
+        entityManager.getTransaction().commit();
     }
 
     @Test
     void shouldCreateModule() throws IOException {
-        AssessmentModule assessmentModule = new AssessmentModule();
-        assessmentModule.setModuleId(1);
-        assessmentModule.setModuleName("Module");
-        assessmentModule.setActive(false);
-        AssessmentCategory assessmentCategory = new AssessmentCategory();
-        assessmentCategory.setCategoryId(1);
-        assessmentCategory.setCategoryName("Hello");
-        assessmentCategory.setActive(false);
-
-        when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
-        when(categoryRepository.findCategoryById(1)).thenReturn(assessmentCategory);
-        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-module-response.json");
-        System.out.println(dataRequest);
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/modules", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+        List<AssessmentModule> assessmentModules = (List<AssessmentModule>) moduleRepository.findAll();
+        AssessmentModule assessmentModule = assessmentModules.get(assessmentModules.size()-1);
+        moduleRepository.delete(assessmentModule);
+        entityManager.getTransaction().commit();
     }
 
     @Test
     void shouldCreateTopic() throws IOException {
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(1);
-        assessmentTopic.setTopicName("This is a module");
-        assessmentTopic.setActive(false);
-
-        AssessmentModule assessmentModule = new AssessmentModule();
-        assessmentModule.setModuleId(1);
-        assessmentModule.setModuleName("Module");
-        assessmentModule.setActive(false);
-
-        when(moduleRepository.findByModuleId(1)).thenReturn(assessmentModule);
-        when(assessmentTopicRepository.save(assessmentTopic)).thenReturn(assessmentTopic);
-        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String dataRequest = resourceFileUtil.getJsonString("dto/set-topic-response.json");
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/topics", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
+        List<AssessmentTopic> assessmentTopics = (List<AssessmentTopic>) assessmentTopicRepository.findAll();
+        AssessmentTopic assessmentTopic= assessmentTopics.get(assessmentTopics.size()-1);
+        assessmentTopicRepository.delete(assessmentTopic);
+        entityManager.getTransaction().commit();
+
     }
 
     @Test
     void shouldCreateParameter() throws IOException {
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(1);
-        assessmentTopic.setTopicName("This is a module");
-        assessmentTopic.setActive(false);
-
-        AssessmentParameter parameter = new AssessmentParameter();
-        parameter.setParameterId(1);
-        parameter.setParameterName("parameter");
-        parameter.setTopic(assessmentTopic);
-
-        when(assessmentTopicRepository.findById(1)).thenReturn(Optional.of(assessmentTopic));
-        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
-        when(assessmentParameterRepository.save(parameter)).thenReturn(parameter);
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-response.json");
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/parameters", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+        List<AssessmentParameter> assessmentParameters = (List<AssessmentParameter>) assessmentParameterRepository.findAll();
+        AssessmentParameter assessmentParameter = assessmentParameters.get(assessmentParameters.size()-1);
+        assessmentParameterRepository.delete(assessmentParameter);
+        entityManager.getTransaction().commit();
     }
 
     @Test
     void shouldCreateTopicReference() throws IOException {
-        AssessmentTopicReference topicReference = new AssessmentTopicReference();
-        topicReference.setReference("Hello this is a reference");
-        topicReference.setReferenceId(1);
-
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(1);
-        assessmentTopic.setTopicName("This is a module");
-        assessmentTopic.setActive(false);
-
-        when(assessmentTopicRepository.findById(1)).thenReturn(Optional.of(assessmentTopic));
-        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
-        when(assessmentTopicReferenceRepository.save(topicReference)).thenReturn(topicReference);
-        String dataRequest = resourceFileUtil.getJsonString("dto/set-topicReference-response.json");
+        String dataRequest = "[{" + "\"topic\"" + ":" + 56 + "," + "\"rating\"" + ":" + "\"TWO\"" + "," + "\"reference\"" + ":" + "\"This is a reference\"" + "}]";
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/topicReferences", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+        Set<AssessmentTopicReference> assessmentTopicReference =  assessmentTopicRepository.findByTopicId(56).getReferences();
+        for(AssessmentTopicReference assessmentTopicReference1 : assessmentTopicReference) {
+            assessmentTopicReferenceRepository.delete(assessmentTopicReference1);
+        }
+        entityManager.getTransaction().commit();
     }
 
     @Test
     void shouldCreateParameterReference() throws IOException {
-        AssessmentParameterReference parameterReference = new AssessmentParameterReference();
-        parameterReference.setReference("Hello this is a reference");
-        parameterReference.setReferenceId(1);
-
-        AssessmentParameter assessmentParameter = new AssessmentParameter();
-        assessmentParameter.setParameterId(1);
-        assessmentParameter.setParameterName("This is a module");
-        assessmentParameter.setActive(false);
-
-        when(assessmentParameterRepository.findById(1)).thenReturn(Optional.of(assessmentParameter));
-        when(accessControlRepository.getAccessControlRolesByEmail("dummy@test.com")).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
-        when(assessmentParameterReferenceRepository.save(parameterReference)).thenReturn(parameterReference);
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameterReference-response.json");
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/parameterReferences", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+        Set<AssessmentParameterReference> assessmentParameterReference =  assessmentParameterRepository.findByParameterId(52).getReferences();
+        for(AssessmentParameterReference assessmentParameterReference1 : assessmentParameterReference) {
+            assessmentParameterReferenceRepository.delete(assessmentParameterReference1);
+        }
+        entityManager.getTransaction().commit();
 
     }
 

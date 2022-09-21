@@ -67,7 +67,12 @@ public class AssessmentController {
         List<Assessment> assessments = usersAssessmentsService.findAssessments(loggedInUser.getUserEmail());
         List<AssessmentResponse> assessmentResponses = new ArrayList<>();
         if (Objects.nonNull(assessments))
-            assessments.forEach(assessment -> assessmentResponses.add(modelMapper.map(assessment, AssessmentResponse.class)));
+            assessments.forEach(assessment ->
+            {
+                AssessmentResponse assessmentResponse=modelMapper.map(assessment,AssessmentResponse.class);
+                assessmentResponse.setDrafted(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
+                assessmentResponses.add(assessmentResponse);
+              });
         return HttpResponse.ok(assessmentResponses);
     }
 
@@ -80,6 +85,8 @@ public class AssessmentController {
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
+
+        assessmentResponse.setDrafted(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
 
         return HttpResponse.created(assessmentResponse);
     }

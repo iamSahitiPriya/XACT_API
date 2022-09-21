@@ -32,6 +32,8 @@ public class AssessmentResponse {
 
     private String industry;
 
+    private boolean isDrafted;
+
     private List<String> users;
 
     private List<AnswerResponse> answerResponseList;

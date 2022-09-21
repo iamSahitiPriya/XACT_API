@@ -185,4 +185,8 @@ public class AssessmentService {
             userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
             saveUserModules(moduleRequest,assessment);
     }
+
+    public boolean getDraftedStatus(Integer assessmentId) {
+       return  !(userAssessmentModuleRepository.findModuleByAssessment(assessmentId).isEmpty());
+    }
 }

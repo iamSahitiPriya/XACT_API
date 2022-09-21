@@ -181,5 +181,12 @@ class ReportControllerTest {
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
     }
 
+    @Test
+    void shouldGetTemplateReport(){
+        MutableHttpResponse<byte[]> actualResponse = reportController.getReportTemplate();
+        MutableHttpResponse<ReportDataResponse> expectedResponse = HttpResponse.ok();
+        assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
 }
 

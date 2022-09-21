@@ -20,12 +20,14 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import org.apache.commons.io.IOUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,11 +70,6 @@ public class ReportController {
         return HttpResponse.serverError();
     }
 
-    private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
-        return assessmentService.getAssessment(assessmentId, loggedInUser);
-    }
-
     @Get(value = "/sunburst/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<ReportDataResponse> getAssessmentReportData(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
@@ -86,6 +83,29 @@ public class ReportController {
 
         return HttpResponse.ok(reportDataResponse);
 
+    }
+
+    @Get(value = "/template", produces = MediaType.APPLICATION_OCTET_STREAM)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public MutableHttpResponse<byte[]> getReportTemplate() {
+        LOGGER.info("Get report template");
+        String reportName = "Thoughtworks-X-Act-Template.docx";
+        try {
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream is = classloader.getResourceAsStream("templates/Tech_Due_Diligence_Report_Sample.docx");
+            byte[] fileData = IOUtils.toByteArray(is);
+            is.close();
+            return HttpResponse.ok(fileData).header(HttpHeaders.CONTENT_DISPOSITION,
+                    "attachment; filename=" + reportName);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return HttpResponse.serverError();
+        }
+    }
+
+    private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        return assessmentService.getAssessment(assessmentId, loggedInUser);
     }
 
     private void mapToResponseStructure(List<AssessmentCategory> assessmentCategories, List<ReportCategoryResponse> reportCategoryResponseList) {
@@ -152,4 +172,3 @@ public class ReportController {
     }
 
 }
-

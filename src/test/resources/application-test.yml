@@ -33,8 +33,6 @@ datasources:
     schema: test_schema
     auto-commit: true
 
-
-
 flyway:
   datasources:
     default:

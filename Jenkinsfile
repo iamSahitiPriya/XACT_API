@@ -8,6 +8,7 @@ pipeline {
                                 script{
                                        try{
                                           sh "set +e"
+                                          sh 'docker stop $(docker ps -a -q)'
                                           sh 'docker rm $(docker ps -a -q)'
                                           sh "docker run --rm -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common git file://${env.WORKSPACE} --debug"
                                           ERROR_COUNT = sh(returnStdout: true, script: "docker run -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common git file://${env.WORKSPACE} --json | grep -c commit")
@@ -30,6 +31,7 @@ pipeline {
         stage('Postgres Instance') {
                     steps {
                         sh "set +e"
+                        sh 'docker stop $(docker ps -a -q)'
                         sh 'docker rm $(docker ps -a -q)'
                         sh "docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
                     }
@@ -106,11 +108,13 @@ pipeline {
                     cleanWs notFailBuild: true
                 }
         }
-        post {
-                    always {
-                    sh "docker rm $(docker ps -a -q)"
-                    }
-            }
+
     }
+      post {
+                        always {
+                        sh 'docker stop $(docker ps -a -q)'
+                        sh 'docker rm $(docker ps -a -q)'
+                        }
+                }
 
 }

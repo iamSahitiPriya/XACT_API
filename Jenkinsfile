@@ -26,6 +26,14 @@ pipeline {
 
                           }
                 }
+
+        stage('Postgres Instance') {
+                    steps {
+                        sh "set +e"
+                        sh 'docker rm $(docker ps -a -q)'
+                        sh "docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
+                    }
+        }
         stage('Build') {
             steps {
                 sh "aws s3 cp s3://xact-artifacts/ap-south-1-bundle.pem ap-south-1-bundle.pem"
@@ -98,6 +106,11 @@ pipeline {
                     cleanWs notFailBuild: true
                 }
         }
+        post {
+                    always {
+                    sh "docker rm $(docker ps -a -q)"
+                    }
+            }
     }
 
 }

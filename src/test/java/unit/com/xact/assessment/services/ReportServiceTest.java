@@ -34,7 +34,9 @@ class ReportServiceTest {
     TopicService topicService = mock(TopicService.class);
     ParameterService parameterService = mock(ParameterService.class);
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, topicService, parameterService);
+    AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
+
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, topicService, parameterService, assessmentMasterDataService);
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() {

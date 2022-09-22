@@ -33,8 +33,10 @@ public class ReportService {
     private final TopicService topicService;
     private final ParameterService parameterService;
 
+    private final AssessmentMasterDataService assessmentMasterDataService;
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, TopicService topicService, ParameterService parameterService) {
+
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, TopicService topicService, ParameterService parameterService, AssessmentMasterDataService assessmentMasterDataService) {
 
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
@@ -42,8 +44,7 @@ public class ReportService {
         this.categoryRepository = categoryRepository;
         this.topicService = topicService;
         this.parameterService = parameterService;
-
-
+        this.assessmentMasterDataService = assessmentMasterDataService;
     }
 
     public Workbook generateReport(Integer assessmentId) {
@@ -171,7 +172,7 @@ public class ReportService {
 
         Map<String, List<CategoryMaturity>> dataSet = new HashMap<>();
         List<CategoryMaturity> listOfCurrentScores = new ArrayList<>();
-        List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
+        List<AssessmentCategory> assessmentCategoryList = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
             fillInMaturityScore(assessmentCategory, topicLevelAssessments, parameterLevelAssessments);
             CategoryMaturity categoryMaturity = new CategoryMaturity();

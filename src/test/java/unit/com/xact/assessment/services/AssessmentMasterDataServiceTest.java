@@ -6,10 +6,7 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AssessmentParameterReferenceRepository;
-import com.xact.assessment.repositories.AssessmentTopicReferenceRepository;
-import com.xact.assessment.repositories.CategoryRepository;
-import com.xact.assessment.repositories.ModuleRepository;
+import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +28,8 @@ class AssessmentMasterDataServiceTest {
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
     private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository = mock(AssessmentTopicReferenceRepository.class);
     private final AssessmentParameterReferenceRepository assessmentParameterReferenceRepository = mock(AssessmentParameterReferenceRepository.class);
+
+    private final UserAssessmentModuleRepository userAssessmentModuleRepository=mock(UserAssessmentModuleRepository.class);
 
     private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService, assessmentTopicReferenceRepository, parameterService, topicService, userAssessmentModuleRepository, assessmentParameterReferenceRepository);
 

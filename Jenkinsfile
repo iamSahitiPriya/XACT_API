@@ -27,17 +27,9 @@ pipeline {
 
                           }
                 }
-
-        stage('Postgres Instance') {
-                    steps {
-                        sh "set +e"
-                        sh 'docker stop $(docker ps -a -q)'
-                        sh 'docker rm $(docker ps -a -q)'
-                        sh "docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
-                    }
-        }
         stage('Build') {
             steps {
+                sh "docker run --name postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
                 sh "aws s3 cp s3://xact-artifacts/ap-south-1-bundle.pem ap-south-1-bundle.pem"
                 sh "cp ap-south-1-bundle.pem src/main/resources/certs/ap-south-1-bundle.pem"
                 sh './gradlew clean build'
@@ -112,6 +104,7 @@ pipeline {
     }
       post {
                         always {
+                        sh "set +e"
                         sh 'docker stop $(docker ps -a -q)'
                         sh 'docker rm $(docker ps -a -q)'
                         }

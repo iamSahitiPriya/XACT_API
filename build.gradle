@@ -61,12 +61,7 @@ dependencies {
     testImplementation("io.reactivex:rxjava:1.3.8")
     testImplementation("io.reactivex.rxjava3:rxjava:3.1.4")
     testAnnotationProcessor "io.micronaut:micronaut-inject-java"
-    testImplementation("org.junit.jupiter:junit-jupiter-api")
-    testImplementation("io.micronaut.test:micronaut-test-junit5:3.1.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
-    testImplementation("io.micronaut.data:micronaut-data-hibernate-jpa")
-    testRuntimeOnly("com.h2database:h2")
-    testRuntimeOnly("org.postgresql:postgresql")
+
 
 }
 

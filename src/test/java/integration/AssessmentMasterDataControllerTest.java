@@ -90,8 +90,12 @@ class AssessmentMasterDataControllerTest {
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
         List<AssessmentCategory> assessmentCategories = categoryRepository.findCategories();
         AssessmentCategory assessmentCategory = assessmentCategories.get(0);
+
+        assertEquals(assessmentCategories.get(0).getCategoryName(), "Software");
+
         categoryRepository.delete(assessmentCategory);
         entityManager.getTransaction().commit();
     }
@@ -106,6 +110,9 @@ class AssessmentMasterDataControllerTest {
 
         List<AssessmentModule> assessmentModules = (List<AssessmentModule>) moduleRepository.findAll();
         AssessmentModule assessmentModule = assessmentModules.get(assessmentModules.size()-1);
+
+        assertEquals(assessmentModule.getModuleName(),"Module1");
+
         moduleRepository.delete(assessmentModule);
         entityManager.getTransaction().commit();
     }
@@ -120,6 +127,9 @@ class AssessmentMasterDataControllerTest {
 
         List<AssessmentTopic> assessmentTopics = (List<AssessmentTopic>) assessmentTopicRepository.findAll();
         AssessmentTopic assessmentTopic= assessmentTopics.get(assessmentTopics.size()-1);
+
+        assertEquals(assessmentTopic.getTopicName(), "Software");
+
         assessmentTopicRepository.delete(assessmentTopic);
         entityManager.getTransaction().commit();
 
@@ -136,6 +146,9 @@ class AssessmentMasterDataControllerTest {
 
         List<AssessmentParameter> assessmentParameters = (List<AssessmentParameter>) assessmentParameterRepository.findAll();
         AssessmentParameter assessmentParameter = assessmentParameters.get(assessmentParameters.size()-1);
+
+        assertEquals(assessmentParameter.getParameterName(),"Software");
+
         assessmentParameterRepository.delete(assessmentParameter);
         entityManager.getTransaction().commit();
     }
@@ -148,8 +161,13 @@ class AssessmentMasterDataControllerTest {
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
         Set<AssessmentTopicReference> assessmentTopicReference =  assessmentTopicRepository.findByTopicId(56).getReferences();
+
         for(AssessmentTopicReference assessmentTopicReference1 : assessmentTopicReference) {
+            if(assessmentTopicReference1.getReference() != null)
+                assertEquals(assessmentTopicReference1.getReference(), "This is a reference");
+
             assessmentTopicReferenceRepository.delete(assessmentTopicReference1);
         }
         entityManager.getTransaction().commit();
@@ -166,6 +184,9 @@ class AssessmentMasterDataControllerTest {
 
         Set<AssessmentParameterReference> assessmentParameterReference =  assessmentParameterRepository.findByParameterId(52).getReferences();
         for(AssessmentParameterReference assessmentParameterReference1 : assessmentParameterReference) {
+            if(assessmentParameterReference1.getRating().equals(Rating.TWO))
+                assertEquals(assessmentParameterReference1.getReference(), "This is a reference");
+
             assessmentParameterReferenceRepository.delete(assessmentParameterReference1);
         }
         entityManager.getTransaction().commit();

@@ -54,21 +54,23 @@ public class AssessmentMasterDataService {
         List<AssessmentCategory> categories = new ArrayList<>();
         Set<AssessmentCategory> categorySet = new HashSet<>();
         List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
-        for (AssessmentModule assessmentModule : assessmentModules) {
-            AssessmentCategory category = categoryRepository.findCategoryById(assessmentModule.getCategory().getCategoryId());
-            if(category.getIsActive()) {
-                categorySet.add(category);
-            }
-        }
-        for (AssessmentCategory category : categorySet) {
-            Set<AssessmentModule> assessmentModuleSet = new HashSet<>();
-            category.getModules().forEach(module -> {
-                if (assessmentModules.contains(module)) {
-                    assessmentModuleSet.add(module);
+        if(!assessmentModules.isEmpty()) {
+            for (AssessmentModule assessmentModule : assessmentModules) {
+                AssessmentCategory category = categoryRepository.findCategoryById(assessmentModule.getCategory().getCategoryId());
+                if (category.getIsActive()) {
+                    categorySet.add(category);
                 }
-            });
-            category.setModules(assessmentModuleSet);
-            categories.add(category);
+            }
+            for (AssessmentCategory category : categorySet) {
+                Set<AssessmentModule> assessmentModuleSet = new HashSet<>();
+                category.getModules().forEach(module -> {
+                    if (assessmentModules.contains(module)) {
+                        assessmentModuleSet.add(module);
+                    }
+                });
+                category.setModules(assessmentModuleSet);
+                categories.add(category);
+            }
         }
         return categories;
     }

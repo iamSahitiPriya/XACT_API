@@ -34,12 +34,13 @@ public class AssessmentService {
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
 
     private final ModuleRepository moduleRepository;
+    private final AssessmentMasterDataService assessmentMasterDataService;
     private final String datePattern = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
@@ -47,6 +48,7 @@ public class AssessmentService {
 
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
         this.moduleRepository = moduleRepository;
+        this.assessmentMasterDataService = assessmentMasterDataService;
     }
 
     @Transactional
@@ -187,6 +189,7 @@ public class AssessmentService {
     }
 
     public boolean getDraftedStatus(Integer assessmentId) {
-       return  !(userAssessmentModuleRepository.findModuleByAssessment(assessmentId).isEmpty());
+       List<AssessmentCategory> assessmentCategories =  this.assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+       return  !(assessmentCategories.size() == 0);
     }
 }

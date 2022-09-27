@@ -241,7 +241,7 @@ class AssessmentServiceTest {
 
         DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
 
-        when(assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
         assertEquals(2,assessmentService.getTotalAssessments(startDate,endDate));
 
@@ -267,7 +267,7 @@ class AssessmentServiceTest {
 
         DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
 
-        when(assessmentRepository.Total_Active_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.totalActiveAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
         assertEquals(2,assessmentService.getTotalActiveAssessments(startDate,endDate));
 
@@ -321,7 +321,7 @@ class AssessmentServiceTest {
         String endDate = "2022-05-13";
 
 
-        when(assessmentRepository.Total_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
         assertEquals(2,assessmentService.getAdminAssessmentsData(startDate,endDate).size());
 

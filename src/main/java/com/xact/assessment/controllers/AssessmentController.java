@@ -171,6 +171,7 @@ public class AssessmentController {
         assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
         assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
+        assessmentResponse.setDrafted(assessmentService.getDraftedStatus(assessmentId));
         assessmentResponse.setUsers(users);
 
         return HttpResponse.ok(assessmentResponse);

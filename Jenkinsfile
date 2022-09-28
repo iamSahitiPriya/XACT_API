@@ -8,6 +8,7 @@ pipeline {
                                 script{
                                        try{
                                           sh "set +e"
+                                          sh 'docker stop $(docker ps -a -q)'
                                           sh 'docker rm $(docker ps -a -q)'
                                           sh "docker run --rm -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common git file://${env.WORKSPACE} --debug"
                                           ERROR_COUNT = sh(returnStdout: true, script: "docker run -v ${env.WORKSPACE}:${env.WORKSPACE} 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact-common git file://${env.WORKSPACE} --json | grep -c commit")
@@ -28,6 +29,7 @@ pipeline {
                 }
         stage('Build') {
             steps {
+                sh "docker run --name postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
                 sh "aws s3 cp s3://xact-artifacts/ap-south-1-bundle.pem ap-south-1-bundle.pem"
                 sh "cp ap-south-1-bundle.pem src/main/resources/certs/ap-south-1-bundle.pem"
                 sh './gradlew clean build'
@@ -98,6 +100,14 @@ pipeline {
                     cleanWs notFailBuild: true
                 }
         }
+
     }
+      post {
+                        always {
+                        sh "set +e"
+                        sh 'docker stop $(docker ps -a -q)'
+                        sh 'docker rm $(docker ps -a -q)'
+                        }
+                }
 
 }

@@ -10,10 +10,7 @@ import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -313,6 +310,38 @@ class AssessmentMasterDataServiceTest {
         assessmentCategories.add(category);
         assessmentMasterDataService.getUserAssessmentCategories(1);
         when(assessmentMasterDataService.getUserAssessmentCategories(assessmentId)).thenReturn(assessmentCategories);
+
+    }
+
+    @Test
+    void getUserAssessmentCategories() {
+      Integer assessmentId =1;
+      Assessment assessment=new Assessment();
+      assessment.setAssessmentId(assessmentId);
+      Set<AssessmentModule> assessmentModuleSet=new HashSet<>();
+      List<AssessmentModule> assessmentModules1=new ArrayList<>();
+
+      AssessmentCategory assessmentCategory=new AssessmentCategory();
+      assessmentCategory.setCategoryId(1);
+      assessmentCategory.setActive(true);
+
+      AssessmentModule assessmentModule1=new AssessmentModule();
+      assessmentModule1.setModuleId(1);
+      assessmentModule1.setActive(true);
+      assessmentModule1.setCategory(assessmentCategory);
+      assessmentModuleSet.add(assessmentModule1);
+        assessmentCategory.setModules(assessmentModuleSet);
+        assessmentModules1.add(assessmentModule1);
+
+
+      when(userAssessmentModuleRepository.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules1);
+
+      when(categoryRepository.findCategoryById(1)).thenReturn(assessmentCategory);
+
+      assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+
+      verify(userAssessmentModuleRepository).findModuleByAssessment(assessmentId);
+      verify(categoryRepository).findCategoryById(assessmentModule1.getCategory().getCategoryId());
 
     }
 }

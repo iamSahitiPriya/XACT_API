@@ -26,11 +26,9 @@ class AssessmentMasterDataServiceTest {
     private final ParameterService parameterService = mock(ParameterService.class);
     private final QuestionService questionService = mock(QuestionService.class);
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
+    private final UserAssessmentModuleRepository userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
     private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository = mock(AssessmentTopicReferenceRepository.class);
     private final AssessmentParameterReferenceRepository assessmentParameterReferenceRepository = mock(AssessmentParameterReferenceRepository.class);
-
-    private final UserAssessmentModuleRepository userAssessmentModuleRepository=mock(UserAssessmentModuleRepository.class);
-
     private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService, assessmentTopicReferenceRepository, parameterService, topicService, userAssessmentModuleRepository, assessmentParameterReferenceRepository);
 
     @Test
@@ -303,5 +301,18 @@ class AssessmentMasterDataServiceTest {
         when(assessmentParameterReferenceRepository.findById(1)).thenReturn(Optional.of(parameterReference));
         assessmentMasterDataService.updateParameterReferences(1,referencesRequest);
         verify(assessmentParameterReferenceRepository).update(parameterReference);
+    }
+
+    @Test
+    void shouldGetUserAssessmentCategories() {
+        Integer assessmentId = 1;
+        List<AssessmentCategory> assessmentCategories = new ArrayList<>();
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryId(1);
+        category.setCategoryName("Hello");
+        assessmentCategories.add(category);
+        assessmentMasterDataService.getUserAssessmentCategories(1);
+        when(assessmentMasterDataService.getUserAssessmentCategories(assessmentId)).thenReturn(assessmentCategories);
+
     }
 }

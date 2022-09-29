@@ -97,7 +97,7 @@ public class AssessmentController {
             assessment.getOrganisation().setDomain(assessmentRequest.getDomain());
             assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
             assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
-
+            assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
             Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
 

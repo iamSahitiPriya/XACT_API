@@ -229,8 +229,8 @@ class AssessmentServiceTest {
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment1 = new Assessment(1, "Name", organisation, Active, created1, updated1);
-        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
+        Assessment assessment1 = new Assessment(1, "Name","Client Request", organisation, Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name","Client Request", organisation, AssessmentStatus.Completed, created2, updated2);
 
         List<Assessment> assessments=new ArrayList<>();
         assessments.add(assessment1);
@@ -255,8 +255,8 @@ class AssessmentServiceTest {
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment1 = new Assessment(1, "First_Name", organisation,Active, created2, updated2);
-        Assessment assessment2 = new Assessment(2, "Second_Name", organisation,Active, created1, updated1);
+        Assessment assessment1 = new Assessment(1, "First_Name","Client Request", organisation,Active, created2, updated2);
+        Assessment assessment2 = new Assessment(2, "Second_Name","Client Request", organisation,Active, created1, updated1);
 
         List<Assessment> assessments=new ArrayList<>();
         assessments.add(assessment1);
@@ -283,8 +283,8 @@ class AssessmentServiceTest {
 
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment2 = new Assessment(1, "Name", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
-        Assessment assessment1 = new Assessment(2, "Name", organisation,Completed, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
+        Assessment assessment2 = new Assessment(1, "Name","Client Request", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
+        Assessment assessment1 = new Assessment(2, "Name","Client Request", organisation,Completed, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
 
         List<Assessment> assessments=new ArrayList<>();
         assessments.add(assessment1);
@@ -310,8 +310,8 @@ class AssessmentServiceTest {
 
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment2 = new Assessment(1, "Name", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
-        Assessment assessment1 = new Assessment(2, "Name", organisation, Active, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
+        Assessment assessment2 = new Assessment(1, "Name","Client Request", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
+        Assessment assessment1 = new Assessment(2, "Name", "Client Request",organisation, Active, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
 
         List<Assessment> assessments=new ArrayList<>();
         assessments.add(assessment1);

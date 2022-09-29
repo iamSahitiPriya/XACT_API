@@ -40,7 +40,7 @@ class AdminReportServiceTest {
         Date updated1 = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment1 = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment1 = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created1, updated1);
 
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);

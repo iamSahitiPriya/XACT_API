@@ -17,7 +17,7 @@ import java.util.List;
 public class AssessmentResponse {
 
     private Integer assessmentId;
-
+    private String assessmentPurpose;
     private String assessmentName;
 
     private String organisationName;

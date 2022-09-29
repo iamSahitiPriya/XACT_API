@@ -37,6 +37,10 @@ public class Assessment {
     private String assessmentName;
 
     @NotNull
+    @Column(name = "assessment_purpose", nullable = false)
+    private String assessmentPurpose;
+
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "organisation")
     private Organisation organisation;

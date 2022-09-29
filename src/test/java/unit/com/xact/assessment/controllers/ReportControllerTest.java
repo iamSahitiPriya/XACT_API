@@ -55,7 +55,7 @@ class ReportControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -103,7 +103,7 @@ class ReportControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();

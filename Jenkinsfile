@@ -29,7 +29,7 @@ pipeline {
                 }
         stage('Build') {
             steps {
-                sh "docker run --name postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
+                sh "docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
                 sh "aws s3 cp s3://xact-artifacts/ap-south-1-bundle.pem ap-south-1-bundle.pem"
                 sh "cp ap-south-1-bundle.pem src/main/resources/certs/ap-south-1-bundle.pem"
                 sh './gradlew clean build'

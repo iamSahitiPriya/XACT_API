@@ -165,6 +165,7 @@ public class AssessmentController {
         assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
         assessmentResponse.setUsers(users);
+        assessmentResponse.setAssessmentPurpose(assessment.getAssessmentPurpose());
 
         return HttpResponse.ok(assessmentResponse);
     }

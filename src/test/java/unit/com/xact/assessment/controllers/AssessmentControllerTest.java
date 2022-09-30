@@ -59,6 +59,7 @@ class AssessmentControllerTest {
         expectedAssessment.setAssessmentName("xact");
         expectedAssessment.setOrganisationName("abc");
         expectedAssessment.setAssessmentStatus(AssessmentStatusDto.Active);
+        expectedAssessment.setAssessmentPurpose("Client Purpose");
         expectedAssessment.setUpdatedAt(updated);
         HttpResponse<List<AssessmentResponse>> actualAssessments = assessmentController.getAssessments(authentication);
 

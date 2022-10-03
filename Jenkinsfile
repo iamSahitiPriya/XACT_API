@@ -28,7 +28,7 @@ pipeline {
                 }
         stage('Build') {
             steps {
-                sh "docker run --name postgres -e POSTGRES_USER=${USER} -e POSTGRES_PASSWORD=${USER} -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
+                sh "docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
                 sh './gradlew clean build'
             }
         }

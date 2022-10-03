@@ -17,7 +17,7 @@ import java.util.List;
 public interface CategoryRepository extends CrudRepository<AssessmentCategory, Integer> {
 
     @Executable
-    @Query("SELECT category FROM AssessmentCategory category WHERE category.isActive=true")
+    @Query("SELECT category FROM AssessmentCategory category")
     List<AssessmentCategory> findAll();
 
     @Executable

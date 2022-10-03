@@ -57,9 +57,8 @@ public class AssessmentMasterDataService {
         if(!assessmentModules.isEmpty()) {
             for (AssessmentModule assessmentModule : assessmentModules) {
                 AssessmentCategory category = categoryRepository.findCategoryById(assessmentModule.getCategory().getCategoryId());
-                if (category.getIsActive()) {
                     categorySet.add(category);
-                }
+
             }
             for (AssessmentCategory category : categorySet) {
                 Set<AssessmentModule> assessmentModuleSet = new HashSet<>();

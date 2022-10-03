@@ -4,7 +4,6 @@
 
 package integration;
 
-import com.xact.assessment.dtos.UserAssessmentResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.UserAuthService;

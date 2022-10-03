@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
@@ -190,6 +191,7 @@ public class AssessmentService {
 
     public boolean getDraftedStatus(Integer assessmentId) {
        List<AssessmentCategory> assessmentCategories =  this.assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+        assessmentCategories=assessmentCategories.stream().filter(AssessmentCategory::getIsActive).collect(Collectors.toList());
        return  !(assessmentCategories.size() == 0);
     }
 }

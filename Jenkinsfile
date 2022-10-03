@@ -1,7 +1,6 @@
 pipeline {
     agent any
 
-    tools { nodejs "nodejs" }
     stages {
         stage("Security check"){
                           steps{
@@ -29,7 +28,7 @@ pipeline {
                 }
         stage('Build') {
             steps {
-                sh "docker run --name postgres -e POSTGRES_USER=${USER} -e POSTGRES_PASSWORD='' -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
+                sh "docker run --name postgres -e POSTGRES_USER=${USER} -e POSTGRES_PASSWORD=${USER} -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
                 sh './gradlew clean build'
             }
         }
@@ -102,6 +101,13 @@ pipeline {
     }
       post {
                         always {
+                        publishHTML (target : [allowMissing: false,
+                                                                               alwaysLinkToLastBuild: true,
+                                                                               keepAll: true,
+                                                                               reportDir: './build/reports/tests/test',
+                                                                               reportFiles: 'index.html',
+                                                                               reportName: 'Test Report',
+                                                                               reportTitles: 'Test Report'])
                         sh "set +e"
                         sh 'docker stop $(docker ps -a -q)'
                         sh 'docker rm $(docker ps -a -q)'

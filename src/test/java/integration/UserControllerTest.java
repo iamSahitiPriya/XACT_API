@@ -1,35 +1,27 @@
 package integration;
 
-import com.xact.assessment.models.AccessControlRoles;
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentUsers;
-import com.xact.assessment.models.UserId;
+import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AccessControlRepository;
+import com.xact.assessment.repositories.AssessmentRepository;
+import com.xact.assessment.repositories.OrganisationRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.UserAuthService;
+import com.xact.assessment.services.UsersAssessmentsService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
-import io.micronaut.security.authentication.Authentication;
-import io.micronaut.test.annotation.MockBean;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.modelmapper.ModelMapper;
 
+import javax.persistence.EntityManager;
 import java.io.IOException;
-import java.util.Optional;
 
-import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @MicronautTest
 class UserControllerTest {
-    private ModelMapper mapper = new ModelMapper();
 
     @Inject
     @Client("/")
@@ -39,40 +31,63 @@ class UserControllerTest {
     UsersAssessmentsRepository usersAssessmentsRepository;
 
     @Inject
-    AccessControlRepository accessControlRepository;
-    private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
-    private final Authentication authentication = Mockito.mock(Authentication.class);
-    private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
+    AssessmentRepository assessmentRepository;
 
-    @MockBean(UsersAssessmentsRepository.class)
-    UsersAssessmentsRepository usersAssessmentsRepository() {
-        return mock(UsersAssessmentsRepository.class);
-    }
+    @Inject
+    OrganisationRepository organisationRepository;
+
+    @Inject
+    AccessControlRepository accessControlRepository;
+
+    @Inject
+    UsersAssessmentsService usersAssessmentsService;
+
+    @Inject
+    AssessmentService assessmentService;
+
+    @Inject
+    EntityManager entityManager;
 
 
     ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
-    @MockBean(AccessControlRepository.class)
-    AccessControlRepository accessControlRepository() {
-        return mock(AccessControlRepository.class);
-    }
 
+    @AfterEach
+    public void afterEach() {
+        usersAssessmentsRepository.deleteAll();
+        assessmentRepository.deleteAll();
+        accessControlRepository.deleteAll();
+    }
 
     @Test
     void shouldGetUserRole() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
+        assessment.setAssessmentName("new");
+        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+        Organisation organisation = new Organisation();
+        organisation.setSize(5);
+        organisation.setIndustry("new");
+        organisation.setDomain("new");
+        organisation.setOrganisationName("new");
+        assessment.setOrganisation(organisation);
         AssessmentUsers assessmentUsers = new AssessmentUsers();
         UserId userId = new UserId(userEmail, assessment);
-        assessment.setAssessmentId(23);
+
         assessmentUsers.setUserId(userId);
+        assessmentUsers.setRole(AssessmentRole.Owner);
+        AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.Admin);
+
+        assessmentRepository.save(assessment);
+        accessControlRepository.save(accessControlList);
+        usersAssessmentsRepository.save(assessmentUsers);
+        entityManager.getTransaction().commit();
+        entityManager.clear();
 
 
-        when(usersAssessmentsRepository.findByUserEmail(userEmail)).thenReturn(singletonList(assessmentUsers));
-        when(accessControlRepository.getAccessControlRolesByEmail(userEmail)).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-user-role-response.json");
-
         String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/users/roles")
-                .bearerAuth("anything"),String.class);
+                .bearerAuth("anything"), String.class);
         assertEquals(expectedResponse, userResponse);
     }
+
 }

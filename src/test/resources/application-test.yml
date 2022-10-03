@@ -22,13 +22,16 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
 
-#datasources:
-#  default:
-#    url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
-#    driverClassName: org.postgresql.Driver
-#    username: ${USER}
-#    password: ''
-#    dialect: POSTGRES
+datasources:
+  default:
+    url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
+    driverClassName: org.postgresql.Driver
+    username: 'postres'
+    password: 'postgres'
+    dialect: POSTGRES
+    #    schema-generate: CREATE_DROP
+    schema: test_schema
+    auto-commit: true
 
 flyway:
   datasources:
@@ -42,6 +45,7 @@ jpa:
       packages: 'com.xact.assessment.models'
     properties:
       hibernate:
+        default-schema : test_schema
         hbm2ddl:
           auto: validate
         show_sql: true

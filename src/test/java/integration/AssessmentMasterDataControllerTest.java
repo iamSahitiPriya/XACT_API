@@ -32,7 +32,7 @@ class AssessmentMasterDataControllerTest {
     @Inject
     @Client("/")
     HttpClient client; //
-    private final Authentication authentication = Mockito.mock(Authentication.class);
+
 
     ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
 

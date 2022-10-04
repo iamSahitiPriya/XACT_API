@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -155,42 +156,108 @@ class AssessmentMasterDataControllerTest {
 
     @Test
     void shouldCreateTopicReference() throws IOException {
-        String dataRequest = "[{" + "\"topic\"" + ":" + 56 + "," + "\"rating\"" + ":" + "\"TWO\"" + "," + "\"reference\"" + ":" + "\"This is a reference\"" + "}]";
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryName("Category Name 1 Example");
+        assessmentCategory.setActive(true);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleName("Module Name 1 Example");
+        assessmentModule.setCategory(assessmentCategory);
+        assessmentModule.setActive(true);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicName("Topic Name 1 Example");
+        assessmentTopic.setModule(assessmentModule);
+        assessmentTopic.setActive(true);
+
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        assessmentCategory.setModules(Collections.singleton(assessmentModule));
+
+        categoryRepository.save(assessmentCategory);
+        moduleRepository.save(assessmentModule);
+        assessmentTopicRepository.save(assessmentTopic);
+        entityManager.getTransaction().commit();
+        entityManager.clear();
+        entityManager.close();
+
+
+        String dataRequest = "[{" + "\"topic\"" + ":" + assessmentTopic.getTopicId() + "," + "\"rating\"" + ":" + "\"TWO\"" + "," + "\"reference\"" + ":" + "\"This is a reference\"" + "}]";
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/topicReferences", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
-        Set<AssessmentTopicReference> assessmentTopicReference =  assessmentTopicRepository.findByTopicId(56).getReferences();
 
-        for(AssessmentTopicReference assessmentTopicReference1 : assessmentTopicReference) {
-            if(assessmentTopicReference1.getReference() != null)
-                assertEquals(assessmentTopicReference1.getReference(), "This is a reference");
+        Set<AssessmentTopicReference> assessmentTopicReferences = assessmentTopicRepository.findByTopicId(assessmentTopic.getTopicId()).getReferences();
 
-            assessmentTopicReferenceRepository.delete(assessmentTopicReference1);
+        entityManager.getTransaction().begin();
+        for(AssessmentTopicReference assessmentTopicReference : assessmentTopicReferences){
+            if(assessmentTopicReference.getRating().equals(Rating.TWO)){
+                assertEquals(assessmentTopicReference.getReference(),"This is a reference");
+                assessmentTopicReferenceRepository.deleteById(assessmentTopicReference.getReferenceId());
+            }
         }
+        assessmentTopicRepository.deleteById(assessmentTopic.getTopicId());
+        moduleRepository.deleteById(assessmentModule.getModuleId());
+        categoryRepository.deleteById(assessmentCategory.getCategoryId());
         entityManager.getTransaction().commit();
     }
 
     @Test
     void shouldCreateParameterReference() throws IOException {
-        String dataRequest = resourceFileUtil.getJsonString("dto/set-parameterReference-response.json");
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryName("Category Name Example_1");
+        assessmentCategory.setActive(true);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleName("Module Name Example_1");
+        assessmentModule.setCategory(assessmentCategory);
+        assessmentModule.setActive(true);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicName("Topic Name Example_1");
+        assessmentTopic.setModule(assessmentModule);
+        assessmentTopic.setActive(true);
+
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        assessmentCategory.setModules(Collections.singleton(assessmentModule));
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterName("Parameter Name Example_1");
+        assessmentParameter.setTopic(assessmentTopic);
+        assessmentParameter.setActive(true);
+
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
+        categoryRepository.save(assessmentCategory);
+        moduleRepository.save(assessmentModule);
+        assessmentTopicRepository.save(assessmentTopic);
+        assessmentParameterRepository.save(assessmentParameter);
+        entityManager.getTransaction().commit();
+        entityManager.clear();
+        entityManager.close();
+
+        String dataRequest = "[{" + "\"parameter\"" + ":" + assessmentParameter.getParameterId() + "," + "\"rating\"" + ":" + "\"TWO\"" + "," + "\"reference\"" + ":" + "\"This is a reference\"" + "}]";
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/parameterReferences", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
-        Set<AssessmentParameterReference> assessmentParameterReference =  assessmentParameterRepository.findByParameterId(52).getReferences();
+        Set<AssessmentParameterReference> assessmentParameterReference =  assessmentParameterRepository.findByParameterId(assessmentParameter.getParameterId()).getReferences();
+        entityManager.getTransaction().begin();
         for(AssessmentParameterReference assessmentParameterReference1 : assessmentParameterReference) {
-            if(assessmentParameterReference1.getRating().equals(Rating.TWO))
+            if(assessmentParameterReference1.getRating().equals(Rating.TWO)) {
                 assertEquals(assessmentParameterReference1.getReference(), "This is a reference");
-
-            assessmentParameterReferenceRepository.delete(assessmentParameterReference1);
+                assessmentParameterReferenceRepository.deleteById(assessmentParameterReference1.getReferenceId());
+            }
         }
+
+        assessmentParameterRepository.deleteById(assessmentParameter.getParameterId());
+        assessmentTopicRepository.deleteById(assessmentTopic.getTopicId());
+        moduleRepository.deleteById(assessmentModule.getModuleId());
+        categoryRepository.deleteById(assessmentCategory.getCategoryId());
         entityManager.getTransaction().commit();
 
     }
-
 }

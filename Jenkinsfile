@@ -2,6 +2,14 @@ pipeline {
     agent any
 
     stages {
+
+        stage('Prepare') {
+                steps {
+                     sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 730911736748.dkr.ecr.ap-south-1.amazonaws.com'
+
+                }
+        }
+
         stage("Security check"){
                           steps{
                                 script{
@@ -28,7 +36,7 @@ pipeline {
                 }
         stage('Build') {
             steps {
-                sh "docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
+                sh "docker run --name postgres -e POSTGRES_USER=${USER} -e POSTGRES_PASSWORD=${USER} -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
                 sh './gradlew clean build'
             }
         }
@@ -56,7 +64,6 @@ pipeline {
 
         stage('Build & Push to artifactory') {
             steps {
-                sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 730911736748.dkr.ecr.ap-south-1.amazonaws.com'
                 sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${env.GIT_COMMIT}"
                 sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:latest"
 

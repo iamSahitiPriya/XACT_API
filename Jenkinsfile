@@ -101,7 +101,6 @@ pipeline {
                                                        reportFiles: 'index.html',
                                                        reportName: 'Coverage Reports',
                                                        reportTitles: 'Coverage Report'])
-                    cleanWs notFailBuild: true
                 }
         }
 
@@ -118,6 +117,7 @@ pipeline {
                         sh "set +e"
                         sh 'docker stop $(docker ps -a -q)'
                         sh 'docker rm $(docker ps -a -q)'
+                        cleanWs notFailBuild: true
                         }
                 }
 

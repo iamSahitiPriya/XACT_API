@@ -27,7 +27,7 @@ micronaut:
 #    url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
 #    driverClassName: org.postgresql.Driver
 #    username: ${USER}
-#    password: ''
+#    password: ${USER}
 #    dialect: POSTGRES
 
 

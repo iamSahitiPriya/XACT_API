@@ -294,7 +294,7 @@ class AssessmentServiceTest {
         String endDate = "2022-05-13";
 
 
-        when(assessmentRepository.Total_Completed_Assessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.totalCompletedAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
         assertEquals(2,assessmentService.getTotalCompletedAssessments(startDate,endDate));
 

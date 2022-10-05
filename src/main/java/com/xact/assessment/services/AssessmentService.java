@@ -33,7 +33,7 @@ public class AssessmentService {
 
     private final AccessControlRepository accessControlRepository;
 
-   private final String datePattern = "yyyy-MM-dd";
+   private final static String datePattern = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
@@ -157,7 +157,7 @@ public class AssessmentService {
 
     public Integer getTotalCompletedAssessments(String startDate, String endDate) throws ParseException {
         DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
-        List<Assessment> assessmentList = assessmentRepository.Total_Completed_Assessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
+        List<Assessment> assessmentList = assessmentRepository.totalCompletedAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
         return assessmentList.size();
     }
 

@@ -164,7 +164,7 @@ public class AssessmentService {
         return assessmentList.size();
     }
 
-    public void saveUserModules(List<ModuleRequest> moduleRequests, Assessment assessment) {
+    public void saveAssessmentModules(List<ModuleRequest> moduleRequests, Assessment assessment) {
         for (ModuleRequest moduleRequest1 : moduleRequests) {
             UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
             userAssessmentModule.setAssessment(assessment);
@@ -180,12 +180,12 @@ public class AssessmentService {
         return moduleRepository.findByModuleId(moduleId);
     }
 
-    public void updateUserModules(List<ModuleRequest> moduleRequest, Assessment assessment) {
+    public void updateAssessmentModules(List<ModuleRequest> moduleRequest, Assessment assessment) {
             userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
-            saveUserModules(moduleRequest,assessment);
+            saveAssessmentModules(moduleRequest,assessment);
     }
 
-    public AssessmentStateDto getDraftedStatus(Integer assessmentId) {
+    public AssessmentStateDto assessmentState(Integer assessmentId) {
        List<AssessmentCategory> assessmentCategories =  this.assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         assessmentCategories=assessmentCategories.stream().filter(AssessmentCategory::getIsActive).collect(Collectors.toList());
        return  assessmentCategories.size() == 0 ? AssessmentStateDto.Draft : AssessmentStateDto.inProgress;

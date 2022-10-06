@@ -361,7 +361,7 @@ class AssessmentServiceTest {
 
         when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
 
-        assessmentService.saveUserModules(moduleRequests, assessment);
+        assessmentService.saveAssessmentModules(moduleRequests, assessment);
 
         verify(userAssessmentModuleRepository).save(userAssessmentModule);
 
@@ -394,7 +394,7 @@ class AssessmentServiceTest {
 
         when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
 
-        assessmentService.updateUserModules(moduleRequests, assessment);
+        assessmentService.updateAssessmentModules(moduleRequests, assessment);
 
         verify(userAssessmentModuleRepository).save(userAssessmentModule);
     }
@@ -426,7 +426,7 @@ class AssessmentServiceTest {
 
         when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
         doNothing().when(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
-         assessmentService.updateUserModules(moduleRequests,assessment);
+         assessmentService.updateAssessmentModules(moduleRequests,assessment);
 
          verify(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
     }

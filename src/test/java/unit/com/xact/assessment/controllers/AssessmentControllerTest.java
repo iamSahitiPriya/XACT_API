@@ -13,7 +13,6 @@ import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.text.ParseException;
 import java.util.*;
 
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
@@ -1474,7 +1473,7 @@ class AssessmentControllerTest {
         moduleRequests.add(moduleRequest1);
         moduleRequests.add(moduleRequest2);
 
-        doNothing().when(assessmentService).saveUserModules(moduleRequests, assessment);
+        doNothing().when(assessmentService).saveAssessmentModules(moduleRequests, assessment);
 
         HttpResponse actualResponse = assessmentController.saveModules(assessment.getAssessmentId(), moduleRequests, authentication);
 
@@ -1507,8 +1506,8 @@ class AssessmentControllerTest {
         moduleRequests.add(moduleRequest1);
         moduleRequests.add(moduleRequest2);
 
-        doNothing().when(assessmentService).saveUserModules(moduleRequests, assessment);
-        doNothing().when(assessmentService).updateUserModules(moduleRequests,assessment);
+        doNothing().when(assessmentService).saveAssessmentModules(moduleRequests, assessment);
+        doNothing().when(assessmentService).updateAssessmentModules(moduleRequests,assessment);
 
         HttpResponse actualResponse = assessmentController.updateModules(assessment.getAssessmentId(), moduleRequests, authentication);
 

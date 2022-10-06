@@ -4,7 +4,6 @@
 
 package com.xact.assessment.controllers;
 
-import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -21,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
-import java.text.ParseException;
 import java.util.*;
 
 
@@ -70,7 +68,7 @@ public class AssessmentController {
             assessments.forEach(assessment ->
             {
                 AssessmentResponse assessmentResponse=modelMapper.map(assessment,AssessmentResponse.class);
-                assessmentResponse.setAssessmentState(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
+                assessmentResponse.setAssessmentState(assessmentService.assessmentState(assessment.getAssessmentId()));
                 assessmentResponses.add(assessmentResponse);
               });
         return HttpResponse.ok(assessmentResponses);
@@ -86,7 +84,7 @@ public class AssessmentController {
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
 
-        assessmentResponse.setAssessmentState(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
+        assessmentResponse.setAssessmentState(assessmentService.assessmentState(assessment.getAssessmentId()));
 
         return HttpResponse.created(assessmentResponse);
     }
@@ -171,7 +169,7 @@ public class AssessmentController {
         assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
         assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
-        assessmentResponse.setAssessmentState(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
+        assessmentResponse.setAssessmentState(assessmentService.assessmentState(assessment.getAssessmentId()));
         assessmentResponse.setUsers(users);
 
         return HttpResponse.ok(assessmentResponse);
@@ -375,7 +373,7 @@ public class AssessmentController {
         LOGGER.info("Save modules: "+assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if(assessment.isEditable()) {
-            assessmentService.saveUserModules(moduleRequests, assessment);
+            assessmentService.saveAssessmentModules(moduleRequests, assessment);
         }
         return HttpResponse.ok();
     }
@@ -384,7 +382,7 @@ public class AssessmentController {
     public HttpResponse updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication){
         Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
         if(assessment.isEditable()) {
-            assessmentService.updateUserModules(moduleRequest, assessment);
+            assessmentService.updateAssessmentModules(moduleRequest, assessment);
         }
         return HttpResponse.ok();
     }

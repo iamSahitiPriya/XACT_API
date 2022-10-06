@@ -26,6 +26,7 @@ public class ReportService {
 
     private static final String FORMULA_STRING = "=-+@";
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
+
     private final AnswerService answerService;
     private final ChartService chartService;
     private final CategoryRepository categoryRepository;
@@ -35,8 +36,10 @@ public class ReportService {
 
     private final AssessmentMasterDataService assessmentMasterDataService;
 
+    private final AssessmentService assessmentService;
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, TopicService topicService, ParameterService parameterService, AssessmentMasterDataService assessmentMasterDataService) {
+
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, TopicService topicService, ParameterService parameterService, AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService) {
 
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
@@ -45,6 +48,7 @@ public class ReportService {
         this.topicService = topicService;
         this.parameterService = parameterService;
         this.assessmentMasterDataService = assessmentMasterDataService;
+        this.assessmentService = assessmentService;
     }
 
     public Workbook generateReport(Integer assessmentId) {
@@ -58,24 +62,23 @@ public class ReportService {
         return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap, parameterLevelRecommendationMap, assessmentId);
     }
 
-    public List<AssessmentCategory> generateSunburstData(Integer assessmentId){
+    public List<AssessmentCategory> generateSunburstData(Integer assessmentId) {
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
         List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
-        for (AssessmentCategory assessmentCategory : assessmentCategoryList){
-            fillInMaturityScore(assessmentCategory,topicAssessmentData,parameterAssessmentData);
+        for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
+            fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData);
         }
         return assessmentCategoryList;
-
 
 
     }
 
     public HashMap<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
-        HashMap<Integer,List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = new HashMap<>();
-        List <ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
-        for(ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
-            List<ParameterLevelRecommendation> parameterLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId,parameterLevelRecommendation.getParameter().getParameterId());
+        HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = new HashMap<>();
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
+        for (ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
+            List<ParameterLevelRecommendation> parameterLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId, parameterLevelRecommendation.getParameter().getParameterId());
             parameterLevelRecommendationList.addAll(parameterLevelRecommendationList1);
             parameterLevelRecommendationMap.put(parameterLevelRecommendation.getParameter().getParameterId(), parameterLevelRecommendationList1);
 
@@ -98,7 +101,7 @@ public class ReportService {
     private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId) {
         Workbook workbook = new XSSFWorkbook();
 
-        writeReport(answers, parameterLevelAssessments, topicLevelAssessments, topicLevelRecommendations, parameterLevelRecommendations, workbook);
+        writeReport(answers, parameterLevelAssessments, topicLevelAssessments, topicLevelRecommendations, parameterLevelRecommendations, workbook, assessmentId);
 
         createDataAndGenerateChart(workbook, assessmentId, parameterLevelAssessments, topicLevelAssessments);
 
@@ -106,61 +109,61 @@ public class ReportService {
     }
 
 
-    private void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook) {
+    private void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook, Integer assessmentId) {
         for (Answer answer : answers) {
-            writeAnswerRow(workbook, answer);
+            writeAnswerRow(workbook, answer,assessmentId);
         }
-        if(!parameterAssessments.isEmpty()) {
+        if (!parameterAssessments.isEmpty()) {
             for (ParameterLevelAssessment parameterLevelAssessment : parameterAssessments) {
                 List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterLevelRecommendations.get(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
                 if (parameterLevelRecommendationList != null) {
                     parameterLevelRecommendations.remove(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
-                    writeParameterRow(workbook, parameterLevelAssessment, parameterLevelRecommendationList);
+                    writeParameterRow(workbook, parameterLevelAssessment, parameterLevelRecommendationList,assessmentId);
                 } else {
-                    writeParameterRow(workbook, parameterLevelAssessment, new ArrayList<>());
+                    writeParameterRow(workbook, parameterLevelAssessment, new ArrayList<>(),assessmentId);
                 }
 
             }
-        }
-        else {
+        } else {
             for (Map.Entry<Integer, List<ParameterLevelRecommendation>> entry : parameterLevelRecommendations.entrySet()) {
                 Integer key = entry.getKey();
                 AssessmentParameter assessmentParameter = parameterService.getParameter(key).orElse(new AssessmentParameter());
                 AssessmentTopic assessmentTopic = assessmentParameter.getTopic();
                 AssessmentModule assessmentModule = assessmentTopic.getModule();
-                List<ParameterLevelRecommendation> parameterLevelRecommendationList = entry.getValue();
-                AssessmentCategory category = assessmentModule.getCategory();
-                Sheet sheet = getMatchingSheet(workbook, category);
+                if (assessmentService.findById(assessmentModule, assessmentId)) {
+                    List<ParameterLevelRecommendation> parameterLevelRecommendationList = entry.getValue();
+                    AssessmentCategory category = assessmentModule.getCategory();
+                    Sheet sheet = getMatchingSheet(workbook, category);
+                    generateHeaderIfNotExist(sheet, workbook);
+                    writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, assessmentParameter, "", parameterLevelRecommendationList);
 
-                generateHeaderIfNotExist(sheet, workbook);
-                writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, assessmentParameter, "", parameterLevelRecommendationList);
-
+                }
             }
         }
-        if(!topicLevelAssessments.isEmpty()) {
+        if (!topicLevelAssessments.isEmpty()) {
             for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
                 List<TopicLevelRecommendation> topicLevelRecommendationList = topicLevelRecommendations.get(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
                 if (topicLevelRecommendationList != null) {
                     topicLevelRecommendations.remove(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
-                    writeTopicRow(workbook, topicLevelAssessment, topicLevelRecommendationList);
+                    writeTopicRow(workbook, topicLevelAssessment, topicLevelRecommendationList,assessmentId);
                 } else {
-                    writeTopicRow(workbook, topicLevelAssessment, new ArrayList<>());
+                    writeTopicRow(workbook, topicLevelAssessment, new ArrayList<>(),assessmentId);
                 }
 
             }
-        }
-        else {
+        } else {
             for (Map.Entry<Integer, List<TopicLevelRecommendation>> entry : topicLevelRecommendations.entrySet()) {
                 Integer key = entry.getKey();
                 AssessmentTopic assessmentTopic = topicService.getTopic(key).orElse(new AssessmentTopic());
                 AssessmentModule assessmentModule = assessmentTopic.getModule();
-                List<TopicLevelRecommendation> topicLevelRecommendationList = entry.getValue();
-                AssessmentCategory category = assessmentModule.getCategory();
-
-                Sheet sheet = getMatchingSheet(workbook, category);
-                generateHeaderIfNotExist(sheet, workbook);
-                writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, "", topicLevelRecommendationList);
-
+                System.out.println(assessmentService.findById(assessmentModule, assessmentId));
+                if (assessmentService.findById(assessmentModule, assessmentId)) {
+                    List<TopicLevelRecommendation> topicLevelRecommendationList = entry.getValue();
+                    AssessmentCategory category = assessmentModule.getCategory();
+                    Sheet sheet = getMatchingSheet(workbook, category);
+                    generateHeaderIfNotExist(sheet, workbook);
+                    writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, "", topicLevelRecommendationList);
+                }
             }
         }
 
@@ -214,53 +217,59 @@ public class ReportService {
         drawing.createPicture(anchor, pictureIdx);
     }
 
-    private void writeTopicRow(Workbook workbook, TopicLevelAssessment topicLevelAssessment, List<TopicLevelRecommendation> topicLevelRecommendations) {
+    private void writeTopicRow(Workbook workbook, TopicLevelAssessment topicLevelAssessment, List<TopicLevelRecommendation> topicLevelRecommendations,Integer assessmentId) {
 
         String rating = String.valueOf(topicLevelAssessment.getRating());
         AssessmentTopic topic = topicLevelAssessment.getTopicLevelId().getTopic();
         AssessmentModule module = topic.getModule();
-        AssessmentCategory category = module.getCategory();
-        Sheet sheet = getMatchingSheet(workbook, category);
+        if (assessmentService.findById(module, assessmentId)) {
+            AssessmentCategory category = module.getCategory();
+            Sheet sheet = getMatchingSheet(workbook, category);
 
-        generateHeaderIfNotExist(sheet, workbook);
+            generateHeaderIfNotExist(sheet, workbook);
 
-        writeDataOnSheet(workbook, sheet, module, topic, rating, topicLevelRecommendations);
+            writeDataOnSheet(workbook, sheet, module, topic, rating, topicLevelRecommendations);
+        }
     }
 
-    private void writeParameterRow(Workbook workbook, ParameterLevelAssessment parameterLevelAssessment, List<ParameterLevelRecommendation> parameterLevelRecommendations) {
+    private void writeParameterRow(Workbook workbook, ParameterLevelAssessment parameterLevelAssessment, List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
         String rating = String.valueOf(parameterLevelAssessment.getRating());
         AssessmentParameter parameter = parameterLevelAssessment.getParameterLevelId().getParameter();
         AssessmentTopic topic = parameter.getTopic();
         AssessmentModule module = topic.getModule();
-        AssessmentCategory category = module.getCategory();
+        if (assessmentService.findById(module, assessmentId)) {
+            AssessmentCategory category = module.getCategory();
 
-        Sheet sheet = getMatchingSheet(workbook, category);
+            Sheet sheet = getMatchingSheet(workbook, category);
 
-        generateHeaderIfNotExist(sheet, workbook);
-        writeDataOnSheet(workbook, sheet, module, topic, parameter, rating, parameterLevelRecommendations);
+            generateHeaderIfNotExist(sheet, workbook);
+            writeDataOnSheet(workbook, sheet, module, topic, parameter, rating, parameterLevelRecommendations);
+        }
     }
 
-    private void writeAnswerRow(Workbook workbook, Answer answer) {
+    private void writeAnswerRow(Workbook workbook, Answer answer,Integer assessmentId) {
         Question question = answer.getAnswerId().getQuestion();
         AssessmentParameter parameter = question.getParameter();
         AssessmentTopic topic = parameter.getTopic();
         AssessmentModule module = topic.getModule();
-        AssessmentCategory category = module.getCategory();
+        if (assessmentService.findById(module, assessmentId)) {
+            AssessmentCategory category = module.getCategory();
 
-        Sheet sheet = getMatchingSheet(workbook, category);
-        generateHeaderIfNotExist(sheet, workbook);
-        writeDataOnSheet(workbook, sheet,
-                module,
-                topic,
-                BLANK_STRING,
-                new TopicLevelRecommendation(),
-                0,
-                parameter,
-                BLANK_STRING,
-                new ParameterLevelRecommendation(),
-                0,
-                question.getQuestionText(),
-                answer.getAnswer());
+            Sheet sheet = getMatchingSheet(workbook, category);
+            generateHeaderIfNotExist(sheet, workbook);
+            writeDataOnSheet(workbook, sheet,
+                    module,
+                    topic,
+                    BLANK_STRING,
+                    new TopicLevelRecommendation(),
+                    0,
+                    parameter,
+                    BLANK_STRING,
+                    new ParameterLevelRecommendation(),
+                    0,
+                    question.getQuestionText(),
+                    answer.getAnswer());
+        }
     }
 
 

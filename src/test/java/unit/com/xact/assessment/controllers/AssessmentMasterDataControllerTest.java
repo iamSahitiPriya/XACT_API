@@ -35,7 +35,7 @@ class AssessmentMasterDataControllerTest {
         category.setCategoryId(3);
         category.setCategoryName("My category");
         List<AssessmentCategory> allCategories = Collections.singletonList(category);
-        when(assessmentMasterDataService.getAllCategories()).thenReturn(allCategories);
+        when(assessmentMasterDataService.getCategories()).thenReturn(allCategories);
 
         HttpResponse<UserAssessmentResponse> userAssessmentResponseHttpResponse = assessmentMasterDataController.getAssessmentMasterData(assessment.getAssessmentId());
 

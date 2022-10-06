@@ -193,4 +193,10 @@ public class AssessmentService {
         assessmentCategories=assessmentCategories.stream().filter(AssessmentCategory::getIsActive).collect(Collectors.toList());
        return  !(assessmentCategories.size() == 0);
     }
+    public boolean findById(AssessmentModule assessmentModule, Integer assessmentId){
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElse(new Assessment());
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment,assessmentModule);
+        return userAssessmentModuleRepository.existsById(assessmentModuleId);
+    }
+
 }

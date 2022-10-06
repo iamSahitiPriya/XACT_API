@@ -35,8 +35,10 @@ class ReportServiceTest {
     ParameterService parameterService = mock(ParameterService.class);
 
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
+    AssessmentService assessmentService = mock(AssessmentService.class);
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, topicService, parameterService, assessmentMasterDataService);
+
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, topicService, parameterService, assessmentMasterDataService, assessmentService);
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() {
@@ -122,6 +124,7 @@ class ReportServiceTest {
         parameterLevelRecommendationList.add(parameterLevelRecommendation1);
 
         parameterRecommendationMap.put(parameter.getParameterId(), parameterLevelRecommendationList);
+        when(assessmentService.findById(module,assessmentId)).thenReturn(true);
 
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
@@ -238,6 +241,7 @@ class ReportServiceTest {
         parameterLevelRecommendationList.add(parameterLevelRecommendation1);
 
         parameterRecommendationMap.put(parameter.getParameterId(), parameterLevelRecommendationList);
+        when(assessmentService.findById(module,assessmentId)).thenReturn(true);
 
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
@@ -325,7 +329,6 @@ class ReportServiceTest {
 
         topicLevelRecommendationList.add(topicLevelRecommendation);
         topicLevelRecommendationList.add(topicLevelRecommendation1);
-
         topicRecommendationMap.put(topic.getTopicId(), topicLevelRecommendationList);
 
         HashMap<Integer, List<ParameterLevelRecommendation>> parameterRecommendationMap = new HashMap<>();
@@ -351,7 +354,7 @@ class ReportServiceTest {
 
         parameterRecommendationMap.put(parameter.getParameterId(), parameterLevelRecommendationList);
 
-
+        when(assessmentService.findById(module,assessmentId)).thenReturn(true);
         when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
         when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(parameterLevelRecommendationList);
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId,parameter.getParameterId())).thenReturn(parameterLevelRecommendationList);
@@ -443,6 +446,7 @@ class ReportServiceTest {
 
         List<TopicLevelAssessment> topicLevelAssessments = new ArrayList<>();
         topicLevelAssessments.add(topicLevelAssessment);
+        when(assessmentService.findById(assessmentModule,assessment.getAssessmentId())).thenReturn(true);
 
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(topicLevelAssessments);
         when(categoryRepository.findAll()).thenReturn(assessmentCategories);

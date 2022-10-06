@@ -67,8 +67,15 @@ public class AssessmentController {
         if (Objects.nonNull(assessments))
             assessments.forEach(assessment ->
             {
+                List<String> users = assessmentService.getAssessmentUsers(assessment.getAssessmentId());
                 AssessmentResponse assessmentResponse=modelMapper.map(assessment,AssessmentResponse.class);
                 assessmentResponse.setAssessmentState(assessmentService.assessmentState(assessment.getAssessmentId()));
+                assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
+                assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
+                assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
+                assessmentResponse.setUsers(users);
+
+                assessmentResponse.setDrafted(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
                 assessmentResponses.add(assessmentResponse);
               });
         return HttpResponse.ok(assessmentResponses);

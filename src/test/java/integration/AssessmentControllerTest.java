@@ -111,7 +111,7 @@ class AssessmentControllerTest {
 
 
         String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() +"," +"\"assessmentName\"" +  ":" +"\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" +"\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" +  ":" + assessment.getUpdatedAt().getTime() + "}]";
+                "\"organisationName\"" + ":" +"\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" +  ":" + assessment.getUpdatedAt().getTime() + "," +"\"assessmentState\"" + ":" + "\"Draft\""+ "}]";
 
         assertEquals(expectedResponse,assessmentResponse);
 
@@ -192,7 +192,7 @@ class AssessmentControllerTest {
         entityManager.getTransaction().commit();
 
         String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() +"," +"\"assessmentName\"" +  ":" +"\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" +"\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" +  ":" + assessment.getUpdatedAt().getTime() + "," +"\"teamSize\"" + ":" + 10 +"," +"\"domain\"" + ":" + "\"Telecom\"" + "," +"\"industry\"" + ":" + "\"IT\"" +"," +
+                "\"organisationName\"" + ":" +"\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" +  ":" + assessment.getUpdatedAt().getTime() + "," +"\"teamSize\"" + ":" + 10 +"," +"\"domain\"" + ":" + "\"Telecom\"" + "," +"\"industry\"" + ":" + "\"IT\"" +"," +"\"assessmentState\"" + ":" + "\"Draft\""+","+
                 "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" +  ":" + 1 + "," + "\"answer\"" + ":" + "\"answer\"" +  "}" + "]" + "," +
                 "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" +  ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
                 "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\""+  ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," +

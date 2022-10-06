@@ -22,9 +22,9 @@ public class GlobalErrorResponseProcessor implements ErrorResponseProcessor<Http
     private final Logger LOGGER = LoggerFactory.getLogger(GlobalErrorResponseProcessor.class);
 
     @Override
-    public MutableHttpResponse processResponse(ErrorContext errorContext, MutableHttpResponse baseResponse) {
+    public MutableHttpResponse<HttpResponse> processResponse(ErrorContext errorContext, MutableHttpResponse baseResponse) {
         LOGGER.error("URI: {}", errorContext.getRequest().getUri());
         LOGGER.error("Exception: {}", errorContext.getRootCause());
-        return baseResponse;
+        return HttpResponse.status(baseResponse.status());
     }
 }

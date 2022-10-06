@@ -378,7 +378,7 @@ public class AssessmentController {
         return HttpResponse.ok(adminAssessmentResponse);
     }
 
-    @Post(value = "/user/modules/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
         LOGGER.info("Save modules: "+assessmentId);
@@ -388,7 +388,7 @@ public class AssessmentController {
         }
         return HttpResponse.ok();
     }
-    @Put(value = "/user/modules/{assessmentId}")
+    @Put(value = "/{assessmentId}/modules")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication){
         Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);

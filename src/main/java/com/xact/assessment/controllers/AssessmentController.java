@@ -367,16 +367,7 @@ public class AssessmentController {
     }
 
 
-    @Get(value = "/admin/{startDate}/{endDate}")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    @AdminAuth
-    public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, Authentication authentication) throws ParseException {
-        AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
-        adminAssessmentResponse.setTotalAssessments(assessmentService.getTotalAssessments(startDate, endDate));
-        adminAssessmentResponse.setTotalActiveAssessments(assessmentService.getTotalActiveAssessments(startDate, endDate));
-        adminAssessmentResponse.setTotalCompleteAssessments(assessmentService.getTotalCompletedAssessments(startDate, endDate));
-        return HttpResponse.ok(adminAssessmentResponse);
-    }
+
 
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)

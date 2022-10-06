@@ -70,7 +70,7 @@ public class AssessmentController {
             assessments.forEach(assessment ->
             {
                 AssessmentResponse assessmentResponse=modelMapper.map(assessment,AssessmentResponse.class);
-                assessmentResponse.setDrafted(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
+                assessmentResponse.setAssessmentState(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
                 assessmentResponses.add(assessmentResponse);
               });
         return HttpResponse.ok(assessmentResponses);
@@ -86,7 +86,7 @@ public class AssessmentController {
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
 
-        assessmentResponse.setDrafted(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
+        assessmentResponse.setAssessmentState(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
 
         return HttpResponse.created(assessmentResponse);
     }
@@ -171,7 +171,7 @@ public class AssessmentController {
         assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
         assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
-        assessmentResponse.setDrafted(assessmentService.getDraftedStatus(assessmentId));
+        assessmentResponse.setAssessmentState(assessmentService.getDraftedStatus(assessment.getAssessmentId()));
         assessmentResponse.setUsers(users);
 
         return HttpResponse.ok(assessmentResponse);

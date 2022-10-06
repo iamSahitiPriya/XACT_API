@@ -32,7 +32,7 @@ public class AssessmentResponse {
 
     private String industry;
 
-    private boolean isDrafted;
+    private AssessmentStateDto assessmentState;
 
     private List<String> users;
 

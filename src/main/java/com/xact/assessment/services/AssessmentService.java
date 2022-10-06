@@ -4,10 +4,7 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentRequest;
-import com.xact.assessment.dtos.ModuleRequest;
-import com.xact.assessment.dtos.UserDto;
-import com.xact.assessment.dtos.UserRole;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
@@ -188,15 +185,14 @@ public class AssessmentService {
             saveUserModules(moduleRequest,assessment);
     }
 
-    public boolean getDraftedStatus(Integer assessmentId) {
+    public AssessmentStateDto getDraftedStatus(Integer assessmentId) {
        List<AssessmentCategory> assessmentCategories =  this.assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         assessmentCategories=assessmentCategories.stream().filter(AssessmentCategory::getIsActive).collect(Collectors.toList());
-       return  !(assessmentCategories.size() == 0);
+       return  assessmentCategories.size() == 0 ? AssessmentStateDto.Draft : AssessmentStateDto.inProgress;
     }
     public boolean findById(AssessmentModule assessmentModule, Integer assessmentId){
         Assessment assessment = assessmentRepository.findById(assessmentId).orElse(new Assessment());
         AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment,assessmentModule);
         return userAssessmentModuleRepository.existsById(assessmentModuleId);
     }
-
 }

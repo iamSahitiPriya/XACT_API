@@ -820,7 +820,7 @@ class AssessmentControllerTest {
 
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-admin-assessments-response.json");
 
-        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/admin/1/2022-01-13/2022-05-13")
+        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/admin/2022-01-13/2022-05-13")
                 .bearerAuth("anything"), String.class);
 
         assertEquals(expectedResponse, assessmentResponse);

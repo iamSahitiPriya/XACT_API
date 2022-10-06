@@ -367,7 +367,7 @@ public class AssessmentController {
     }
 
 
-    @Get(value = "/admin/{assessmentId}/{startDate}/{endDate}")
+    @Get(value = "/admin/{startDate}/{endDate}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @AdminAuth
     public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, Authentication authentication) throws ParseException {

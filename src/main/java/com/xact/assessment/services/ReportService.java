@@ -448,24 +448,6 @@ public class ReportService {
     }
 
 
-    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
-            topic, String topicRating, String topicRecommendation, AssessmentParameter parameter, String paramRating, String
-                                          paramRecommendation, String questionText, String answer) {
-        Row row = sheet.createRow(sheet.getLastRowNum() + 1);
-
-        CellStyle style = workbook.createCellStyle();
-        style.setQuotePrefixed(true);
-        createStyledCell(row, 0, module.getModuleName(), style);
-        createStyledCell(row, 1, topic.getTopicName(), style);
-        createStyledCell(row, 2, topicRating, style);
-        createStyledCell(row, 3, topicRecommendation, style);
-        createStyledCell(row, 4, parameter.getParameterName(), style);
-        createStyledCell(row, 5, paramRating, style);
-        createStyledCell(row, 6, paramRecommendation, style);
-        createStyledCell(row, 7, questionText, style);
-        createStyledCell(row, 8, answer, style);
-    }
-
     private void fillInMaturityScore(AssessmentCategory assessmentCategory, List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments) {
         for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
             for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {

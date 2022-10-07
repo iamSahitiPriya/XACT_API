@@ -1454,7 +1454,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName","Client Request" ,organisation, AssessmentStatus.Active, created, updated);
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
@@ -1487,7 +1487,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Request",organisation, AssessmentStatus.Active, created, updated);
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";

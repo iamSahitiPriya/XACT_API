@@ -185,7 +185,7 @@ public class AssessmentService {
             saveAssessmentModules(moduleRequest,assessment);
     }
 
-    public AssessmentStateDto assessmentState(Integer assessmentId) {
+    public AssessmentStateDto getAssessmentState(Integer assessmentId) {
        List<AssessmentCategory> assessmentCategories =  this.assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         assessmentCategories=assessmentCategories.stream().filter(AssessmentCategory::getIsActive).collect(Collectors.toList());
        return  assessmentCategories.size() == 0 ? AssessmentStateDto.Draft : AssessmentStateDto.inProgress;

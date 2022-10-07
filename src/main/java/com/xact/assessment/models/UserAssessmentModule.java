@@ -14,7 +14,7 @@ import java.io.Serializable;
 @Introspected
 @EqualsAndHashCode
 @Entity
-@Table(name="tbl_user_assessment_modules")
+@Table(name="tbl_assessment_modules")
 public class UserAssessmentModule implements Serializable {
 
     @EmbeddedId

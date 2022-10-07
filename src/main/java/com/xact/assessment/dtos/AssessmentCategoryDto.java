@@ -19,6 +19,7 @@ public class AssessmentCategoryDto implements Comparable<AssessmentCategoryDto> 
 
     private Integer categoryId;
     private String categoryName;
+    private boolean active;
     private SortedSet<AssessmentModuleDto> modules;
 
 

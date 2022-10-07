@@ -32,6 +32,8 @@ public class AssessmentResponse {
 
     private String industry;
 
+    private AssessmentStateDto assessmentState;
+
     private List<String> users;
 
     private List<AnswerResponse> answerResponseList;

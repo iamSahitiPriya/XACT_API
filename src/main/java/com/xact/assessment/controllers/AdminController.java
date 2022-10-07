@@ -8,6 +8,7 @@ import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.AssessmentService;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -73,8 +75,11 @@ public class AdminController {
     }
     private final AssessmentMasterDataService assessmentMasterDataService;
 
-    public AdminController(AssessmentMasterDataService assessmentMasterDataService) {
+    private final AssessmentService assessmentService;
+
+    public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService) {
         this.assessmentMasterDataService = assessmentMasterDataService;
+        this.assessmentService = assessmentService;
     }
 
 
@@ -202,6 +207,17 @@ public class AdminController {
         assessmentMasterDataService.updateParameterReferences(referenceId, parameterReferencesRequest);
         return HttpResponse.ok();
 
+    }
+
+    @Get(value = "/assessments/{startDate}/{endDate}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    @AdminAuth
+    public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, Authentication authentication) throws ParseException {
+        AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
+        adminAssessmentResponse.setTotalAssessments(assessmentService.getTotalAssessments(startDate, endDate));
+        adminAssessmentResponse.setTotalActiveAssessments(assessmentService.getTotalActiveAssessments(startDate, endDate));
+        adminAssessmentResponse.setTotalCompleteAssessments(assessmentService.getTotalCompletedAssessments(startDate, endDate));
+        return HttpResponse.ok(adminAssessmentResponse);
     }
 
     private AssessmentCategory getCategory(Integer categoryId) {

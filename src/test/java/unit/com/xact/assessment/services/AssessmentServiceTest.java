@@ -5,12 +5,12 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.AssessmentRequest;
+import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AccessControlRepository;
-import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.repositories.UsersAssessmentsRepository;
+import com.xact.assessment.repositories.*;
+import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +32,10 @@ class AssessmentServiceTest {
     private AssessmentRepository assessmentRepository;
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
+    private AssessmentMasterDataService assessmentMasterDataService;
+
+    private UserAssessmentModuleRepository userAssessmentModuleRepository;
+    private ModuleRepository moduleRepository;
 
     @BeforeEach
     public void beforeEach() {
@@ -39,7 +43,9 @@ class AssessmentServiceTest {
         assessmentRepository = mock(AssessmentRepository.class);
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
         accessControlRepository = mock(AccessControlRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository);
+        moduleRepository = mock(ModuleRepository.class);
+        userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository, assessmentMasterDataService);
     }
 
     @Test
@@ -129,7 +135,7 @@ class AssessmentServiceTest {
 
         Assessment actualAssessment = assessmentService.finishAssessment(assessment);
 
-        assertEquals(AssessmentStatus.Completed,actualAssessment.getAssessmentStatus());
+        assertEquals(AssessmentStatus.Completed, actualAssessment.getAssessmentStatus());
     }
 
     @Test
@@ -153,7 +159,7 @@ class AssessmentServiceTest {
 
         Assessment actualAssessment = assessmentService.reopenAssessment(assessment);
 
-        assertEquals( Active,actualAssessment.getAssessmentStatus());
+        assertEquals(Active, actualAssessment.getAssessmentStatus());
     }
 
     @Test
@@ -232,18 +238,18 @@ class AssessmentServiceTest {
         Assessment assessment1 = new Assessment(1, "Name", organisation, Active, created1, updated1);
         Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
 
-        List<Assessment> assessments=new ArrayList<>();
+        List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
         assessments.add(assessment2);
 
         String startDate = "2022-10-13";
         String endDate = "2022-05-13";
 
-        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         when(assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
-        assertEquals(2,assessmentService.getTotalAssessments(startDate,endDate));
+        assertEquals(2, assessmentService.getTotalAssessments(startDate, endDate));
 
     }
 
@@ -255,38 +261,38 @@ class AssessmentServiceTest {
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment1 = new Assessment(1, "First_Name", organisation,Active, created2, updated2);
-        Assessment assessment2 = new Assessment(2, "Second_Name", organisation,Active, created1, updated1);
+        Assessment assessment1 = new Assessment(1, "First_Name", organisation, Active, created2, updated2);
+        Assessment assessment2 = new Assessment(2, "Second_Name", organisation, Active, created1, updated1);
 
-        List<Assessment> assessments=new ArrayList<>();
+        List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
         assessments.add(assessment2);
 
         String startDate = "2022-10-13";
         String endDate = "2022-05-13";
 
-        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
         when(assessmentRepository.totalActiveAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
-        assertEquals(2,assessmentService.getTotalActiveAssessments(startDate,endDate));
+        assertEquals(2, assessmentService.getTotalActiveAssessments(startDate, endDate));
 
     }
 
     @Test
     void shouldGetTheTotalCompletedAssessmentCount() throws ParseException {
-         DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-        String createdAt1="2022-07-13";
-        String updatedAt1="2022-09-24";
-        String createdAt2="2022-06-01";
-        String updatedAt2="2022-06-11";
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String createdAt1 = "2022-07-13";
+        String updatedAt1 = "2022-09-24";
+        String createdAt2 = "2022-06-01";
+        String updatedAt2 = "2022-06-11";
 
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment2 = new Assessment(1, "Name", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
-        Assessment assessment1 = new Assessment(2, "Name", organisation,Completed, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
+        Assessment assessment2 = new Assessment(1, "Name", organisation, Completed, simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
+        Assessment assessment1 = new Assessment(2, "Name", organisation, Completed, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
 
-        List<Assessment> assessments=new ArrayList<>();
+        List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
         assessments.add(assessment2);
 
@@ -296,24 +302,24 @@ class AssessmentServiceTest {
 
         when(assessmentRepository.totalCompletedAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
-        assertEquals(2,assessmentService.getTotalCompletedAssessments(startDate,endDate));
+        assertEquals(2, assessmentService.getTotalCompletedAssessments(startDate, endDate));
 
     }
 
     @Test
     void shouldGetTheAdminAssessmentData() throws ParseException {
-        DateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd");
-        String createdAt1="2022-07-13";
-        String updatedAt1="2022-09-24";
-        String createdAt2="2022-06-01";
-        String updatedAt2="2022-06-11";
+        DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String createdAt1 = "2022-07-13";
+        String updatedAt1 = "2022-09-24";
+        String createdAt2 = "2022-06-01";
+        String updatedAt2 = "2022-06-11";
 
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment2 = new Assessment(1, "Name", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
+        Assessment assessment2 = new Assessment(1, "Name", organisation, Completed, simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
         Assessment assessment1 = new Assessment(2, "Name", organisation, Active, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
 
-        List<Assessment> assessments=new ArrayList<>();
+        List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
         assessments.add(assessment2);
 
@@ -323,11 +329,105 @@ class AssessmentServiceTest {
 
         when(assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
-        assertEquals(2,assessmentService.getAdminAssessmentsData(startDate,endDate).size());
-
+        assertEquals(2, assessmentService.getAdminAssessmentsData(startDate, endDate).size());
 
 
     }
 
+    @Test
+    void shouldSaveModulesSelectedByUser() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", organisation, AssessmentStatus.Active, created, updated);
 
+        List<ModuleRequest> moduleRequests = new ArrayList<>();
+        ModuleRequest moduleRequest = new ModuleRequest();
+        moduleRequest.setModuleId(1);
+        moduleRequests.add(moduleRequest);
+
+        AssessmentModule assessmentModule1 = new AssessmentModule();
+        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+
+        when(moduleRepository.findByModuleId(moduleRequest.getModuleId())).thenReturn(assessmentModule1);
+
+        AssessmentModule assessmentModule = assessmentService.getModule(moduleRequest.getModuleId());
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
+        assessmentModuleId.setAssessment(assessment);
+        assessmentModuleId.setModule(assessmentModule);
+        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
+        userAssessmentModule.setModule(assessmentModule);
+        userAssessmentModule.setAssessment(assessment);
+
+        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
+
+        assessmentService.saveAssessmentModules(moduleRequests, assessment);
+
+        verify(userAssessmentModuleRepository).save(userAssessmentModule);
+
+    }
+
+    @Test
+    void shouldUpdateUserSelectedModules() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", organisation, AssessmentStatus.Active, created, updated);
+
+        List<ModuleRequest> moduleRequests = new ArrayList<>();
+        ModuleRequest moduleRequest = new ModuleRequest();
+        moduleRequest.setModuleId(2);
+        moduleRequests.add(moduleRequest);
+
+        AssessmentModule assessmentModule1 = new AssessmentModule();
+        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+
+        when(moduleRepository.findByModuleId(moduleRequest.getModuleId())).thenReturn(assessmentModule1);
+
+        AssessmentModule assessmentModule = assessmentService.getModule(moduleRequest.getModuleId());
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
+        assessmentModuleId.setAssessment(assessment);
+        assessmentModuleId.setModule(assessmentModule);
+        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
+        userAssessmentModule.setModule(assessmentModule);
+        userAssessmentModule.setAssessment(assessment);
+
+        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
+
+        assessmentService.updateAssessmentModules(moduleRequests, assessment);
+
+        verify(userAssessmentModuleRepository).save(userAssessmentModule);
+    }
+
+    @Test
+    void shouldDeleteUserSelectedModule() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", organisation, AssessmentStatus.Active, created, updated);
+
+        List<ModuleRequest> moduleRequests = new ArrayList<>();
+        ModuleRequest moduleRequest = new ModuleRequest();
+        moduleRequest.setModuleId(2);
+        moduleRequests.add(moduleRequest);
+
+        AssessmentModule assessmentModule1 = new AssessmentModule();
+        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+
+        when(moduleRepository.findByModuleId(moduleRequest.getModuleId())).thenReturn(assessmentModule1);
+
+        AssessmentModule assessmentModule = assessmentService.getModule(moduleRequest.getModuleId());
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
+        assessmentModuleId.setAssessment(assessment);
+        assessmentModuleId.setModule(assessmentModule);
+        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
+        userAssessmentModule.setModule(assessmentModule);
+        userAssessmentModule.setAssessment(assessment);
+
+        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
+        doNothing().when(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
+         assessmentService.updateAssessmentModules(moduleRequests,assessment);
+
+         verify(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
+    }
 }

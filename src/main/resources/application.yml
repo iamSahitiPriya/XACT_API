@@ -22,13 +22,13 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
 
-datasources:
-  default:
-    url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
-    driverClassName: org.postgresql.Driver
-    username: ${USER}
-    password: ${USER}
-    dialect: POSTGRES
+#datasources:
+#  default:
+#    url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
+#    driverClassName: org.postgresql.Driver
+#    username: ${USER}
+#    password: ''
+#    dialect: POSTGRES
 
 
 flyway:

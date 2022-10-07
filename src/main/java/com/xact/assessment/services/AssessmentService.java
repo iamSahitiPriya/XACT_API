@@ -4,13 +4,9 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentRequest;
-import com.xact.assessment.dtos.UserDto;
-import com.xact.assessment.dtos.UserRole;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AccessControlRepository;
-import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.repositories.UsersAssessmentsRepository;
+import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
@@ -19,6 +15,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
@@ -32,18 +29,24 @@ public class AssessmentService {
     private final UsersAssessmentsRepository usersAssessmentsRepository;
 
     private final AccessControlRepository accessControlRepository;
+    private final UserAssessmentModuleRepository userAssessmentModuleRepository;
 
-   private final static String datePattern = "yyyy-MM-dd";
+    private final ModuleRepository moduleRepository;
+    private final AssessmentMasterDataService assessmentMasterDataService;
+    private final static String datePattern = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
         this.accessControlRepository = accessControlRepository;
 
+        this.userAssessmentModuleRepository = userAssessmentModuleRepository;
+        this.moduleRepository = moduleRepository;
+        this.assessmentMasterDataService = assessmentMasterDataService;
     }
 
     @Transactional
@@ -161,5 +164,35 @@ public class AssessmentService {
         return assessmentList.size();
     }
 
+    public void saveAssessmentModules(List<ModuleRequest> moduleRequests, Assessment assessment) {
+        for (ModuleRequest moduleRequest1 : moduleRequests) {
+            UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+            userAssessmentModule.setAssessment(assessment);
+            AssessmentModule assessmentModule = getModule(moduleRequest1.getModuleId());
+            AssessmentModuleId assessmentModuleId=new AssessmentModuleId(assessment,assessmentModule);
+            userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
+            userAssessmentModule.setModule(assessmentModule);
+            userAssessmentModuleRepository.save(userAssessmentModule);
+        }
+    }
 
+    public AssessmentModule getModule(Integer moduleId) {
+        return moduleRepository.findByModuleId(moduleId);
+    }
+
+    public void updateAssessmentModules(List<ModuleRequest> moduleRequest, Assessment assessment) {
+            userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
+            saveAssessmentModules(moduleRequest,assessment);
+    }
+
+    public AssessmentStateDto getAssessmentState(Integer assessmentId) {
+       List<AssessmentCategory> assessmentCategories =  this.assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+        assessmentCategories=assessmentCategories.stream().filter(AssessmentCategory::getIsActive).collect(Collectors.toList());
+       return  assessmentCategories.size() == 0 ? AssessmentStateDto.Draft : AssessmentStateDto.inProgress;
+    }
+    public boolean findById(AssessmentModule assessmentModule, Integer assessmentId){
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElse(new Assessment());
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment,assessmentModule);
+        return userAssessmentModuleRepository.existsById(assessmentModuleId);
+    }
 }

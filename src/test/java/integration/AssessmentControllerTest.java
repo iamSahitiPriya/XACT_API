@@ -110,10 +110,10 @@ class AssessmentControllerTest {
                 .bearerAuth("anything"), String.class);
 
 
-        String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() +"," +"\"assessmentName\"" +  ":" +"\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" +"\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" +  ":" + assessment.getUpdatedAt().getTime() + "," +"\"assessmentState\"" + ":" + "\"Draft\""+ "}]";
+        String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
+                "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + organisation.getSize() + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "}]";
 
-        assertEquals(expectedResponse,assessmentResponse);
+        assertEquals(expectedResponse, assessmentResponse);
 
     }
 
@@ -142,7 +142,7 @@ class AssessmentControllerTest {
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
 
-        List <Question> questions = (List<Question>) questionRepository.findAll();
+        List<Question> questions = (List<Question>) questionRepository.findAll();
         Question question = questions.get(0);
 
 
@@ -156,7 +156,7 @@ class AssessmentControllerTest {
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
         parameterLevelAssessment.setRating(4);
 
-        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendation("some recommendation");
         parameterLevelRecommendation.setDeliveryHorizon("some text");
         parameterLevelRecommendation.setRecommendationImpact(LOW);
@@ -174,7 +174,7 @@ class AssessmentControllerTest {
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         topicLevelAssessment.setRating(4);
 
-        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendation("some recommendation");
         topicLevelRecommendation.setDeliveryHorizon("some text");
         topicLevelRecommendation.setRecommendationImpact(LOW);
@@ -191,14 +191,14 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() +"," +"\"assessmentName\"" +  ":" +"\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" +"\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" +  ":" + assessment.getUpdatedAt().getTime() + "," +"\"teamSize\"" + ":" + 10 +"," +"\"domain\"" + ":" + "\"Telecom\"" + "," +"\"industry\"" + ":" + "\"IT\"" +"," +"\"assessmentState\"" + ":" + "\"Draft\""+","+
-                "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" +  ":" + 1 + "," + "\"answer\"" + ":" + "\"answer\"" +  "}" + "]" + "," +
-                "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" +  ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
-                "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\""+  ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," +
-                "\"topicRatingAndRecommendation\"" + ":" + "[{" +"\"topicId\"" + ":" +1 + "," + "\"rating\"" + ":" +4 + "," +"\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" +  ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]}";
+        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
+                "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 10 + "," + "\"domain\"" + ":" + "\"Telecom\"" + "," + "\"industry\"" + ":" + "\"IT\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "," +
+                "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + 1 + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
+                "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
+                "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," +
+                "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]}";
 
-        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/"+assessment.getAssessmentId())
+        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId())
                 .bearerAuth("anything"), String.class);
 
         assertEquals(expectedResponse, assessmentResponse);
@@ -238,8 +238,8 @@ class AssessmentControllerTest {
         HttpResponse<String> assessmentResponse = client.toBlocking().exchange(request, String.class);
 
         Date updatedDate = assessmentRepository.findById(assessment.getAssessmentId()).get().getUpdatedAt();
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() +"," +"\"assessmentName\"" +  ":" +"\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" +"\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" +  ":" + updatedDate.getTime() + "}";
+        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
+                "\"organisationName\"" + ":" + "\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + updatedDate.getTime() + "}";
 
 
         assertEquals(expectedResponse, assessmentResponse.body());
@@ -273,13 +273,13 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/" + assessment.getAssessmentId() +"/statuses/open").contentLength(0)
+        MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/" + assessment.getAssessmentId() + "/statuses/open").contentLength(0)
                 .bearerAuth("anything");
         HttpResponse<String> assessmentResponse = client.toBlocking().exchange(request, String.class);
 
         Date updatedDate = assessmentRepository.findById(assessment.getAssessmentId()).get().getUpdatedAt();
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() +"," +"\"assessmentName\"" +  ":" +"\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" +"\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Active\"" + "," + "\"updatedAt\"" +  ":" + updatedDate.getTime() + "}";
+        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
+                "\"organisationName\"" + ":" + "\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Active\"" + "," + "\"updatedAt\"" + ":" + updatedDate.getTime() + "}";
 
 
         assertEquals(expectedResponse, assessmentResponse.body());
@@ -376,10 +376,10 @@ class AssessmentControllerTest {
         assessmentUsers.setUserId(userId);
         assessmentUsers.setRole(AssessmentRole.Owner);
 
-        List <Question> questions = (List<Question>) questionRepository.findAll();
+        List<Question> questions = (List<Question>) questionRepository.findAll();
         Question question = questions.get(0);
 
-        AnswerId answerId = new AnswerId(assessment,question);
+        AnswerId answerId = new AnswerId(assessment, question);
 
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
@@ -398,6 +398,7 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
+
     @Test
     void testUpdateTopicRecommendation() throws IOException {
 
@@ -445,7 +446,6 @@ class AssessmentControllerTest {
     }
 
 
-
     @Test
     void testUpdateParameterRecommendationText() throws IOException {
         String userEmail = "dummy@test.com";
@@ -484,12 +484,13 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"recommendationId\"" + ":" +  parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}" ;
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/"+assessment.getAssessmentId() + "/" +assessmentParameter.getParameterId(), dataRequest)
+        String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}";
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
+
     @Test
     void testUpdateTopicRecommendationImpact() throws IOException {
         String userEmail = "dummy@test.com";
@@ -513,7 +514,7 @@ class AssessmentControllerTest {
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
-        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendation("some recommendation");
         topicLevelRecommendation.setTopic(assessmentTopic);
         topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.MEDIUM);
@@ -527,14 +528,15 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"recommendationId\"" + ":" +  topicLevelRecommendation.getRecommendationId() + "," + "\"impact\"" + ":" + "\"\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"\"" + "}" ;
+        String dataRequest = "{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"impact\"" + ":" + "\"\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationFields/"+assessment.getAssessmentId()+"/"+assessmentTopic.getTopicId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationFields/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
     }
+
     @Test
     void testUpdateParameterRecommendationImpact() throws IOException {
         String userEmail = "dummy@test.com";
@@ -558,7 +560,7 @@ class AssessmentControllerTest {
 
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
-        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendation("some recommendation");
         parameterLevelRecommendation.setParameter(assessmentParameter);
         parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.MEDIUM);
@@ -572,9 +574,9 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"recommendationId\"" + ":" +  parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}" ;
+        String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/"+assessment.getAssessmentId()+"/"+assessmentParameter.getParameterId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRecommendation/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -603,7 +605,7 @@ class AssessmentControllerTest {
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
-        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendation("some recommendation");
         topicLevelRecommendation.setTopic(assessmentTopic);
         topicLevelRecommendation.setRecommendationImpact(RecommendationImpact.MEDIUM);
@@ -617,9 +619,9 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"recommendationId\"" + ":" +  topicLevelRecommendation.getRecommendationId() + "," + "\"impact\"" + ":" + "\"\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"\"" + "}" ;
+        String dataRequest = "{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"impact\"" + ":" + "\"\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationFields/"+assessment.getAssessmentId()+"/"+assessmentTopic.getTopicId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRecommendationFields/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -662,7 +664,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRating/"+assessment.getAssessmentId()+ "/" +assessmentParameter.getParameterId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameterRating/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -697,14 +699,14 @@ class AssessmentControllerTest {
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         topicLevelAssessment.setRating(1);
 
-       assessmentRepository.save(assessment);
-       usersAssessmentsRepository.save(assessmentUsers);
-       topicLevelAssessmentRepository.save(topicLevelAssessment);
-       entityManager.getTransaction().commit();
+        assessmentRepository.save(assessment);
+        usersAssessmentsRepository.save(assessmentUsers);
+        topicLevelAssessmentRepository.save(topicLevelAssessment);
+        entityManager.getTransaction().commit();
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRating/"+assessment.getAssessmentId()+"/"+assessmentTopic.getTopicId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topicRating/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -735,7 +737,7 @@ class AssessmentControllerTest {
 
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
-        ParameterLevelRecommendation parameterLevelRecommendation=new ParameterLevelRecommendation();
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendation("some recommendation");
         parameterLevelRecommendation.setParameter(assessmentParameter);
         parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.MEDIUM);
@@ -747,7 +749,7 @@ class AssessmentControllerTest {
         entityManager.getTransaction().commit();
 
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/deleteParameterRecommendation/"+assessment.getAssessmentId()+"/"+assessmentParameter.getParameterId()+"/"+parameterLevelRecommendation.getRecommendationId())
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/deleteParameterRecommendation/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId() + "/" + parameterLevelRecommendation.getRecommendationId())
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -776,7 +778,7 @@ class AssessmentControllerTest {
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
-        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendation("some recommendation");
         topicLevelRecommendation.setTopic(assessmentTopic);
         topicLevelRecommendation.setRecommendationImpact(RecommendationImpact.MEDIUM);
@@ -787,11 +789,12 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/deleteRecommendation/"+assessment.getAssessmentId()+"/"+assessmentTopic.getTopicId()+"/"+topicLevelRecommendation.getRecommendationId())
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/deleteRecommendation/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId() + "/" + topicLevelRecommendation.getRecommendationId())
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
+
     @Test
     void testGetAdminAssessmentsResponse() throws IOException, ParseException {
         String userEmail = "dummy@test.com";

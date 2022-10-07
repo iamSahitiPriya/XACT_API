@@ -4,7 +4,6 @@
 
 package com.xact.assessment.controllers;
 
-import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -21,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
-import java.text.ParseException;
 import java.util.*;
 
 
@@ -67,7 +65,19 @@ public class AssessmentController {
         List<Assessment> assessments = usersAssessmentsService.findAssessments(loggedInUser.getUserEmail());
         List<AssessmentResponse> assessmentResponses = new ArrayList<>();
         if (Objects.nonNull(assessments))
-            assessments.forEach(assessment -> assessmentResponses.add(modelMapper.map(assessment, AssessmentResponse.class)));
+            assessments.forEach(assessment ->
+            {
+                List<String> users = assessmentService.getAssessmentUsers(assessment.getAssessmentId());
+                AssessmentResponse assessmentResponse=modelMapper.map(assessment,AssessmentResponse.class);
+                assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
+                assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
+                assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
+                assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
+                assessmentResponse.setUsers(users);
+
+                assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
+                assessmentResponses.add(assessmentResponse);
+              });
         return HttpResponse.ok(assessmentResponses);
     }
 
@@ -80,6 +90,8 @@ public class AssessmentController {
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
+
+        assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
 
         return HttpResponse.created(assessmentResponse);
     }
@@ -164,6 +176,7 @@ public class AssessmentController {
         assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
         assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
+        assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
         assessmentResponse.setUsers(users);
         assessmentResponse.setAssessmentPurpose(assessment.getAssessmentPurpose());
 
@@ -360,17 +373,27 @@ public class AssessmentController {
     }
 
 
-    @Get(value = "/admin/{assessmentId}/{startDate}/{endDate}")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    @AdminAuth
-    public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, Authentication authentication) throws ParseException {
-        AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
-        adminAssessmentResponse.setTotalAssessments(assessmentService.getTotalAssessments(startDate, endDate));
-        adminAssessmentResponse.setTotalActiveAssessments(assessmentService.getTotalActiveAssessments(startDate, endDate));
-        adminAssessmentResponse.setTotalCompleteAssessments(assessmentService.getTotalCompletedAssessments(startDate, endDate));
-        return HttpResponse.ok(adminAssessmentResponse);
-    }
 
+
+    @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
+        LOGGER.info("Save modules: "+assessmentId);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if(assessment.isEditable()) {
+            assessmentService.saveAssessmentModules(moduleRequests, assessment);
+        }
+        return HttpResponse.ok();
+    }
+    @Put(value = "/{assessmentId}/modules")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication){
+        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
+        if(assessment.isEditable()) {
+            assessmentService.updateAssessmentModules(moduleRequest, assessment);
+        }
+        return HttpResponse.ok();
+    }
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);

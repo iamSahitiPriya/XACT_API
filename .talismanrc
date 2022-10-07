@@ -75,6 +75,11 @@ fileignoreconfig:
   checksum: 90f929ea635917629925ae9674e3a8cf5b57d5f122f4add7d44d51827e4a90ec
 - filename: src/main/java/com/xact/assessment/services/ReportService.java
   checksum: 475f5daeb356f6268d7d06a65d255a39275bf7ef752ce34c80378f980c67e3a4
+- filename: Jenkinsfile
+  checksum: 9f48729dbbd0808b85708d827ce58acdee4cab3169d81aee16486cc05c292ad3
+- filename: src/test/resources/application-test.yml
+  checksum: 9f6d033dee8a250497bfac7e43a93f2d93f9d53ab94aa342a51a1ed32f207550
+
 
 version: ""
 

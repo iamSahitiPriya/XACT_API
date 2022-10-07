@@ -1,8 +1,15 @@
 pipeline {
     agent any
 
-    tools { nodejs "nodejs" }
     stages {
+
+        stage('Prepare') {
+                steps {
+                     sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 730911736748.dkr.ecr.ap-south-1.amazonaws.com'
+
+                }
+        }
+
         stage("Security check"){
                           steps{
                                 script{
@@ -29,9 +36,7 @@ pipeline {
                 }
         stage('Build') {
             steps {
-                sh "docker run --name postgres -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
-                sh "aws s3 cp s3://xact-artifacts/ap-south-1-bundle.pem ap-south-1-bundle.pem"
-                sh "cp ap-south-1-bundle.pem src/main/resources/certs/ap-south-1-bundle.pem"
+                sh "docker run --name postgres -e POSTGRES_USER=${USER} -e POSTGRES_PASSWORD=${USER} -p 5432:5432 -v /data:/var/lib/postgresql/data -d 730911736748.dkr.ecr.ap-south-1.amazonaws.com/postgres-test:latest"
                 sh './gradlew clean build'
             }
         }
@@ -59,7 +64,6 @@ pipeline {
 
         stage('Build & Push to artifactory') {
             steps {
-                sh 'aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 730911736748.dkr.ecr.ap-south-1.amazonaws.com'
                 sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${env.GIT_COMMIT}"
                 sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:latest"
 
@@ -97,16 +101,23 @@ pipeline {
                                                        reportFiles: 'index.html',
                                                        reportName: 'Coverage Reports',
                                                        reportTitles: 'Coverage Report'])
-                    cleanWs notFailBuild: true
                 }
         }
 
     }
       post {
                         always {
+                        publishHTML (target : [allowMissing: false,
+                                                                               alwaysLinkToLastBuild: true,
+                                                                               keepAll: true,
+                                                                               reportDir: './build/reports/tests/test',
+                                                                               reportFiles: 'index.html',
+                                                                               reportName: 'Test Report',
+                                                                               reportTitles: 'Test Report'])
                         sh "set +e"
                         sh 'docker stop $(docker ps -a -q)'
                         sh 'docker rm $(docker ps -a -q)'
+                        cleanWs notFailBuild: true
                         }
                 }
 

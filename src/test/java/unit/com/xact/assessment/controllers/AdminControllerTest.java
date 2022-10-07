@@ -4,22 +4,29 @@ import com.xact.assessment.controllers.AdminController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.AssessmentService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AdminControllerTest {
     AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
+
+    AssessmentService assessmentService=Mockito.mock(AssessmentService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
-    AdminController adminController = new AdminController(assessmentMasterDataService);
+    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService);
 
     @Test
     void createAssessmentCategory() {
@@ -192,4 +199,88 @@ class AdminControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
+    @Test
+    void shouldGetTheTotalAssessmentCount() throws ParseException {
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+        Date created2 = new Date(2022 - 6 - 01);
+        Date updated2 = new Date(2022 - 6 - 11);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
+
+        List<Assessment> assessments = new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+
+        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments.size());
+
+        HttpResponse actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(assessmentService).getTotalAssessments(startDate, endDate);
+
+    }
+
+    @Test
+    void shouldGetTheTotalActiveAssessmentCount() throws ParseException {
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+        Date created2 = new Date(2022 - 6 - 01);
+        Date updated2 = new Date(2022 - 6 - 11);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
+
+        List<Assessment> assessments = new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+        when(assessmentService.getTotalActiveAssessments(startDate, endDate)).thenReturn(assessments.size());
+
+        HttpResponse<AdminAssessmentResponse> actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(assessmentService).getTotalActiveAssessments(startDate, endDate);
+    }
+
+    @Test
+    void shouldGetTheTotalCompleteAssessmentCount() throws ParseException {
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+        Date created2 = new Date(2022 - 6 - 01);
+        Date updated2 = new Date(2022 - 6 - 11);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", organisation, AssessmentStatus.Completed, created2, updated2);
+
+        List<Assessment> assessments = new ArrayList<>();
+        assessments.add(assessment1);
+        assessments.add(assessment2);
+
+        String startDate = "2022-10-13";
+        String endDate = "2022-05-13";
+
+        when(assessmentService.getTotalCompletedAssessments(startDate, endDate)).thenReturn(assessments.size());
+
+        HttpResponse actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(assessmentService).getTotalCompletedAssessments(startDate, endDate);
+    }
+
 }

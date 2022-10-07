@@ -30,6 +30,7 @@ dependencies {
     implementation 'io.projectreactor:reactor-core:3.4.23'
     compileOnly "io.micronaut:micronaut-aop:3.6.1"
     compileOnly "org.projectlombok:lombok:1.18.22"
+    compileOnly "com.google.code.findbugs:jsr305"
     annotationProcessor "org.projectlombok:lombok:1.18.22"
     annotationProcessor "io.micronaut.openapi:micronaut-openapi:4.0.0"
 

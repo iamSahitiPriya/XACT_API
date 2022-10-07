@@ -10,9 +10,10 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterReferenceRepository;
 import com.xact.assessment.repositories.AssessmentTopicReferenceRepository;
 import com.xact.assessment.repositories.CategoryRepository;
+import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -23,17 +24,20 @@ public class AssessmentMasterDataService {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
+
+    private final UserAssessmentModuleRepository userAssessmentModuleRepository;
     AssessmentParameterReferenceRepository assessmentParameterRRepository;
     private final ModuleService moduleService;
 
 
-    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
+    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
         this.categoryRepository = categoryRepository;
         this.moduleService = moduleService;
         this.questionService = questionService;
         this.assessmentTopicReferenceRepository = assessmentTopicReferenceRepository;
         this.parameterService = parameterService;
         this.topicService = topicService;
+        this.userAssessmentModuleRepository = userAssessmentModuleRepository;
         this.assessmentParameterRRepository = assessmentParameterRRepository;
 
     }
@@ -46,12 +50,35 @@ public class AssessmentMasterDataService {
         return categoryRepository.findCategoryById(categoryId);
     }
 
+    public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
+        List<AssessmentCategory> categories = new ArrayList<>();
+        Set<AssessmentCategory> categorySet = new HashSet<>();
+        List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
+        if(!assessmentModules.isEmpty()) {
+            for (AssessmentModule assessmentModule : assessmentModules) {
+                AssessmentCategory category = categoryRepository.findCategoryById(assessmentModule.getCategory().getCategoryId());
+                    categorySet.add(category);
+
+            }
+            for (AssessmentCategory category : categorySet) {
+                Set<AssessmentModule> assessmentModuleSet = new HashSet<>();
+                category.getModules().forEach(module -> {
+                    if (assessmentModules.contains(module)) {
+                        assessmentModuleSet.add(module);
+                    }
+                });
+                category.setModules(assessmentModuleSet);
+                categories.add(category);
+            }
+        }
+        return categories;
+    }
+
     public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
-        if(!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
+        if (!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
             AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
             categoryRepository.save(assessmentCategory);
-        }
-        else {
+        } else {
             throw new DuplicateRecordException("Duplicate records are not allowed");
         }
 
@@ -60,7 +87,7 @@ public class AssessmentMasterDataService {
     private boolean checkIfUnique(String categoryName) {
         List<String> categories = categoryRepository.getAllCategories();
         List<String> result = categories.stream()
-                .map(String::toLowerCase).map(String :: trim)
+                .map(String::toLowerCase).map(String::trim)
                 .collect(Collectors.toList());
         return result.contains(categoryName.trim().toLowerCase());
     }
@@ -106,12 +133,12 @@ public class AssessmentMasterDataService {
     }
 
     public void updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
-        if(assessmentCategory.getCategoryName().equals(assessmentCategoryRequest.getCategoryName())){
+        if (assessmentCategory.getCategoryName().equals(assessmentCategoryRequest.getCategoryName())) {
             assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
             assessmentCategory.setActive(assessmentCategoryRequest.isActive());
             assessmentCategory.setComments(assessmentCategoryRequest.getComments());
             categoryRepository.update(assessmentCategory);
-        }else {
+        } else {
             if (!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
                 assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
                 assessmentCategory.setActive(assessmentCategoryRequest.isActive());

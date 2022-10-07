@@ -26,8 +26,8 @@ datasources:
   default:
     url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
     driverClassName: org.postgresql.Driver
-    username: 'postres'
-    password: 'postgres'
+    username: ${USER}
+    password: ${USER}
     dialect: POSTGRES
     #    schema-generate: CREATE_DROP
     schema: test_schema

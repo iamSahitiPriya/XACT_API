@@ -3,7 +3,6 @@ package integration;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.repositories.OrganisationRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
@@ -32,9 +31,6 @@ class UserControllerTest {
 
     @Inject
     AssessmentRepository assessmentRepository;
-
-    @Inject
-    OrganisationRepository organisationRepository;
 
     @Inject
     AccessControlRepository accessControlRepository;

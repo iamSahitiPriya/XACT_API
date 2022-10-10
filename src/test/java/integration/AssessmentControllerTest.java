@@ -242,7 +242,7 @@ class AssessmentControllerTest {
 
         Date updatedDate = assessmentRepository.findById(assessment.getAssessmentId()).get().getUpdatedAt();
         String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Request\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" + "\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + updatedDate.getTime() + "}";
+                "\"organisationName\"" + ":" + "\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + updatedDate.getTime() + "," + "\"assessmentState\"" + ":" + "\"Draft\"" +"}";
 
 
         assertEquals(expectedResponse, assessmentResponse.body());
@@ -283,7 +283,7 @@ class AssessmentControllerTest {
 
         Date updatedDate = assessmentRepository.findById(assessment.getAssessmentId()).get().getUpdatedAt();
         String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + ","+"\"assessmentPurpose\""+ ":"+"\"Client Request\""+"," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" + "\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Active\"" + "," + "\"updatedAt\"" + ":" + updatedDate.getTime() + "}";
+                "\"organisationName\"" + ":" + "\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Active\"" + "," + "\"updatedAt\"" + ":" + updatedDate.getTime() + ","+ "\"assessmentState\"" + ":" + "\"Draft\"" + "}";
 
 
         assertEquals(expectedResponse, assessmentResponse.body());

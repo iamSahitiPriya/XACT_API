@@ -154,8 +154,8 @@ public class AssessmentService {
     }
 
     public List<Assessment> getAdminAssessmentsData(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat=new SimpleDateFormat(datePattern);
-         return assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate));
+        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        return assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
     }
 
     public Integer getTotalCompletedAssessments(String startDate, String endDate) throws ParseException {
@@ -169,7 +169,7 @@ public class AssessmentService {
             UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
             userAssessmentModule.setAssessment(assessment);
             AssessmentModule assessmentModule = getModule(moduleRequest1.getModuleId());
-            AssessmentModuleId assessmentModuleId=new AssessmentModuleId(assessment,assessmentModule);
+            AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment, assessmentModule);
             userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
             userAssessmentModule.setModule(assessmentModule);
             userAssessmentModuleRepository.save(userAssessmentModule);
@@ -181,18 +181,13 @@ public class AssessmentService {
     }
 
     public void updateAssessmentModules(List<ModuleRequest> moduleRequest, Assessment assessment) {
-            userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
-            saveAssessmentModules(moduleRequest,assessment);
+        userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
+        saveAssessmentModules(moduleRequest, assessment);
     }
 
-    public AssessmentStateDto getAssessmentState(Integer assessmentId) {
-       List<AssessmentCategory> assessmentCategories =  this.assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
-        assessmentCategories=assessmentCategories.stream().filter(AssessmentCategory::getIsActive).collect(Collectors.toList());
-       return  assessmentCategories.size() == 0 ? AssessmentStateDto.Draft : AssessmentStateDto.inProgress;
-    }
-    public boolean findById(AssessmentModule assessmentModule, Integer assessmentId){
+    public boolean findById(AssessmentModule assessmentModule, Integer assessmentId) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElse(new Assessment());
-        AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment,assessmentModule);
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment, assessmentModule);
         return userAssessmentModuleRepository.existsById(assessmentModuleId);
     }
 }

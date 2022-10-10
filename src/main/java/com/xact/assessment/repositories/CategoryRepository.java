@@ -17,7 +17,7 @@ import java.util.List;
 public interface CategoryRepository extends CrudRepository<AssessmentCategory, Integer> {
 
     @Executable
-    @Query("SELECT category FROM AssessmentCategory category")
+    @Query("SELECT category FROM AssessmentCategory category ORDER BY category.isActive DESC")
     List<AssessmentCategory> findAll();
 
     @Executable

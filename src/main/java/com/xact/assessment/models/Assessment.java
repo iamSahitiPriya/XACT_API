@@ -6,7 +6,6 @@ package com.xact.assessment.models;
 
 import com.xact.assessment.dtos.AssessmentStateDto;
 import io.micronaut.core.annotation.Introspected;
-import io.micronaut.core.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

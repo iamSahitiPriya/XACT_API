@@ -145,8 +145,9 @@ public class AssessmentService {
 
     public List<Assessment> getTotalAssessments(String startDate, String endDate) throws ParseException {
         DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
-        List<Assessment> assessmentList = assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
-        return assessmentList;
+        Date startDateTime = simpleDateFormat.parse(startDate);
+        Date endDateTime = simpleDateFormat.parse(endDate);
+        return assessmentRepository.totalAssessments(startDateTime, endDateTime);
     }
 
     public List<Assessment> getAdminAssessmentsData(String startDate, String endDate) throws ParseException {

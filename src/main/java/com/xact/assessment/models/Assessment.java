@@ -4,7 +4,9 @@
 
 package com.xact.assessment.models;
 
+import com.xact.assessment.dtos.AssessmentStateDto;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
@@ -37,9 +38,17 @@ public class Assessment {
     private String assessmentName;
 
     @NotNull
+    @Column(name = "assessment_purpose", nullable = false)
+    private String assessmentPurpose;
+
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "organisation")
     private Organisation organisation;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "assessment")
+    @ElementCollection()
+    private Set<UserAssessmentModule> assessmentModules;
 
     @NotNull
     @Column(name = "assessment_status", nullable = false)
@@ -74,5 +83,34 @@ public class Assessment {
 
     public boolean isEditable() {
         return assessmentStatus == AssessmentStatus.Active;
+    }
+
+    public AssessmentStateDto getAssessmentState() {
+        if (assessmentModules != null) {
+            return getCategoryStatus() ? AssessmentStateDto.inProgress : AssessmentStateDto.Draft;
+        }
+        return AssessmentStateDto.Draft;
+    }
+
+    public boolean getCategoryStatus(){
+        List<AssessmentModule> assessmentModuleList=new ArrayList<>();
+        assessmentModules.forEach(assessmentModule -> {
+            if(assessmentModule.getModule().getCategory().getIsActive() && assessmentModule.getModule().getIsActive()){
+                assessmentModuleList.add(assessmentModule.getModule());
+            }
+        });
+
+        return  assessmentModuleList.size()>0;
+
+    }
+
+    public Assessment(Integer assessmentId, String assessmentName, String assessmentPurpose, Organisation organisation, AssessmentStatus assessmentStatus, Date createdAt, Date updatedAt) {
+        this.assessmentId = assessmentId;
+        this.assessmentName = assessmentName;
+        this.assessmentPurpose = assessmentPurpose;
+        this.organisation = organisation;
+        this.assessmentStatus = assessmentStatus;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 }

@@ -35,7 +35,7 @@ class UsersAssessmentsServiceTest {
         String userEmail = "hello@thoughtworks.com";
 
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact", "Client Request",organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
@@ -54,7 +54,7 @@ class UsersAssessmentsServiceTest {
         Date updated = new Date(22 - 10 - 2022);
 
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact","Client Request", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
@@ -73,7 +73,7 @@ class UsersAssessmentsServiceTest {
         Date updated = new Date(22 - 10 - 2022);
 
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact","Client Request", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
@@ -90,7 +90,7 @@ class UsersAssessmentsServiceTest {
         Date updated = new Date(22 - 10 - 2022);
 
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact","Client Request", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 

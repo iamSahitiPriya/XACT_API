@@ -69,13 +69,13 @@ public class AssessmentController {
             {
                 List<String> users = assessmentService.getAssessmentUsers(assessment.getAssessmentId());
                 AssessmentResponse assessmentResponse=modelMapper.map(assessment,AssessmentResponse.class);
-                assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
+                assessmentResponse.setAssessmentState(assessment.getAssessmentState());
                 assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
                 assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
                 assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
                 assessmentResponse.setUsers(users);
 
-                assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
+//                assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
                 assessmentResponses.add(assessmentResponse);
               });
         return HttpResponse.ok(assessmentResponses);
@@ -89,10 +89,10 @@ public class AssessmentController {
         assessmentRequest.validate(emailPattern);
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
+
+
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
-
-        assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
-
+        assessmentResponse.setAssessmentState(assessment.getAssessmentState());
         return HttpResponse.created(assessmentResponse);
     }
 
@@ -109,7 +109,7 @@ public class AssessmentController {
             assessment.getOrganisation().setDomain(assessmentRequest.getDomain());
             assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
             assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
-
+            assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
             Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
 
@@ -176,8 +176,9 @@ public class AssessmentController {
         assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
         assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
-        assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
+        assessmentResponse.setAssessmentState(assessment.getAssessmentState());
         assessmentResponse.setUsers(users);
+        assessmentResponse.setAssessmentPurpose(assessment.getAssessmentPurpose());
 
         return HttpResponse.ok(assessmentResponse);
     }

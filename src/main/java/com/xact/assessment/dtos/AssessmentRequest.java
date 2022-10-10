@@ -24,6 +24,8 @@ public class AssessmentRequest {
     @NotBlank
     private String assessmentName;
     @NotBlank
+    private String assessmentPurpose;
+    @NotBlank
     private String organisationName;
     @NotBlank
     private String domain;

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class AssessmentMasterDataServiceTest {
@@ -303,14 +304,24 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldGetUserAssessmentCategories() {
         Integer assessmentId = 1;
-        List<AssessmentCategory> assessmentCategories = new ArrayList<>();
         AssessmentCategory category = new AssessmentCategory();
         category.setCategoryId(1);
-        category.setCategoryName("Hello");
-        assessmentCategories.add(category);
-        assessmentMasterDataService.getUserAssessmentCategories(1);
-        when(assessmentMasterDataService.getUserAssessmentCategories(assessmentId)).thenReturn(assessmentCategories);
+        category.setCategoryName("category1");
+        List<AssessmentModule> assessmentModules = new ArrayList<>();
+        AssessmentModule module = new AssessmentModule();
+        module.setActive(true);
+        module.setModuleName("module1");
+        module.setModuleId(1);
+        module.setCategory(category);
+        Set<AssessmentModule> validModules = Collections.singleton(module);
+        category.setModules(validModules);
+        assessmentModules.add(module);
+        when(userAssessmentModuleRepository.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules);
 
+        List<AssessmentCategory> actualAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+
+        assertEquals(actualAssessmentCategories.size(),1);
+        assertEquals(actualAssessmentCategories.get(0).getCategoryName(),"category1");
     }
 
     @Test

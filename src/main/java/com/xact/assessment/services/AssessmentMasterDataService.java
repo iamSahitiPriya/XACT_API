@@ -13,7 +13,10 @@ import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -54,10 +57,10 @@ public class AssessmentMasterDataService {
         List<AssessmentCategory> categories = new ArrayList<>();
         Set<AssessmentCategory> categorySet = new HashSet<>();
         List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
-        if(!assessmentModules.isEmpty()) {
+        if (!assessmentModules.isEmpty()) {
             for (AssessmentModule assessmentModule : assessmentModules) {
-                AssessmentCategory category = categoryRepository.findCategoryById(assessmentModule.getCategory().getCategoryId());
-                    categorySet.add(category);
+                AssessmentCategory category = assessmentModule.getCategory();
+                categorySet.add(category);
 
             }
             for (AssessmentCategory category : categorySet) {

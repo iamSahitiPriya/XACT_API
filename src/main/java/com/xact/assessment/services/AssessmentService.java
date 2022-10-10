@@ -4,7 +4,10 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.*;
+import com.xact.assessment.dtos.AssessmentRequest;
+import com.xact.assessment.dtos.ModuleRequest;
+import com.xact.assessment.dtos.UserDto;
+import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
@@ -15,7 +18,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
@@ -141,27 +143,15 @@ public class AssessmentService {
         return accessControlRepository.getAccessControlRolesByEmail(email);
     }
 
-    public Integer getTotalAssessments(String startDate, String endDate) throws ParseException {
+    public List<Assessment> getTotalAssessments(String startDate, String endDate) throws ParseException {
         DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
         List<Assessment> assessmentList = assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
-        return assessmentList.size();
-    }
-
-    public Integer getTotalActiveAssessments(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
-        List<Assessment> assessmentList = assessmentRepository.totalActiveAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
-        return assessmentList.size();
+        return assessmentList;
     }
 
     public List<Assessment> getAdminAssessmentsData(String startDate, String endDate) throws ParseException {
         DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
         return assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
-    }
-
-    public Integer getTotalCompletedAssessments(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
-        List<Assessment> assessmentList = assessmentRepository.totalCompletedAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
-        return assessmentList.size();
     }
 
     public void saveAssessmentModules(List<ModuleRequest> moduleRequests, Assessment assessment) {

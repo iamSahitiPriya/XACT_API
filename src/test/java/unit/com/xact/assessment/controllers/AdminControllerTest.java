@@ -219,7 +219,7 @@ class AdminControllerTest {
         String endDate = "2022-05-13";
 
 
-        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments.size());
+        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
 
         HttpResponse actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
 
@@ -246,14 +246,11 @@ class AdminControllerTest {
 
         String startDate = "2022-10-13";
         String endDate = "2022-05-13";
-
-        when(assessmentService.getTotalActiveAssessments(startDate, endDate)).thenReturn(assessments.size());
+        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
 
         HttpResponse<AdminAssessmentResponse> actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-
-        verify(assessmentService).getTotalActiveAssessments(startDate, endDate);
     }
 
     @Test
@@ -274,13 +271,11 @@ class AdminControllerTest {
         String startDate = "2022-10-13";
         String endDate = "2022-05-13";
 
-        when(assessmentService.getTotalCompletedAssessments(startDate, endDate)).thenReturn(assessments.size());
+        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
 
         HttpResponse actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-
-        verify(assessmentService).getTotalCompletedAssessments(startDate, endDate);
     }
 
 }

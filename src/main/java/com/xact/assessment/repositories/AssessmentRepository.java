@@ -21,13 +21,4 @@ public interface AssessmentRepository extends CrudRepository<Assessment, Integer
     @Executable
     @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate)")
     List<Assessment> totalAssessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
-
-    @Executable
-    @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate) and tla.assessmentStatus='Active'")
-    List<Assessment> totalActiveAssessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
-
-    @Executable
-    @Query("SELECT tla FROM Assessment tla WHERE (tla.createdAt <= :startDate and tla.createdAt >= :endDate) and tla.assessmentStatus='Completed'")
-    List<Assessment> totalCompletedAssessments(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
-
 }

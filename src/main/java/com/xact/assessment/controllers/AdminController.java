@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Introspected
 @AdminAuth
@@ -214,9 +215,12 @@ public class AdminController {
     @AdminAuth
     public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, Authentication authentication) throws ParseException {
         AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
-        adminAssessmentResponse.setTotalAssessments(assessmentService.getTotalAssessments(startDate, endDate));
-        adminAssessmentResponse.setTotalActiveAssessments(assessmentService.getTotalActiveAssessments(startDate, endDate));
-        adminAssessmentResponse.setTotalCompleteAssessments(assessmentService.getTotalCompletedAssessments(startDate, endDate));
+        List<Assessment> allAssessments = assessmentService.getTotalAssessments(startDate, endDate);
+        List<Assessment> activeAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Active).collect(Collectors.toList());
+        List<Assessment> completedAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Completed).collect(Collectors.toList());
+        adminAssessmentResponse.setTotalAssessments(allAssessments.size());
+        adminAssessmentResponse.setTotalActiveAssessments(activeAssessments.size());
+        adminAssessmentResponse.setTotalCompleteAssessments(completedAssessments.size());
         return HttpResponse.ok(adminAssessmentResponse);
     }
 

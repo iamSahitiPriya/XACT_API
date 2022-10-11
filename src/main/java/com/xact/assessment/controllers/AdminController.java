@@ -98,13 +98,15 @@ public class AdminController {
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
-            assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
+        LOGGER.info("Admin: Create category");
+        assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
             return HttpResponse.ok();
     }
 
     @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentModule> createAssessmentModule(@Body @Valid List<AssessmentModuleRequest> assessmentModules, Authentication authentication) {
+        LOGGER.info("Admin: Create module");
         for (AssessmentModuleRequest assessmentModule : assessmentModules) {
             assessmentMasterDataService.createAssessmentModule(assessmentModule);
         }
@@ -114,6 +116,7 @@ public class AdminController {
     @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopic> createTopics(@Body @Valid List<AssessmentTopicRequest> assessmentTopicRequests, Authentication authentication) {
+        LOGGER.info("Admin: Create topics");
         for (AssessmentTopicRequest assessmentTopicRequest : assessmentTopicRequests) {
             assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
         }
@@ -123,6 +126,7 @@ public class AdminController {
     @Post(value = "/parameters", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameter> createParameters(@Body @Valid List<AssessmentParameterRequest> assessmentParameterRequests, Authentication authentication) {
+        LOGGER.info("Admin: Create parameter");
         for (AssessmentParameterRequest assessmentParameter : assessmentParameterRequests) {
             assessmentMasterDataService.createAssessmentParameter(assessmentParameter);
         }
@@ -132,6 +136,7 @@ public class AdminController {
     @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> createQuestions(@Body @Valid List<QuestionRequest> questionRequests, Authentication authentication) {
+        LOGGER.info("Admin: Create questions");
         for (QuestionRequest questionRequest : questionRequests) {
             assessmentMasterDataService.createAssessmentQuestions(questionRequest);
         }
@@ -141,6 +146,7 @@ public class AdminController {
     @Post(value = "/topicReferences", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopicReference> createTopicReference(@Body List<TopicReferencesRequest> topicReferencesRequests, Authentication authentication) {
+        LOGGER.info("Admin: Create topic reference");
         for (TopicReferencesRequest topicReferencesRequest : topicReferencesRequests) {
             assessmentMasterDataService.createAssessmentTopicReferences(topicReferencesRequest);
         }
@@ -150,6 +156,7 @@ public class AdminController {
     @Post(value = "/parameterReferences", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameterReference> createParameterReferences(@Body List<ParameterReferencesRequest> parameterReferencesRequests, Authentication authentication) {
+        LOGGER.info("Admin: Create parameter reference");
         for (ParameterReferencesRequest parameterReferencesRequest : parameterReferencesRequests) {
             assessmentMasterDataService.createAssessmentParameterReferences(parameterReferencesRequest);
         }
@@ -159,6 +166,7 @@ public class AdminController {
     @Put(value = "/categories/{categoryId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body  @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update category: {}",categoryId);
         AssessmentCategory assessmentCategory = getCategory(categoryId);
         assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
         assessmentCategory.setActive(assessmentCategoryRequest.isActive());
@@ -170,6 +178,7 @@ public class AdminController {
     @Put(value = "/modules/{moduleId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentModule> updateModule(@PathVariable("moduleId") Integer moduleId, @Body @Valid AssessmentModuleRequest assessmentModuleRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update module: {}",moduleId);
         assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
         return HttpResponse.ok();
     }
@@ -177,6 +186,7 @@ public class AdminController {
     @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopic> updateTopic(@PathVariable("topicId") Integer topicId, @Body  @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update topic: {}",topicId);
         assessmentMasterDataService.updateTopic(topicId, assessmentTopicRequest);
         return HttpResponse.ok();
     }
@@ -184,6 +194,7 @@ public class AdminController {
     @Put(value = "/parameters/{parameterId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameter> updateParameter(@PathVariable("parameterId") Integer parameterId, @Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update parameter: {}",parameterId);
         assessmentMasterDataService.updateParameter(parameterId, assessmentParameterRequest);
         return HttpResponse.ok();
     }
@@ -191,6 +202,7 @@ public class AdminController {
     @Put(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update question: {}",questionId);
         assessmentMasterDataService.updateQuestion(questionId, questionRequest);
         return HttpResponse.ok();
     }
@@ -214,6 +226,7 @@ public class AdminController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @AdminAuth
     public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, Authentication authentication) throws ParseException {
+        LOGGER.info("Admin: Get assessment from {} to {}",startDate,endDate);
         AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
         List<Assessment> allAssessments = assessmentService.getTotalAssessments(startDate, endDate);
         List<Assessment> activeAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Active).collect(Collectors.toList());

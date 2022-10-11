@@ -68,7 +68,7 @@ public class AssessmentController {
             assessments.forEach(assessment ->
             {
                 List<String> users = assessmentService.getAssessmentUsers(assessment.getAssessmentId());
-                AssessmentResponse assessmentResponse=modelMapper.map(assessment,AssessmentResponse.class);
+                AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
                 assessmentResponse.setAssessmentState(assessment.getAssessmentState());
                 assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
                 assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
@@ -77,7 +77,7 @@ public class AssessmentController {
 
 //                assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
                 assessmentResponses.add(assessmentResponse);
-              });
+            });
         return HttpResponse.ok(assessmentResponses);
     }
 
@@ -263,6 +263,7 @@ public class AssessmentController {
     @Patch(value = "/topicRecommendationText/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelRecommendationResponse> saveTopicRecommendationText(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest, Authentication authentication) {
+        LOGGER.info("Update individual topic recommendation text. assessment: {}, parameter: {}", assessmentId, topicId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
@@ -294,6 +295,7 @@ public class AssessmentController {
     @Patch(value = "/topicRecommendationFields/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelRecommendationRequest> saveTopicRecommendationFields(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
+        LOGGER.info("Update individual topic maturity recommendation. assessment: {}, parameter: {}", assessmentId, topicId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
             TopicLevelRecommendation topicLevelRecommendation = topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
@@ -316,6 +318,8 @@ public class AssessmentController {
     public HttpResponse<TopicLevelRecommendationRequest> deleteRecommendation
             (@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer
                     topicId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
+        LOGGER.info("Delete recommendation. assessment: {}, topic: {}" , assessmentId, topicId);
+
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
             topicAndParameterLevelAssessmentService.deleteRecommendation(recommendationId);
@@ -327,6 +331,7 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterLevelRecommendationRequest> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        LOGGER.info("Delete recommendation. assessment: {}, parameter: {}" , assessmentId, parameterId);
         if (assessment.isEditable()) {
             topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
         }
@@ -373,23 +378,23 @@ public class AssessmentController {
     }
 
 
-
-
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
-        LOGGER.info("Save modules: "+assessmentId);
+        LOGGER.info("Save modules: " + assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if(assessment.isEditable()) {
+        if (assessment.isEditable()) {
             assessmentService.saveAssessmentModules(moduleRequests, assessment);
         }
         return HttpResponse.ok();
     }
+
     @Put(value = "/{assessmentId}/modules")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication){
-        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
-        if(assessment.isEditable()) {
+    public HttpResponse updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication) {
+        LOGGER.info("Update modules. assessment: {}" , assessmentId);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if (assessment.isEditable()) {
             assessmentService.updateAssessmentModules(moduleRequest, assessment);
         }
         return HttpResponse.ok();

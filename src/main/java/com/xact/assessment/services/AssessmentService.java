@@ -129,9 +129,9 @@ public class AssessmentService {
 
     @Transactional
     public void updateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+        usersAssessmentsService.updateUsersInAssessment(assessmentUsers,assessment.getAssessmentId());
+        assessment.setAssessmentUsers(assessmentUsers);
         assessmentRepository.update(assessment);
-
-        usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
     }
 
     public void updateAssessment(Assessment assessment) {

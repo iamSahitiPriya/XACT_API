@@ -51,6 +51,8 @@ class AssessmentControllerTest {
         Assessment assessment = new Assessment(1, "xact","Client Request", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
+        AssessmentUsers assessmentUser =  new AssessmentUsers(new UserId("test@thoughtworks.com",assessment),AssessmentRole.Owner);
+        assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
         when(usersAssessmentsService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         AssessmentResponse expectedAssessment = new AssessmentResponse();

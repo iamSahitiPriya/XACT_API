@@ -67,15 +67,13 @@ public class AssessmentController {
         if (Objects.nonNull(assessments))
             assessments.forEach(assessment ->
             {
-                List<String> users = assessmentService.getAssessmentUsers(assessment.getAssessmentId());
+                //List<String> users = assessmentService.getAssessmentUsers(assessment.getAssessmentId());
                 AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
                 assessmentResponse.setAssessmentState(assessment.getAssessmentState());
                 assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
                 assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
                 assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
-                assessmentResponse.setUsers(users);
-
-//                assessmentResponse.setAssessmentState(assessmentService.getAssessmentState(assessment.getAssessmentId()));
+                assessmentResponse.setUsers(assessment.getFacilitators());
                 assessmentResponses.add(assessmentResponse);
             });
         return HttpResponse.ok(assessmentResponses);
@@ -112,9 +110,6 @@ public class AssessmentController {
             assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
             Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
-
-            UserId userID = new UserId();
-            userID.setAssessment(assessment);
             assessmentService.updateAssessment(assessment, assessmentUsers);
         }
         return HttpResponse.ok();
@@ -378,12 +373,14 @@ public class AssessmentController {
     }
 
 
+
+
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
-        LOGGER.info("Save modules: " + assessmentId);
+        LOGGER.info("Save modules: "+assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable()) {
+        if(assessment.isEditable()) {
             assessmentService.saveAssessmentModules(moduleRequests, assessment);
         }
         return HttpResponse.ok();

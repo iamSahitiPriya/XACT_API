@@ -4,6 +4,8 @@
 
 package integration;
 
+import com.xact.assessment.dtos.AssessmentResponse;
+import com.xact.assessment.dtos.AssessmentStatusDto;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import io.micronaut.http.HttpMethod;
@@ -238,14 +240,9 @@ class AssessmentControllerTest {
 
         MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/" + assessment.getAssessmentId() + "/statuses/finish").contentLength(0)
                 .bearerAuth("anything");
-        HttpResponse<String> assessmentResponse = client.toBlocking().exchange(request, String.class);
+        HttpResponse<AssessmentResponse> assessmentResponse = client.toBlocking().exchange(request, AssessmentResponse.class);
 
-        Date updatedDate = assessmentRepository.findById(assessment.getAssessmentId()).get().getUpdatedAt();
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Request\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" + "\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + updatedDate.getTime() + "," + "\"assessmentState\"" + ":" + "\"Draft\"" +"}";
-
-
-        assertEquals(expectedResponse, assessmentResponse.body());
+        assertEquals(AssessmentStatusDto.Completed, assessmentResponse.body().getAssessmentStatus());
 
     }
 
@@ -279,15 +276,9 @@ class AssessmentControllerTest {
 
         MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/" + assessment.getAssessmentId() + "/statuses/open").contentLength(0)
                 .bearerAuth("anything");
-        HttpResponse<String> assessmentResponse = client.toBlocking().exchange(request, String.class);
+        HttpResponse<AssessmentResponse> assessmentResponse = client.toBlocking().exchange(request, AssessmentResponse.class);
 
-        Date updatedDate = assessmentRepository.findById(assessment.getAssessmentId()).get().getUpdatedAt();
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + ","+"\"assessmentPurpose\""+ ":"+"\"Client Request\""+"," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" + "\"org\"" + "," + "\"assessmentStatus\"" + ":" + "\"Active\"" + "," + "\"updatedAt\"" + ":" + updatedDate.getTime() + ","+ "\"assessmentState\"" + ":" + "\"Draft\"" + "}";
-
-
-        assertEquals(expectedResponse, assessmentResponse.body());
-
+        assertEquals(AssessmentStatusDto.Active, assessmentResponse.body().getAssessmentStatus());
     }
 
     @Test

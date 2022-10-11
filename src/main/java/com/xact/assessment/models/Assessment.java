@@ -16,6 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -64,6 +65,10 @@ public class Assessment {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userId.assessment")
+    @ElementCollection()
+    private Set<AssessmentUsers> assessmentUsers;
+
 
     @Override
     public boolean equals(Object o) {
@@ -91,16 +96,21 @@ public class Assessment {
         return AssessmentStateDto.Draft;
     }
 
-    public boolean getCategoryStatus(){
-        List<AssessmentModule> assessmentModuleList=new ArrayList<>();
+    public boolean getCategoryStatus() {
+        List<AssessmentModule> assessmentModuleList = new ArrayList<>();
         assessmentModules.forEach(assessmentModule -> {
-            if(assessmentModule.getModule().getCategory().getIsActive() && assessmentModule.getModule().getIsActive()){
+            if (assessmentModule.getModule().getCategory().getIsActive() && assessmentModule.getModule().getIsActive()) {
                 assessmentModuleList.add(assessmentModule.getModule());
             }
         });
 
-        return  assessmentModuleList.size()>0;
+        return assessmentModuleList.size() > 0;
 
+    }
+
+    @Transient
+    public List<String> getFacilitators() {
+        return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Facilitator).map(assessmentUsers1 -> assessmentUsers1.getUserId().getUserEmail()).collect(Collectors.toList());
     }
 
     public Assessment(Integer assessmentId, String assessmentName, String assessmentPurpose, Organisation organisation, AssessmentStatus assessmentStatus, Date createdAt, Date updatedAt) {

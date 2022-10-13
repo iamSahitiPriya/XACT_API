@@ -64,6 +64,7 @@ public class ReportController {
                 return HttpResponse.ok(stream.toByteArray()).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + reportName);
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
+                e.printStackTrace();
                 return HttpResponse.serverError();
             }
         }
@@ -73,11 +74,11 @@ public class ReportController {
     @Get(value = "/sunburst/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<ReportDataResponse> getAssessmentReportData(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
-        Assessment assessment = getAuthenticatedAssessment(assessmentId,authentication);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         List<AssessmentCategory> assessmentCategories = reportService.generateSunburstData(assessment.getAssessmentId());
         ReportDataResponse reportDataResponse = new ReportDataResponse();
         reportDataResponse.setName(assessment.getAssessmentName());
-        List<ReportCategoryResponse> reportCategoryResponseList  = new ArrayList<>();
+        List<ReportCategoryResponse> reportCategoryResponseList = new ArrayList<>();
         mapToResponseStructure(assessmentCategories, reportCategoryResponseList);
         reportDataResponse.setChildren(reportCategoryResponseList);
 
@@ -109,21 +110,20 @@ public class ReportController {
     }
 
     private void mapToResponseStructure(List<AssessmentCategory> assessmentCategories, List<ReportCategoryResponse> reportCategoryResponseList) {
-        for(AssessmentCategory assessmentCategory: assessmentCategories){
+        for (AssessmentCategory assessmentCategory : assessmentCategories) {
             ReportCategoryResponse reportCategoryResponse = getReportCategoryResponse(assessmentCategory);
             List<ReportModuleResponse> reportModuleResponseList = new ArrayList<>();
-            for(AssessmentModule assessmentModule: assessmentCategory.getModules()){
+            for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
                 ReportModuleResponse reportModuleResponse = getReportModuleResponse(assessmentModule);
                 List<ReportTopicResponse> reportTopicResponseList = new ArrayList<>();
-                for(AssessmentTopic assessmentTopic: assessmentModule.getTopics()){
+                for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
                     ReportTopicResponse reportTopicResponse = getReportTopicResponse(assessmentTopic);
-                    if(assessmentTopic.hasReferences()){
+                    if (assessmentTopic.hasReferences()) {
                         reportTopicResponse.setValue(assessmentTopic.getRating());
-                    }
-                    else{
+                    } else {
                         reportTopicResponse.setRating(assessmentTopic.getTopicAverage());
                         List<ReportParameterResponse> reportParameterResponseList = new ArrayList<>();
-                        for(AssessmentParameter assessmentParameter : assessmentTopic.getParameters()){
+                        for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
                             ReportParameterResponse reportParameterResponse = getReportParameterResponse(assessmentParameter);
                             reportParameterResponseList.add(reportParameterResponse);
                         }

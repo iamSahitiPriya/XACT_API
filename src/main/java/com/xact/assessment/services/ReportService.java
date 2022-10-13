@@ -21,6 +21,7 @@ import java.util.Map;
 public class ReportService {
 
     private static final String BLANK_STRING = "";
+    private static final Integer ZERO = 0;
 
     private int recommendationCount = 0;
 
@@ -111,16 +112,16 @@ public class ReportService {
 
     private void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterAssessments, List<TopicLevelAssessment> topicLevelAssessments, HashMap<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, HashMap<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook, Integer assessmentId) {
         for (Answer answer : answers) {
-            writeAnswerRow(workbook, answer,assessmentId);
+            writeAnswerRow(workbook, answer, assessmentId);
         }
         if (!parameterAssessments.isEmpty()) {
             for (ParameterLevelAssessment parameterLevelAssessment : parameterAssessments) {
                 List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterLevelRecommendations.get(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
                 if (parameterLevelRecommendationList != null) {
                     parameterLevelRecommendations.remove(parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId());
-                    writeParameterRow(workbook, parameterLevelAssessment, parameterLevelRecommendationList,assessmentId);
+                    writeParameterRow(workbook, parameterLevelAssessment, parameterLevelRecommendationList, assessmentId);
                 } else {
-                    writeParameterRow(workbook, parameterLevelAssessment, new ArrayList<>(),assessmentId);
+                    writeParameterRow(workbook, parameterLevelAssessment, new ArrayList<>(), assessmentId);
                 }
 
             }
@@ -135,7 +136,7 @@ public class ReportService {
                     AssessmentCategory category = assessmentModule.getCategory();
                     Sheet sheet = getMatchingSheet(workbook, category);
                     generateHeaderIfNotExist(sheet, workbook);
-                    writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, assessmentParameter, "", parameterLevelRecommendationList);
+                    writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, assessmentParameter, ZERO, parameterLevelRecommendationList);
 
                 }
             }
@@ -145,9 +146,9 @@ public class ReportService {
                 List<TopicLevelRecommendation> topicLevelRecommendationList = topicLevelRecommendations.get(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
                 if (topicLevelRecommendationList != null) {
                     topicLevelRecommendations.remove(topicLevelAssessment.getTopicLevelId().getTopic().getTopicId());
-                    writeTopicRow(workbook, topicLevelAssessment, topicLevelRecommendationList,assessmentId);
+                    writeTopicRow(workbook, topicLevelAssessment, topicLevelRecommendationList, assessmentId);
                 } else {
-                    writeTopicRow(workbook, topicLevelAssessment, new ArrayList<>(),assessmentId);
+                    writeTopicRow(workbook, topicLevelAssessment, new ArrayList<>(), assessmentId);
                 }
 
             }
@@ -162,7 +163,7 @@ public class ReportService {
                     AssessmentCategory category = assessmentModule.getCategory();
                     Sheet sheet = getMatchingSheet(workbook, category);
                     generateHeaderIfNotExist(sheet, workbook);
-                    writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, "", topicLevelRecommendationList);
+                    writeDataOnSheet(workbook, sheet, assessmentModule, assessmentTopic, ZERO, topicLevelRecommendationList);
                 }
             }
         }
@@ -217,9 +218,9 @@ public class ReportService {
         drawing.createPicture(anchor, pictureIdx);
     }
 
-    private void writeTopicRow(Workbook workbook, TopicLevelAssessment topicLevelAssessment, List<TopicLevelRecommendation> topicLevelRecommendations,Integer assessmentId) {
+    private void writeTopicRow(Workbook workbook, TopicLevelAssessment topicLevelAssessment, List<TopicLevelRecommendation> topicLevelRecommendations, Integer assessmentId) {
 
-        String rating = String.valueOf(topicLevelAssessment.getRating());
+        Integer rating = topicLevelAssessment.getRating();
         AssessmentTopic topic = topicLevelAssessment.getTopicLevelId().getTopic();
         AssessmentModule module = topic.getModule();
         if (assessmentService.findById(module, assessmentId)) {
@@ -233,7 +234,7 @@ public class ReportService {
     }
 
     private void writeParameterRow(Workbook workbook, ParameterLevelAssessment parameterLevelAssessment, List<ParameterLevelRecommendation> parameterLevelRecommendations, Integer assessmentId) {
-        String rating = String.valueOf(parameterLevelAssessment.getRating());
+        Integer rating = parameterLevelAssessment.getRating();
         AssessmentParameter parameter = parameterLevelAssessment.getParameterLevelId().getParameter();
         AssessmentTopic topic = parameter.getTopic();
         AssessmentModule module = topic.getModule();
@@ -247,7 +248,7 @@ public class ReportService {
         }
     }
 
-    private void writeAnswerRow(Workbook workbook, Answer answer,Integer assessmentId) {
+    private void writeAnswerRow(Workbook workbook, Answer answer, Integer assessmentId) {
         Question question = answer.getAnswerId().getQuestion();
         AssessmentParameter parameter = question.getParameter();
         AssessmentTopic topic = parameter.getTopic();
@@ -260,11 +261,11 @@ public class ReportService {
             writeDataOnSheet(workbook, sheet,
                     module,
                     topic,
-                    BLANK_STRING,
+                    ZERO,
                     new TopicLevelRecommendation(),
                     0,
                     parameter,
-                    BLANK_STRING,
+                    ZERO,
                     new ParameterLevelRecommendation(),
                     0,
                     question.getQuestionText(),
@@ -313,7 +314,7 @@ public class ReportService {
         cell.setCellStyle(style);
     }
 
-    private void createStyledCell(Row row, int i, String value, CellStyle style) {
+    private void createStyledStringCell(Row row, int i, String value, CellStyle style) {
         Cell cell = row.createCell(i, CellType.STRING);
         cell.setCellValue(value);
         if (value != null && !value.isBlank() && FORMULA_STRING.indexOf(value.trim().charAt(0)) >= 0) {
@@ -321,30 +322,39 @@ public class ReportService {
         }
     }
 
-    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic topic, String topicRating, List<TopicLevelRecommendation> topicRecommendation) {
+    private void createStyledNumberCell(Row row, int i, Integer value) {
+        if (ZERO.equals(value)) {
+            row.createCell(i, CellType.BLANK);
+        } else {
+            Cell cell = row.createCell(i, CellType.NUMERIC);
+            cell.setCellValue(value);
+        }
+    }
+
+    private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic topic, Integer topicRating, List<TopicLevelRecommendation> topicRecommendation) {
         if (topicRecommendation.isEmpty()) {
-            writeDataOnSheet(workbook, sheet, module, topic, topicRating, new TopicLevelRecommendation(), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
+            writeDataOnSheet(workbook, sheet, module, topic, topicRating, new TopicLevelRecommendation(), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
         } else {
             for (int index = 0; index < topicRecommendation.size(); index++) {
                 if (index == 0) {
-                    writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
+                    writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
                 } else {
-                    writeDataOnSheet(workbook, sheet, module, topic, " ", topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), BLANK_STRING, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
+                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING);
                 }
             }
         }
     }
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
-            topic, AssessmentParameter parameter, String paramRating, List<ParameterLevelRecommendation> parameterRecommendation) {
+            topic, AssessmentParameter parameter, Integer paramRating, List<ParameterLevelRecommendation> parameterRecommendation) {
         if (parameterRecommendation.isEmpty()) {
-            writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(), 0, parameter, paramRating, new ParameterLevelRecommendation(), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+            writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, paramRating, new ParameterLevelRecommendation(), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
         } else {
             for (int index = 0; index < parameterRecommendation.size(); index++) {
                 if (index == 0) {
-                    writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(), 0, parameter, paramRating, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, paramRating, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
                 } else {
-                    writeDataOnSheet(workbook, sheet, module, topic, BLANK_STRING, new TopicLevelRecommendation(), 0, parameter, BLANK_STRING, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
+                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, ZERO, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING);
                 }
             }
         }
@@ -352,7 +362,7 @@ public class ReportService {
 
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
-            topic, String topicRating, TopicLevelRecommendation topicRecommendation, int topicRecommendationCount, AssessmentParameter parameter, String paramRating, ParameterLevelRecommendation
+            topic, Integer topicRating, TopicLevelRecommendation topicRecommendation, int topicRecommendationCount, AssessmentParameter parameter, Integer paramRating, ParameterLevelRecommendation
                                           paramRecommendation, int paramRecommendationCount, String questionText, String answer) {
         String topicImpact, paramImpact, paramEffort;
         String topicEffort;
@@ -364,28 +374,28 @@ public class ReportService {
         CellStyle style = workbook.createCellStyle();
         style.setQuotePrefixed(true);
 
-        createStyledCell(row, 0, module.getModuleName(), style);
-        createStyledCell(row, 1, topic.getTopicName(), style);
+        createStyledStringCell(row, 0, module.getModuleName(), style);
+        createStyledStringCell(row, 1, topic.getTopicName(), style);
 
         checkToMergeRatingColumn(sheet, topicRating, topicRecommendationCount, 2);
 
-        createStyledCell(row, 2, topicRating, style);
-        createStyledCell(row, 3, topicRecommendation.getRecommendation(), style);
-        createStyledCell(row, 4, topicImpact, style);
-        createStyledCell(row, 5, topicEffort, style);
-        createStyledCell(row, 6, topicRecommendation.getDeliveryHorizon(), style);
+        createStyledNumberCell(row, 2, topicRating);
+        createStyledStringCell(row, 3, topicRecommendation.getRecommendation(), style);
+        createStyledStringCell(row, 4, topicImpact, style);
+        createStyledStringCell(row, 5, topicEffort, style);
+        createStyledStringCell(row, 6, topicRecommendation.getDeliveryHorizon(), style);
 
-        createStyledCell(row, 7, parameter.getParameterName(), style);
+        createStyledStringCell(row, 7, parameter.getParameterName(), style);
 
         checkToMergeRatingColumn(sheet, paramRating, paramRecommendationCount, 8);
 
-        createStyledCell(row, 8, paramRating, style);
-        createStyledCell(row, 9, paramRecommendation.getRecommendation(), style);
-        createStyledCell(row, 10, paramImpact, style);
-        createStyledCell(row, 11, paramEffort, style);
-        createStyledCell(row, 12, paramRecommendation.getDeliveryHorizon(), style);
-        createStyledCell(row, 13, questionText, style);
-        createStyledCell(row, 14, answer, style);
+        createStyledNumberCell(row, 8, paramRating);
+        createStyledStringCell(row, 9, paramRecommendation.getRecommendation(), style);
+        createStyledStringCell(row, 10, paramImpact, style);
+        createStyledStringCell(row, 11, paramEffort, style);
+        createStyledStringCell(row, 12, paramRecommendation.getDeliveryHorizon(), style);
+        createStyledStringCell(row, 13, questionText, style);
+        createStyledStringCell(row, 14, answer, style);
     }
 
     private String getParameterRecommendationImpact(ParameterLevelRecommendation paramRecommendation) {
@@ -428,8 +438,8 @@ public class ReportService {
         return impact;
     }
 
-    private void checkToMergeRatingColumn(Sheet sheet, String rating, int totalRecommendationCount, int columnNo) {
-        if (rating.equals(" ")) {
+    private void checkToMergeRatingColumn(Sheet sheet, Integer rating, int totalRecommendationCount, int columnNo) {
+        if (ZERO.equals(rating)) {
             recommendationCount += 1;
         } else {
             if (totalRecommendationCount > 1) {

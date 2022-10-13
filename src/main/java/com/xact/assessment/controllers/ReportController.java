@@ -63,8 +63,7 @@ public class ReportController {
                 workbook.close();
                 return HttpResponse.ok(stream.toByteArray()).header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + reportName);
             } catch (Exception e) {
-                LOGGER.error(e.getMessage());
-                e.printStackTrace();
+                LOGGER.error("Error", e);
                 return HttpResponse.serverError();
             }
         }

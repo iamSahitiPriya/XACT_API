@@ -403,7 +403,7 @@ public class ReportService {
         if (paramRecommendation.getRecommendationImpact() != null) {
             impact = paramRecommendation.getRecommendationImpact().toString();
         } else {
-            impact = " ";
+            impact = BLANK_STRING;
         }
         return impact;
     }
@@ -413,7 +413,7 @@ public class ReportService {
         if (parameterRecommendation.getRecommendationEffort() != null) {
             effort = parameterRecommendation.getRecommendationEffort().toString();
         } else {
-            effort = " ";
+            effort = BLANK_STRING;
         }
         return effort;
     }
@@ -423,7 +423,7 @@ public class ReportService {
         if (topicRecommendation.getRecommendationEffort() != null) {
             effort = topicRecommendation.getRecommendationEffort().toString();
         } else {
-            effort = " ";
+            effort = BLANK_STRING;
         }
         return effort;
     }
@@ -433,20 +433,15 @@ public class ReportService {
         if (topicRecommendation.getRecommendationImpact() != null) {
             impact = topicRecommendation.getRecommendationImpact().toString();
         } else {
-            impact = " ";
+            impact = BLANK_STRING;
         }
         return impact;
     }
 
     private void checkToMergeRatingColumn(Sheet sheet, Integer rating, int totalRecommendationCount, int columnNo) {
-        if (ZERO.equals(rating)) {
+        if (totalRecommendationCount > 1) {
             recommendationCount += 1;
-        } else {
-            if (totalRecommendationCount > 1) {
-                recommendationCount += 1;
-            }
         }
-
         mergeCells(sheet, totalRecommendationCount, recommendationCount, columnNo);
     }
 

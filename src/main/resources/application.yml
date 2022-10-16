@@ -1,8 +1,4 @@
 micronaut:
-  caches:
-    organisation:
-      charset: 'UTF-8'
-      expire-after-access: 30s
   application:
     name: XAct_Assessment_API
   server:
@@ -33,6 +29,9 @@ datasources:
     username: ${USER}
     password: ${USER}
     dialect: POSTGRES
+
+application:
+  userName: ${NAME}
 
 
 flyway:

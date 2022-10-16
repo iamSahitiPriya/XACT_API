@@ -35,24 +35,21 @@ public class OrganisationController {
         this.organisationService = organisationService;
         this.httpClient = httpClient;
     }
-//    @Get(value = "/org/{orgName}", produces = MediaType.APPLICATION_JSON)
-//    @Secured(SecurityRule.IS_AUTHENTICATED)
-//    public HttpResponse organisationName(@PathVariable("orgName")String orgName, Authentication authentication) throws ParseException {
-//        OrganisationResponse result = getOrgName();
-//        return HttpResponse.ok(result);
-//
-//    }
+    @Get(value = "/org/{orgName}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse organisationName(@PathVariable("orgName")String orgName, Authentication authentication) throws ParseException {
+        List<OrganisationResponse> result = getOrgName();
+        return HttpResponse.ok(result);
+
+    }
     @Scheduled(fixedDelay = "10s")
     List<OrganisationResponse> getOrgName() throws ParseException {
-        LOGGER.info("Data retrieving from API");
         HttpRequest<?> httpRequest = HttpRequest.GET("/todos/1");
         String result = httpClient.toBlocking().retrieve(httpRequest);
         JSONParser parser = new JSONParser();
         JSONObject json = (JSONObject) parser.parse(result);
-        OrganisationResponse organisationResponse = modelMapper.map(json,OrganisationResponse.class);
-        List<OrganisationResponse> organisationResponse1 = organisationService.getOrganisationName(organisationResponse);
-        System.out.println(organisationResponse1.size());
-        return organisationService.getOrganisationName(organisationResponse);
+        organisationService.getName();
+        return null;
     }
 
 }

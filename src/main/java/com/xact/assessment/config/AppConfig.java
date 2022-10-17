@@ -9,4 +9,5 @@ import lombok.Setter;
 @ConfigurationProperties(value = "application", cliPrefix = "application")
 public class AppConfig {
     private String userName;
+    private String userPassword;
 }

@@ -59,7 +59,7 @@ class UserControllerTest {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         assessment.setAssessmentName("new");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         Organisation organisation = new Organisation();
         organisation.setSize(5);

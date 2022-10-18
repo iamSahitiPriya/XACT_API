@@ -48,7 +48,7 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1, "xact","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         AssessmentUsers assessmentUser =  new AssessmentUsers(new UserId("test@thoughtworks.com",assessment),AssessmentRole.Owner);
@@ -93,7 +93,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1, "xact","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
 
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
@@ -118,7 +118,7 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(123, "xact","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(123, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         Integer assessmentId = 123;
@@ -251,7 +251,7 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(123, "xact","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(123, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         Integer assessmentId = 123;
@@ -283,7 +283,7 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(123, "xact","Client Request", organisation, AssessmentStatus.Completed, created, updated);
+        Assessment assessment = new Assessment(123, "xact","Client Assessment", organisation, AssessmentStatus.Completed, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         Integer assessmentId = 123;
@@ -352,7 +352,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -405,7 +405,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Request",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -463,7 +463,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -511,7 +511,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -562,7 +562,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -619,7 +619,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -677,7 +677,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -734,7 +734,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -792,7 +792,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -852,7 +852,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Request",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -906,7 +906,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Request",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -957,7 +957,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Request",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1016,7 +1016,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Request",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1078,7 +1078,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1138,7 +1138,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1198,7 +1198,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1258,7 +1258,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1319,7 +1319,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1371,7 +1371,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1426,7 +1426,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(1, "Name", "Industry", "Domain", 1);
-        Assessment assessment = new Assessment(1, "Assessment","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Assessment","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
 
@@ -1456,7 +1456,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName","Client Request" ,organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName","Client Assessment" ,organisation, AssessmentStatus.Active, created, updated);
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
@@ -1489,7 +1489,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", "Client Request",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";

@@ -96,7 +96,7 @@ class AssessmentControllerTest {
         organisation.setDomain("new");
         organisation.setOrganisationName("testorg");
         assessment.setAssessmentName("mocked assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         assessment.setOrganisation(organisation);
         UserId userId = new UserId(userEmail, assessment);
@@ -113,7 +113,7 @@ class AssessmentControllerTest {
                 .bearerAuth("anything"), String.class);
 
 
-        String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Request\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
+        String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Assessment\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
                 "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + organisation.getSize() + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "}]";
 
         assertEquals(expectedResponse, assessmentResponse);
@@ -135,7 +135,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         assessment.setOrganisation(org);
 
@@ -195,7 +195,7 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Request\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
+        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Assessment\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
                 "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 10 + "," + "\"domain\"" + ":" + "\"Telecom\"" + "," + "\"industry\"" + ":" + "\"IT\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "," +
                 "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + 1 + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
                 "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
@@ -224,7 +224,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(org);
 
@@ -261,7 +261,7 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
@@ -296,7 +296,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(Active);
         assessment.setOrganisation(org);
 
@@ -332,7 +332,7 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(Active);
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
@@ -367,7 +367,7 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(Active);
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
@@ -413,7 +413,7 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
@@ -460,7 +460,7 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
@@ -505,7 +505,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(org);
 
@@ -552,7 +552,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(org);
 
@@ -598,7 +598,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(org);
 
@@ -645,7 +645,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(org);
 
@@ -689,7 +689,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(org);
 
@@ -733,7 +733,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(org);
 
@@ -775,7 +775,7 @@ class AssessmentControllerTest {
 
         assessment.setOrganisation(org);
         assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(org);
 
@@ -807,7 +807,7 @@ class AssessmentControllerTest {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         assessment.setAssessmentName("new");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         Organisation organisation = new Organisation();
         organisation.setSize(5);

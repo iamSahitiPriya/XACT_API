@@ -22,7 +22,7 @@ class AssessmentTest {
         organisation.setDomain("new");
         organisation.setOrganisationName("testorg");
         assessment.setAssessmentName("mocked assessment");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         assessment.setOrganisation(organisation);
         UserId userId = new UserId(userEmail, assessment);
@@ -44,7 +44,7 @@ class AssessmentTest {
         organisation.setDomain("domain");
         organisation.setOrganisationName("organisation");
         assessment.setAssessmentName("assessmentName");
-        assessment.setAssessmentPurpose("Client Request");
+        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(organisation);
         AssessmentCategory category = new AssessmentCategory("name",true,"");

@@ -45,7 +45,7 @@ class AdminReportControllerTest {
         Date updated = new Date(2022 - 9 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Request", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
 
         when(adminReportService.generateAdminReport("2022-09-06","2022-08-23")).thenReturn(getMockWorkbook());

@@ -4,19 +4,24 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.models.Accounts;
+import com.xact.assessment.controllers.AccountClient;
+import com.xact.assessment.dtos.AccountResponse;
 import jakarta.inject.Singleton;
+import org.reactivestreams.Publisher;
 
 @Singleton
 public class AccountService {
-//    private AccountRepository accountRepository;
 
-    public AccountService() {
-//        this.accountRepository = accountRepository;
+    private final AccountClient accountClient;
+
+
+    public AccountService(AccountClient accountClient) {
+        this.accountClient = accountClient;
     }
 
-    public void saveAccount(Accounts account) {
-        System.out.println(account.getId() + " " + account.getName() + " " + account.getIndustry());
-//        accountRepository.save(account);
+    public Publisher<AccountResponse> fetchOrganisationDetails() {
+        return accountClient.getOrganisationDetails();
     }
+
+
 }

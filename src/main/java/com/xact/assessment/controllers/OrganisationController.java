@@ -33,7 +33,7 @@ public class OrganisationController {
 
     @Get(uri = "/accounts",produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public MutableHttpResponse<Publisher<AccountResponse>> fetchOrganisationName() {
+    public MutableHttpResponse<AccountResponse> fetchOrganisationName() {
         System.out.println("calling");
         return HttpResponse.ok(accountService.fetchOrganisationDetails());
     }

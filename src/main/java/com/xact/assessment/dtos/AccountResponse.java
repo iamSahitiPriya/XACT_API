@@ -18,7 +18,6 @@ import java.util.List;
 @NoArgsConstructor
 public class AccountResponse {
 
-    Integer size;
     String offset;
     String nextPageUrl;
     Integer numberOfElements;

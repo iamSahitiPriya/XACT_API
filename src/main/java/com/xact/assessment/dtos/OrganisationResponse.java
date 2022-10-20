@@ -14,14 +14,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class OrganisationResponse {
     @JsonProperty
-    private int userId;
+    private String name;
 
     @JsonProperty
-    private int id;
+    private String industry;
 
-    @JsonProperty
-    private String title;
-
-    @JsonProperty
-    private boolean completed;
 }

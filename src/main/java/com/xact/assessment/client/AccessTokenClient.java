@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package com.xact.assessment.controllers;
+package com.xact.assessment.client;
 
 import com.xact.assessment.dtos.AccountResponse;
 import io.micronaut.http.annotation.Body;

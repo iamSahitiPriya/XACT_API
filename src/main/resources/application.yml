@@ -1,8 +1,7 @@
 micronaut:
-  caches:
-    organisation:
-      charset: 'UTF-8'
-      expire-after-access: 30s
+  http:
+    client:
+      read-timeout: 1m
   application:
     name: XAct_Assessment_API
   server:
@@ -26,6 +25,7 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
 
+
 datasources:
   default:
     url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
@@ -37,6 +37,8 @@ datasources:
 application:
   userName: ${NAME}
   userPassword: ${PASSWORD}
+
+
 
 
 flyway:

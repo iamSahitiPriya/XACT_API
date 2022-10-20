@@ -649,8 +649,6 @@ class AssessmentControllerTest {
 
         when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
-        when(topicAndParameterLevelAssessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())).thenReturn(true);
-
         HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendationText(assessmentId, topicId, topicLevelRecommendationTextRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());

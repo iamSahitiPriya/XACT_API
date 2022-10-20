@@ -2,11 +2,13 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package com.xact.assessment.controllers;
+package com.xact.assessment.filters;
 
 import com.nimbusds.jose.shaded.json.JSONObject;
 import com.nimbusds.jose.shaded.json.parser.JSONParser;
 import com.xact.assessment.config.AppConfig;
+import com.xact.assessment.controllers.AssessmentController;
+import com.xact.assessment.controllers.OrganisationController;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.annotation.Filter;
@@ -14,6 +16,8 @@ import io.micronaut.http.filter.ClientFilterChain;
 import io.micronaut.http.filter.HttpClientFilter;
 import lombok.SneakyThrows;
 import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -30,6 +34,7 @@ import java.util.Map;
 
 @Filter("/account/**")
 public class AccountFilter implements HttpClientFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrganisationController.class);
 
     private final AppConfig appConfig;
 
@@ -40,6 +45,7 @@ public class AccountFilter implements HttpClientFilter {
     @SneakyThrows
     @Override
     public Publisher<? extends HttpResponse<?>> doFilter(MutableHttpRequest<?> request, ClientFilterChain chain) {
+        LOGGER.info("Fetching Accounts. {}",request);
         Map<String,String> body = new HashMap<>();
         body.put("grant_type","client_credentials");
         body.put("scope","account.read.internal");

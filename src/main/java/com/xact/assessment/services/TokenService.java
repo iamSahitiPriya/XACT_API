@@ -5,7 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.config.AppConfig;
-import com.xact.assessment.controllers.AccessTokenClient;
+import com.xact.assessment.client.AccessTokenClient;
 import com.xact.assessment.dtos.AccountResponse;
 import jakarta.inject.Singleton;
 

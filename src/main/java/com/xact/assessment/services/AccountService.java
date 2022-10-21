@@ -41,14 +41,15 @@ public class AccountService {
         do {
             accountResponse = accountClient.getOrganisationDetails(parameters);
             parameters.put("offset", accountResponse.getContent().get(accountResponse.getNumberOfElements() - 1).getId());
-            saveAccountDetails(accountResponse.getContent());
+            saveAccountDetails(accountResponse);
         } while (accountResponse.getNextPageUrl() != null);
     }
 
-    public void saveAccountDetails(List<Accounts> accountsList) {
-        accountsList.remove(accountsList.size() - 1);
-        accountRepository.updateAll(accountsList);
+    public void saveAccountDetails(AccountResponse accountResponse) {
+        if(accountResponse.getNextPageUrl() == null)
+        accountResponse.getContent().remove(accountResponse.getContent().size() - 1);
 
+        accountRepository.updateAll(accountResponse.getContent());
     }
 
 

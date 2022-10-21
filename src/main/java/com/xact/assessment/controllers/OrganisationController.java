@@ -4,7 +4,6 @@
 
 package com.xact.assessment.controllers;
 
-import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.services.AccountService;
 import io.micronaut.http.HttpResponse;
@@ -13,15 +12,12 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
-import io.micronaut.scheduling.annotation.Scheduled;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.Security;
 import java.util.List;
 
 @Controller("/v1")

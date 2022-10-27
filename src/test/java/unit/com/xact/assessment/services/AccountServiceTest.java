@@ -16,10 +16,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
@@ -38,9 +35,10 @@ public class AccountServiceTest {
         Accounts account = new Accounts("A1","TW","Finance");
         Accounts anotherAccount = new Accounts("B2","TWI","Assess");
         Map<String, String> parameters = new HashMap<>();
-        AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1000,"abcd","");
+        String scope = "account.read.internal";
+        AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1,"abc","",new Date());
         String token = "Bearer "+accessTokenResponse.getAccess_token();
-        when(tokenService.getToken()).thenReturn(accessTokenResponse);
+        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());
         parameters.put("status", "active");
         List <Accounts> accounts = new ArrayList<>();
         accounts.add(account);

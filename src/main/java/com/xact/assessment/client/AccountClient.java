@@ -23,7 +23,4 @@ public interface AccountClient {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     AccountResponse getOrganisationDetails(@QueryValue Map<String, String> args, @Header(AUTHORIZATION) String authorisation);
 
-
-
-
 }

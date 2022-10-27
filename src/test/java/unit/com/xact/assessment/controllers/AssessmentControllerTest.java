@@ -359,7 +359,6 @@ class AssessmentControllerTest {
         assessmentUsers.setUserId(userId);
 
         when(assessmentService.getAssessment(any(), any())).thenReturn(assessmentUsers.getUserId().getAssessment());
-        System.out.println(userAuthService.getLoggedInUser(authentication));
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 

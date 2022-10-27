@@ -5,13 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @Getter
 @Setter
 @NoArgsConstructor
 public class AccessTokenResponse {
     String token_type;
-    Integer expires_token;
+    Integer expires_in;
     String access_token;
     String scope;
+    Date createdTime;
 }

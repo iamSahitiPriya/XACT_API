@@ -5,10 +5,8 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.client.AccountClient;
-import com.xact.assessment.controllers.AdminReportController;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
-import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.models.Accounts;
 import com.xact.assessment.repositories.AccountRepository;
 import io.micronaut.scheduling.annotation.Scheduled;
@@ -25,6 +23,7 @@ import java.util.Map;
 @Singleton
 public class AccountService {
 
+    private final static String scope = "account.read.internal";
     private final AccountClient accountClient;
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper = new ModelMapper();
@@ -48,11 +47,11 @@ public class AccountService {
 
     private void fetchAccounts() {
         Map<String, String> parameters = new HashMap<>();
-        AccessTokenResponse accessTokenResponse = tokenService.getToken();
-        String token = "Bearer "+accessTokenResponse.getAccess_token();
+        String token = "Bearer "+ tokenService.getToken(scope);
         parameters.put("status", "active");
-        AccountResponse accountResponse = new AccountResponse();
+        AccountResponse accountResponse;
         do {
+
             accountResponse = accountClient.getOrganisationDetails(parameters, token);
             parameters.put("offset", accountResponse.getContent().get(accountResponse.getNumberOfElements() - 1).getId());
             saveAccountDetails(accountResponse);

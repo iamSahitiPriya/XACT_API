@@ -7,6 +7,8 @@ import com.xact.assessment.services.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.Base64;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,16 +28,17 @@ public class TokenServiceTest {
     @Test
     void shouldFetchAccessToken() {
         Map<String,String> body = new HashMap<>();
-        String auth = "Basic dXNlcm5hbWU6cGFzc3dvcmQ=";
+        String scope = "account.read.internal";
+        String auth = "Basic " + Base64.getEncoder().encodeToString(("username" + ":" + "password").getBytes());
         body.put("grant_type","client_credentials");
         body.put("scope","account.read.internal");
-        AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1000,"abc","");
-        when(accessTokenClient.getAccessToken(auth,body)).thenReturn(accessTokenResponse);
+        AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1,"abc","",new Date());
         when(appConfig.getUserName()).thenReturn("username");
         when(appConfig.getUserPassword()).thenReturn("password");
+        when(accessTokenClient.getAccessToken(auth,body)).thenReturn(accessTokenResponse);
 
-        AccessTokenResponse accessTokenResponse1 = tokenService.getToken();
+        String token = tokenService.getToken(scope);
 
-        Assertions.assertEquals(accessTokenResponse1.getAccess_token(),"abc");
+        Assertions.assertNotNull(token);
     }
 }

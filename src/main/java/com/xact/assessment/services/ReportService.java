@@ -157,7 +157,6 @@ public class ReportService {
                 Integer key = entry.getKey();
                 AssessmentTopic assessmentTopic = topicService.getTopic(key).orElse(new AssessmentTopic());
                 AssessmentModule assessmentModule = assessmentTopic.getModule();
-                System.out.println(assessmentService.findById(assessmentModule, assessmentId));
                 if (assessmentService.findById(assessmentModule, assessmentId)) {
                     List<TopicLevelRecommendation> topicLevelRecommendationList = entry.getValue();
                     AssessmentCategory category = assessmentModule.getCategory();

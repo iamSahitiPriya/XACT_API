@@ -78,7 +78,7 @@ class AssessmentMasterDataControllerTest {
 
     @Test
     void testGetMasterDataCategoryResponse() throws IOException {
-        String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/categories/1")
+        String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/1/categories/allg")
                 .bearerAuth("anything"), String.class);
 
         assertNotEquals(userResponse, null);

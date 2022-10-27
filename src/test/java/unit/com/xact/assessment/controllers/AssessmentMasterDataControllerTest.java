@@ -37,7 +37,7 @@ class AssessmentMasterDataControllerTest {
         List<AssessmentCategory> allCategories = Collections.singletonList(category);
         when(assessmentMasterDataService.getAllCategories()).thenReturn(allCategories);
 
-        HttpResponse<UserAssessmentResponse> userAssessmentResponseHttpResponse = assessmentMasterDataController.getAssessmentMasterData(assessment.getAssessmentId());
+        HttpResponse<UserAssessmentResponse> userAssessmentResponseHttpResponse = assessmentMasterDataController.getCategories(assessment.getAssessmentId());
 
         List<AssessmentCategoryDto> assessmentCategoryDto=userAssessmentResponseHttpResponse.body().getAssessmentCategories();
         AssessmentCategoryDto firstAssessmentCategory = assessmentCategoryDto.get(0);

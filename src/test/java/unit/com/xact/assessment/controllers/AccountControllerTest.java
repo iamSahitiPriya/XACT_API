@@ -4,7 +4,7 @@
 
 package unit.com.xact.assessment.controllers;
 
-import com.xact.assessment.controllers.OrganisationController;
+import com.xact.assessment.controllers.AccountController;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.services.AccountService;
 import io.micronaut.http.HttpResponse;
@@ -19,10 +19,10 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class OrganisationControllerTest {
+public class AccountControllerTest {
 
     private final AccountService  accountService= mock(AccountService.class);
-    private final OrganisationController organisationController = new OrganisationController(accountService);
+    private final AccountController accountController = new AccountController(accountService);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
     @Test
@@ -34,7 +34,7 @@ public class OrganisationControllerTest {
         organisationResponseList.add(organisationResponse1);
         when(accountService.getOrganisation("a")).thenReturn(organisationResponseList);
 
-        HttpResponse<List<OrganisationResponse>> actualResponse = organisationController.fetchOrganisationName("a",authentication);
+        HttpResponse<List<OrganisationResponse>> actualResponse = accountController.fetchOrganisationName("a",authentication);
 
         Assertions.assertEquals(actualResponse.body().size(),2);
     }

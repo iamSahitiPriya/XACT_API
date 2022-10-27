@@ -7,9 +7,11 @@ package unit.com.xact.assessment.services;
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
+import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.models.Accounts;
 import com.xact.assessment.repositories.AccountRepository;
 import com.xact.assessment.services.AccountService;
+import com.xact.assessment.services.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -25,9 +27,10 @@ public class AccountServiceTest {
     AccountClient accountClient = mock(AccountClient.class);
     AccountRepository accountRepository = mock(AccountRepository.class);
     AccountService accountService;
+    TokenService tokenService = mock(TokenService.class);
 
     public AccountServiceTest() {
-        this.accountService = new AccountService(accountClient,accountRepository);
+        this.accountService = new AccountService(accountClient,accountRepository, tokenService);
     }
 
     @Test
@@ -35,12 +38,15 @@ public class AccountServiceTest {
         Accounts account = new Accounts("A1","TW","Finance");
         Accounts anotherAccount = new Accounts("B2","TWI","Assess");
         Map<String, String> parameters = new HashMap<>();
+        AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1000,"abcd","");
+        String token = "Bearer "+accessTokenResponse.getAccess_token();
+        when(tokenService.getToken()).thenReturn(accessTokenResponse);
         parameters.put("status", "active");
         List <Accounts> accounts = new ArrayList<>();
         accounts.add(account);
         accounts.add(anotherAccount);
         AccountResponse accountResponse = new AccountResponse("ABC123",null,2,accounts);
-        Mockito.when(accountClient.getOrganisationDetails(parameters)).thenReturn(accountResponse);
+        Mockito.when(accountClient.getOrganisationDetails(parameters,token)).thenReturn(accountResponse);
 
         accountService.fetchOrganisationDetails();
 

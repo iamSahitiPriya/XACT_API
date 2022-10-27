@@ -6,7 +6,7 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.config.AppConfig;
 import com.xact.assessment.client.AccessTokenClient;
-import com.xact.assessment.dtos.AccountResponse;
+import com.xact.assessment.models.AccessTokenResponse;
 import jakarta.inject.Singleton;
 
 import java.util.Base64;
@@ -23,14 +23,13 @@ public class TokenService {
         this.accessTokenClient = accessTokenClient;
     }
 
-    public AccountResponse getToken() {
+    public AccessTokenResponse getToken() {
         String userName = appConfig.getUserName();
         String password = appConfig.getUserPassword();
         String authentication = "Basic " + Base64.getEncoder().encodeToString((userName + ":" + password).getBytes());
         Map<String,String> body = new HashMap<>();
         body.put("grant_type","client_credentials");
         body.put("scope","account.read.internal");
-        AccountResponse accountResponse = accessTokenClient.getAccessToken(authentication,body);
-        return accountResponse;
+        return accessTokenClient.getAccessToken(authentication,body);
     }
 }

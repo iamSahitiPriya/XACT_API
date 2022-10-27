@@ -21,12 +21,12 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 @Controller("/v1")
-public class OrganisationController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrganisationController.class);
+public class AccountController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
     private final AccountService accountService;
 
 
-    public OrganisationController(AccountService accountService) {
+    public AccountController(AccountService accountService) {
 
         this.accountService = accountService;
     }

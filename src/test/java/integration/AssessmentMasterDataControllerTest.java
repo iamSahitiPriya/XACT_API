@@ -6,7 +6,6 @@ package integration;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
-import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @MicronautTest
 class AssessmentMasterDataControllerTest {
@@ -57,9 +55,6 @@ class AssessmentMasterDataControllerTest {
     @Inject
     AccessControlRepository accessControlRepository;
 
-    @Inject
-    UserAuthService userAuthService;
-
 
     @Inject
     EntityManager entityManager;
@@ -78,10 +73,19 @@ class AssessmentMasterDataControllerTest {
 
     @Test
     void testGetMasterDataCategoryResponse() throws IOException {
-        String userResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/1/categories/all")
+        String categoryDto = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/1/categories/all")
                 .bearerAuth("anything"), String.class);
 
-        assertNotEquals(userResponse, null);
+        String categories = resourceFileUtil.getJsonString("dto/all-categories.json");
+        assertEquals(categories, categoryDto);
+    }
+
+    @Test
+    void testGetSelectedCategoryResponse() throws IOException {
+        String categoryDto = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/1/categories")
+                .bearerAuth("anything"), String.class);
+
+        assertEquals("{}", categoryDto);
     }
 
     @Test
@@ -112,7 +116,7 @@ class AssessmentMasterDataControllerTest {
         AssessmentModule assessmentModule = assessmentModules.stream().filter(assessmentModule1 -> assessmentModule1.getModuleName().equals("Module1")).findFirst().get();
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-        assertEquals(assessmentModule.getModuleName(),"Module1");
+        assertEquals(assessmentModule.getModuleName(), "Module1");
 
         moduleRepository.delete(assessmentModule);
         entityManager.getTransaction().commit();

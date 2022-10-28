@@ -8,7 +8,7 @@ import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AppConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
-import com.xact.assessment.models.Accounts;
+import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
@@ -50,7 +50,6 @@ public class AccountService {
         parameters.put("status", "active");
         AccountResponse accountResponse;
         do {
-            System.out.println(token);
             accountResponse = accountClient.getOrganisationDetails(parameters, token);
             parameters.put("offset", accountResponse.getContent().get(accountResponse.getNumberOfElements() - 1).getId());
             saveAccountDetails(accountResponse);
@@ -66,7 +65,7 @@ public class AccountService {
 
 
     public List<OrganisationResponse> getOrganisation(String organisationName) {
-        List<Accounts> accounts = accountRepository.findAccount(organisationName);
+        List<Account> accounts = accountRepository.findAccount(organisationName);
         List<OrganisationResponse> responses = new ArrayList<>();
         accounts.forEach(account -> {
             OrganisationResponse organisationResponse = modelMapper.map(account, OrganisationResponse.class);

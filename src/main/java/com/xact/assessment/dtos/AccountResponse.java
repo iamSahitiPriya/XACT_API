@@ -4,7 +4,7 @@
 
 package com.xact.assessment.dtos;
 
-import com.xact.assessment.models.Accounts;
+import com.xact.assessment.models.Account;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +21,5 @@ public class AccountResponse {
     String offset;
     String nextPageUrl;
     Integer numberOfElements;
-    List<Accounts> content;
+    List<Account> content;
 }

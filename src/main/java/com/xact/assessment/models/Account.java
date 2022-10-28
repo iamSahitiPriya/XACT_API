@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
 @Introspected
 @Entity
 @Table(name = "tbm_accounts")
-public class Accounts {
+public class Account {
     @Id
     @Column(name = "id", nullable = false, unique = true)
     private String id;

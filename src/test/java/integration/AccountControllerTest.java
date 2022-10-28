@@ -4,7 +4,7 @@
 
 package integration;
 
-import com.xact.assessment.models.Accounts;
+import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
@@ -39,15 +39,15 @@ public class AccountControllerTest {
 
     @Test
     void getOrganisationNames() throws IOException {
-        Accounts accounts = new Accounts("abc","Shell Singapore","Commodities, Utilities and Energy");
-        Accounts accounts1 = new Accounts("def","Equinor","Finance");
+        Account accounts = new Account("abc","Shell Singapore","Commodities, Utilities and Energy");
+        Account accounts1 = new Account("def","Equinor","Finance");
         accountRepository.save(accounts);
         accountRepository.save(accounts1);
         entityManager.getTransaction().commit();
         entityManager.clear();
         entityManager.close();
 
-        String organisationResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/accounts/shell")
+        String organisationResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/account/shell")
                 .bearerAuth("anything"), String.class);
 
         String expectedResponse = "[{" + "\"name\"" + ":" + "\"Shell Singapore\"" + "," +"\"industry\""+ ":"+"\"Commodities, Utilities and Energy\"" + "}]";

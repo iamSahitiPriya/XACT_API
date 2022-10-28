@@ -9,7 +9,7 @@ import com.xact.assessment.config.AppConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.models.AccessTokenResponse;
-import com.xact.assessment.models.Accounts;
+import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
 import com.xact.assessment.services.AccountService;
 import com.xact.assessment.services.TokenService;
@@ -34,8 +34,8 @@ public class AccountServiceTest {
 
     @Test
     void fetchAccounts() {
-        Accounts account = new Accounts("A1","TW","Finance");
-        Accounts anotherAccount = new Accounts("B2","TWI","Assess");
+        Account account = new Account("A1","TW","Finance");
+        Account anotherAccount = new Account("B2","TWI","Assess");
         Map<String, String> parameters = new HashMap<>();
         String scope = "account.read.internal";
         when(appConfig.getScope()).thenReturn(scope);
@@ -43,7 +43,7 @@ public class AccountServiceTest {
         String token = "Bearer "+accessTokenResponse.getAccess_token();
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());
         parameters.put("status", "active");
-        List <Accounts> accounts = new ArrayList<>();
+        List <Account> accounts = new ArrayList<>();
         accounts.add(account);
         accounts.add(anotherAccount);
         AccountResponse accountResponse = new AccountResponse("ABC123",null,2,accounts);
@@ -56,8 +56,8 @@ public class AccountServiceTest {
 
     @Test
     void getOrganisation() {
-        List <Accounts> accounts = new ArrayList<>();
-        accounts.add(new Accounts("A1","TW","Finance"));
+        List <Account> accounts = new ArrayList<>();
+        accounts.add(new Account("A1","TW","Finance"));
         when(accountRepository.findAccount("A")).thenReturn(accounts);
 
         List<OrganisationResponse> organisationResponseList = accountService.getOrganisation("A");

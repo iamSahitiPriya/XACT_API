@@ -30,7 +30,7 @@ public class AccountController {
 
         this.accountService = accountService;
     }
-    @Get(value = "/accounts/{name}",produces = MediaType.APPLICATION_JSON)
+    @Get(value = "/account/{name}",produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<List<OrganisationResponse>> fetchOrganisationName(@PathVariable("name") String organisationName, Authentication authentication) {
         LOGGER.info("Get Organisation details: {}",organisationName);

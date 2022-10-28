@@ -6,8 +6,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@ConfigurationProperties(value = "application", cliPrefix = "application")
+@ConfigurationProperties(value = "token", cliPrefix = "token")
 public class AppConfig {
     private String userName;
-    private String userPassword;
+    private String password;
+    private String grantType;
+    private String scope;
+
 }

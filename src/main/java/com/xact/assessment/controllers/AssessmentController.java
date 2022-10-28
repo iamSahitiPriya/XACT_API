@@ -12,9 +12,6 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.client.HttpClient;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.scheduling.annotation.Scheduled;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -40,7 +37,6 @@ public class AssessmentController {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
-    private final OrganisationService organisationService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
@@ -48,7 +44,7 @@ public class AssessmentController {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, OrganisationService organisationService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
@@ -57,7 +53,6 @@ public class AssessmentController {
         this.parameterService = parameterService;
         this.topicService = topicService;
         this.questionService = questionService;
-        this.organisationService = organisationService;
     }
 
 
@@ -272,14 +267,21 @@ public class AssessmentController {
         if (assessment.isEditable()) {
             if (topicLevelRecommendationTextRequest.getRecommendationId() == null) {
                 topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
+                topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
             } else {
                 topicLevelRecommendation = topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendationTextRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
+                topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
+                topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
             }
-            topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
             topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
             updateAssessment(assessment);
-            topicLevelRecommendationResponse.setRecommendationId(topicLevelRecommendation.getRecommendationId());
-            topicLevelRecommendationResponse.setRecommendation(topicLevelRecommendation.getRecommendation());
+            if (topicAndParameterLevelAssessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())) {
+                topicLevelRecommendationResponse.setRecommendationId(topicLevelRecommendation.getRecommendationId());
+                topicLevelRecommendationResponse.setRecommendation(topicLevelRecommendation.getRecommendation());
+            } else {
+                topicLevelRecommendationResponse.setRecommendationId(null);
+            }
+
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }
@@ -310,7 +312,7 @@ public class AssessmentController {
     public HttpResponse<TopicLevelRecommendationRequest> deleteRecommendation
             (@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer
                     topicId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
-        LOGGER.info("Delete recommendation. assessment: {}, topic: {}", assessmentId, topicId);
+        LOGGER.info("Delete recommendation. assessment: {}, topic: {}" , assessmentId, topicId);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
@@ -323,7 +325,7 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterLevelRecommendationRequest> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        LOGGER.info("Delete recommendation. assessment: {}, parameter: {}", assessmentId, parameterId);
+        LOGGER.info("Delete recommendation. assessment: {}, parameter: {}" , assessmentId, parameterId);
         if (assessment.isEditable()) {
             topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
         }
@@ -370,12 +372,14 @@ public class AssessmentController {
     }
 
 
+
+
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
-        LOGGER.info("Save modules: " + assessmentId);
+        LOGGER.info("Save modules: "+assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable()) {
+        if(assessment.isEditable()) {
             assessmentService.saveAssessmentModules(moduleRequests, assessment);
         }
         return HttpResponse.ok();
@@ -384,7 +388,7 @@ public class AssessmentController {
     @Put(value = "/{assessmentId}/modules")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication) {
-        LOGGER.info("Update modules. assessment: {}", assessmentId);
+        LOGGER.info("Update modules. assessment: {}" , assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
             assessmentService.updateAssessmentModules(moduleRequest, assessment);

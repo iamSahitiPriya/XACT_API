@@ -34,12 +34,17 @@ datasources:
     password: ${USER}
     dialect: POSTGRES
 
-application:
+token:
   userName: ${NAME}
-  userPassword: ${PASSWORD}
+  password: ${PASSWORD}
+  url: "https://thoughtworks.okta.com"
+  endpoint: "/oauth2/aus1fjygi70z7ZtVB0h8/v1/token"
+  grantType: "client_credentials"
+  scope: "account.read.internal"
 
-
-
+account:
+  url: "https://api.thoughtworks.net/account"
+  endpoint: "/api/accounts"
 
 flyway:
   datasources:

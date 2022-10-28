@@ -5,6 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.client.AccountClient;
+import com.xact.assessment.config.AppConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.models.Accounts;
@@ -22,20 +23,18 @@ import java.util.Map;
 
 @Singleton
 public class AccountService {
-
-    private final static String scope = "account.read.internal";
     private final AccountClient accountClient;
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper = new ModelMapper();
     private final TokenService tokenService;
+    private final AppConfig appConfig;
     private static  final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
 
-
-
-    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService) {
+    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService, AppConfig appConfig) {
         this.accountClient = accountClient;
         this.accountRepository = accountRepository;
         this.tokenService = tokenService;
+        this.appConfig = appConfig;
     }
 
     @Scheduled(fixedDelay = "4h")
@@ -47,11 +46,11 @@ public class AccountService {
 
     private void fetchAccounts() {
         Map<String, String> parameters = new HashMap<>();
-        String token = "Bearer "+ tokenService.getToken(scope);
+        String token = "Bearer "+ tokenService.getToken(appConfig.getScope());
         parameters.put("status", "active");
         AccountResponse accountResponse;
         do {
-
+            System.out.println(token);
             accountResponse = accountClient.getOrganisationDetails(parameters, token);
             parameters.put("offset", accountResponse.getContent().get(accountResponse.getNumberOfElements() - 1).getId());
             saveAccountDetails(accountResponse);

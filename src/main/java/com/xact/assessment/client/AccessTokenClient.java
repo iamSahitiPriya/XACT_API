@@ -16,12 +16,10 @@ import java.util.Map;
 import static io.micronaut.http.HttpHeaders.AUTHORIZATION;
 
 
-@Client("https://thoughtworks.okta.com")
+@Client("${token.url}")
 public interface AccessTokenClient {
 
-    @Post( value="/oauth2/aus1fjygi70z7ZtVB0h8/v1/token")
+    @Post( value="${token.endpoint}")
     @Header(name = "Content-type", value="application/x-www-form-urlencoded")
     AccessTokenResponse getAccessToken(@Header(AUTHORIZATION) String authorization, @Body Map<String, String> maps);
-
-
 }

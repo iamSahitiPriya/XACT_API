@@ -16,10 +16,10 @@ import java.util.Map;
 
 import static io.micronaut.http.HttpHeaders.AUTHORIZATION;
 
-@Client("https://api.thoughtworks.net/account")
+@Client("${account.url}")
 public interface AccountClient {
 
-    @Get(value="/api/accounts{?args*}")
+    @Get(value="${account.endpoint}{?args*}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     AccountResponse getOrganisationDetails(@QueryValue Map<String, String> args, @Header(AUTHORIZATION) String authorisation);
 

@@ -5,6 +5,7 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.client.AccountClient;
+import com.xact.assessment.config.AppConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.models.AccessTokenResponse;
@@ -24,10 +25,11 @@ public class AccountServiceTest {
     AccountClient accountClient = mock(AccountClient.class);
     AccountRepository accountRepository = mock(AccountRepository.class);
     AccountService accountService;
+    AppConfig appConfig = mock(AppConfig.class);
     TokenService tokenService = mock(TokenService.class);
 
     public AccountServiceTest() {
-        this.accountService = new AccountService(accountClient,accountRepository, tokenService);
+        this.accountService = new AccountService(accountClient,accountRepository, tokenService, appConfig);
     }
 
     @Test
@@ -36,6 +38,7 @@ public class AccountServiceTest {
         Accounts anotherAccount = new Accounts("B2","TWI","Assess");
         Map<String, String> parameters = new HashMap<>();
         String scope = "account.read.internal";
+        when(appConfig.getScope()).thenReturn(scope);
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1,"abc","",new Date());
         String token = "Bearer "+accessTokenResponse.getAccess_token();
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());

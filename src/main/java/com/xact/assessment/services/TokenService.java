@@ -35,10 +35,10 @@ public class TokenService {
         }
         else {
             String userName = appConfig.getUserName();
-            String password = appConfig.getUserPassword();
+            String password = appConfig.getPassword();
             String authentication = "Basic " + Base64.getEncoder().encodeToString((userName + ":" + password).getBytes());
             Map<String, String> body = new HashMap<>();
-            body.put("grant_type", "client_credentials");
+            body.put("grant_type", appConfig.getGrantType());
             body.put("scope", scope);
             AccessTokenResponse accessTokenResponse = accessTokenClient.getAccessToken(authentication, body);
             accessTokenResponse.setCreatedTime(new Date());

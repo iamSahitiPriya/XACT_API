@@ -34,7 +34,7 @@ public class TokenServiceTest {
         body.put("scope","account.read.internal");
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1,"abc","",new Date());
         when(appConfig.getUserName()).thenReturn("username");
-        when(appConfig.getUserPassword()).thenReturn("password");
+        when(appConfig.getPassword()).thenReturn("password");
         when(accessTokenClient.getAccessToken(auth,body)).thenReturn(accessTokenResponse);
 
         String token = tokenService.getToken(scope);

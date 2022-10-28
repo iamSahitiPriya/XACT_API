@@ -23,7 +23,6 @@ import org.modelmapper.ModelMapper;
 import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;

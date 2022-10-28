@@ -377,7 +377,7 @@ public class AssessmentController {
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
-        LOGGER.info("Save modules: "+assessmentId);
+        LOGGER.info("Save modules: {}",assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if(assessment.isEditable()) {
             assessmentService.saveAssessmentModules(moduleRequests, assessment);

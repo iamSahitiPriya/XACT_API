@@ -4,7 +4,6 @@
 
 package com.xact.assessment.client;
 
-import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.models.AccessTokenResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Header;

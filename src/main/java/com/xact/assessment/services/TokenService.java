@@ -34,7 +34,7 @@ public class TokenService {
             return tokenMap.get("account.read.internal").getAccess_token();
         }
         else {
-            String userName = appConfig.getUserName();
+            String userName = appConfig.getUsername();
             String password = appConfig.getPassword();
             String authentication = "Basic " + Base64.getEncoder().encodeToString((userName + ":" + password).getBytes());
             Map<String, String> body = new HashMap<>();

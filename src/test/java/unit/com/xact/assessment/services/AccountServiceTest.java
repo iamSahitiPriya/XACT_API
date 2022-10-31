@@ -13,10 +13,13 @@ import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
 import com.xact.assessment.services.AccountService;
 import com.xact.assessment.services.TokenService;
+import jakarta.inject.Inject;
+import io.micronaut.context.env.Environment;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
@@ -28,26 +31,31 @@ public class AccountServiceTest {
     AppConfig appConfig = mock(AppConfig.class);
     TokenService tokenService = mock(TokenService.class);
 
+    Environment environment = mock(Environment.class) ;
+
     public AccountServiceTest() {
-        this.accountService = new AccountService(accountClient,accountRepository, tokenService, appConfig);
+        this.accountService = new AccountService(accountClient, accountRepository, tokenService, appConfig,environment);
     }
 
     @Test
-    void fetchAccounts() {
-        Account account = new Account("A1","TW","Finance");
-        Account anotherAccount = new Account("B2","TWI","Assess");
+    void fetchAccounts() throws IOException {
+        Account account = new Account("A1", "TW", "Finance");
+        Account anotherAccount = new Account("B2", "TWI", "Assess");
         Map<String, String> parameters = new HashMap<>();
         String scope = "account.read.internal";
         when(appConfig.getScope()).thenReturn(scope);
-        AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1,"abc","",new Date());
-        String token = "Bearer "+accessTokenResponse.getAccess_token();
+        AccessTokenResponse accessTokenResponse = new AccessTokenResponse("", 1, "abc", "", new Date());
+        String token = "Bearer " + accessTokenResponse.getAccess_token();
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());
         parameters.put("status", "active");
-        List <Account> accounts = new ArrayList<>();
+        List<Account> accounts = new ArrayList<>();
         accounts.add(account);
         accounts.add(anotherAccount);
-        AccountResponse accountResponse = new AccountResponse("ABC123",null,2,accounts);
-        Mockito.when(accountClient.getOrganisationDetails(parameters,token)).thenReturn(accountResponse);
+        AccountResponse accountResponse = new AccountResponse("ABC123", null, 2, accounts);
+        Mockito.when(accountClient.getOrganisationDetails(parameters, token)).thenReturn(accountResponse);
+        Set<String> set = new HashSet<>();
+        set.add("dev");
+        when(environment.getActiveNames()).thenReturn(set);
 
         accountService.fetchOrganisationDetails();
 
@@ -56,13 +64,13 @@ public class AccountServiceTest {
 
     @Test
     void getOrganisation() {
-        List <Account> accounts = new ArrayList<>();
-        accounts.add(new Account("A1","TW","Finance"));
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(new Account("A1", "TW", "Finance"));
         when(accountRepository.findAccount("A")).thenReturn(accounts);
 
         List<OrganisationResponse> organisationResponseList = accountService.getOrganisation("A");
 
-        Assertions.assertEquals(organisationResponseList.size(),1);
+        Assertions.assertEquals(organisationResponseList.size(), 1);
 
 
     }

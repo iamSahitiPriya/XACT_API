@@ -1,4 +1,7 @@
 micronaut:
+  http:
+    client:
+      read-timeout: 1m
   application:
     name: XAct_Assessment_API
   server:

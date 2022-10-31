@@ -107,7 +107,7 @@ public class AssessmentMasterDataController {
         return HttpResponse.ok(userAssessmentResponse);
     }
 
-    @Get(value = "{assessmentId}/categories/", produces = MediaType.APPLICATION_JSON)
+    @Get(value = "{assessmentId}/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<UserAssessmentResponse> getSelectedCategories(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get selected categories only");

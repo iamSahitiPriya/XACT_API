@@ -58,7 +58,7 @@ public class AccountService {
         }
     }
 
-    private List<Account> readAccounts() throws IOException {
+    public List<Account> readAccounts() throws IOException {
         String dataPath = "src/main/resources/localData/tbm_accounts.json";
         String jsonString = new String(Files.readAllBytes(Paths.get(dataPath)));
         ObjectMapper mapper = new ObjectMapper();

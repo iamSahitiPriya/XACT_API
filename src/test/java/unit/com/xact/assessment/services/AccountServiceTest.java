@@ -4,6 +4,8 @@
 
 package unit.com.xact.assessment.services;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AppConfig;
 import com.xact.assessment.dtos.AccountResponse;
@@ -15,11 +17,14 @@ import com.xact.assessment.services.AccountService;
 import com.xact.assessment.services.TokenService;
 import jakarta.inject.Inject;
 import io.micronaut.context.env.Environment;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static org.mockito.Mockito.*;
@@ -30,6 +35,7 @@ public class AccountServiceTest {
     AccountService accountService;
     AppConfig appConfig = mock(AppConfig.class);
     TokenService tokenService = mock(TokenService.class);
+    ObjectMapper mapper = mock(ObjectMapper.class);
 
     Environment environment = mock(Environment.class) ;
 
@@ -72,6 +78,19 @@ public class AccountServiceTest {
 
         Assertions.assertEquals(organisationResponseList.size(), 1);
 
+
+    }
+
+    @Test
+    void fetchAccountDetailForLocalEnv() throws IOException {
+        Set<String> set = new HashSet<>();
+        set.add("local");
+        when(environment.getActiveNames()).thenReturn(set);
+        List<Account> accountList = accountService.readAccounts();
+
+        accountService.fetchOrganisationDetails();
+
+        verify(accountRepository).updateAll(accountList);
 
     }
 }

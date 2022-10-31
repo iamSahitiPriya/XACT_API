@@ -33,16 +33,18 @@ datasources:
     password: ${DB_PWD}
 
 
+token:
+  username: ${NAME}
+  password: ${PASSWORD}
+  url: "https://thoughtworks.okta.com"
+  endpoint: "/oauth2/aus1fjygi70z7ZtVB0h8/v1/token"
+  grantType: "client_credentials"
+  scope: "account.read.internal"
+
 account:
   url: "https://api.thoughtworks.net/account"
-  endpoint: "/api/accounts"
   scope: "account.read.internal"
-  token:
-    username: ${NAME}
-    password: ${PASSWORD}
-    url: "https://thoughtworks.okta.com"
-    endpoint: "/oauth2/aus1fjygi70z7ZtVB0h8/v1/token"
-    grantType: "client_credentials"
+  endpoint: "/api/accounts"
 
 flyway:
   datasources:

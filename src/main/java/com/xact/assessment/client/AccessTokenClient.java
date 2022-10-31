@@ -15,10 +15,10 @@ import java.util.Map;
 import static io.micronaut.http.HttpHeaders.AUTHORIZATION;
 
 
-@Client("${account.token.url}")
+@Client("${token.url}")
 public interface AccessTokenClient {
 
-    @Post( value="${account.token.endpoint}")
+    @Post( value="${token.endpoint}")
     @Header(name = "Content-type", value="application/x-www-form-urlencoded")
     AccessTokenResponse getAccessToken(@Header(AUTHORIZATION) String authorization, @Body Map<String, String> maps);
 }

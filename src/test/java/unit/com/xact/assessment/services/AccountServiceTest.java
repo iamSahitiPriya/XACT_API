@@ -4,7 +4,6 @@
 
 package unit.com.xact.assessment.services;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AppConfig;
@@ -15,16 +14,12 @@ import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
 import com.xact.assessment.services.AccountService;
 import com.xact.assessment.services.TokenService;
-import jakarta.inject.Inject;
 import io.micronaut.context.env.Environment;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static org.mockito.Mockito.*;

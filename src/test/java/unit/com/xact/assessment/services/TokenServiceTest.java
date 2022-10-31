@@ -33,8 +33,9 @@ public class TokenServiceTest {
         body.put("grant_type","client_credentials");
         body.put("scope","account.read.internal");
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1,"abc","",new Date());
-        when(appConfig.getUserName()).thenReturn("username");
+        when(appConfig.getUsername()).thenReturn("username");
         when(appConfig.getPassword()).thenReturn("password");
+        when(appConfig.getGrantType()).thenReturn("client_credentials");
         when(accessTokenClient.getAccessToken(auth,body)).thenReturn(accessTokenResponse);
 
         String token = tokenService.getToken(scope);

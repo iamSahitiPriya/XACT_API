@@ -214,5 +214,9 @@ public class AssessmentMasterDataService {
     public List<AssessmentCategory> getCategories() {
         return categoryRepository.findCategories();
     }
+
+    public List<AssessmentModule> getModules() {
+      return moduleService.getAllModules();
+    }
 }
 

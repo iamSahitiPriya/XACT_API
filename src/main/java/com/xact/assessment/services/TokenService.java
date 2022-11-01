@@ -48,7 +48,7 @@ public class TokenService {
     }
 
     private boolean isTokenValid(AccessTokenResponse accessToken) {
-        return (accessToken != null) && ((new Date().getTime() / SECONDS) - (accessToken.getCreatedTime().getTime() / SECONDS) < accessToken.getExpires_in());
+        return (accessToken != null) && ((new Date().getTime() / SECONDS) - (accessToken.getCreatedTime().getTime() / SECONDS) < accessToken.getExpires_in() - 60);
     }
 
 }

@@ -6,7 +6,8 @@ package unit.com.xact.assessment.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.AccountClient;
-import com.xact.assessment.config.AppConfig;
+import com.xact.assessment.config.AccountConfig;
+import com.xact.assessment.config.TokenConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.models.AccessTokenResponse;
@@ -28,14 +29,14 @@ public class AccountServiceTest {
     AccountClient accountClient = mock(AccountClient.class);
     AccountRepository accountRepository = mock(AccountRepository.class);
     AccountService accountService;
-    AppConfig appConfig = mock(AppConfig.class);
+    TokenConfig tokenConfig = mock(TokenConfig.class);
     TokenService tokenService = mock(TokenService.class);
-    ObjectMapper mapper = mock(ObjectMapper.class);
+    AccountConfig accountConfig = mock(AccountConfig.class);
 
     Environment environment = mock(Environment.class) ;
 
     public AccountServiceTest() {
-        this.accountService = new AccountService(accountClient, accountRepository, tokenService, appConfig,environment);
+        this.accountService = new AccountService(accountClient, accountRepository, tokenService, tokenConfig, accountConfig, environment);
     }
 
     @Test
@@ -44,7 +45,7 @@ public class AccountServiceTest {
         Account anotherAccount = new Account("B2", "TWI", "Assess");
         Map<String, String> parameters = new HashMap<>();
         String scope = "account.read.internal";
-        when(appConfig.getScope()).thenReturn(scope);
+        when(accountConfig.getScope()).thenReturn(scope);
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("", 1, "abc", "", new Date());
         String token = "Bearer " + accessTokenResponse.getAccess_token();
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());

@@ -1,7 +1,7 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.client.AccessTokenClient;
-import com.xact.assessment.config.AppConfig;
+import com.xact.assessment.config.TokenConfig;
 import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.services.TokenService;
 import org.junit.jupiter.api.Assertions;
@@ -17,11 +17,11 @@ import static org.mockito.Mockito.when;
 
 public class TokenServiceTest {
     AccessTokenClient accessTokenClient = mock(AccessTokenClient.class);
-    AppConfig appConfig = mock(AppConfig.class);
+    TokenConfig tokenConfig = mock(TokenConfig.class);
     TokenService tokenService;
 
     public TokenServiceTest() {
-        this.tokenService = new TokenService(appConfig,accessTokenClient);
+        this.tokenService = new TokenService(tokenConfig,accessTokenClient);
 
     }
 
@@ -33,9 +33,9 @@ public class TokenServiceTest {
         body.put("grant_type","client_credentials");
         body.put("scope","account.read.internal");
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("",1,"abc","",new Date());
-        when(appConfig.getUsername()).thenReturn("username");
-        when(appConfig.getPassword()).thenReturn("password");
-        when(appConfig.getGrantType()).thenReturn("client_credentials");
+        when(tokenConfig.getUsername()).thenReturn("username");
+        when(tokenConfig.getPassword()).thenReturn("password");
+        when(tokenConfig.getGrantType()).thenReturn("client_credentials");
         when(accessTokenClient.getAccessToken(auth,body)).thenReturn(accessTokenResponse);
 
         String token = tokenService.getToken(scope);

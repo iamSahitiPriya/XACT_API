@@ -6,6 +6,7 @@ package integration;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
+import com.xact.assessment.utils.ResourceFileUtil;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;

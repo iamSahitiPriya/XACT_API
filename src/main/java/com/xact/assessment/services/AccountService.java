@@ -7,11 +7,13 @@ package com.xact.assessment.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.AccountClient;
-import com.xact.assessment.config.AppConfig;
+import com.xact.assessment.config.AccountConfig;
+import com.xact.assessment.config.TokenConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
+import com.xact.assessment.utils.ResourceFileUtil;
 import io.micronaut.context.env.Environment;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Inject;
@@ -21,8 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Singleton
@@ -31,21 +31,24 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper = new ModelMapper();
     private final TokenService tokenService;
-    private final AppConfig appConfig;
+    private final TokenConfig tokenConfig;
+    private final AccountConfig accountConfig;
+    private  final ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
 
     @Inject
     Environment environment;
 
-    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService, AppConfig appConfig, Environment environment) {
+    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService, TokenConfig tokenConfig, AccountConfig accountConfig, Environment environment) {
         this.accountClient = accountClient;
         this.accountRepository = accountRepository;
         this.tokenService = tokenService;
-        this.appConfig = appConfig;
+        this.tokenConfig = tokenConfig;
+        this.accountConfig = accountConfig;
         this.environment = environment;
     }
 
-    @Scheduled(fixedDelay = "4h")
+    @Scheduled(fixedDelay = "${account.delay}")
     public void fetchOrganisationDetails() throws IOException {
         LOGGER.info("Fetching account details");
         Set<String> environmentActiveNames = environment.getActiveNames();
@@ -59,16 +62,15 @@ public class AccountService {
     }
 
     public List<Account> readAccounts() throws IOException {
-        String dataPath = "src/main/resources/localData/tbm_accounts.json";
-        String jsonString = new String(Files.readAllBytes(Paths.get(dataPath)));
+        String accounts = resourceFileUtil.getJsonString("localData/tbm_accounts.json");
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonString, new TypeReference<ArrayList<Account>>() {
+        return mapper.readValue(accounts, new TypeReference<ArrayList<Account>>() {
         });
     }
 
     private void fetchAccounts() {
         Map<String, String> parameters = new HashMap<>();
-        String token = "Bearer " + tokenService.getToken(appConfig.getScope());
+        String token = "Bearer " + tokenService.getToken(accountConfig.getScope());
         parameters.put("status", "active");
         AccountResponse accountResponse;
         do {

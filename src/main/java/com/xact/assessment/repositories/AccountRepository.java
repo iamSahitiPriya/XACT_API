@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface AccountRepository extends CrudRepository<Account, String> {
     @Executable
-    @Query("SELECT account FROM Account account WHERE lower( account.name) LIKE lower( CONCAT(CONCAT('%',:name),'%')) OR lower( account.name) LIKE lower(CONCAT(:name,'%')) OR lower(account.name) LIKE lower(CONCAT('%',:name))")
+    @Query("SELECT account FROM Account account WHERE lower( account.name) LIKE lower( CONCAT(CONCAT('%',:name),'%'))")
     List<Account> findAccount(@Parameter("name")String name);
 }

@@ -94,6 +94,20 @@ public class AdminController {
         }
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
+
+    @Get(value="/modules",produces= MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<List<ModuleDto>> getModuleMasterData(Authentication authentication){
+        LOGGER.info("Get Module Data");
+        List<AssessmentModule> assessmentModules=assessmentMasterDataService.getModules();
+        List<ModuleDto> assessmentModulesResponse = new ArrayList<>();
+        if(Objects.nonNull(assessmentModules)){
+            assessmentModules.forEach(assessmentModule ->assessmentModulesResponse.add(mapper.map(assessmentModule,ModuleDto.class)));
+        }
+        return HttpResponse.ok(assessmentModulesResponse);
+    }
+
+
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {

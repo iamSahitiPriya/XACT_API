@@ -48,6 +48,13 @@ account:
   endpoint: "/api/accounts"
   delay: "4h"
 
+email:
+  url: "https://api.thoughtworks.net"
+  scope: "email.send"
+  endpoint: "/notification/messages"
+  delay: "1m"
+
+
 flyway:
   datasources:
     default:

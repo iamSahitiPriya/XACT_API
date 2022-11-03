@@ -175,10 +175,4 @@ public class AssessmentService {
         userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
         saveAssessmentModules(moduleRequest, assessment);
     }
-
-    public boolean findById(AssessmentModule assessmentModule, Integer assessmentId) {
-        Assessment assessment = assessmentRepository.findById(assessmentId).orElse(new Assessment());
-        AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment, assessmentModule);
-        return userAssessmentModuleRepository.existsById(assessmentModuleId);
-    }
 }

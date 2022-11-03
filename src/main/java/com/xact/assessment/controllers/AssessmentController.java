@@ -342,7 +342,7 @@ public class AssessmentController {
     @Patch(value = "/topicRecommendationText/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelRecommendationResponse> saveTopicRecommendationText(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest, Authentication authentication) {
-        LOGGER.info("Update individual topic recommendation text. assessment: {}, parameter: {}", assessmentId, topicId);
+        LOGGER.info("Update individual topic recommendation text. assessment: {}, topic: {}", assessmentId, topicId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
@@ -352,21 +352,14 @@ public class AssessmentController {
         if (assessment.isEditable()) {
             if (topicLevelRecommendationTextRequest.getRecommendationId() == null) {
                 topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
-                topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
             } else {
                 topicLevelRecommendation = topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendationTextRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
-                topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
-                topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
             }
+            topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
             topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
             updateAssessment(assessment);
-            if (topicAndParameterLevelAssessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())) {
-                topicLevelRecommendationResponse.setRecommendationId(topicLevelRecommendation.getRecommendationId());
-                topicLevelRecommendationResponse.setRecommendation(topicLevelRecommendation.getRecommendation());
-            } else {
-                topicLevelRecommendationResponse.setRecommendationId(null);
-            }
-
+            topicLevelRecommendationResponse.setRecommendationId(topicLevelRecommendation.getRecommendationId());
+            topicLevelRecommendationResponse.setRecommendation(topicLevelRecommendation.getRecommendation());
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }

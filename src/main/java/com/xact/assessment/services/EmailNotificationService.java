@@ -13,12 +13,17 @@ import com.xact.assessment.repositories.EmailNotificationRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.Velocity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 @Singleton
 public class EmailNotificationService {
@@ -61,7 +66,19 @@ public class EmailNotificationService {
         notificationDetail.setCc(new ArrayList<>());
         notificationDetail.setReplyTo("");
         notificationDetail.setContentType("text/html");
-        notificationDetail.setContent("Completed");
+
+        Properties p = new Properties();
+        p.setProperty("resource.loader", "class");
+        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        Velocity.init( p );
+        VelocityContext context = new VelocityContext();
+        StringWriter writer = new StringWriter();
+        Template template = Velocity.getTemplate("templates/"+templateType.getTemplateResource());
+        template.merge(context,writer);
+        String text = writer.toString();
+        System.out.println(text);
+
+        notificationDetail.setContent(text);
 
         notificationRequest.setEmail(notificationDetail);
         String json = new ObjectMapper().writeValueAsString(notificationRequest);

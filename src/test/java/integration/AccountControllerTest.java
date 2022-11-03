@@ -47,7 +47,7 @@ public class AccountControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String organisationResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/account/shell")
+        String organisationResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/accounts?name=shell")
                 .bearerAuth("anything"), String.class);
 
         String expectedResponse = "[{" + "\"name\"" + ":" + "\"Shell Singapore\"" + "," +"\"industry\""+ ":"+"\"Commodities, Utilities and Energy\"" + "}]";

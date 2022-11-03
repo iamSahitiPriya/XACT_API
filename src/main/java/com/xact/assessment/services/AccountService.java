@@ -52,10 +52,9 @@ public class AccountService {
     public void fetchOrganisationDetails() throws IOException {
         LOGGER.info("Fetching account details");
         Set<String> environmentActiveNames = environment.getActiveNames();
-        if (environmentActiveNames.contains("local")) {
+        if (environmentActiveNames.isEmpty()) {
             List<Account> accounts = readAccounts();
             save(accounts);
-
         } else {
             fetchAccounts();
         }

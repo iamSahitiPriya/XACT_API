@@ -80,7 +80,6 @@ public class AccountServiceTest {
     @Test
     void fetchAccountDetailForLocalEnv() throws IOException {
         Set<String> set = new HashSet<>();
-        set.add("local");
         when(environment.getActiveNames()).thenReturn(set);
         List<Account> accountList = accountService.readAccounts();
 

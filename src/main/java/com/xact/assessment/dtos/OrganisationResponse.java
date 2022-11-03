@@ -13,10 +13,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class OrganisationResponse {
-    @JsonProperty
     private String name;
 
-    @JsonProperty
     private String industry;
 
 }

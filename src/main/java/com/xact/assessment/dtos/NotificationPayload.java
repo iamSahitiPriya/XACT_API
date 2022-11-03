@@ -13,6 +13,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class NotificationPayload {
-    Integer assessmentId;
-    String assessmentName;
+    Integer assessment_id;
+    String assessment_name;
 }

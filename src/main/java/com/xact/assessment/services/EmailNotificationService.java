@@ -6,6 +6,7 @@ import com.xact.assessment.client.EmailNotificationClient;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.EmailHeader;
 import com.xact.assessment.dtos.NotificationDetail;
+import com.xact.assessment.dtos.NotificationPayload;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.models.EmailNotifier;
 import com.xact.assessment.models.NotificationTemplateType;
@@ -50,22 +51,22 @@ public class EmailNotificationService {
             String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
             for (EmailNotifier emailNotifier:emailNotifierList) {
 
-                sendEmailNotification(accessToken,emailNotifier.getUserEmail(), emailNotifier.getTemplateName(),
-                        "Your Assessment has been Completed!");
+                sendEmailNotification(accessToken,emailNotifier);
             }
         }
     }
 
-    private void sendEmailNotification(String accessToken, String receiver,NotificationTemplateType templateType,String subject ) throws JsonProcessingException {
+    private void sendEmailNotification(String accessToken,EmailNotifier emailNotifier ) throws JsonProcessingException {
         NotificationRequest notificationRequest = new NotificationRequest();
         NotificationDetail notificationDetail= new NotificationDetail();
         notificationDetail.setFrom(new EmailHeader());
-        notificationDetail.setSubject(subject);
-        notificationDetail.setTo(Collections.singletonList(receiver));
+        notificationDetail.setSubject(emailNotifier.getTemplateName().getEmailSubject());
+        notificationDetail.setTo(Collections.singletonList(emailNotifier.getUserEmail()));
         notificationDetail.setBcc(new ArrayList<>());
         notificationDetail.setCc(new ArrayList<>());
         notificationDetail.setReplyTo("");
         notificationDetail.setContentType("text/html");
+        NotificationPayload notificationPayload = new ObjectMapper().readValue(emailNotifier.getPayLoad(),NotificationPayload.class);
 
         Properties p = new Properties();
         p.setProperty("resource.loader", "class");
@@ -73,7 +74,8 @@ public class EmailNotificationService {
         Velocity.init( p );
         VelocityContext context = new VelocityContext();
         StringWriter writer = new StringWriter();
-        Template template = Velocity.getTemplate("templates/"+templateType.getTemplateResource());
+        Template template = Velocity.getTemplate("templates/"+emailNotifier.getTemplateName().getTemplateResource());
+        context.put("assessment",notificationPayload);
         template.merge(context,writer);
         String text = writer.toString();
         System.out.println(text);

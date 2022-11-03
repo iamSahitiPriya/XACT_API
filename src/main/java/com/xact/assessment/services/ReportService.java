@@ -345,7 +345,7 @@ public class ReportService {
     }
 
     private void createStyledNumberCell(Row row, int i, Integer value) {
-        if (ZERO.equals(value)) {
+        if (value == null || ZERO.equals(value)) {
             row.createCell(i, CellType.BLANK);
         } else {
             Cell cell = row.createCell(i, CellType.NUMERIC);

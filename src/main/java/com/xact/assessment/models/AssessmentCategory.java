@@ -62,10 +62,6 @@ public class AssessmentCategory {
     private String comments;
 
 
-    public Set<AssessmentModule> getModules() {
-        return modules == null ? null : modules.stream().filter(AssessmentModule::getIsActive).collect(Collectors.toSet());
-
-    }
 
     public boolean getIsActive() {
         return isActive;

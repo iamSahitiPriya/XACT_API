@@ -13,6 +13,7 @@ import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +28,7 @@ public class AssessmentMasterDataService {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
+
 
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
     AssessmentParameterReferenceRepository assessmentParameterRRepository;
@@ -78,7 +80,7 @@ public class AssessmentMasterDataService {
     }
 
     public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
-        if (!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
+        if (!checkIfCategoryUnique(assessmentCategoryRequest.getCategoryName())) {
             AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
             categoryRepository.save(assessmentCategory);
         } else {
@@ -87,7 +89,7 @@ public class AssessmentMasterDataService {
 
     }
 
-    private boolean checkIfUnique(String categoryName) {
+    private boolean checkIfCategoryUnique(String categoryName) {
         List<String> categories = categoryRepository.getAllCategories();
         List<String> result = categories.stream()
                 .map(String::toLowerCase).map(String::trim)
@@ -143,7 +145,7 @@ public class AssessmentMasterDataService {
             assessmentCategory.setComments(assessmentCategoryRequest.getComments());
             categoryRepository.update(assessmentCategory);
         } else {
-            if (!checkIfUnique(assessmentCategoryRequest.getCategoryName())) {
+            if (!checkIfCategoryUnique(assessmentCategoryRequest.getCategoryName())) {
                 assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
                 assessmentCategory.setActive(assessmentCategoryRequest.isActive());
                 assessmentCategory.setComments(assessmentCategoryRequest.getComments());
@@ -153,14 +155,35 @@ public class AssessmentMasterDataService {
             }
         }
     }
+    private boolean checkIfModuleUnique(String moduleName){
+        List<String> modules=moduleService.moduleRepository.getModuleNames();
+        List<String> result= modules.stream().map(String :: toLowerCase).map(String::trim).collect(Collectors.toList());
+        return result.contains(moduleName.trim().toLowerCase());
+    }
 
     public void updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(moduleId);
-        assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
-
-//        assessmentModule.setCategory(getCategory(assessmentModuleRequest.getCategory()));
-        assessmentModule.setActive(assessmentModuleRequest.isActive());
-        moduleService.updateModule(assessmentModule);
+        Integer categoryId = categoryRepository.findIdByCategoryName(assessmentModuleRequest.getCategory());
+        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(categoryId);
+        if (assessmentModule.getModuleName().equals(assessmentModuleRequest.getModuleName())) {
+            assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
+            System.out.println("if"+assessmentModule.getModuleName());
+            assessmentModule.setCategory(assessmentCategory);
+            assessmentModule.setActive(assessmentModuleRequest.isActive());
+            assessmentModule.setComments(assessmentModuleRequest.getComments());
+            moduleService.updateModule(assessmentModule);
+        }
+        else {
+            if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName())) {
+                assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
+                assessmentModule.setCategory(assessmentCategory);
+                assessmentModule.setActive(assessmentModuleRequest.isActive());
+                assessmentModule.setComments(assessmentModuleRequest.getComments());
+                moduleService.updateModule(assessmentModule);
+            } else {
+                throw new DuplicateRecordException("Duplicate records are not allowed");
+            }
+        }
     }
 
     public void updateTopic(Integer topicId, AssessmentTopicRequest assessmentTopicRequest) {
@@ -218,6 +241,10 @@ public class AssessmentMasterDataService {
 
     public List<AssessmentModule> getModules() {
       return moduleService.getAllModules();
+    }
+
+    public AssessmentModule getModule(Integer moduleId) {
+        return moduleService.getModule(moduleId);
     }
 }
 

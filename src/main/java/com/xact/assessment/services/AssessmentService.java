@@ -32,6 +32,7 @@ public class AssessmentService {
 
     private final AccessControlRepository accessControlRepository;
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
+    private final EmailNotificationService emailNotificationService;
 
     private final ModuleRepository moduleRepository;
     private final AssessmentMasterDataService assessmentMasterDataService;
@@ -40,13 +41,14 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, EmailNotificationService emailNotificationService, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
         this.accessControlRepository = accessControlRepository;
 
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
+        this.emailNotificationService = emailNotificationService;
         this.moduleRepository = moduleRepository;
         this.assessmentMasterDataService = assessmentMasterDataService;
     }
@@ -60,8 +62,33 @@ public class AssessmentService {
         assessment.setOrganisation(organisation);
         Set<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
+        saveNotification(assessment,assessmentUsers);
         usersAssessmentsService.createUsersInAssessment(assessmentUsers);
         return assessment;
+    }
+
+    private void saveNotification(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+        for(AssessmentUsers eachUser : assessmentUsers) {
+            EmailNotifier emailNotifier = new EmailNotifier();
+
+            setNotificationPurpose(eachUser, emailNotifier);
+
+            emailNotifier.setUserEmail(eachUser.getUserId().getUserEmail());
+            emailNotifier.setStatus(NotificationStatus.N);
+            HashMap<String, String> payload = new HashMap<>();
+            payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
+            payload.put("assessment_name", assessment.getAssessmentName());
+            emailNotifier.setPayload(payload);
+
+            emailNotificationService.saveNotification(emailNotifier);
+        }
+    }
+
+    private void setNotificationPurpose(AssessmentUsers eachUser, EmailNotifier emailNotifier) {
+        if(eachUser.getRole().equals(AssessmentRole.Owner))
+            emailNotifier.setTemplateName(NotificationTemplateType.Created);
+        else if(eachUser.getRole().equals(AssessmentRole.Facilitator))
+            emailNotifier.setTemplateName(NotificationTemplateType.AddUser);
     }
 
     private void createAssessment(Assessment assessment) {
@@ -76,7 +103,6 @@ public class AssessmentService {
         if (assessment.getAssessmentId() != null) {
             assessmentOwner = usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId());
         }
-
         Set<AssessmentUsers> assessmentUsers = new HashSet<>();
         assessmentOwner.ifPresent(assessmentUsers::add);
         for (UserDto user : users) {

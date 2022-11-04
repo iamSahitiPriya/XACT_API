@@ -1,16 +1,17 @@
 package com.xact.assessment.models;
 
 
-import io.micronaut.context.annotation.DefaultImplementation;
+import com.vladmihalcea.hibernate.type.json.JsonType;
 import io.micronaut.core.annotation.Introspected;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.Map;
+import java.util.HashMap;
 
 @Getter
 @Setter
@@ -19,6 +20,9 @@ import java.util.Map;
 @Introspected
 @Entity
 @Table(name = "tbl_notification")
+@TypeDefs({
+        @TypeDef(name = "json", typeClass = JsonType.class)
+})
 public class EmailNotifier {
     @Id
     @Column(name = "notification_id", nullable = false, unique = true)
@@ -36,16 +40,17 @@ public class EmailNotifier {
 
     @NotNull
     @Column(name= "payload",columnDefinition = "json")
-    private String payLoad;
+    @Type(type="json")
+    private HashMap<String,String> payload;
 
     @NotNull
     @Column(name="status",nullable = false)
     @Enumerated(EnumType.STRING)
     private NotificationStatus status;
 
-    @NotNull
-    @Column(name = "retries")
-    private Integer retries;
+
+    @Column(name = "retries",nullable = false)
+    private Integer retries = 0;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

@@ -6,10 +6,9 @@ import com.xact.assessment.client.EmailNotificationClient;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.EmailHeader;
 import com.xact.assessment.dtos.NotificationDetail;
-import com.xact.assessment.dtos.NotificationPayload;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.models.EmailNotifier;
-import com.xact.assessment.models.NotificationTemplateType;
+import com.xact.assessment.models.NotificationStatus;
 import com.xact.assessment.repositories.EmailNotificationRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.scheduling.annotation.Scheduled;
@@ -43,14 +42,12 @@ public class EmailNotificationService {
     }
 
     @Scheduled(fixedDelay = "${email.delay}")
-    public void sendEmailNotificationForCompleteStatus() throws JsonProcessingException {
-        List<EmailNotifier> emailNotifierList = (List<EmailNotifier>) emailNotificationRepository.findAll();
-        System.out.println("service called");
+    public void sendEmailNotifications() throws JsonProcessingException {
+        List<EmailNotifier> emailNotifierList = emailNotificationRepository.getNotificationDetailsToBeSend();
 
         if(!emailNotifierList.isEmpty()){
             String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
             for (EmailNotifier emailNotifier:emailNotifierList) {
-
                 sendEmailNotification(accessToken,emailNotifier);
             }
         }
@@ -66,28 +63,47 @@ public class EmailNotificationService {
         notificationDetail.setCc(new ArrayList<>());
         notificationDetail.setReplyTo("");
         notificationDetail.setContentType("text/html");
-        NotificationPayload notificationPayload = new ObjectMapper().readValue(emailNotifier.getPayLoad(),NotificationPayload.class);
+        String notificationContent = getNotificationContent(emailNotifier);
 
-        Properties p = new Properties();
-        p.setProperty("resource.loader", "class");
-        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
-        Velocity.init( p );
-        VelocityContext context = new VelocityContext();
-        StringWriter writer = new StringWriter();
-        Template template = Velocity.getTemplate("templates/"+emailNotifier.getTemplateName().getTemplateResource());
-        context.put("assessment",notificationPayload);
-        template.merge(context,writer);
-        String text = writer.toString();
-        System.out.println(text);
-
-        notificationDetail.setContent(text);
+        notificationDetail.setContent(notificationContent);
 
         notificationRequest.setEmail(notificationDetail);
         String json = new ObjectMapper().writeValueAsString(notificationRequest);
 
         LOGGER.info("Sending notification to {}",notificationDetail.getTo());
         HttpResponse httpResponse =emailNotificationClient.sendNotification(accessToken,json);
+        emailNotifier.setRetries(emailNotifier.getRetries()+1);
 
+        updateNotificationStatus(emailNotifier, httpResponse);
+
+    }
+
+    private String getNotificationContent(EmailNotifier emailNotifier) {
+        setVelocityProperty();
+        VelocityContext context = new VelocityContext();
+        StringWriter writer = new StringWriter();
+        Template template = Velocity.getTemplate("templates/"+ emailNotifier.getTemplateName().getTemplateResource());
+        context.put("assessment", emailNotifier.getPayload());
+        template.merge(context,writer);
+        return writer.toString();
+    }
+
+    private void setVelocityProperty() {
+        Properties p = new Properties();
+        p.setProperty("resource.loader", "class");
+        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        Velocity.init( p );
+    }
+
+    private void updateNotificationStatus(EmailNotifier emailNotifier, HttpResponse httpResponse) {
+        if(httpResponse.code() == 200) {
+            emailNotifier.setStatus(NotificationStatus.Y);
+            emailNotificationRepository.update(emailNotifier);
+        }
+    }
+
+    public void saveNotification(EmailNotifier emailNotifier) {
+        emailNotificationRepository.save(emailNotifier);
     }
 }
 

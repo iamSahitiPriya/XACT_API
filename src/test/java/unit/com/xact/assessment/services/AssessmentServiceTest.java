@@ -45,7 +45,7 @@ class AssessmentServiceTest {
         accessControlRepository = mock(AccessControlRepository.class);
         moduleRepository = mock(ModuleRepository.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository, assessmentMasterDataService);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, emailNotificationRepository, moduleRepository, assessmentMasterDataService);
     }
 
     @Test

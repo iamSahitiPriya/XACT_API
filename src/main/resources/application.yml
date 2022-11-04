@@ -1,4 +1,7 @@
 micronaut:
+  http:
+    client:
+      read-timeout: 1m
   application:
     name: XAct_Assessment_API
   server:
@@ -22,6 +25,9 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
 
+profile:
+  type: "local"
+
 datasources:
   default:
     url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable
@@ -30,6 +36,11 @@ datasources:
     password: ${USER}
     dialect: POSTGRES
 
+account:
+  url: "https://api.thoughtworks.net/account"
+  scope: "account.read.internal"
+  endpoint: "/api/accounts"
+  delay: "4h"
 
 flyway:
   datasources:

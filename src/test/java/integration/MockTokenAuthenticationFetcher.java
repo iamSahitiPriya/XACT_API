@@ -32,9 +32,6 @@ public class MockTokenAuthenticationFetcher implements AuthenticationFetcher {
         authMap.put("sub", email);
         Authentication authentication = Authentication.build(email, authMap);
 
-
-        System.out.println("{resolver} " + resolver);
-
         Flowable<Authentication> auth = Flowable.fromOptional(resolver.resolveToken(request)).flatMap(token -> {
             return Flowable.just(authentication);
         });

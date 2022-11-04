@@ -8,6 +8,7 @@ import com.xact.assessment.dtos.AssessmentResponse;
 import com.xact.assessment.dtos.AssessmentStatusDto;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
+import com.xact.assessment.utils.ResourceFileUtil;
 import io.micronaut.http.HttpMethod;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -23,7 +24,6 @@ import org.modelmapper.ModelMapper;
 import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;

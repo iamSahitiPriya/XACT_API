@@ -30,6 +30,8 @@ datasources:
     driverClassName: org.postgresql.Driver
     username: ${DB_USER}
     password: ${DB_PWD}
+profile:
+  type: "prod"
 
 token:
   username: ${NAME}

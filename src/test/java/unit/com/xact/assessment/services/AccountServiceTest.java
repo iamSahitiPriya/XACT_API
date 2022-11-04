@@ -4,9 +4,9 @@
 
 package unit.com.xact.assessment.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AccountConfig;
+import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.config.TokenConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
@@ -32,11 +32,12 @@ public class AccountServiceTest {
     TokenConfig tokenConfig = mock(TokenConfig.class);
     TokenService tokenService = mock(TokenService.class);
     AccountConfig accountConfig = mock(AccountConfig.class);
+    ProfileConfig profileConfig = mock(ProfileConfig.class);
 
     Environment environment = mock(Environment.class) ;
 
     public AccountServiceTest() {
-        this.accountService = new AccountService(accountClient, accountRepository, tokenService, tokenConfig, accountConfig, environment);
+        this.accountService = new AccountService(accountClient, accountRepository, tokenService, tokenConfig, profileConfig, accountConfig, environment);
     }
 
     @Test
@@ -79,8 +80,7 @@ public class AccountServiceTest {
 
     @Test
     void fetchAccountDetailForLocalEnv() throws IOException {
-        Set<String> set = new HashSet<>();
-        when(environment.getActiveNames()).thenReturn(set);
+        when(profileConfig.getType()).thenReturn("local");
         List<Account> accountList = accountService.readAccounts();
 
         accountService.fetchOrganisationDetails();

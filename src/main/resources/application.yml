@@ -25,6 +25,8 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
 
+profile:
+  type: "local"
 
 datasources:
   default:

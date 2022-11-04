@@ -32,6 +32,8 @@ datasources:
     username: ${DB_USER}
     password: ${DB_PWD}
 
+profile:
+  type: "dev"
 
 token:
   username: ${NAME}

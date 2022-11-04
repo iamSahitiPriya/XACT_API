@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AccountConfig;
+import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.config.TokenConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
@@ -32,6 +33,7 @@ public class AccountService {
     private final ModelMapper modelMapper = new ModelMapper();
     private final TokenService tokenService;
     private final TokenConfig tokenConfig;
+    private final ProfileConfig profileConfig;
     private final AccountConfig accountConfig;
     private  final ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
@@ -39,11 +41,12 @@ public class AccountService {
     @Inject
     Environment environment;
 
-    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService, TokenConfig tokenConfig, AccountConfig accountConfig, Environment environment) {
+    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService, TokenConfig tokenConfig, ProfileConfig profileConfig, AccountConfig accountConfig, Environment environment) {
         this.accountClient = accountClient;
         this.accountRepository = accountRepository;
         this.tokenService = tokenService;
         this.tokenConfig = tokenConfig;
+        this.profileConfig = profileConfig;
         this.accountConfig = accountConfig;
         this.environment = environment;
     }
@@ -51,8 +54,7 @@ public class AccountService {
     @Scheduled(fixedDelay = "${account.delay}")
     public void fetchOrganisationDetails() throws IOException {
         LOGGER.info("Fetching account details");
-        Set<String> environmentActiveNames = environment.getActiveNames();
-        if (environmentActiveNames.isEmpty()) {
+        if (Objects.equals(profileConfig.getType(), "local")) {
             List<Account> accounts = readAccounts();
             save(accounts);
         } else {

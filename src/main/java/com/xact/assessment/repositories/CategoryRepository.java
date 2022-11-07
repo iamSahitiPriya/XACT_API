@@ -33,8 +33,8 @@ public interface CategoryRepository extends CrudRepository<AssessmentCategory, I
     List<String> getAllCategories();
 
     @Executable
-    @Query("SELECT tlc.categoryId FROM AssessmentCategory tlc WHERE tlc.categoryName=:category")
-    Integer findIdByCategoryName(@Parameter("category") String category);
+    @Query("SELECT tlc FROM AssessmentCategory tlc WHERE tlc.categoryName=:category")
+    AssessmentCategory findByCategoryName(@Parameter("category") String category);
 
 
 }

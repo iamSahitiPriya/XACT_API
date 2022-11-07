@@ -13,7 +13,6 @@ import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
-import javax.xml.bind.SchemaOutputResolver;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -92,16 +91,19 @@ public class AssessmentMasterDataService {
     private boolean checkIfCategoryUnique(String categoryName) {
         List<String> categories = categoryRepository.getAllCategories();
         List<String> result = categories.stream()
-                .map(String::toLowerCase).map(String::trim)
+                .map(String::toLowerCase).map(option->option.replaceAll("\\s",""))
                 .collect(Collectors.toList());
-        return result.contains(categoryName.trim().toLowerCase());
+        return result.contains(categoryName.toLowerCase().replaceAll("\\s",""));
     }
 
     public void createAssessmentModule(AssessmentModuleRequest assessmentModuleRequest) {
-        Integer categoryId = categoryRepository.findIdByCategoryName(assessmentModuleRequest.getCategory());
-        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(categoryId);
-        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), assessmentCategory, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
-        moduleService.createModule(assessmentModule);
+        if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName())) {
+            AssessmentCategory assessmentCategory = categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory());
+            AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), assessmentCategory, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
+            moduleService.createModule(assessmentModule);
+        } else {
+            throw new DuplicateRecordException("Duplicate records are not allowed");
+        }
     }
 
     public void createAssessmentTopics(AssessmentTopicRequest assessmentTopicRequest) {
@@ -157,17 +159,15 @@ public class AssessmentMasterDataService {
     }
     private boolean checkIfModuleUnique(String moduleName){
         List<String> modules=moduleService.moduleRepository.getModuleNames();
-        List<String> result= modules.stream().map(String :: toLowerCase).map(String::trim).collect(Collectors.toList());
-        return result.contains(moduleName.trim().toLowerCase());
+        List<String> result= modules.stream().map(String :: toLowerCase).map(option ->option.replaceAll("\\s","")).collect(Collectors.toList());
+        return result.contains(moduleName.toLowerCase().replaceAll("\\s",""));
     }
 
     public void updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(moduleId);
-        Integer categoryId = categoryRepository.findIdByCategoryName(assessmentModuleRequest.getCategory());
-        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(categoryId);
+        AssessmentCategory assessmentCategory = categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory());;
         if (assessmentModule.getModuleName().equals(assessmentModuleRequest.getModuleName())) {
             assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
-            System.out.println("if"+assessmentModule.getModuleName());
             assessmentModule.setCategory(assessmentCategory);
             assessmentModule.setActive(assessmentModuleRequest.isActive());
             assessmentModule.setComments(assessmentModuleRequest.getComments());

@@ -132,7 +132,9 @@ class AssessmentControllerTest {
         question.setQuestionId(1);
         AssessmentParameter parameter = new AssessmentParameter();
         parameter.setParameterName("my param");
+        parameter.setParameterId(1);
         AssessmentTopic topic = new AssessmentTopic();
+        topic.setTopicId(1);
         topic.setTopicName("my topic");
         AssessmentModule module = new AssessmentModule();
         module.setModuleName("my module");
@@ -359,7 +361,6 @@ class AssessmentControllerTest {
         assessmentUsers.setUserId(userId);
 
         when(assessmentService.getAssessment(any(), any())).thenReturn(assessmentUsers.getUserId().getAssessment());
-        System.out.println(userAuthService.getLoggedInUser(authentication));
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 

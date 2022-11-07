@@ -1,8 +1,8 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package integration;
+package com.xact.assessment.utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,7 +12,7 @@ public class ResourceFileUtil {
 
     public static final String NEW_LINE_CHAR = "\n";
 
-    String getJsonString(String path) throws IOException {
+    public String getJsonString(String path) throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
         File jsonFile = new File(classLoader.getResource(path).getFile());
 

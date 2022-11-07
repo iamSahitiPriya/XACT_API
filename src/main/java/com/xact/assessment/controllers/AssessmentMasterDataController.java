@@ -20,7 +20,6 @@ import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -108,7 +107,7 @@ public class AssessmentMasterDataController {
         return HttpResponse.ok(userAssessmentResponse);
     }
 
-    @Get(value = "{assessmentId}/categories/", produces = MediaType.APPLICATION_JSON)
+    @Get(value = "{assessmentId}/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<UserAssessmentResponse> getSelectedCategories(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get selected categories only");

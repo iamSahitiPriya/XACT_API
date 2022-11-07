@@ -14,7 +14,6 @@ import io.micronaut.http.HttpResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

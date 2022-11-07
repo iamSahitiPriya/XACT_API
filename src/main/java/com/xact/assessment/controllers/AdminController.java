@@ -95,7 +95,6 @@ public class AdminController {
         }
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
-
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {

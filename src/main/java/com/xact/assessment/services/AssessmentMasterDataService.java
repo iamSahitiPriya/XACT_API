@@ -28,7 +28,6 @@ public class AssessmentMasterDataService {
     private final TopicService topicService;
     private final QuestionService questionService;
 
-
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
     AssessmentParameterReferenceRepository assessmentParameterRRepository;
     private final ModuleService moduleService;
@@ -245,6 +244,10 @@ public class AssessmentMasterDataService {
 
     public AssessmentModule getModule(Integer moduleId) {
         return moduleService.getModule(moduleId);
+    }
+
+    public List<AssessmentModule> getModules() {
+      return moduleService.getAllModules();
     }
 }
 

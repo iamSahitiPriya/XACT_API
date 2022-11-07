@@ -106,7 +106,6 @@ class AnswerServiceTest {
 
         assertEquals(answer.getAnswer(), actualAnswer.getAnswer());
         assertEquals(answer.getAnswerId(), actualAnswer.getAnswerId());
-        System.out.println(answer.getAnswer());
     }
 
     @Test

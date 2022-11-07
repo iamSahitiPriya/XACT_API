@@ -1,0 +1,1 @@
+CREATE TABLE tbm_accounts (id VARCHAR(50) PRIMARY KEY, name VARCHAR(100), industry VARCHAR(100));

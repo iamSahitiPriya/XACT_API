@@ -1,4 +1,7 @@
 micronaut:
+  http:
+    client:
+      read-timeout: 1m
   application:
     name: XAct_Assessment_API
   server:
@@ -20,6 +23,21 @@ micronaut:
           jwks:
             okta:
               url: '${OIDC_ISSUER:`https://dev-47045452.okta.com/oauth2/default`}/v1/keys'
+
+profile:
+  type: "qa"
+
+token:
+  username: ${AUTH_USERNAME}
+  password: ${AUTH_PASSWORD}
+  url: "https://thoughtworks.okta.com"
+  endpoint: "/oauth2/aus1fjygi70z7ZtVB0h8/v1/token"
+  grantType: "client_credentials"
+
+account:
+  url: "https://api.thoughtworks.net/account"
+  scope: "account.read.internal"
+  endpoint: "/api/accounts"
 
 datasources:
   default:

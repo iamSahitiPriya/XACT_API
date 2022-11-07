@@ -34,8 +34,8 @@ profile:
   type: "prod"
 
 token:
-  username: ${NAME}
-  password: ${PASSWORD}
+  username: ${AUTH_USERNAME}
+  password: ${AUTH_PASSWORD}
   url: "https://thoughtworks.okta.com"
   endpoint: "/oauth2/aus1fjygi70z7ZtVB0h8/v1/token"
   grantType: "client_credentials"

@@ -71,7 +71,7 @@ public class ReportService {
         Set<Integer> selectedModules = new HashSet<>();
         for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
             Set<Integer> moduleIds = assessmentCategory.getModules().stream()
-                    .map(assessmentModule -> assessmentModule.getModuleId())
+                    .map(AssessmentModule::getModuleId)
                     .collect(toSet());
             selectedModules.addAll(moduleIds);
         }
@@ -386,12 +386,10 @@ public class ReportService {
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, Integer topicRating, TopicLevelRecommendation topicRecommendation, int topicRecommendationCount, AssessmentParameter parameter, Integer paramRating, ParameterLevelRecommendation
                                           paramRecommendation, int paramRecommendationCount, String questionText, String answer) {
-        String topicImpact, paramImpact, paramEffort;
-        String topicEffort;
-        topicImpact = getTopicRecommendationImpact(topicRecommendation);
-        topicEffort = getTopicRecommendationEffort(topicRecommendation);
-        paramImpact = getParameterRecommendationImpact(paramRecommendation);
-        paramEffort = getParameterRecommendationEffort(paramRecommendation);
+        String topicImpact = getTopicRecommendationImpact(topicRecommendation);
+        String topicEffort = getTopicRecommendationEffort(topicRecommendation);
+        String paramImpact = getParameterRecommendationImpact(paramRecommendation);
+        String paramEffort = getParameterRecommendationEffort(paramRecommendation);
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
         CellStyle style = workbook.createCellStyle();
         style.setQuotePrefixed(true);

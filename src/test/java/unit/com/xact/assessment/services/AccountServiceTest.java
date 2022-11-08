@@ -48,8 +48,8 @@ class AccountServiceTest {
         String scope = "account.read.internal";
         when(accountConfig.getScope()).thenReturn(scope);
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("", 1, "abc", "", new Date());
-        String token = "Bearer " + accessTokenResponse.getAccess_token();
-        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());
+        String token = "Bearer " + accessTokenResponse.getAccessToken();
+        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
         parameters.put("status", "active");
         List<Account> accounts = new ArrayList<>();
         accounts.add(account);

@@ -110,7 +110,7 @@ public class AssessmentTopic {
     }
 
     public boolean hasReferences() {
-        return references != null && references.size() > 0;
+        return references != null && !references.isEmpty();
     }
 
     public AssessmentTopic(String topicName, AssessmentModule module, boolean isActive, String comments) {

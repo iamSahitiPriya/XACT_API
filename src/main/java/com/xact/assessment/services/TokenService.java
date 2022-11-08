@@ -17,8 +17,8 @@ import java.util.Map;
 
 @Singleton
 public class TokenService {
-    private final static  int SECONDS = 1000;
-    private  static  final Map<String,AccessTokenResponse> tokenMap = new HashMap<>();
+    private static final int SECONDS = 1000;
+    private static final Map<String, AccessTokenResponse> tokenMap = new HashMap<>();
     private final TokenConfig tokenConfig;
     private final AccessTokenClient accessTokenClient;
 
@@ -30,10 +30,9 @@ public class TokenService {
 
     public String getToken(String scope) {
         AccessTokenResponse accessToken = tokenMap.get(scope);
-        if(isTokenValid(accessToken)) {
-            return tokenMap.get(scope).getAccess_token();
-        }
-        else {
+        if (isTokenValid(accessToken)) {
+            return tokenMap.get(scope).getAccessToken();
+        } else {
             String userName = tokenConfig.getUsername();
             String password = tokenConfig.getPassword();
             String authentication = "Basic " + Base64.getEncoder().encodeToString((userName + ":" + password).getBytes());
@@ -42,13 +41,13 @@ public class TokenService {
             body.put("scope", scope);
             AccessTokenResponse accessTokenResponse = accessTokenClient.getAccessToken(authentication, body);
             accessTokenResponse.setCreatedTime(new Date());
-            tokenMap.put(scope,accessTokenResponse);
-            return accessTokenResponse.getAccess_token();
+            tokenMap.put(scope, accessTokenResponse);
+            return accessTokenResponse.getAccessToken();
         }
     }
 
     private boolean isTokenValid(AccessTokenResponse accessToken) {
-        return (accessToken != null) && ((new Date().getTime() / SECONDS) - (accessToken.getCreatedTime().getTime() / SECONDS) < accessToken.getExpires_in() - 60);
+        return (accessToken != null) && ((new Date().getTime() / SECONDS) - (accessToken.getCreatedTime().getTime() / SECONDS) < accessToken.getExpiresIn() - 60);
     }
 
 }

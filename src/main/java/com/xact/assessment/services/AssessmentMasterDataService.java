@@ -242,12 +242,6 @@ public class AssessmentMasterDataService {
       return moduleService.getAllModules();
     }
 
-    public AssessmentModule getModule(Integer moduleId) {
-        return moduleService.getModule(moduleId);
-    }
 
-    public List<AssessmentModule> getModules() {
-      return moduleService.getAllModules();
-    }
 }
 

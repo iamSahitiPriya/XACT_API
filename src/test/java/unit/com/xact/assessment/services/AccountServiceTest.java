@@ -25,7 +25,7 @@ import java.util.*;
 
 import static org.mockito.Mockito.*;
 
-public class AccountServiceTest {
+class AccountServiceTest {
     AccountClient accountClient = mock(AccountClient.class);
     AccountRepository accountRepository = mock(AccountRepository.class);
     AccountService accountService;
@@ -34,7 +34,7 @@ public class AccountServiceTest {
     AccountConfig accountConfig = mock(AccountConfig.class);
     ProfileConfig profileConfig = mock(ProfileConfig.class);
 
-    Environment environment = mock(Environment.class) ;
+    Environment environment = mock(Environment.class);
 
     public AccountServiceTest() {
         this.accountService = new AccountService(accountClient, accountRepository, tokenService, tokenConfig, profileConfig, accountConfig, environment);

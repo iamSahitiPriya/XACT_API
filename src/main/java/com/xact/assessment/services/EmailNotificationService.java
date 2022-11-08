@@ -7,12 +7,12 @@ import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.EmailHeader;
 import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
-import com.xact.assessment.models.EmailNotifier;
-import com.xact.assessment.models.NotificationStatus;
+import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.EmailNotificationRepository;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
+import lombok.SneakyThrows;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -20,10 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Singleton
 public class EmailNotificationService {
@@ -102,7 +99,28 @@ public class EmailNotificationService {
         }
     }
 
-    public void saveNotification(EmailNotifier emailNotifier) {
+    @SneakyThrows
+    public void setNotification(Assessment assessment, String assessmentUserEmail, NotificationTemplateType notificationTemplateType ) {
+        EmailNotifier emailNotifier = new EmailNotifier();
+        emailNotifier.setUserEmail(assessmentUserEmail);
+        emailNotifier.setTemplateName(notificationTemplateType);
+        emailNotifier.setStatus(NotificationStatus.N);
+        Map<String, String> payload = new HashMap<>();
+        payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
+        payload.put("assessment_name", assessment.getAssessmentName());
+        ObjectMapper objectMapper = new ObjectMapper();
+        emailNotifier.setPayload(objectMapper.writeValueAsString(payload));
+        saveNotification(emailNotifier);
+    }
+
+    public void setNotificationByRole(Assessment assessment, AssessmentUsers eachUser) {
+        if(eachUser.getRole().equals(AssessmentRole.Owner))
+            setNotification(assessment, eachUser.getUserId().getUserEmail(),NotificationTemplateType.Created);
+        else if(eachUser.getRole().equals(AssessmentRole.Facilitator))
+            setNotification(assessment, eachUser.getUserId().getUserEmail(),NotificationTemplateType.AddUser);
+    }
+
+    private void saveNotification(EmailNotifier emailNotifier) {
         emailNotificationRepository.save(emailNotifier);
     }
 }

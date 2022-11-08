@@ -40,6 +40,7 @@ public class AssessmentController {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
+    private final EmailNotificationService emailNotificationService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
@@ -47,7 +48,7 @@ public class AssessmentController {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, EmailNotificationService emailNotificationService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
@@ -56,6 +57,7 @@ public class AssessmentController {
         this.parameterService = parameterService;
         this.topicService = topicService;
         this.questionService = questionService;
+        this.emailNotificationService = emailNotificationService;
     }
 
 
@@ -126,6 +128,12 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         Assessment openedAssessment = assessmentService.reopenAssessment(assessment);
+
+        Set<AssessmentUsers> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
+        for (AssessmentUsers eachUser: assessmentUsers) {
+            emailNotificationService.setNotification(assessment,eachUser.getUserId().getUserEmail(), NotificationTemplateType.Reopened);
+        }
+
         AssessmentResponse assessmentResponse = modelMapper.map(openedAssessment, AssessmentResponse.class);
 
         return HttpResponse.ok(assessmentResponse);
@@ -138,6 +146,12 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         Assessment finishedAssessment = assessmentService.finishAssessment(assessment);
+
+        Set<AssessmentUsers> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
+        for (AssessmentUsers eachUser: assessmentUsers) {
+            emailNotificationService.setNotification(assessment,eachUser.getUserId().getUserEmail(), NotificationTemplateType.Completed);
+        }
+
         AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
         return HttpResponse.ok(assessmentResponse);
     }

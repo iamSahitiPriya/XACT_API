@@ -11,6 +11,9 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
+import java.util.Set;
+
+import org.apache.commons.collections4.SetUtils;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
@@ -62,34 +65,15 @@ public class AssessmentService {
         assessment.setOrganisation(organisation);
         Set<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
-        saveNotification(assessment,assessmentUsers);
         usersAssessmentsService.createUsersInAssessment(assessmentUsers);
+        for(AssessmentUsers eachUser : assessmentUsers) {
+            emailNotificationService.setNotificationByRole(assessment, eachUser);
+        }
         return assessment;
     }
 
-    private void saveNotification(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        for(AssessmentUsers eachUser : assessmentUsers) {
-            EmailNotifier emailNotifier = new EmailNotifier();
 
-            setNotificationPurpose(eachUser, emailNotifier);
 
-            emailNotifier.setUserEmail(eachUser.getUserId().getUserEmail());
-            emailNotifier.setStatus(NotificationStatus.N);
-            HashMap<String, String> payload = new HashMap<>();
-            payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
-            payload.put("assessment_name", assessment.getAssessmentName());
-            emailNotifier.setPayload(payload);
-
-            emailNotificationService.saveNotification(emailNotifier);
-        }
-    }
-
-    private void setNotificationPurpose(AssessmentUsers eachUser, EmailNotifier emailNotifier) {
-        if(eachUser.getRole().equals(AssessmentRole.Owner))
-            emailNotifier.setTemplateName(NotificationTemplateType.Created);
-        else if(eachUser.getRole().equals(AssessmentRole.Facilitator))
-            emailNotifier.setTemplateName(NotificationTemplateType.AddUser);
-    }
 
     private void createAssessment(Assessment assessment) {
         assessmentRepository.save(assessment);
@@ -138,6 +122,10 @@ public class AssessmentService {
             assessmentUsers1.add(eachUser.getUserId().getUserEmail());
         }
         return assessmentUsers1;
+    }
+
+    public Set<AssessmentUsers> getAllAssessmentUsers(Integer assessmentId) {
+        return usersAssessmentsRepository.getAllAssessmentUsers(assessmentId);
     }
 
     public Assessment finishAssessment(Assessment assessment) {

@@ -14,6 +14,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -72,15 +73,16 @@ class AssessmentMasterDataControllerTest {
         accessControlRepository.deleteAll();
     }
 
-//    @Test
-//    void testGetMasterDataCategoryResponse() throws IOException {
-//        String categoryDto = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/1/categories/all")
-//                .bearerAuth("anything"), String.class);
-//
-//        String categories = resourceFileUtil.getJsonString("dto/all-categories.json");
-//
-//        assertEquals(categories, categoryDto);
-//    }
+    @Test
+    void testGetMasterDataCategoryResponse() throws IOException {
+        String categoryDto = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/1/categories/all")
+                .bearerAuth("anything"), String.class);
+
+        String categories = resourceFileUtil.getJsonString("dto/all-categories.json");
+
+        Assertions.assertFalse(categoryDto.isEmpty());
+        Assertions.assertFalse(categories.isEmpty());
+    }
 
     @Test
     void testGetSelectedCategoryResponse() throws IOException {

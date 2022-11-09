@@ -1,6 +1,6 @@
 <html>
 <body>
 <h3>Hello User,</h3>
-<p>You have been added to the Assessment!!</p>
+<p>You have been added to the Assessment <b>${assessment.assessment_name}</b>!!</p>
 </body>
 </html>

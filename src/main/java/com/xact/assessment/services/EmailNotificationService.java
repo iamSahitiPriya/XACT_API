@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.EmailNotificationClient;
 import com.xact.assessment.config.EmailConfig;
-import com.xact.assessment.dtos.EmailHeader;
-import com.xact.assessment.dtos.NotificationDetail;
-import com.xact.assessment.dtos.NotificationRequest;
-import com.xact.assessment.dtos.NotificationResponse;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.EmailNotificationRepository;
 import io.micronaut.scheduling.annotation.Scheduled;
@@ -16,6 +13,7 @@ import lombok.SneakyThrows;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +65,6 @@ public class EmailNotificationService {
 
         notificationRequest.setEmail(notificationDetail);
         String json = new ObjectMapper().writeValueAsString(notificationRequest);
-        System.out.println(json);
 
         sendEmail(accessToken, emailNotifier, notificationDetail, json);
 
@@ -81,12 +78,13 @@ public class EmailNotificationService {
             updateNotificationStatus(emailNotifier, notificationResponse);
     }
 
-    private String getNotificationContent(EmailNotifier emailNotifier) {
+    private String getNotificationContent(EmailNotifier emailNotifier) throws JsonProcessingException {
         setVelocityProperty();
         VelocityContext context = new VelocityContext();
         StringWriter writer = new StringWriter();
         Template template = Velocity.getTemplate("templates/"+ emailNotifier.getTemplateName().getTemplateResource());
-        context.put("assessment", emailNotifier.getPayload());
+        EmailPayload emailPayload = new ObjectMapper().readValue(emailNotifier.getPayload(),EmailPayload.class);
+        context.put("assessment", emailPayload);
         template.merge(context,writer);
         return writer.toString();
     }

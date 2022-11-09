@@ -1,6 +1,6 @@
 <html>
 <body>
 <h3>Hello User,</h3>
-<p>Your Assessment <b>${assessment["assessment_name"]}</b> has been completed!!</p>
+<p>Your Assessment <b>${assessment.assessment_name}</b> has been completed!!</p>
 </body>
 </html>

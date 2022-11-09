@@ -1,6 +1,6 @@
 <html>
 <body>
 <h3>Hello User,</h3>
-<p>The assessment has been reopened!!</p>
+<p>The assessment <b>${assessment.assessment_name}</b> has been reopened!!</p>
 </body>
 </html>

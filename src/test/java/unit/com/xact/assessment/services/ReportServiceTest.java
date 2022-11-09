@@ -31,14 +31,11 @@ class ReportServiceTest {
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
 
-    TopicService topicService = mock(TopicService.class);
-    ParameterService parameterService = mock(ParameterService.class);
 
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
-    AssessmentService assessmentService = mock(AssessmentService.class);
 
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, topicService, parameterService, assessmentMasterDataService, assessmentService);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, assessmentMasterDataService);
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() {
@@ -286,7 +283,7 @@ class ReportServiceTest {
 
         Workbook report = reportService.generateReport(assessment.getAssessmentId());
 
-        assertEquals(getMockWorkbook().getSheetAt(0).getSheetName(),report.getSheetAt(0).getSheetName());
+        assertEquals(getMockWorkbook().getSheetAt(0).getSheetName(), report.getSheetAt(0).getSheetName());
     }
 
     @Test

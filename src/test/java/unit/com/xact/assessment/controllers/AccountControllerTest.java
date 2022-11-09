@@ -40,6 +40,6 @@ class AccountControllerTest {
 
         HttpResponse<List<OrganisationResponse>> actualResponse = accountController.fetchOrganisationName(authentication, name);
 
-        Assertions.assertEquals(actualResponse.body().size(), 2);
+        Assertions.assertEquals(2, actualResponse.body().size());
     }
 }

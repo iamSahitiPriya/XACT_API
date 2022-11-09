@@ -319,8 +319,8 @@ class AssessmentMasterDataServiceTest {
 
         List<AssessmentCategory> actualAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
 
-        assertEquals(actualAssessmentCategories.size(), 1);
-        assertEquals(actualAssessmentCategories.get(0).getCategoryName(), "category1");
+        assertEquals(1, actualAssessmentCategories.size());
+        assertEquals("category1", actualAssessmentCategories.get(0).getCategoryName());
     }
 
     @Test

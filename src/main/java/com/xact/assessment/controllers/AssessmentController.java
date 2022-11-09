@@ -69,7 +69,6 @@ public class AssessmentController {
         if (Objects.nonNull(assessments))
             assessments.forEach(assessment ->
             {
-                //List<String> users = assessmentService.getAssessmentUsers(assessment.getAssessmentId());
                 AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
                 assessmentResponse.setAssessmentState(assessment.getAssessmentState());
                 assessmentResponse.setDomain(assessment.getOrganisation().getDomain());

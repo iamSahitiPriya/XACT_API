@@ -34,13 +34,12 @@ public class AssessmentService {
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
 
     private final ModuleRepository moduleRepository;
-    private final AssessmentMasterDataService assessmentMasterDataService;
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
@@ -48,7 +47,6 @@ public class AssessmentService {
 
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
         this.moduleRepository = moduleRepository;
-        this.assessmentMasterDataService = assessmentMasterDataService;
     }
 
     @Transactional

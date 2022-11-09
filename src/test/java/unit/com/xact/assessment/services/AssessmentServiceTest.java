@@ -12,6 +12,7 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.EmailNotificationService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,7 @@ class AssessmentServiceTest {
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
     private AssessmentMasterDataService assessmentMasterDataService;
+    private EmailNotificationService emailNotificationService;
 
     private UserAssessmentModuleRepository userAssessmentModuleRepository;
     private ModuleRepository moduleRepository;
@@ -44,12 +46,15 @@ class AssessmentServiceTest {
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
         accessControlRepository = mock(AccessControlRepository.class);
         moduleRepository = mock(ModuleRepository.class);
+        assessmentMasterDataService = mock(AssessmentMasterDataService.class);
+        emailNotificationService = mock(EmailNotificationService.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, emailNotificationRepository, moduleRepository, assessmentMasterDataService);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository,emailNotificationService ,moduleRepository, assessmentMasterDataService, emailConfig);
     }
 
     @Test
     void shouldAddUsersToAssessment() {
+        String email = "abc@thoughtworks.com";
         AssessmentRequest assessmentRequest = new AssessmentRequest();
         assessmentRequest.setAssessmentName("assessment1");
         assessmentRequest.setTeamSize(1);
@@ -87,6 +92,7 @@ class AssessmentServiceTest {
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
         doNothing().when(usersAssessmentsService).createUsersInAssessment(assessmentUsers);
+        doNothing().when(emailNotificationService).setNotification(assessment,email,NotificationTemplateType.Created);
 
 
         Assessment actualAssessment = assessmentService.createAssessment(assessmentRequest, loggedinUser);

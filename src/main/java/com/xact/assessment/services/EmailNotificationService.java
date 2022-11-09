@@ -7,9 +7,9 @@ import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.EmailHeader;
 import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
+import com.xact.assessment.dtos.NotificationResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.EmailNotificationRepository;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
@@ -29,6 +29,7 @@ public class EmailNotificationService {
     private final EmailConfig emailConfig;
     private final EmailNotificationClient emailNotificationClient;
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
+    private static final String notificationMessage = "EMail sent successfully!";
 
 
     public EmailNotificationService(TokenService tokenService, EmailNotificationRepository emailNotificationRepository, EmailConfig emailConfig, EmailNotificationClient emailNotificationClient) {
@@ -40,17 +41,17 @@ public class EmailNotificationService {
 
     @Scheduled(fixedDelay = "${email.delay}")
     public void sendEmailNotifications() throws JsonProcessingException {
-        List<EmailNotifier> emailNotifierList = emailNotificationRepository.getNotificationDetailsToBeSend();
+            List<EmailNotifier> emailNotifierList = emailNotificationRepository.getNotificationDetailsToBeSend();
 
-        if(!emailNotifierList.isEmpty()){
-            String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
-            for (EmailNotifier emailNotifier:emailNotifierList) {
-                sendEmailNotification(accessToken,emailNotifier);
+            if (!emailNotifierList.isEmpty()) {
+                String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
+                for (EmailNotifier emailNotifier : emailNotifierList) {
+                    setEmailNotification(accessToken, emailNotifier);
+                }
             }
-        }
     }
 
-    private void sendEmailNotification(String accessToken,EmailNotifier emailNotifier ) throws JsonProcessingException {
+    private void setEmailNotification(String accessToken, EmailNotifier emailNotifier ) throws JsonProcessingException {
         NotificationRequest notificationRequest = new NotificationRequest();
         NotificationDetail notificationDetail= new NotificationDetail();
         notificationDetail.setFrom(new EmailHeader());
@@ -66,13 +67,18 @@ public class EmailNotificationService {
 
         notificationRequest.setEmail(notificationDetail);
         String json = new ObjectMapper().writeValueAsString(notificationRequest);
+        System.out.println(json);
 
-        LOGGER.info("Sending notification to {}",notificationDetail.getTo());
-        HttpResponse httpResponse =emailNotificationClient.sendNotification(accessToken,json);
-        emailNotifier.setRetries(emailNotifier.getRetries()+1);
+        sendEmail(accessToken, emailNotifier, notificationDetail, json);
 
-        updateNotificationStatus(emailNotifier, httpResponse);
+    }
 
+    private void sendEmail(String accessToken, EmailNotifier emailNotifier, NotificationDetail notificationDetail, String json) {
+            LOGGER.info("Sending notification to {}",notificationDetail.getTo());
+            NotificationResponse notificationResponse = emailNotificationClient.sendNotification(accessToken, json);
+            emailNotifier.setRetries(emailNotifier.getRetries() + 1);
+
+            updateNotificationStatus(emailNotifier, notificationResponse);
     }
 
     private String getNotificationContent(EmailNotifier emailNotifier) {
@@ -92,8 +98,8 @@ public class EmailNotificationService {
         Velocity.init( p );
     }
 
-    private void updateNotificationStatus(EmailNotifier emailNotifier, HttpResponse httpResponse) {
-        if(httpResponse.code() == 200) {
+    private void updateNotificationStatus(EmailNotifier emailNotifier, NotificationResponse notificationResponse) {
+        if(notificationResponse.getMessage().equals(notificationMessage)) {
             emailNotifier.setStatus(NotificationStatus.Y);
             emailNotificationRepository.update(emailNotifier);
         }
@@ -122,6 +128,10 @@ public class EmailNotificationService {
 
     private void saveNotification(EmailNotifier emailNotifier) {
         emailNotificationRepository.save(emailNotifier);
+    }
+
+    public boolean isEmailMasked(){
+        return emailConfig.isNotificationEnabled() && emailConfig.isMaskEmail();
     }
 }
 

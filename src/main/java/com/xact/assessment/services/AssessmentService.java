@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.dtos.UserDto;
@@ -13,7 +14,6 @@ import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
 import java.util.Set;
 
-import org.apache.commons.collections4.SetUtils;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
@@ -39,12 +39,13 @@ public class AssessmentService {
 
     private final ModuleRepository moduleRepository;
     private final AssessmentMasterDataService assessmentMasterDataService;
+    private final EmailConfig emailConfig;
     private final static String datePattern = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, EmailNotificationService emailNotificationService, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, EmailNotificationService emailNotificationService, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService, EmailConfig emailConfig) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
@@ -54,6 +55,7 @@ public class AssessmentService {
         this.emailNotificationService = emailNotificationService;
         this.moduleRepository = moduleRepository;
         this.assessmentMasterDataService = assessmentMasterDataService;
+        this.emailConfig = emailConfig;
     }
 
     @Transactional
@@ -66,14 +68,20 @@ public class AssessmentService {
         Set<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
         usersAssessmentsService.createUsersInAssessment(assessmentUsers);
-        for(AssessmentUsers eachUser : assessmentUsers) {
-            emailNotificationService.setNotificationByRole(assessment, eachUser);
-        }
+        addNotification(assessment, assessmentUsers);
         return assessment;
     }
 
-
-
+    private void addNotification(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+        if(emailNotificationService.isEmailMasked()) {
+            emailNotificationService.setNotification(assessment,emailConfig.getDefaultEmail(),NotificationTemplateType.Created);
+        }
+        else {
+            for (AssessmentUsers eachUser : assessmentUsers) {
+                emailNotificationService.setNotificationByRole(assessment, eachUser);
+            }
+        }
+    }
 
     private void createAssessment(Assessment assessment) {
         assessmentRepository.save(assessment);

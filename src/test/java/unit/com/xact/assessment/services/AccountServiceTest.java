@@ -4,7 +4,6 @@
 
 package unit.com.xact.assessment.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AccountConfig;
 import com.xact.assessment.config.TokenConfig;

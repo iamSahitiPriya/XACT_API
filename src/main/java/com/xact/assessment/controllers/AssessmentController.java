@@ -4,6 +4,7 @@
 
 package com.xact.assessment.controllers;
 
+import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -41,6 +42,7 @@ public class AssessmentController {
     private final TopicService topicService;
     private final QuestionService questionService;
     private final EmailNotificationService emailNotificationService;
+    private  final EmailConfig emailConfig;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
@@ -48,7 +50,7 @@ public class AssessmentController {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, EmailNotificationService emailNotificationService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, EmailNotificationService emailNotificationService, EmailConfig emailConfig) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
@@ -58,6 +60,7 @@ public class AssessmentController {
         this.topicService = topicService;
         this.questionService = questionService;
         this.emailNotificationService = emailNotificationService;
+        this.emailConfig = emailConfig;
     }
 
 
@@ -130,14 +133,13 @@ public class AssessmentController {
         Assessment openedAssessment = assessmentService.reopenAssessment(assessment);
 
         Set<AssessmentUsers> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
-        for (AssessmentUsers eachUser: assessmentUsers) {
-            emailNotificationService.setNotification(assessment,eachUser.getUserId().getUserEmail(), NotificationTemplateType.Reopened);
-        }
+        addNotification(assessment, assessmentUsers,NotificationTemplateType.Reopened);
 
         AssessmentResponse assessmentResponse = modelMapper.map(openedAssessment, AssessmentResponse.class);
 
         return HttpResponse.ok(assessmentResponse);
     }
+
 
     @Put(value = "/{assessmentId}/statuses/finish", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -148,9 +150,8 @@ public class AssessmentController {
         Assessment finishedAssessment = assessmentService.finishAssessment(assessment);
 
         Set<AssessmentUsers> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
-        for (AssessmentUsers eachUser: assessmentUsers) {
-            emailNotificationService.setNotification(assessment,eachUser.getUserId().getUserEmail(), NotificationTemplateType.Completed);
-        }
+
+        addNotification(assessment,assessmentUsers,NotificationTemplateType.Completed);
 
         AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
         return HttpResponse.ok(assessmentResponse);
@@ -463,9 +464,6 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
-
-
-
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
@@ -622,5 +620,16 @@ public class AssessmentController {
         assessment.setUpdatedAt(new Date());
         LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessmentService.updateAssessment(assessment);
+    }
+
+    private void addNotification(Assessment assessment, Set<AssessmentUsers> assessmentUsers, NotificationTemplateType notificationType) {
+        if(emailNotificationService.isEmailMasked()) {
+            emailNotificationService.setNotification(assessment,emailConfig.getDefaultEmail(),notificationType);
+        }
+        else {
+            for (AssessmentUsers eachUser : assessmentUsers) {
+                emailNotificationService.setNotification(assessment, eachUser.getUserId().getUserEmail(), notificationType);
+            }
+        }
     }
 }

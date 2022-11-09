@@ -45,6 +45,14 @@ account:
   scope: "account.read.internal"
   endpoint: "/api/accounts"
 
+email:
+  url: "https://api.thoughtworks.net"
+  scope: "email.send"
+  endpoint: "/notification/messages"
+  delay: "1m"
+  notificationEnabled : true
+  maskEmail : false
+
 flyway:
   datasources:
     default:

@@ -53,6 +53,9 @@ email:
   scope: "email.send"
   endpoint: "/notification/messages"
   delay: "1m"
+  notificationEnabled : true
+  maskEmail : true
+  defaultEmail : "brindha.e@thoughtworks.com"
 
 
 flyway:

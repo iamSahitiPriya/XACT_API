@@ -39,6 +39,7 @@ public class EmailNotificationService {
 
     @Scheduled(fixedDelay = "${email.delay}")
     public void sendEmailNotifications() throws JsonProcessingException {
+        if(emailConfig.isNotificationEnabled()) {
             List<EmailNotifier> emailNotifierList = emailNotificationRepository.getNotificationDetailsToBeSend();
 
             if (!emailNotifierList.isEmpty()) {
@@ -47,6 +48,7 @@ public class EmailNotificationService {
                     setEmailNotification(accessToken, emailNotifier);
                 }
             }
+        }
     }
 
     private void setEmailNotification(String accessToken, EmailNotifier emailNotifier ) throws JsonProcessingException {
@@ -65,6 +67,7 @@ public class EmailNotificationService {
 
         notificationRequest.setEmail(notificationDetail);
         String json = new ObjectMapper().writeValueAsString(notificationRequest);
+
 
         sendEmail(accessToken, emailNotifier, notificationDetail, json);
 

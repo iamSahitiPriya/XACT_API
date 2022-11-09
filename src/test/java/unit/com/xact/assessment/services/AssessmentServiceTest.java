@@ -4,6 +4,7 @@
 
 package unit.com.xact.assessment.services;
 
+import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.dtos.UserDto;
@@ -35,6 +36,7 @@ class AssessmentServiceTest {
     private AccessControlRepository accessControlRepository;
     private AssessmentMasterDataService assessmentMasterDataService;
     private EmailNotificationService emailNotificationService;
+    private EmailConfig emailConfig;
 
     private UserAssessmentModuleRepository userAssessmentModuleRepository;
     private ModuleRepository moduleRepository;
@@ -49,6 +51,7 @@ class AssessmentServiceTest {
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         emailNotificationService = mock(EmailNotificationService.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
+        emailConfig = mock(EmailConfig.class);
         assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository,emailNotificationService ,moduleRepository, assessmentMasterDataService, emailConfig);
     }
 

@@ -14,6 +14,7 @@ import com.xact.assessment.services.EmailNotificationService;
 import com.xact.assessment.services.TokenService;
 import io.micronaut.test.annotation.MockBean;
 import jakarta.inject.Inject;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -41,17 +42,18 @@ public class EmailNotificationServiceTest {
     void shouldSendEmailNotification() throws JsonProcessingException {
         NotificationResponse notificationResponse = new NotificationResponse("1","EMail sent successfully!");
         String scope = "email.send";
-        EmailNotifier emailNotifier = new EmailNotifier(1, NotificationTemplateType.Created,"brindha.e@thoughtworks.com","{assessment_id:1,assessment_name :" + "\"fintech\"}", NotificationStatus.N,0,new Date(),new Date());
+        EmailNotifier emailNotifier = new EmailNotifier(1, NotificationTemplateType.Created,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N,0,new Date(),new Date());
         List<EmailNotifier> emailNotifierList = new ArrayList<>();
         emailNotifierList.add(emailNotifier);
+        when(emailConfig.isNotificationEnabled()).thenReturn(true);
         when(emailConfig.getScope()).thenReturn(scope);
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("", 1, "abc", "", new Date());
-        String token = "Bearer " + accessTokenResponse.getAccess_token();
-        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());
-        String json = "{\"email\":{\"subject\":\"Assessment Created\",\"to\":[\"brindha.e@thoughtworks.com\"],\"cc\":[],\"bcc\":[],\"from\":{\"email\":\"project-xact@thoughtworks.net\",\"name\":\"X-ACT Support\"},\"replyTo\":\"\",\"contentType\":\"text/html\",\"content\":\"<html>\\n<body>\\n<h3>Hello User,</h3>\\n<p>You have created the Assessment!!</p>\\n</body>\\n</html>\\n\"}}";
+        String token = "Bearer " + accessTokenResponse.getAccessToken();
+        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
+        String json = "{\"email\":{\"subject\":\"Assessment Created\",\"to\":[\"brindha.e@thoughtworks.com\"],\"cc\":[],\"bcc\":[],\"from\":{\"email\":\"project-xact@thoughtworks.net\",\"name\":\"X-ACT Support\"},\"replyTo\":\"\",\"contentType\":\"text/html\",\"content\":\"<html>\\n<body>\\n<h3>Hello User,</h3>\\n<p>You have created the Assessment <b>fintech</b>!!</p>\\n</body>\\n</html>\\n\"}}";
 
         when(emailNotificationRepository.getNotificationDetailsToBeSend()).thenReturn(emailNotifierList);
-        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());
+        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
         Mockito.when(emailNotificationClient.sendNotification(token,json)).thenReturn(notificationResponse);
         when(emailNotificationRepository.update(emailNotifier)).thenReturn(emailNotifier);
 
@@ -100,5 +102,14 @@ public class EmailNotificationServiceTest {
         emailNotificationRepository.save(emailNotifier);
 
         verify(emailNotificationRepository).save(emailNotifier);
+    }
+
+    @Test
+    void shouldReturnTrueWhenNotificationEnabledAndMaskEnabled() {
+        when(emailConfig.isMaskEmail()).thenReturn(true);
+        when(emailConfig.isNotificationEnabled()).thenReturn(true);
+
+        Assertions.assertTrue(emailNotificationService.isEmailMasked());
+
     }
 }

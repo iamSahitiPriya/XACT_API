@@ -4,6 +4,7 @@
 
 package unit.com.xact.assessment.controllers;
 
+import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.controllers.AssessmentController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
@@ -36,6 +37,7 @@ class AssessmentControllerTest {
     private final TopicService topicService = Mockito.mock(TopicService.class);
     private final EmailNotificationService emailNotificationService = Mockito.mock(EmailNotificationService.class);
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
+    private final EmailConfig emailConfig = mock(EmailConfig.class);
     private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService, questionService, emailNotificationService, emailConfig);
 
     @Test

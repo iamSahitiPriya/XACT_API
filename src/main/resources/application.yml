@@ -54,7 +54,7 @@ email:
   scope: "email.send"
   endpoint: "/notification/messages"
   delay: "1m"
-  notificationEnabled : true
+  notificationEnabled : false
   maskEmail : true
   defaultEmail : "brindha.e@thoughtworks.com"
 

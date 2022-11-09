@@ -1,6 +1,11 @@
 <html>
 <body>
-<h3>Hello User,</h3>
-<p>Your Assessment <b>${assessment.assessment_name}</b> has been completed!!</p>
+<div style="height:50%; width: 50%;margin: 10%;background-color: white;">
+    <hr style="height: 6px;background: #4BA1AC; border: none;"/>
+##    <img src="../logo/logo.png" style="height: 200px;width: 200px;">
+    <h1 style="color: #4BA1AC; font-size: 40px;">X-ACT</h1>
+    <h3 style="padding-left: 5px;font-size: 30px;">Hello User,</h3>
+    <p style="padding-left: 5px;font-size: 20px;">Your Assessment <b style="color:#4BA1AC ;">${assessment.assessment_name}</b> has been completed!!</p>
+</div>
 </body>
 </html>

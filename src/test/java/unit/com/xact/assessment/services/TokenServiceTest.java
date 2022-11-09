@@ -15,7 +15,7 @@ import java.util.Map;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TokenServiceTest {
+class TokenServiceTest {
     AccessTokenClient accessTokenClient = mock(AccessTokenClient.class);
     TokenConfig tokenConfig = mock(TokenConfig.class);
     TokenService tokenService;

@@ -25,6 +25,8 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
 
+profile:
+  type: "local"
 
 datasources:
   default:
@@ -33,14 +35,6 @@ datasources:
     username: ${USER}
     password: ${USER}
     dialect: POSTGRES
-
-
-token:
-    username: ${NAME}
-    password: ${PASSWORD}
-    url: "https://thoughtworks.okta.com"
-    endpoint: "/oauth2/aus1fjygi70z7ZtVB0h8/v1/token"
-    grantType: "client_credentials"
 
 account:
   url: "https://api.thoughtworks.net/account"

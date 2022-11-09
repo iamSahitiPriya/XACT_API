@@ -6,6 +6,7 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AccountConfig;
+import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.config.TokenConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
@@ -24,18 +25,19 @@ import java.util.*;
 
 import static org.mockito.Mockito.*;
 
-public class AccountServiceTest {
+class AccountServiceTest {
     AccountClient accountClient = mock(AccountClient.class);
     AccountRepository accountRepository = mock(AccountRepository.class);
     AccountService accountService;
     TokenConfig tokenConfig = mock(TokenConfig.class);
     TokenService tokenService = mock(TokenService.class);
     AccountConfig accountConfig = mock(AccountConfig.class);
+    ProfileConfig profileConfig = mock(ProfileConfig.class);
 
-    Environment environment = mock(Environment.class) ;
+    Environment environment = mock(Environment.class);
 
     public AccountServiceTest() {
-        this.accountService = new AccountService(accountClient, accountRepository, tokenService, tokenConfig, accountConfig, environment);
+        this.accountService = new AccountService(accountClient, accountRepository, tokenService, tokenConfig, profileConfig, accountConfig, environment);
     }
 
     @Test
@@ -46,8 +48,8 @@ public class AccountServiceTest {
         String scope = "account.read.internal";
         when(accountConfig.getScope()).thenReturn(scope);
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("", 1, "abc", "", new Date());
-        String token = "Bearer " + accessTokenResponse.getAccess_token();
-        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccess_token());
+        String token = "Bearer " + accessTokenResponse.getAccessToken();
+        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
         parameters.put("status", "active");
         List<Account> accounts = new ArrayList<>();
         accounts.add(account);
@@ -78,9 +80,7 @@ public class AccountServiceTest {
 
     @Test
     void fetchAccountDetailForLocalEnv() throws IOException {
-        Set<String> set = new HashSet<>();
-        set.add("local");
-        when(environment.getActiveNames()).thenReturn(set);
+        when(profileConfig.getType()).thenReturn("local");
         List<Account> accountList = accountService.readAccounts();
 
         accountService.fetchOrganisationDetails();

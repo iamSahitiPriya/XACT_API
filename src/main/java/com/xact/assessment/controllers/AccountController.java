@@ -11,7 +11,7 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller("/v1")
 public class AccountController {
@@ -30,11 +31,11 @@ public class AccountController {
 
         this.accountService = accountService;
     }
-    @Get(value = "/account/{name}",produces = MediaType.APPLICATION_JSON)
+    @Get(value = "/accounts{?organisationName*}",produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public MutableHttpResponse<List<OrganisationResponse>> fetchOrganisationName(@PathVariable("name") String organisationName, Authentication authentication) {
+    public MutableHttpResponse<List<OrganisationResponse>> fetchOrganisationName(Authentication authentication, @QueryValue Map<String, String> organisationName) {
         LOGGER.info("Get Organisation details: {}",organisationName);
-        List<OrganisationResponse> organisation = accountService.getOrganisation(organisationName);
+        List<OrganisationResponse> organisation = accountService.getOrganisation(organisationName.get("name"));
         return HttpResponse.ok(organisation);
     }
 }

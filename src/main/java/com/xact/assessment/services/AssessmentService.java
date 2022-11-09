@@ -40,7 +40,7 @@ public class AssessmentService {
     private final ModuleRepository moduleRepository;
     private final AssessmentMasterDataService assessmentMasterDataService;
     private final EmailConfig emailConfig;
-    private final static String datePattern = "yyyy-MM-dd";
+    static final String DATE_PATTERN = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();
@@ -95,6 +95,7 @@ public class AssessmentService {
         if (assessment.getAssessmentId() != null) {
             assessmentOwner = usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId());
         }
+
         Set<AssessmentUsers> assessmentUsers = new HashSet<>();
         assessmentOwner.ifPresent(assessmentUsers::add);
         for (UserDto user : users) {
@@ -151,7 +152,7 @@ public class AssessmentService {
 
     @Transactional
     public void updateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        usersAssessmentsService.updateUsersInAssessment(assessmentUsers,assessment.getAssessmentId());
+        usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
         assessment.setAssessmentUsers(assessmentUsers);
         assessmentRepository.update(assessment);
     }
@@ -166,14 +167,14 @@ public class AssessmentService {
     }
 
     public List<Assessment> getTotalAssessments(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        DateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
         Date startDateTime = simpleDateFormat.parse(startDate);
         Date endDateTime = simpleDateFormat.parse(endDate);
         return assessmentRepository.totalAssessments(startDateTime, endDateTime);
     }
 
     public List<Assessment> getAdminAssessmentsData(String startDate, String endDate) throws ParseException {
-        DateFormat simpleDateFormat = new SimpleDateFormat(datePattern);
+        DateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
         return assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate));
     }
 

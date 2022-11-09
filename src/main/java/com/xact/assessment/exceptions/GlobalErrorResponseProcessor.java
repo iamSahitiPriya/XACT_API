@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 @Singleton
 @Replaces(value = ErrorResponseProcessor.class)
 public class GlobalErrorResponseProcessor implements ErrorResponseProcessor<HttpResponse> {
-    private final Logger LOGGER = LoggerFactory.getLogger(GlobalErrorResponseProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalErrorResponseProcessor.class);
 
     @Override
     public MutableHttpResponse<HttpResponse> processResponse(ErrorContext errorContext, MutableHttpResponse baseResponse) {

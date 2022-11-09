@@ -19,7 +19,7 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 
 @MicronautTest
-public class AccountControllerTest {
+class AccountControllerTest {
 
 
     @Client("/")
@@ -39,18 +39,18 @@ public class AccountControllerTest {
 
     @Test
     void getOrganisationNames() throws IOException {
-        Account accounts = new Account("abc","Shell Singapore","Commodities, Utilities and Energy");
-        Account accounts1 = new Account("def","Equinor","Finance");
+        Account accounts = new Account("abc", "Shell Singapore", "Commodities, Utilities and Energy");
+        Account accounts1 = new Account("def", "Equinor", "Finance");
         accountRepository.save(accounts);
         accountRepository.save(accounts1);
         entityManager.getTransaction().commit();
         entityManager.clear();
         entityManager.close();
 
-        String organisationResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/account/shell")
+        String organisationResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/accounts?name=shell")
                 .bearerAuth("anything"), String.class);
 
-        String expectedResponse = "[{" + "\"name\"" + ":" + "\"Shell Singapore\"" + "," +"\"industry\""+ ":"+"\"Commodities, Utilities and Energy\"" + "}]";
+        String expectedResponse = "[{" + "\"name\"" + ":" + "\"Shell Singapore\"" + "," + "\"industry\"" + ":" + "\"Commodities, Utilities and Energy\"" + "}]";
 
         Assertions.assertEquals(expectedResponse, organisationResponse);
     }

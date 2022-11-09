@@ -105,11 +105,9 @@ public class AdminController {
 
     @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentModule> createAssessmentModule(@Body @Valid List<AssessmentModuleRequest> assessmentModules, Authentication authentication) {
+    public HttpResponse<AssessmentModule> createAssessmentModule(@Body @Valid AssessmentModuleRequest assessmentModule, Authentication authentication) {
         LOGGER.info("Admin: Create module");
-        for (AssessmentModuleRequest assessmentModule : assessmentModules) {
             assessmentMasterDataService.createAssessmentModule(assessmentModule);
-        }
         return HttpResponse.ok();
     }
 

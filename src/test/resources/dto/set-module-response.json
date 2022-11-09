@@ -1,6 +1,6 @@
 [
   {
-    "moduleName": "Module1",
-    "category":1,
+    "moduleName": "ModuleName",
+    "category":"Software engineering",
     "isActive":true
   }]

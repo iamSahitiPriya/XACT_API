@@ -44,9 +44,8 @@ class AdminControllerTest {
         AssessmentModuleRequest moduleRequest = new AssessmentModuleRequest();
         moduleRequest.setModuleName("This is a module");
         moduleRequest.setActive(false);
-        List<AssessmentModuleRequest> moduleRequests = Collections.singletonList(moduleRequest);
 
-        HttpResponse<AssessmentModule> actualResponse = adminController.createAssessmentModule(moduleRequests,authentication);
+        HttpResponse<AssessmentModule> actualResponse = adminController.createAssessmentModule(moduleRequest,authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
     }

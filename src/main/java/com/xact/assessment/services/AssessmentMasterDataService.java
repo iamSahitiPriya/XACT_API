@@ -157,7 +157,7 @@ public class AssessmentMasterDataService {
         }
     }
     private boolean checkIfModuleUnique(String moduleName){
-        List<String> modules=moduleService.moduleRepository.getModuleNames();
+        List<String> modules=moduleService.getModuleNames();
         List<String> result= modules.stream().map(String :: toLowerCase).map(option ->option.replaceAll("\\s","")).collect(Collectors.toList());
         return result.contains(moduleName.toLowerCase().replaceAll("\\s",""));
     }

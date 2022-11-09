@@ -62,12 +62,15 @@ class AssessmentMasterDataServiceTest {
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
-        assessmentModuleRequest.setCategory(1);
+        assessmentModuleRequest.setCategory("Category");
         AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
-        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
+        List<String> assessmentModules = new ArrayList<>();
+
+        when(moduleService.getModuleNames()).thenReturn(assessmentModules);
+        when(categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory())).thenReturn(category);
+
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
-        List<AssessmentModule> assessmentModules = new ArrayList<>();
-        when(moduleService.getAllModules()).thenReturn(assessmentModules);
+
         assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest);
         verify(moduleService).createModule(assessmentModule);
     }
@@ -180,9 +183,9 @@ class AssessmentMasterDataServiceTest {
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
-        assessmentModuleRequest.setCategory(1);
+        assessmentModuleRequest.setCategory("Category");
         AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
-        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
+        when(categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory())).thenReturn(category);
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
         List<AssessmentModule> assessmentModules = new ArrayList<>();
         when(moduleService.getAllModules()).thenReturn(assessmentModules);
@@ -191,6 +194,30 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentModuleRequest assessmentModule1 = new AssessmentModuleRequest();
         assessmentModule1.setModuleName("This is an updated module");
+        when(moduleService.getModule(1)).thenReturn(assessmentModule);
+
+        assessmentMasterDataService.updateModule(1, assessmentModuleRequest);
+        verify(moduleService).updateModule(assessmentModule);
+    }
+
+    @Test
+    void shouldThrowErrorWhenSameModuleName() {
+        AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
+        assessmentModuleRequest.setModuleName("Dummy module");
+        assessmentModuleRequest.setActive(false);
+        assessmentModuleRequest.setCategory("Category");
+
+        AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
+        when(categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory())).thenReturn(category);
+
+        AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
+        List<AssessmentModule> assessmentModules = new ArrayList<>();
+        when(moduleService.getAllModules()).thenReturn(assessmentModules);
+        when(moduleRepository.update(assessmentModule)).thenReturn(assessmentModule);
+        assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest);
+
+        AssessmentModuleRequest assessmentModule1 = new AssessmentModuleRequest();
+        assessmentModule1.setModuleName("Dummy module");
         when(moduleService.getModule(1)).thenReturn(assessmentModule);
 
         assessmentMasterDataService.updateModule(1, assessmentModuleRequest);

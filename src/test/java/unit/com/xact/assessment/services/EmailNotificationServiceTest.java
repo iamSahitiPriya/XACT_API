@@ -50,7 +50,7 @@ public class EmailNotificationServiceTest {
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse("", 1, "abc", "", new Date());
         String token = "Bearer " + accessTokenResponse.getAccessToken();
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
-        String json = "{\"email\":{\"subject\":\"Assessment Created\",\"to\":[\"brindha.e@thoughtworks.com\"],\"cc\":[],\"bcc\":[],\"from\":{\"email\":\"project-xact@thoughtworks.net\",\"name\":\"X-ACT Support\"},\"replyTo\":\"\",\"contentType\":\"text/html\",\"content\":\"<html>\\n<body>\\n<h3>Hello User,</h3>\\n<p>You have created the Assessment <b>fintech</b>!!</p>\\n</body>\\n</html>\\n\"}}";
+        String json = "{\"email\":{\"subject\":\"Assessment Created\",\"to\":[\"brindha.e@thoughtworks.com\"],\"cc\":[],\"bcc\":[],\"from\":{\"email\":\"project-xact@thoughtworks.net\",\"name\":\"X-ACT Support\"},\"replyTo\":\"\",\"contentType\":\"text/html\",\"content\":\"<html>\\n<body>\\n<div style=\\\"height:50%; width: 50%;margin: 10%;background-color: white;\\\">\\n    <hr style=\\\"height: 6px;background: #4BA1AC; border: none;\\\"/>\\n    <h1 style=\\\"color: #4BA1AC; font-size: 40px;\\\">X-ACT</h1>\\n    <h3 style=\\\"padding-left: 5px;font-size: 30px;\\\">Hello User,</h3>\\n    <p style=\\\"padding-left: 5px;font-size: 20px;\\\">You have created the Assessment <b style=\\\"color:#4BA1AC ;\\\">fintech</b>!!</p>\\n</div>\\n</body>\\n</html>\\n\"}}";
 
         when(emailNotificationRepository.getNotificationDetailsToBeSend()).thenReturn(emailNotifierList);
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());

@@ -38,9 +38,9 @@ public class AssessmentService {
     private final EmailNotificationService emailNotificationService;
 
     private final ModuleRepository moduleRepository;
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
     private final AssessmentMasterDataService assessmentMasterDataService;
     private final EmailConfig emailConfig;
-    static final String DATE_PATTERN = "yyyy-MM-dd";
 
 
     ModelMapper mapper = new ModelMapper();

@@ -18,9 +18,9 @@ class UserTest {
         profile.setEmail("test@test.com");
 
 
-        User user = new User("assxsww",profile, "Active");
+        User user = new User("assxsww", profile, "Active");
 
 
-        assertEquals(user.getUserEmail(), "test@test.com");
+        assertEquals("test@test.com", user.getUserEmail());
     }
 }

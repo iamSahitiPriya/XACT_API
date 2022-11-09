@@ -7,7 +7,6 @@ package unit.com.xact.assessment.services;
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AccountConfig;
 import com.xact.assessment.config.ProfileConfig;
-import com.xact.assessment.config.TokenConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.models.AccessTokenResponse;
@@ -29,7 +28,6 @@ class AccountServiceTest {
     AccountClient accountClient = mock(AccountClient.class);
     AccountRepository accountRepository = mock(AccountRepository.class);
     AccountService accountService;
-    TokenConfig tokenConfig = mock(TokenConfig.class);
     TokenService tokenService = mock(TokenService.class);
     AccountConfig accountConfig = mock(AccountConfig.class);
     ProfileConfig profileConfig = mock(ProfileConfig.class);
@@ -37,7 +35,7 @@ class AccountServiceTest {
     Environment environment = mock(Environment.class);
 
     public AccountServiceTest() {
-        this.accountService = new AccountService(accountClient, accountRepository, tokenService, tokenConfig, profileConfig, accountConfig, environment);
+        this.accountService = new AccountService(accountClient, accountRepository, tokenService, profileConfig, accountConfig, environment);
     }
 
     @Test
@@ -73,7 +71,7 @@ class AccountServiceTest {
 
         List<OrganisationResponse> organisationResponseList = accountService.getOrganisation("A");
 
-        Assertions.assertEquals(organisationResponseList.size(), 1);
+        Assertions.assertEquals(1, organisationResponseList.size());
 
 
     }

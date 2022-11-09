@@ -68,9 +68,7 @@ public class EmailNotificationService {
         notificationRequest.setEmail(notificationDetail);
         String json = new ObjectMapper().writeValueAsString(notificationRequest);
 
-
         sendEmail(accessToken, emailNotifier, notificationDetail, json);
-
     }
 
     private void sendEmail(String accessToken, EmailNotifier emailNotifier, NotificationDetail notificationDetail, String json) {

@@ -57,9 +57,8 @@ class AdminControllerTest {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
         topicRequest.setTopicName("Hello this is a topic");
         topicRequest.setActive(false);
-        List<AssessmentTopicRequest> assessmentTopicRequests = Collections.singletonList(topicRequest);
 
-        HttpResponse<AssessmentTopic> actualResponse = adminController.createTopics(assessmentTopicRequests, authentication);
+        HttpResponse<AssessmentTopic> actualResponse = adminController.createTopics(topicRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 

@@ -18,8 +18,6 @@ import javax.validation.constraints.NotBlank;
 @Introspected
 public class AssessmentTopicRequest {
     @JsonProperty
-    private Integer topicId;
-    @JsonProperty
     @NotBlank
     private String topicName;
     @JsonProperty

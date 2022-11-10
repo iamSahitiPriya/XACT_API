@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.NotificationResponse;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.EmailNotificationRepository;
+import com.xact.assessment.repositories.NotificationRepository;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -14,14 +14,14 @@ import java.util.*;
 
 @Singleton
 public class NotificationService {
-    private final EmailNotificationRepository emailNotificationRepository;
+    private final NotificationRepository notificationRepository;
     private final EmailConfig emailConfig;
     private static final String notificationMessage = "EMail sent successfully!";
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
 
 
-    public NotificationService(EmailNotificationRepository emailNotificationRepository, EmailConfig emailConfig) {
-        this.emailNotificationRepository = emailNotificationRepository;
+    public NotificationService(NotificationRepository notificationRepository, EmailConfig emailConfig) {
+        this.notificationRepository = notificationRepository;
         this.emailConfig = emailConfig;
     }
 
@@ -67,7 +67,7 @@ public class NotificationService {
     private void saveNotification(Notification notification) {
         LOGGER.info("Saving notification for {} {}", notification.getTemplateName(), notification.getPayload());
         try {
-            emailNotificationRepository.save(notification);
+            notificationRepository.save(notification);
         }catch (Exception exception) {
             LOGGER.error("Notification not saved");
         }
@@ -83,7 +83,7 @@ public class NotificationService {
 
         if(notificationResponse.getMessage().equals(notificationMessage)) {
             LOGGER.info("Updating notification retries and status for Notification Id {}", notification.getNotificationId());
-            emailNotificationRepository.updateNotification(notification.getNotificationId(),notification.getRetries());
+            notificationRepository.updateNotification(notification.getNotificationId(),notification.getRetries());
         }
     }
 }

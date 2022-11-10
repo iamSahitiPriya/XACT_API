@@ -13,7 +13,7 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.EmailNotificationService;
+import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class AssessmentServiceTest {
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
     private AssessmentMasterDataService assessmentMasterDataService;
-    private EmailNotificationService emailNotificationService;
+    private NotificationService notificationService;
     private EmailConfig emailConfig;
 
     private UserAssessmentModuleRepository userAssessmentModuleRepository;
@@ -49,10 +49,10 @@ class AssessmentServiceTest {
         accessControlRepository = mock(AccessControlRepository.class);
         moduleRepository = mock(ModuleRepository.class);
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
-        emailNotificationService = mock(EmailNotificationService.class);
+        notificationService = mock(NotificationService.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
         emailConfig = mock(EmailConfig.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository,emailNotificationService ,moduleRepository, assessmentMasterDataService, emailConfig);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, notificationService,moduleRepository, assessmentMasterDataService, emailConfig);
     }
 
     @Test
@@ -95,7 +95,7 @@ class AssessmentServiceTest {
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
         doNothing().when(usersAssessmentsService).createUsersInAssessment(assessmentUsers);
-        doNothing().when(emailNotificationService).setNotification(assessment,email,NotificationTemplateType.Created);
+        when(notificationService.setNotificationTypeByUserRole(assessment,assessmentUsers)).thenReturn(null);
 
 
         Assessment actualAssessment = assessmentService.createAssessment(assessmentRequest, loggedinUser);

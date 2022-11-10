@@ -10,7 +10,7 @@ import com.xact.assessment.client.EmailNotificationClient;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Notification;
-import com.xact.assessment.repositories.EmailNotificationRepository;
+import com.xact.assessment.repositories.NotificationRepository;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import org.apache.velocity.Template;
@@ -28,15 +28,15 @@ import java.util.Properties;
 @Singleton
 public class EmailSchedulerService {
     private final EmailConfig emailConfig;
-    private final EmailNotificationRepository emailNotificationRepository;
+    private final NotificationRepository notificationRepository;
     private final TokenService tokenService;
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailSchedulerService.class);
 
-    public EmailSchedulerService(EmailConfig emailConfig, EmailNotificationRepository emailNotificationRepository, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
+    public EmailSchedulerService(EmailConfig emailConfig, NotificationRepository notificationRepository, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
         this.emailConfig = emailConfig;
-        this.emailNotificationRepository = emailNotificationRepository;
+        this.notificationRepository = notificationRepository;
         this.tokenService = tokenService;
         this.emailNotificationClient = emailNotificationClient;
         this.notificationService = notificationService;
@@ -45,7 +45,7 @@ public class EmailSchedulerService {
     @Scheduled(fixedDelay = "${email.delay}")
     public void sendEmailNotifications() throws JsonProcessingException {
         if(emailConfig.isNotificationEnabled()) {
-            List<Notification> notificationList = emailNotificationRepository.getNotificationDetailsToBeSend();
+            List<Notification> notificationList = notificationRepository.getNotificationDetailsToBeSend();
 
             if (!notificationList.isEmpty()) {
                 String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());

@@ -96,8 +96,8 @@ public class AssessmentMasterDataService {
     }
 
     public void createAssessmentModule(AssessmentModuleRequest assessmentModuleRequest) {
-        if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName())) {
-            AssessmentCategory assessmentCategory = categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory());
+        AssessmentCategory assessmentCategory = categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory());
+        if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName(),assessmentCategory)) {
             AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), assessmentCategory, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
             moduleService.createModule(assessmentModule);
         } else {
@@ -156,8 +156,8 @@ public class AssessmentMasterDataService {
             }
         }
     }
-    private boolean checkIfModuleUnique(String moduleName){
-        List<String> modules=moduleService.getModuleNames();
+    private boolean checkIfModuleUnique(String moduleName, AssessmentCategory assessmentCategory){
+        List<String> modules=moduleService.getModuleNames(assessmentCategory.getCategoryId());
         List<String> result= modules.stream().map(String :: toLowerCase).map(option ->option.replaceAll("\\s","")).collect(Collectors.toList());
         return result.contains(moduleName.toLowerCase().replaceAll("\\s",""));
     }
@@ -173,7 +173,7 @@ public class AssessmentMasterDataService {
             moduleService.updateModule(assessmentModule);
         }
         else {
-            if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName())) {
+            if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName(),assessmentCategory)) {
                 assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
                 assessmentModule.setCategory(assessmentCategory);
                 assessmentModule.setActive(assessmentModuleRequest.isActive());

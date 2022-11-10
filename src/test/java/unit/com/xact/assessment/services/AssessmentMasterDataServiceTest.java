@@ -66,7 +66,7 @@ class AssessmentMasterDataServiceTest {
         AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
         List<String> assessmentModules = new ArrayList<>();
 
-        when(moduleService.getModuleNames()).thenReturn(assessmentModules);
+        when(moduleService.getModuleNames(category.getCategoryId())).thenReturn(assessmentModules);
         when(categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory())).thenReturn(category);
 
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());

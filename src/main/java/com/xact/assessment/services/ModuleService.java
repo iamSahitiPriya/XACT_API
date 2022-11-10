@@ -32,7 +32,7 @@ public class ModuleService {
         return (List<AssessmentModule>) moduleRepository.findAll();
     }
 
-    public List<String> getModuleNames() {
-        return moduleRepository.getModuleNames();
+    public List<String> getModuleNames(Integer categoryId) {
+        return moduleRepository.getModuleNames(categoryId);
     }
 }

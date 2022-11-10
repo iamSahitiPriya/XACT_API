@@ -59,15 +59,20 @@ class AssessmentMasterDataServiceTest {
 
     @Test
     void shouldCreateModule() {
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryName("Dummy");
+        category.setCategoryId(1);
+        category.setActive(true);
+
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
-        assessmentModuleRequest.setCategory("Category");
-        AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
+        assessmentModuleRequest.setCategory(1);
+
         List<String> assessmentModules = new ArrayList<>();
 
         when(moduleService.getModuleNames(category.getCategoryId())).thenReturn(assessmentModules);
-        when(categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory())).thenReturn(category);
+        when(categoryRepository.findCategoryById(category.getCategoryId())).thenReturn(category);
 
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
 
@@ -183,9 +188,9 @@ class AssessmentMasterDataServiceTest {
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
-        assessmentModuleRequest.setCategory("Category");
+        assessmentModuleRequest.setCategory(1);
         AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
-        when(categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory())).thenReturn(category);
+        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
         List<AssessmentModule> assessmentModules = new ArrayList<>();
         when(moduleService.getAllModules()).thenReturn(assessmentModules);
@@ -205,10 +210,10 @@ class AssessmentMasterDataServiceTest {
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
-        assessmentModuleRequest.setCategory("Category");
+        assessmentModuleRequest.setCategory(1);
 
         AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
-        when(categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory())).thenReturn(category);
+        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
 
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
         List<AssessmentModule> assessmentModules = new ArrayList<>();

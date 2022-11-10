@@ -24,7 +24,7 @@ public class AssessmentModuleRequest {
     private String moduleName;
 
     @JsonProperty
-    private String category ;
+    private Integer category ;
 
     @JsonProperty
     private boolean isActive;

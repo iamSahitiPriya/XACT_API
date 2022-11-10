@@ -96,7 +96,7 @@ public class AssessmentMasterDataService {
     }
 
     public void createAssessmentModule(AssessmentModuleRequest assessmentModuleRequest) {
-        AssessmentCategory assessmentCategory = categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory());
+        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());
         if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName(),assessmentCategory)) {
             AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), assessmentCategory, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
             moduleService.createModule(assessmentModule);
@@ -164,7 +164,7 @@ public class AssessmentMasterDataService {
 
     public void updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(moduleId);
-        AssessmentCategory assessmentCategory = categoryRepository.findByCategoryName(assessmentModuleRequest.getCategory());;
+        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());;
         if (assessmentModule.getModuleName().equals(assessmentModuleRequest.getModuleName())) {
             assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
             assessmentModule.setCategory(assessmentCategory);

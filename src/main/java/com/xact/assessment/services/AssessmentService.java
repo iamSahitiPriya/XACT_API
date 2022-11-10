@@ -35,7 +35,7 @@ public class AssessmentService {
 
     private final AccessControlRepository accessControlRepository;
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
-    private final EmailNotificationService emailNotificationService;
+    private final NotificationService notificationService;
 
     private final ModuleRepository moduleRepository;
     private static final String DATE_PATTERN = "yyyy-MM-dd";
@@ -45,14 +45,14 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, EmailNotificationService emailNotificationService, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService, EmailConfig emailConfig) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, NotificationService notificationService, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService, EmailConfig emailConfig) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
         this.accessControlRepository = accessControlRepository;
 
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
-        this.emailNotificationService = emailNotificationService;
+        this.notificationService = notificationService;
         this.moduleRepository = moduleRepository;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.emailConfig = emailConfig;
@@ -68,20 +68,10 @@ public class AssessmentService {
         Set<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
         usersAssessmentsService.createUsersInAssessment(assessmentUsers);
-        addNotification(assessment, assessmentUsers);
+        notificationService.setNotificationTypeByRole(assessment, assessmentUsers);
         return assessment;
     }
 
-    private void addNotification(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        if(emailNotificationService.isEmailMasked()) {
-            emailNotificationService.setNotification(assessment,emailConfig.getDefaultEmail(),NotificationTemplateType.Created);
-        }
-        else {
-            for (AssessmentUsers eachUser : assessmentUsers) {
-                emailNotificationService.setNotificationByRole(assessment, eachUser);
-            }
-        }
-    }
 
     private void createAssessment(Assessment assessment) {
         assessmentRepository.save(assessment);
@@ -133,7 +123,7 @@ public class AssessmentService {
         return assessmentUsers1;
     }
 
-    public Set<AssessmentUsers> getAllAssessmentUsers(Integer assessmentId) {
+    public Set<String> getAllAssessmentUsers(Integer assessmentId) {
         return usersAssessmentsRepository.getAllAssessmentUsers(assessmentId);
     }
 

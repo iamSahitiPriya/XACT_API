@@ -252,11 +252,9 @@ public class AdminController {
 
     @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentTopic> createTopics(@Body @Valid List<AssessmentTopicRequest> assessmentTopicRequests, Authentication authentication) {
+    public HttpResponse<AssessmentTopic> createTopics(@Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
         LOGGER.info("Admin: Create topics");
-        for (AssessmentTopicRequest assessmentTopicRequest : assessmentTopicRequests) {
-            assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
-        }
+        assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
         return HttpResponse.ok();
     }
 

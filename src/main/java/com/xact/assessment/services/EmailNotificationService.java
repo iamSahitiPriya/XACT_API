@@ -13,7 +13,6 @@ import lombok.SneakyThrows;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +44,7 @@ public class EmailNotificationService {
             if (!emailNotifierList.isEmpty()) {
                 String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
                 for (EmailNotifier emailNotifier : emailNotifierList) {
+//                    emailNotifier.setUserEmail();
                     setEmailNotification(accessToken, emailNotifier);
                 }
             }
@@ -56,7 +56,7 @@ public class EmailNotificationService {
         NotificationDetail notificationDetail= new NotificationDetail();
         notificationDetail.setFrom(new EmailHeader());
         notificationDetail.setSubject(emailNotifier.getTemplateName().getEmailSubject());
-        notificationDetail.setTo(Collections.singletonList(emailNotifier.getUserEmail()));
+        notificationDetail.setTo(new ArrayList<String>(Arrays.asList(emailNotifier.getUserEmail().split(","))));
         notificationDetail.setBcc(new ArrayList<>());
         notificationDetail.setCc(new ArrayList<>());
         notificationDetail.setReplyTo("");
@@ -67,6 +67,7 @@ public class EmailNotificationService {
 
         notificationRequest.setEmail(notificationDetail);
         String json = new ObjectMapper().writeValueAsString(notificationRequest);
+        System.out.println(json);
 
         sendEmail(accessToken, emailNotifier, notificationDetail, json);
     }
@@ -105,25 +106,28 @@ public class EmailNotificationService {
     }
 
     @SneakyThrows
-    public void setNotification(Assessment assessment, String assessmentUserEmail, NotificationTemplateType notificationTemplateType ) {
+    public void setNotification(Assessment assessment, Set<String> assessmentUserEmail, NotificationTemplateType notificationTemplateType ) {
         EmailNotifier emailNotifier = new EmailNotifier();
-        emailNotifier.setUserEmail(assessmentUserEmail);
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("EmailNotificationService");
+        emailNotifier.setUserEmail(String.join(",",assessmentUserEmail));
+        System.out.println(emailNotifier.getUserEmail());
         emailNotifier.setTemplateName(notificationTemplateType);
         emailNotifier.setStatus(NotificationStatus.N);
         Map<String, String> payload = new HashMap<>();
         payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
         payload.put("assessment_name", assessment.getAssessmentName());
-        ObjectMapper objectMapper = new ObjectMapper();
+
         emailNotifier.setPayload(objectMapper.writeValueAsString(payload));
         saveNotification(emailNotifier);
     }
 
-    public void setNotificationByRole(Assessment assessment, AssessmentUsers eachUser) {
-        if(eachUser.getRole().equals(AssessmentRole.Owner))
-            setNotification(assessment, eachUser.getUserId().getUserEmail(),NotificationTemplateType.Created);
-        else if(eachUser.getRole().equals(AssessmentRole.Facilitator))
-            setNotification(assessment, eachUser.getUserId().getUserEmail(),NotificationTemplateType.AddUser);
-    }
+//    public void setNotificationByRole(Assessment assessment, AssessmentUsers eachUser) {
+//        if(eachUser.getRole().equals(AssessmentRole.Owner))
+//            setNotification(assessment, eachUser.getUserId().getUserEmail(),NotificationTemplateType.Created);
+//        else if(eachUser.getRole().equals(AssessmentRole.Facilitator))
+//            setNotification(assessment, eachUser.getUserId().getUserEmail(),NotificationTemplateType.AddUser);
+//    }
 
     private void saveNotification(EmailNotifier emailNotifier) {
         emailNotificationRepository.save(emailNotifier);

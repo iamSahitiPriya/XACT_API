@@ -12,8 +12,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -22,7 +20,7 @@ import java.util.Set;
 @Introspected
 @Entity
 @Table(name = "tbl_notification")
-public class EmailNotifier {
+public class Notification {
     @Id
     @Column(name = "notification_id", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)

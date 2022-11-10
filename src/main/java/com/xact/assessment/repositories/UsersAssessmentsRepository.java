@@ -43,8 +43,8 @@ public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUse
     Optional<AssessmentUsers> findOwnerByAssessmentId(@Parameter("assessmentId") Integer assessmentId);
 
     @Executable
-    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId")
-    Set<AssessmentUsers> getAllAssessmentUsers(@Parameter("assessmentId") Integer assessmentId);
+    @Query("SELECT au.userId.userEmail FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId")
+    Set<String> getAllAssessmentUsers(@Parameter("assessmentId") Integer assessmentId);
 }
 
 

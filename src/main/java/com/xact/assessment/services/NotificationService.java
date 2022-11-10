@@ -40,26 +40,25 @@ public class NotificationService {
         saveNotification(notification);
     }
 
-    public void setNotificationTypeByRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+    public Void setNotificationTypeByUserRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
         HashMap<NotificationTemplateType,Set<String>> notifications = new HashMap<>();
         HashSet<String> facilitatorEmails = new HashSet<>();
         for(AssessmentUsers eachUser : assessmentUsers) {
             if (eachUser.getRole().equals(AssessmentRole.Owner)) {
                 notifications.put(NotificationTemplateType.Created, Collections.singleton(eachUser.getUserId().getUserEmail()));
-                assessmentUsers.remove(eachUser);
             }
-
             else if (eachUser.getRole().equals(AssessmentRole.Facilitator)) {
                facilitatorEmails.add(eachUser.getUserId().getUserEmail());
-               assessmentUsers.remove(eachUser);
             }
         }
         notifications.put(NotificationTemplateType.AddUser,facilitatorEmails);
 
-        setNotificationsByRole(assessment, notifications);
+
+        setNotificationsByUserRole(assessment, notifications);
+        return null;
     }
 
-    private void setNotificationsByRole(Assessment assessment, HashMap<NotificationTemplateType, Set<String>> notifications) {
+    private void setNotificationsByUserRole(Assessment assessment, HashMap<NotificationTemplateType, Set<String>> notifications) {
         notifications.forEach((notificationTemplateType, userEmails) -> {
             saveNotification(assessment, userEmails, notificationTemplateType);
         });
@@ -67,7 +66,12 @@ public class NotificationService {
 
     private void saveNotification(Notification notification) {
         LOGGER.info("Saving notification for {} {}", notification.getTemplateName(), notification.getPayload());
-        emailNotificationRepository.save(notification);
+        try {
+            emailNotificationRepository.save(notification);
+        }catch (Exception exception) {
+            LOGGER.error("Notification not saved");
+        }
+
     }
 
     public boolean isEmailMasked(){

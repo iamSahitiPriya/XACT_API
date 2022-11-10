@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
@@ -68,7 +69,9 @@ public class AssessmentService {
         Set<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
         usersAssessmentsService.createUsersInAssessment(assessmentUsers);
-        notificationService.setNotificationTypeByRole(assessment, assessmentUsers);
+
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationTypeByUserRole(assessment, assessmentUsers));
+
         return assessment;
     }
 

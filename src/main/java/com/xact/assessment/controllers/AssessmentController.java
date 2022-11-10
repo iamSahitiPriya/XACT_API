@@ -16,12 +16,14 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import org.apache.poi.ss.formula.functions.T;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
@@ -132,9 +134,11 @@ public class AssessmentController {
         Assessment openedAssessment = assessmentService.reopenAssessment(assessment);
 
         Set<String> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
-        dispatchNotification(assessment, assessmentUsers,NotificationTemplateType.Reopened);
+
 
         AssessmentResponse assessmentResponse = modelMapper.map(openedAssessment, AssessmentResponse.class);
+
+        CompletableFuture.supplyAsync(() -> dispatchNotification(assessment,assessmentUsers,NotificationTemplateType.Reopened));
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -151,7 +155,8 @@ public class AssessmentController {
         Set<String> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
 
         AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
-        dispatchNotification(assessment,assessmentUsers,NotificationTemplateType.Completed);
+
+        CompletableFuture.supplyAsync(() -> dispatchNotification(assessment,assessmentUsers,NotificationTemplateType.Completed));
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -621,7 +626,12 @@ public class AssessmentController {
         assessmentService.updateAssessment(assessment);
     }
 
-    private void dispatchNotification(Assessment assessment, Set<String> assessmentUsers, NotificationTemplateType notificationType) {
-        notificationService.saveNotification(assessment,assessmentUsers,notificationType);
+    private Void dispatchNotification (Assessment assessment, Set<String> assessmentUsers, NotificationTemplateType notificationType) {
+        try {
+            notificationService.saveNotification(assessment, assessmentUsers, notificationType);
+        } catch (Exception exception) {
+            LOGGER.error("Notification not saved");
+        }
+        return null;
     }
 }

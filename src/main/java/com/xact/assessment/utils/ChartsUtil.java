@@ -17,7 +17,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class ChartsUtil {
-    public ChartsUtil() {
+    private ChartsUtil() {
     }
 
     /**

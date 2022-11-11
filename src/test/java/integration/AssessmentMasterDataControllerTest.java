@@ -137,7 +137,7 @@ class AssessmentMasterDataControllerTest {
         List<AssessmentTopic> assessmentTopics = (List<AssessmentTopic>) assessmentTopicRepository.findAll();
         AssessmentTopic assessmentTopic = assessmentTopics.get(assessmentTopics.size() - 1);
 
-        assertEquals(assessmentTopic.getTopicName(), "Software");
+        assertEquals("Software", assessmentTopic.getTopicName());
 
         assessmentTopicRepository.delete(assessmentTopic);
         entityManager.getTransaction().commit();
@@ -156,7 +156,7 @@ class AssessmentMasterDataControllerTest {
         List<AssessmentParameter> assessmentParameters = (List<AssessmentParameter>) assessmentParameterRepository.findAll();
         AssessmentParameter assessmentParameter = assessmentParameters.get(assessmentParameters.size() - 1);
 
-        assertEquals(assessmentParameter.getParameterName(), "Software");
+        assertEquals("Software", assessmentParameter.getParameterName());
 
         assessmentParameterRepository.delete(assessmentParameter);
         entityManager.getTransaction().commit();
@@ -202,7 +202,7 @@ class AssessmentMasterDataControllerTest {
         entityManager.getTransaction().begin();
         for (AssessmentTopicReference assessmentTopicReference : assessmentTopicReferences) {
             if (assessmentTopicReference.getRating().equals(Rating.TWO)) {
-                assertEquals(assessmentTopicReference.getReference(), "This is a reference");
+                assertEquals("This is a reference", assessmentTopicReference.getReference());
                 assessmentTopicReferenceRepository.deleteById(assessmentTopicReference.getReferenceId());
             }
         }
@@ -256,7 +256,7 @@ class AssessmentMasterDataControllerTest {
         entityManager.getTransaction().begin();
         for (AssessmentParameterReference assessmentParameterReference1 : assessmentParameterReference) {
             if (assessmentParameterReference1.getRating().equals(Rating.TWO)) {
-                assertEquals(assessmentParameterReference1.getReference(), "This is a reference");
+                assertEquals("This is a reference", assessmentParameterReference1.getReference());
                 assessmentParameterReferenceRepository.deleteById(assessmentParameterReference1.getReferenceId());
             }
         }

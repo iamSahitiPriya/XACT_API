@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AccountConfig;
 import com.xact.assessment.config.ProfileConfig;
-import com.xact.assessment.config.TokenConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.models.Account;
@@ -24,7 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class AccountService {
@@ -32,20 +34,18 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final ModelMapper modelMapper = new ModelMapper();
     private final TokenService tokenService;
-    private final TokenConfig tokenConfig;
     private final ProfileConfig profileConfig;
     private final AccountConfig accountConfig;
-    private  final ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
+    private final ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
 
     @Inject
     Environment environment;
 
-    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService, TokenConfig tokenConfig, ProfileConfig profileConfig, AccountConfig accountConfig, Environment environment) {
+    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService, ProfileConfig profileConfig, AccountConfig accountConfig, Environment environment) {
         this.accountClient = accountClient;
         this.accountRepository = accountRepository;
         this.tokenService = tokenService;
-        this.tokenConfig = tokenConfig;
         this.profileConfig = profileConfig;
         this.accountConfig = accountConfig;
         this.environment = environment;

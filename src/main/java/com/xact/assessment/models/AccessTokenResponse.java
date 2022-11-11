@@ -1,5 +1,6 @@
 package com.xact.assessment.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +13,17 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class AccessTokenResponse {
-    String token_type;
-    Integer expires_in;
-    String access_token;
+
+    @JsonProperty("token_type")
+    String tokenType;
+
+    @JsonProperty("expires_in")
+    Integer expiresIn;
+
+    @JsonProperty("access_token")
+    String accessToken;
+
     String scope;
+
     Date createdTime;
 }

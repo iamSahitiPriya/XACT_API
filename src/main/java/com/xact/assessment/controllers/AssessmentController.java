@@ -12,9 +12,6 @@ import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
-import io.micronaut.http.client.HttpClient;
-import io.micronaut.http.client.annotation.Client;
-import io.micronaut.scheduling.annotation.Scheduled;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -72,7 +69,6 @@ public class AssessmentController {
         if (Objects.nonNull(assessments))
             assessments.forEach(assessment ->
             {
-                //List<String> users = assessmentService.getAssessmentUsers(assessment.getAssessmentId());
                 AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
                 assessmentResponse.setAssessmentState(assessment.getAssessmentState());
                 assessmentResponse.setDomain(assessment.getOrganisation().getDomain());

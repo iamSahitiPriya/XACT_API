@@ -16,8 +16,7 @@ public class ResourceFileUtil {
         ClassLoader classLoader = getClass().getClassLoader();
         File jsonFile = new File(classLoader.getResource(path).getFile());
 
-        String expectedResponse = Files.readString(jsonFile.toPath()).replace(NEW_LINE_CHAR, "");
-        return expectedResponse;
+        return Files.readString(jsonFile.toPath()).replace(NEW_LINE_CHAR, "");
     }
 }
 

@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 @Singleton
 @Requires(classes = {DuplicateRecordException.class, ExceptionHandler.class})
 public class DuplicateRecordExceptionHandler implements ExceptionHandler<DuplicateRecordException, HttpResponse> {
-    private final Logger LOGGER = LoggerFactory.getLogger(DuplicateRecordExceptionHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DuplicateRecordExceptionHandler.class);
+
     @Override
     public HttpResponse handle(HttpRequest request, DuplicateRecordException exception) {
         LOGGER.info("Duplicate records are not allowed");

@@ -35,7 +35,7 @@ class UsersAssessmentsServiceTest {
         String userEmail = "hello@thoughtworks.com";
 
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
@@ -54,7 +54,7 @@ class UsersAssessmentsServiceTest {
         Date updated = new Date(22 - 10 - 2022);
 
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
@@ -73,14 +73,14 @@ class UsersAssessmentsServiceTest {
         Date updated = new Date(22 - 10 - 2022);
 
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
         when(usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId())).thenReturn(Optional.of(assessmentUsers));
 
-        Optional<AssessmentUsers> assessmentUsers1=usersAssessmentsService.findOwnerByAssessmentId(assessment.getAssessmentId());
-        assertEquals(assessmentUsers1.get().getUserId().getUserEmail(),"hello@thoughtworks.com");
+        Optional<AssessmentUsers> assessmentUsers1 = usersAssessmentsService.findOwnerByAssessmentId(assessment.getAssessmentId());
+        assertEquals("hello@thoughtworks.com", assessmentUsers1.get().getUserId().getUserEmail());
 
     }
 
@@ -90,11 +90,11 @@ class UsersAssessmentsServiceTest {
         Date updated = new Date(22 - 10 - 2022);
 
         Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         UserId userId = new UserId("hello@thoughtworks.com", assessment);
         AssessmentUsers assessmentUsers = new AssessmentUsers(userId, AssessmentRole.Owner);
 
-        List<AssessmentUsers> assessmentUsers1=new ArrayList<>();
+        List<AssessmentUsers> assessmentUsers1 = new ArrayList<>();
         assessmentUsers1.add(assessmentUsers);
 
         doNothing().when(usersAssessmentsRepository).deleteById(assessment.getAssessmentId());

@@ -10,7 +10,6 @@ import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
-import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +31,6 @@ class AssessmentServiceTest {
     private AssessmentRepository assessmentRepository;
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
-    private AssessmentMasterDataService assessmentMasterDataService;
 
     private UserAssessmentModuleRepository userAssessmentModuleRepository;
     private ModuleRepository moduleRepository;
@@ -45,7 +43,7 @@ class AssessmentServiceTest {
         accessControlRepository = mock(AccessControlRepository.class);
         moduleRepository = mock(ModuleRepository.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository, assessmentMasterDataService);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository);
     }
 
     @Test
@@ -235,8 +233,8 @@ class AssessmentServiceTest {
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment1 = new Assessment(1, "Name","Client Assessment", organisation, Active, created1, updated1);
-        Assessment assessment2 = new Assessment(2, "Name","Client Assessment", organisation, AssessmentStatus.Completed, created2, updated2);
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", organisation, Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", "Client Assessment", organisation, AssessmentStatus.Completed, created2, updated2);
 
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
@@ -247,7 +245,7 @@ class AssessmentServiceTest {
 
         DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        when(assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
         List<Assessment> actualAssessments = assessmentService.getTotalAssessments(startDate, endDate);
 
@@ -265,8 +263,8 @@ class AssessmentServiceTest {
 
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment2 = new Assessment(1, "Name","Client Assessment", organisation,Completed,  simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
-        Assessment assessment1 = new Assessment(2, "Name", "Client Assessment",organisation, Active, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
+        Assessment assessment2 = new Assessment(1, "Name", "Client Assessment", organisation, Completed, simpleDateFormat.parse(createdAt1), simpleDateFormat.parse(updatedAt1));
+        Assessment assessment1 = new Assessment(2, "Name", "Client Assessment", organisation, Active, simpleDateFormat.parse(createdAt2), simpleDateFormat.parse(updatedAt2));
 
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
@@ -276,7 +274,7 @@ class AssessmentServiceTest {
         String endDate = "2022-05-13";
 
 
-        when(assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate),simpleDateFormat.parse(endDate))).thenReturn(assessments);
+        when(assessmentRepository.totalAssessments(simpleDateFormat.parse(startDate), simpleDateFormat.parse(endDate))).thenReturn(assessments);
 
         assertEquals(2, assessmentService.getAdminAssessmentsData(startDate, endDate).size());
 
@@ -288,7 +286,7 @@ class AssessmentServiceTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
         List<ModuleRequest> moduleRequests = new ArrayList<>();
         ModuleRequest moduleRequest = new ModuleRequest();
@@ -321,7 +319,7 @@ class AssessmentServiceTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
         List<ModuleRequest> moduleRequests = new ArrayList<>();
         ModuleRequest moduleRequest = new ModuleRequest();
@@ -353,7 +351,7 @@ class AssessmentServiceTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
         List<ModuleRequest> moduleRequests = new ArrayList<>();
         ModuleRequest moduleRequest = new ModuleRequest();
@@ -375,8 +373,8 @@ class AssessmentServiceTest {
 
         when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
         doNothing().when(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
-         assessmentService.updateAssessmentModules(moduleRequests,assessment);
+        assessmentService.updateAssessmentModules(moduleRequests, assessment);
 
-         verify(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
+        verify(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
     }
 }

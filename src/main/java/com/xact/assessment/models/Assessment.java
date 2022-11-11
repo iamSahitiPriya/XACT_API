@@ -104,7 +104,7 @@ public class Assessment {
             }
         });
 
-        return assessmentModuleList.size() > 0;
+        return !assessmentModuleList.isEmpty();
 
     }
 

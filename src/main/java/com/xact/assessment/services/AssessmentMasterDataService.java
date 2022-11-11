@@ -92,7 +92,7 @@ public class AssessmentMasterDataService {
         List<String> categories = categoryRepository.getAllCategories();
         List<String> result = categories.stream()
                 .map(String::toLowerCase).map(String::trim)
-                .collect(Collectors.toList());
+                .toList();
         return result.contains(categoryName.trim().toLowerCase());
     }
 

@@ -26,6 +26,7 @@ micronaut:
 
 profile:
   type: "qa"
+  url: "https://qa.xact.thoughtworks.net/assessment/"
 
 token:
   username: ${AUTH_USERNAME}

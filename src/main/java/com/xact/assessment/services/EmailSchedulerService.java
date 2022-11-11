@@ -8,9 +8,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.client.EmailNotificationClient;
 import com.xact.assessment.config.EmailConfig;
+import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.repositories.NotificationRepository;
+import com.xact.assessment.utils.NamingConventionUtil;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import org.apache.velocity.Template;
@@ -28,14 +30,17 @@ import java.util.Properties;
 @Singleton
 public class EmailSchedulerService {
     private final EmailConfig emailConfig;
+    private final ProfileConfig profileConfig;
     private final NotificationRepository notificationRepository;
     private final TokenService tokenService;
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
+    private final NamingConventionUtil namingConventionUtil = new NamingConventionUtil();
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailSchedulerService.class);
 
-    public EmailSchedulerService(EmailConfig emailConfig, NotificationRepository notificationRepository, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
+    public EmailSchedulerService(EmailConfig emailConfig, ProfileConfig profileConfig, NotificationRepository notificationRepository, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
         this.emailConfig = emailConfig;
+        this.profileConfig = profileConfig;
         this.notificationRepository = notificationRepository;
         this.tokenService = tokenService;
         this.emailNotificationClient = emailNotificationClient;
@@ -94,7 +99,10 @@ public class EmailSchedulerService {
         Template template = Velocity.getTemplate("templates/"+ notification.getTemplateName().getTemplateResource());
 
         EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(),EmailPayload.class);
+        emailPayload.setOrganisation_name(namingConventionUtil.convertToPascalCase(emailPayload.getOrganisation_name()));
+
         context.put("assessment", emailPayload);
+        context.put("url",profileConfig.getUrl());
 
         template.merge(context,writer);
 

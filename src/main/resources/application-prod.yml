@@ -32,6 +32,7 @@ datasources:
     password: ${DB_PWD}
 profile:
   type: "prod"
+  url: "https://xact.thoughtworks.net/assessment/"
 
 token:
   username: ${AUTH_USERNAME}

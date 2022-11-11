@@ -35,12 +35,14 @@ public class NotificationService {
         Map<String, String> payload = new HashMap<>();
         payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
         payload.put("assessment_name", assessment.getAssessmentName());
+        payload.put("organisation_name",assessment.getOrganisation().getOrganisationName());
+        payload.put("created_at",assessment.getCreatedAt().toString());
 
         notification.setPayload(objectMapper.writeValueAsString(payload));
         saveNotification(notification);
     }
 
-    public Void setNotificationTypeByUserRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+    public HashMap<NotificationTemplateType, Set<String>> setNotificationTypeByUserRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
         HashMap<NotificationTemplateType,Set<String>> notifications = new HashMap<>();
         HashSet<String> facilitatorEmails = new HashSet<>();
         for(AssessmentUsers eachUser : assessmentUsers) {
@@ -51,11 +53,11 @@ public class NotificationService {
                facilitatorEmails.add(eachUser.getUserId().getUserEmail());
             }
         }
-        notifications.put(NotificationTemplateType.AddUser,facilitatorEmails);
-
+        if(!facilitatorEmails.isEmpty())
+            notifications.put(NotificationTemplateType.AddUser,facilitatorEmails);
 
         setNotificationsByUserRole(assessment, notifications);
-        return null;
+        return notifications;
     }
 
     private void setNotificationsByUserRole(Assessment assessment, HashMap<NotificationTemplateType, Set<String>> notifications) {
@@ -71,7 +73,6 @@ public class NotificationService {
         }catch (Exception exception) {
             LOGGER.error("Notification not saved");
         }
-
     }
 
     public boolean isEmailMasked(){

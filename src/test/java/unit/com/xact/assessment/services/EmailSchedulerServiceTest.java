@@ -7,6 +7,7 @@ package unit.com.xact.assessment.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.client.EmailNotificationClient;
 import com.xact.assessment.config.EmailConfig;
+import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.dtos.NotificationResponse;
 import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.models.Notification;
@@ -16,6 +17,7 @@ import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.TokenService;
+import com.xact.assessment.utils.NamingConventionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +34,8 @@ public class EmailSchedulerServiceTest {
     private final NotificationRepository notificationRepository;
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
+    private final ProfileConfig profileConfig;
+    private final NamingConventionUtil namingConventionUtil;
 
     public EmailSchedulerServiceTest() {
         emailConfig = mock(EmailConfig.class);
@@ -39,7 +43,10 @@ public class EmailSchedulerServiceTest {
         notificationRepository = mock(NotificationRepository.class);
         emailNotificationClient = mock(EmailNotificationClient.class);
         notificationService = mock(NotificationService.class);
-        emailSchedulerService = new EmailSchedulerService(emailConfig,notificationRepository,tokenService,emailNotificationClient,notificationService);
+        profileConfig = mock(ProfileConfig.class);
+        namingConventionUtil = mock(NamingConventionUtil.class);
+
+        emailSchedulerService = new EmailSchedulerService(emailConfig, profileConfig, notificationRepository,tokenService,emailNotificationClient,notificationService);
     }
 
     @Test

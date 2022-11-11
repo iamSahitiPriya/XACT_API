@@ -9,13 +9,14 @@ import com.xact.assessment.dtos.NotificationResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.services.NotificationService;
-import com.xact.assessment.services.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 
@@ -31,9 +32,13 @@ public class NotificationServiceTest {
     @Test
     void shouldSetNotificationTypeAsAddUserForAssessmentFacilitator() {
         String email = "abc@thoughtworks.com";
+        Organisation organisation = new Organisation(1,"abC","ABC","abc",6);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
         assessment.setAssessmentName("Assessment");
+        assessment.setCreatedAt(new Date());
+        assessment.setOrganisation(organisation);
+
         AssessmentUsers assessmentUser = new AssessmentUsers();
         UserId userId = new UserId(email,assessment);
         assessmentUser.setUserId(userId);
@@ -60,9 +65,12 @@ public class NotificationServiceTest {
     @Test
     void shouldThrowExceptionWhenAnyOfTheFieldIsNullInNotification() {
         String email = "abc@thoughtworks.com";
+        Organisation organisation = new Organisation(1,"abC","ABC","abc",6);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
         assessment.setAssessmentName("Assessment");
+        assessment.setOrganisation(organisation);
+        assessment.setCreatedAt(new Date());
         AssessmentUsers assessmentUser1 = new AssessmentUsers();
         UserId userId1 = new UserId(email,assessment);
         assessmentUser1.setUserId(userId1);

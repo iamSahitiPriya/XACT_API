@@ -138,7 +138,7 @@ public class AssessmentController {
 
         AssessmentResponse assessmentResponse = modelMapper.map(openedAssessment, AssessmentResponse.class);
 
-        CompletableFuture.supplyAsync(() -> dispatchNotification(assessment,assessmentUsers,NotificationTemplateType.Reopened));
+        CompletableFuture.supplyAsync(() -> dispatchNotification(assessment, assessmentUsers, NotificationTemplateType.Reopened));
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -626,12 +626,13 @@ public class AssessmentController {
         assessmentService.updateAssessment(assessment);
     }
 
-    private Void dispatchNotification (Assessment assessment, Set<String> assessmentUsers, NotificationTemplateType notificationType) {
+    private boolean dispatchNotification (Assessment assessment, Set<String> assessmentUsers, NotificationTemplateType notificationType) {
         try {
             notificationService.saveNotification(assessment, assessmentUsers, notificationType);
         } catch (Exception exception) {
             LOGGER.error("Notification not saved");
+            return false;
         }
-        return null;
+        return true;
     }
 }

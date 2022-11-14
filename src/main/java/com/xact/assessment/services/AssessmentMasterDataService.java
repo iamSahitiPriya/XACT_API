@@ -167,6 +167,8 @@ public class AssessmentMasterDataService {
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
         assessmentTopic.setModule(assessmentModule);
         assessmentTopic.setTopicName(assessmentTopicRequest.getTopicName());
+        assessmentTopic.setActive(assessmentTopicRequest.isActive());
+        assessmentTopic.setComments(assessmentTopicRequest.getComments());
 
         topicService.updateTopic(assessmentTopic);
     }

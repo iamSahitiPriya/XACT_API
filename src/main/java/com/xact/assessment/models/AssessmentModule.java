@@ -69,9 +69,10 @@ public class AssessmentModule {
     public boolean getIsActive() {
         return isActive;
     }
-    public Set<AssessmentTopic> getTopics() {
+    public Set<AssessmentTopic> getActiveTopics() {
         return topics == null ? null : topics.stream().filter(AssessmentTopic::getIsActive).collect(Collectors.toSet());
     }
+
 
     public double getModuleAverage() {
         double topicSum = 0;

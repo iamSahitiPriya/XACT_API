@@ -233,7 +233,7 @@ public class AssessmentController {
 
     private List<ParameterLevelRecommendationRequest> getParameterRecommendation(List<ParameterLevelRecommendation> parameterLevelRecommendationList, Integer parameterId) {
         List<ParameterLevelRecommendationRequest> parameterLevelRecommendationRequests = new ArrayList<>();
-        List<ParameterLevelRecommendation> matchingList = parameterLevelRecommendationList.stream().filter(parameterLevelRecommendation -> parameterId.equals(parameterLevelRecommendation.getParameter().getParameterId())).collect(Collectors.toList());
+        List<ParameterLevelRecommendation> matchingList = parameterLevelRecommendationList.stream().filter(parameterLevelRecommendation -> parameterId.equals(parameterLevelRecommendation.getParameter().getParameterId())).toList();
         for (ParameterLevelRecommendation parameterLevelRecommendation : matchingList) {
             ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = modelMapper.map(parameterLevelRecommendation, ParameterLevelRecommendationRequest.class);
             parameterLevelRecommendationRequests.add(parameterLevelRecommendationRequest);
@@ -273,7 +273,7 @@ public class AssessmentController {
 
     private List<TopicLevelRecommendationRequest> getTopicRecommendation(List<TopicLevelRecommendation> topicLevelRecommendationList, Integer topicId) {
         List<TopicLevelRecommendationRequest> topicLevelRecommendationRequests = new ArrayList<>();
-        List<TopicLevelRecommendation> matchingList = topicLevelRecommendationList.stream().filter(topicLevelRecommendation -> topicId.equals(topicLevelRecommendation.getTopic().getTopicId())).collect(Collectors.toList());
+        List<TopicLevelRecommendation> matchingList = topicLevelRecommendationList.stream().filter(topicLevelRecommendation -> topicId.equals(topicLevelRecommendation.getTopic().getTopicId())).toList();
         for (TopicLevelRecommendation topicLevelRecommendation : matchingList) {
             TopicLevelRecommendationRequest topicLevelRecommendationRequest = modelMapper.map(topicLevelRecommendation, TopicLevelRecommendationRequest.class);
             topicLevelRecommendationRequests.add(topicLevelRecommendationRequest);

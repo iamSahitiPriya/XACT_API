@@ -8,15 +8,11 @@ import com.xact.assessment.controllers.AccountController;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.services.AccountService;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,7 +21,6 @@ class AccountControllerTest {
 
     private final AccountService accountService = mock(AccountService.class);
     private final AccountController accountController = new AccountController(accountService);
-    private final Authentication authentication = Mockito.mock(Authentication.class);
 
     @Test
     void fetchOrganisationName() {
@@ -34,11 +29,10 @@ class AccountControllerTest {
         List<OrganisationResponse> organisationResponseList = new ArrayList<>();
         organisationResponseList.add(organisationResponse);
         organisationResponseList.add(organisationResponse1);
-        Map<String, String> name = new HashMap<>();
-        name.put("name", "a");
-        when(accountService.getOrganisation("a")).thenReturn(organisationResponseList);
+        String name = "a";
+        when(accountService.getOrganisation(name)).thenReturn(organisationResponseList);
 
-        HttpResponse<List<OrganisationResponse>> actualResponse = accountController.fetchOrganisationName(authentication, name);
+        HttpResponse<List<OrganisationResponse>> actualResponse = accountController.fetchOrganisationName(name);
 
         Assertions.assertEquals(2, actualResponse.body().size());
     }

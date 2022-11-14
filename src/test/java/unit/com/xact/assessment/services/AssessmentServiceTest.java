@@ -94,7 +94,6 @@ class AssessmentServiceTest {
 
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
-        doNothing().when(usersAssessmentsService).createUsersInAssessment(assessmentUsers);
         when(notificationService.setNotificationTypeByUserRole(assessment,assessmentUsers)).thenReturn(null);
 
 

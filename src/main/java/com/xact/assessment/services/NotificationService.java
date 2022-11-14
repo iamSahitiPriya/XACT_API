@@ -32,17 +32,23 @@ public class NotificationService {
         notification.setUserEmail(String.join(",",userEmails));
         notification.setTemplateName(notificationTemplateType);
         notification.setStatus(NotificationStatus.N);
-        Map<String, String> payload = new HashMap<>();
-        payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
-        payload.put("assessment_name", assessment.getAssessmentName());
-        payload.put("organisation_name",assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at",assessment.getCreatedAt().toString());
+        Map<String, String> payload = setPayload(assessment);
 
         notification.setPayload(objectMapper.writeValueAsString(payload));
         saveNotification(notification);
     }
 
-    public HashMap<NotificationTemplateType, Set<String>> setNotificationTypeByUserRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+    private Map<String, String> setPayload(Assessment assessment) {
+        Map<String, String> payload = new HashMap<>();
+        payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
+        payload.put("assessment_name", assessment.getAssessmentName());
+        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
+        payload.put("created_at", assessment.getCreatedAt().toString());
+
+        return payload;
+    }
+
+    public Map<NotificationTemplateType, Set<String>> setNotificationTypeByUserRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
         HashMap<NotificationTemplateType,Set<String>> notifications = new HashMap<>();
         HashSet<String> facilitatorEmails = new HashSet<>();
         for(AssessmentUsers eachUser : assessmentUsers) {
@@ -81,10 +87,11 @@ public class NotificationService {
 
     public void update(Notification notification, NotificationResponse notificationResponse) {
         notification.setRetries(notification.getRetries() + 1);
+        notification.setStatus(NotificationStatus.Y);
 
         if(notificationResponse.getMessage().equals(notificationMessage)) {
             LOGGER.info("Updating notification retries and status for Notification Id {}", notification.getNotificationId());
-            notificationRepository.updateNotification(notification.getNotificationId(),notification.getRetries());
+            notificationRepository.update(notification);
         }
     }
 }

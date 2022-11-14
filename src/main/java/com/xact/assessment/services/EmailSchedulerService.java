@@ -11,6 +11,7 @@ import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Notification;
+import com.xact.assessment.models.NotificationStatus;
 import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.utils.NamingConventionUtil;
 import io.micronaut.scheduling.annotation.Scheduled;
@@ -29,6 +30,7 @@ import java.util.Properties;
 
 @Singleton
 public class EmailSchedulerService {
+    private static final Integer MAXIMUM_RETRIES = 6 ;
     private final EmailConfig emailConfig;
     private final ProfileConfig profileConfig;
     private final NotificationRepository notificationRepository;
@@ -50,31 +52,33 @@ public class EmailSchedulerService {
     @Scheduled(fixedDelay = "${email.delay}")
     public void sendEmailNotifications() throws JsonProcessingException {
         if(emailConfig.isNotificationEnabled()) {
-            List<Notification> notificationList = notificationRepository.getNotificationDetailsToBeSend();
+            List<Notification> notificationList = notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N,MAXIMUM_RETRIES);
+            System.out.println(notificationList.size());
 
             if (!notificationList.isEmpty()) {
                 String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
                 for (Notification notification : notificationList) {
-                    setUserEmail(notification);
-                    String body = setEmailParameters(notification);
-                    sendEmail(accessToken,notification,body);
+                    String emailTo = setUserEmail(notification);
+                    String body = getEmailBody(notification,emailTo);
+                    sendEmail(accessToken,notification,emailTo,body);
                 }
             }
         }
     }
 
-    private void setUserEmail(Notification notification) {
+    private String setUserEmail(Notification notification) {
         if(emailConfig.isMaskEmail()) {
-            notification.setUserEmail(emailConfig.getDefaultEmail());
+            return emailConfig.getDefaultEmail();
         }
+        return notification.getUserEmail();
     }
 
-    private String setEmailParameters(Notification notification) throws JsonProcessingException {
+    private String getEmailBody(Notification notification, String emailTo) throws JsonProcessingException {
         NotificationRequest notificationRequest = new NotificationRequest();
         NotificationDetail notificationDetail= new NotificationDetail();
         notificationDetail.setFrom(new EmailHeader());
         notificationDetail.setSubject(notification.getTemplateName().getEmailSubject());
-        notificationDetail.setTo(new ArrayList<>(Arrays.asList(notification.getUserEmail().split(","))));
+        notificationDetail.setTo(new ArrayList<>(Arrays.asList(emailTo.split(","))));
         notificationDetail.setBcc(new ArrayList<>());
         notificationDetail.setCc(new ArrayList<>());
         notificationDetail.setReplyTo("");
@@ -84,8 +88,6 @@ public class EmailSchedulerService {
         notificationDetail.setContent(notificationContent);
 
         notificationRequest.setEmail(notificationDetail);
-
-        LOGGER.info("Sending notification to {}",notificationDetail.getTo());
 
         return new ObjectMapper().writeValueAsString(notificationRequest);
     }
@@ -99,7 +101,7 @@ public class EmailSchedulerService {
         Template template = Velocity.getTemplate("templates/"+ notification.getTemplateName().getTemplateResource());
 
         EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(),EmailPayload.class);
-        emailPayload.setOrganisation_name(namingConventionUtil.convertToPascalCase(emailPayload.getOrganisation_name()));
+        emailPayload.setOrganisationName(namingConventionUtil.convertToPascalCase(emailPayload.getOrganisationName()));
 
         context.put("assessment", emailPayload);
         context.put("url",profileConfig.getUrl());
@@ -109,7 +111,9 @@ public class EmailSchedulerService {
         return writer.toString();
     }
 
-    private void sendEmail(String accessToken, Notification notification, String body) {
+    private void sendEmail(String accessToken, Notification notification, String emailTo, String body) {
+        LOGGER.info("Sending notification to {}",emailTo);
+
         NotificationResponse notificationResponse = emailNotificationClient.sendNotification(accessToken, body);
 
         notificationService.update(notification,notificationResponse);

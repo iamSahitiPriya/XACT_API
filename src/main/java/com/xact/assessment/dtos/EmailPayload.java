@@ -4,6 +4,7 @@
 
 package com.xact.assessment.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,8 +18,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EmailPayload {
 
-    private String  assessment_id;
-    private String assessment_name;
-    private String organisation_name;
-    private String created_at;
+    @JsonProperty(value = "assessment_id")
+    private String  assessmentId;
+
+    @JsonProperty(value = "assessment_name")
+    private String assessmentName;
+
+    @JsonProperty(value = "organisation_name")
+    private String organisationName;
+
+    @JsonProperty(value = "created_at")
+    private String createdAt;
 }

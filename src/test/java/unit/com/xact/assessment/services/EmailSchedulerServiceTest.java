@@ -64,14 +64,14 @@ public class EmailSchedulerServiceTest {
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
         String json = "{\"email\":{\"subject\":\"Assessment Created\",\"to\":[\"brindha.e@thoughtworks.com\"],\"cc\":[],\"bcc\":[],\"from\":{\"email\":\"project-xact@thoughtworks.net\",\"name\":\"X-ACT Support\"},\"replyTo\":\"\",\"contentType\":\"text/html\",\"content\":\"<html>\\n<body>\\n<div style=\\\"height:50%; width: 50%;margin: 10%;background-color: white;\\\">\\n    <hr style=\\\"height: 6px;background: #4BA1AC; border: none;\\\"/>\\n    <h1 style=\\\"color: #4BA1AC; font-size: 40px;\\\">X-ACT</h1>\\n    <h3 style=\\\"padding-left: 5px;font-size: 30px;\\\">Hello User,</h3>\\n    <p style=\\\"padding-left: 5px;font-size: 20px;\\\">You have created the Assessment <b style=\\\"color:#4BA1AC ;\\\">fintech</b>!!</p>\\n</div>\\n</body>\\n</html>\\n\"}}";
 
-        when(notificationRepository.getNotificationDetailsToBeSend()).thenReturn(notificationList);
+        when(notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N,6)).thenReturn(notificationList);
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
         when(emailNotificationClient.sendNotification(token,json)).thenReturn(notificationResponse);
-        when(notificationRepository.updateNotification(notification.getNotificationId(),notification.getRetries())).thenReturn(notification1);
+        when(notificationRepository.update(notification)).thenReturn(notification1);
         doNothing().when(notificationService).update(notification,notificationResponse);
 
         emailSchedulerService.sendEmailNotifications();
-        Notification notification2 = notificationRepository.updateNotification(notification.getNotificationId(),notification.getRetries());
+        Notification notification2 = notificationRepository.update(notification);
 
         Assertions.assertEquals(NotificationStatus.Y,notification2.getStatus());
     }

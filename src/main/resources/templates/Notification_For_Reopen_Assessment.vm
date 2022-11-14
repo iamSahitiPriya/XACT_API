@@ -4,17 +4,17 @@
     <hr style="height: 4px;background: #4BA1AC; border: none;"/>
     <h1 style="color: #4BA1AC; font-size: 20px;">Thoughtworks X-Act</h1>
     <p style="padding-left: 5px;font-size: 15px;">Hello there,</p>
-    <p style="padding-left: 5px;font-size: 13px;font-style: italic;">Your Assessment <b style="color:#4BA1AC ;">${assessment.assessment_name}</b> has been reopened. You can find the details of the assessment by clicking the below button.</p>
+    <p style="padding-left: 5px;font-size: 13px;font-style: italic;">Your Assessment <b style="color:#4BA1AC ;">${assessment.assessmentName}</b> has been reopened. You can find the details of the assessment by clicking the below button.</p>
     <br>
     <hr>
     <div style="padding-top: 8px;">
         <heading style="font-size: 13px;">Organisation Name:</heading>
-        <p style="font-style: italic;font-size: 12px;">${assessment.organisation_name}</p>
+        <p style="font-style: italic;font-size: 12px;">${assessment.organisationName}</p>
         <br>
         <heading style="font-size: 13px;">Created Date:</heading>
-        <p style="font-style: italic;font-size: 12px;">${assessment.created_at}</p>
+        <p style="font-style: italic;font-size: 12px;">${assessment.createdAt}</p>
         <br>
-        <button style="color: white; background-color: #4BA1AC; border: none;height: 30px;"><a style="text-decoration: none;color: white" href="${url}${assessment.assessment_id}">View Assessment</a></button>
+        <button style="color: white; background-color: #4BA1AC; border: none;height: 30px;"><a style="text-decoration: none;color: white" href="${url}${assessment.assessmentId}">View Assessment</a></button>
     </div>
 </div>
 </body>

@@ -16,7 +16,6 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
-import org.apache.poi.ss.formula.functions.T;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,6 @@ import org.slf4j.LoggerFactory;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -96,9 +94,11 @@ public class AssessmentController {
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
 
-
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
         assessmentResponse.setAssessmentState(assessment.getAssessmentState());
+
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationTypeByUserRole(assessment, assessment.getAssessmentUsers()));
+
         return HttpResponse.created(assessmentResponse);
     }
 

@@ -12,8 +12,6 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
-import java.util.Set;
-
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
@@ -61,16 +59,18 @@ public class AssessmentService {
 
     @Transactional
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
+        Set<AssessmentUsers> savedAssessmentUsers = new HashSet<>();
         Assessment assessment = mapper.map(assessmentRequest, Assessment.class);
         assessment.setAssessmentStatus(AssessmentStatus.Active);
 
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
         assessment.setOrganisation(organisation);
-        Set<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
-        createAssessment(assessment);
-        usersAssessmentsService.createUsersInAssessment(assessmentUsers);
 
-        CompletableFuture.supplyAsync(() -> notificationService.setNotificationTypeByUserRole(assessment, assessmentUsers));
+        Set<AssessmentUsers> assessmentUsersSet = getAssessmentUsers(assessmentRequest, user, assessment);
+        createAssessment(assessment);
+
+        usersAssessmentsService.createUsersInAssessment(assessmentUsersSet);
+        assessment.setAssessmentUsers(assessmentUsersSet);
 
         return assessment;
     }

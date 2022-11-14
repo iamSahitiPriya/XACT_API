@@ -102,7 +102,7 @@ public class NotificationServiceTest {
         Notification notification = new Notification(1, NotificationTemplateType.Created,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N,0,new Date(),new Date());
         Notification notification1 = new Notification(1, NotificationTemplateType.Created,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y,0,new Date(),new Date());
 
-        when(notificationRepository.updateNotification(notification.getNotificationId(),notification.getRetries())).thenReturn(notification1);
+        when(notificationRepository.update(notification)).thenReturn(notification1);
 
         notificationService.update(notification,notificationResponse);
 

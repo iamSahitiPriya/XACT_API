@@ -95,11 +95,21 @@ public class AccountService {
 
     public List<OrganisationResponse> getOrganisation(String organisationName) {
         List<Account> accounts = accountRepository.findAccount(organisationName);
+
         List<OrganisationResponse> responses = new ArrayList<>();
         accounts.forEach(account -> {
             OrganisationResponse organisationResponse = modelMapper.map(account, OrganisationResponse.class);
             responses.add(organisationResponse);
         });
+
+        responses.sort((a, b) -> {
+            String nameA = a.getName().toLowerCase();
+            int indexA = nameA.indexOf(organisationName.toLowerCase());
+            String nameB = b.getName().toLowerCase();
+            int indexB = nameB.indexOf(organisationName.toLowerCase());
+            return indexA != indexB ? Integer.compare(indexA, indexB) : nameA.compareTo(nameB);
+        });
+
         return responses;
 
     }

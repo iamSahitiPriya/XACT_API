@@ -16,7 +16,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -110,7 +109,7 @@ public class Assessment {
 
     @Transient
     public List<String> getFacilitators() {
-        return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Facilitator).map(assessmentUsers1 -> assessmentUsers1.getUserId().getUserEmail()).collect(Collectors.toList());
+        return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Facilitator).map(assessmentUsers1 -> assessmentUsers1.getUserId().getUserEmail()).toList();
     }
 
     public Assessment(Integer assessmentId, String assessmentName, String assessmentPurpose, Organisation organisation, AssessmentStatus assessmentStatus, Date createdAt, Date updatedAt) {

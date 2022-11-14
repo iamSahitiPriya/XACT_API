@@ -13,13 +13,11 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.security.annotation.Secured;
-import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller("/v1")
 public class AccountController {
@@ -31,11 +29,13 @@ public class AccountController {
 
         this.accountService = accountService;
     }
-    @Get(value = "/accounts{?organisationName*}",produces = MediaType.APPLICATION_JSON)
+
+    @Get(value = "/accounts{?name}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public MutableHttpResponse<List<OrganisationResponse>> fetchOrganisationName(Authentication authentication, @QueryValue Map<String, String> organisationName) {
-        LOGGER.info("Get Organisation details: {}",organisationName);
-        List<OrganisationResponse> organisation = accountService.getOrganisation(organisationName.get("name"));
+    public MutableHttpResponse<List<OrganisationResponse>> fetchOrganisationName(@QueryValue String name) {
+
+        LOGGER.info("Get Organisation details: {}", name);
+        List<OrganisationResponse> organisation = accountService.getOrganisation(name);
         return HttpResponse.ok(organisation);
     }
 }

@@ -26,7 +26,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Introspected
 @AdminAuth
@@ -241,8 +240,8 @@ public class AdminController {
         LOGGER.info("Admin: Get assessment from {} to {}",startDate,endDate);
         AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
         List<Assessment> allAssessments = assessmentService.getTotalAssessments(startDate, endDate);
-        List<Assessment> activeAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Active).collect(Collectors.toList());
-        List<Assessment> completedAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Completed).collect(Collectors.toList());
+        List<Assessment> activeAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Active).toList();
+        List<Assessment> completedAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Completed).toList();
         adminAssessmentResponse.setTotalAssessments(allAssessments.size());
         adminAssessmentResponse.setTotalActiveAssessments(activeAssessments.size());
         adminAssessmentResponse.setTotalCompleteAssessments(completedAssessments.size());

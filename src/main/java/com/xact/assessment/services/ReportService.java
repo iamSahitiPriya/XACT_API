@@ -12,7 +12,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -89,7 +88,7 @@ public class ReportService {
                 .map(parameterLevelRecommendation -> parameterLevelRecommendation.getParameter().getParameterId())
                 .collect(toSet());
         for (Integer parameterId : parameterIds) {
-            List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterLevelRecommendations.stream().filter(parameterLevelRecommendation -> parameterId.equals(parameterLevelRecommendation.getParameter().getParameterId())).collect(Collectors.toList());
+            List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterLevelRecommendations.stream().filter(parameterLevelRecommendation -> parameterId.equals(parameterLevelRecommendation.getParameter().getParameterId())).toList();
             parameterLevelRecommendationMap.put(parameterId, parameterLevelRecommendationList);
 
         }
@@ -103,7 +102,7 @@ public class ReportService {
                 .collect(toSet());
 
         for (Integer topicId : topicIds) {
-            List<TopicLevelRecommendation> topicLevelRecommendationList = topicLevelRecommendations.stream().filter(topicLevelRecommendation -> topicId.equals(topicLevelRecommendation.getTopic().getTopicId())).collect(Collectors.toList());
+            List<TopicLevelRecommendation> topicLevelRecommendationList = topicLevelRecommendations.stream().filter(topicLevelRecommendation -> topicId.equals(topicLevelRecommendation.getTopic().getTopicId())).toList();
             topicLevelRecommendationMap.put(topicId, topicLevelRecommendationList);
         }
         return topicLevelRecommendationMap;

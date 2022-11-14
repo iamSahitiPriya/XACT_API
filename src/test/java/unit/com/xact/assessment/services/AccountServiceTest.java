@@ -66,14 +66,19 @@ class AccountServiceTest {
     @Test
     void getOrganisation() {
         List<Account> accounts = new ArrayList<>();
-        accounts.add(new Account("A1", "TW", "Finance"));
+        accounts.add(new Account("Aab1", "Aab", "Finance"));
+        accounts.add(new Account("Aba1", "Aba", "Finance"));
+        accounts.add(new Account("zzba1", "zzba", "Finance"));
+        accounts.add(new Account("aaa1", "aaa", "Finance"));
         when(accountRepository.findAccount("A")).thenReturn(accounts);
 
         List<OrganisationResponse> organisationResponseList = accountService.getOrganisation("A");
 
-        Assertions.assertEquals(1, organisationResponseList.size());
-
-
+        Assertions.assertEquals(4, organisationResponseList.size());
+        Assertions.assertEquals("aaa", organisationResponseList.get(0).getName());
+        Assertions.assertEquals("Aab", organisationResponseList.get(1).getName());
+        Assertions.assertEquals("Aba", organisationResponseList.get(2).getName());
+        Assertions.assertEquals("zzba", organisationResponseList.get(3).getName());
     }
 
     @Test

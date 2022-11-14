@@ -165,7 +165,13 @@ public class AssessmentMasterDataService {
     public void updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(moduleId);
         AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());;
-            if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName(),assessmentCategory)) {
+        if (assessmentModule.getModuleName().equals(assessmentModuleRequest.getModuleName())) {
+            assessmentCategory.setCategoryName(assessmentModuleRequest.getModuleName());
+            assessmentCategory.setActive(assessmentModuleRequest.isActive());
+            assessmentCategory.setComments(assessmentModuleRequest.getComments());
+            categoryRepository.update(assessmentCategory);
+        }else {
+            if (!checkIfModuleUnique(assessmentModuleRequest.getModuleName(), assessmentCategory)) {
                 assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
                 assessmentModule.setCategory(assessmentCategory);
                 assessmentModule.setActive(assessmentModuleRequest.isActive());
@@ -174,6 +180,7 @@ public class AssessmentMasterDataService {
             } else {
                 throw new DuplicateRecordException("Duplicate records are not allowed");
             }
+        }
 
     }
 

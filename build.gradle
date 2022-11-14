@@ -20,7 +20,7 @@ apply plugin: 'jacoco'
 
 version = "0.1"
 group = "com.xact"
-
+compileJava.options.compilerArgs += '-parameters'
 
 repositories {
     mavenCentral()

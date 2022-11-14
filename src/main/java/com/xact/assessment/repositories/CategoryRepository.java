@@ -9,7 +9,6 @@ import io.micronaut.context.annotation.Executable;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
-import io.micronaut.context.annotation.Parameter;
 
 import java.util.List;
 
@@ -32,9 +31,6 @@ public interface CategoryRepository extends CrudRepository<AssessmentCategory, I
     @Query("SELECT category.categoryName FROM AssessmentCategory category")
     List<String> getAllCategories();
 
-    @Executable
-    @Query("SELECT tlc FROM AssessmentCategory tlc WHERE tlc.categoryName=:category")
-    AssessmentCategory findByCategoryName(@Parameter("category") String category);
 
 
 }

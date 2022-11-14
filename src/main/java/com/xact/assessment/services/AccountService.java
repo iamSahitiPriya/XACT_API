@@ -103,9 +103,11 @@ public class AccountService {
         });
 
         responses.sort((a, b) -> {
-            int indexA = a.getName().toLowerCase().indexOf(organisationName.toLowerCase());
-            int indexB = b.getName().toLowerCase().indexOf(organisationName.toLowerCase());
-            return Integer.compare(indexA, indexB);
+            String nameA = a.getName().toLowerCase();
+            int indexA = nameA.indexOf(organisationName.toLowerCase());
+            String nameB = b.getName().toLowerCase();
+            int indexB = nameB.indexOf(organisationName.toLowerCase());
+            return indexA != indexB ? Integer.compare(indexA, indexB) : nameA.compareTo(nameB);
         });
 
         return responses;

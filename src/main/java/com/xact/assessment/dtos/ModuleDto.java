@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.dtos;
 
 import lombok.EqualsAndHashCode;
@@ -6,18 +10,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
-import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
 @Setter
-public class ModuleDto {
+public class ModuleDto implements Comparable<ModuleDto> {
+
     private Integer moduleId ;
     private String moduleName;
-    private String categoryName;
     private boolean isActive;
     private Date updatedAt;
     private String comments;
-    private SortedSet<AssessmentTopicDto> topics;
+
+    @Override
+    public int compareTo(ModuleDto moduleDto) {
+        return moduleDto.updatedAt.compareTo(updatedAt);
+    }
 }

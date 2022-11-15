@@ -4,6 +4,7 @@
 
 package com.xact.assessment.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
@@ -23,9 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Introspected
 @AdminAuth
@@ -85,7 +84,7 @@ public class AdminController {
 
     @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<CategoryDto>> getMasterData(Authentication authentication) {
+    public HttpResponse<List<CategoryDto>> getCategoriesData(Authentication authentication) {
         LOGGER.info("Get master data");
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getCategories();
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
@@ -95,16 +94,37 @@ public class AdminController {
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
 
-    @Get(value="/modules",produces= MediaType.APPLICATION_JSON)
+    @Get(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<ModuleDto>> getModuleMasterData(Authentication authentication){
-        LOGGER.info("Get Module Data");
-        List<AssessmentModule> assessmentModules=assessmentMasterDataService.getModules();
-        List<ModuleDto> assessmentModulesResponse = new ArrayList<>();
-        if(Objects.nonNull(assessmentModules)){
-            assessmentModules.forEach(assessmentModule ->assessmentModulesResponse.add(mapper.map(assessmentModule,ModuleDto.class)));
+    public HttpResponse<List<AdminDataResponse>> getModules(Authentication authentication) throws JsonProcessingException {
+        LOGGER.info("Get all modules data");
+        List<AdminDataResponse> dataResponses = new ArrayList<>();
+        Map<CategoryDto,List<ModuleDto>> categoryMap = new LinkedHashMap<>();
+        List<AssessmentModule> assessmentModules = assessmentMasterDataService.getModules();
+        if (Objects.nonNull(assessmentModules)) {
+            for(AssessmentModule assessmentModule : assessmentModules) {
+                getModulesWithCategory(categoryMap, assessmentModule);
+            }
+            categoryMap.forEach((category,modules) -> {
+                AdminDataResponse adminDataResponse = new AdminDataResponse(category,modules);
+                dataResponses.add(adminDataResponse);
+            });
         }
-        return HttpResponse.ok(assessmentModulesResponse);
+        return HttpResponse.ok(dataResponses);
+    }
+
+    private void getModulesWithCategory(Map<CategoryDto, List<ModuleDto>> categoryMap, AssessmentModule assessmentModule) {
+        CategoryDto categoryDto = mapper.map(assessmentModule.getCategory(),CategoryDto.class);
+        if(categoryMap.containsKey(categoryDto)) {
+            List<ModuleDto> module = categoryMap.get(categoryDto);
+            module.add(mapper.map(assessmentModule,ModuleDto.class));
+            categoryMap.put(categoryDto,module);
+        }
+        else {
+            List<ModuleDto> module = new ArrayList<>();
+            module.add(mapper.map(assessmentModule,ModuleDto.class));
+            categoryMap.put(categoryDto,module);
+        }
     }
 
 

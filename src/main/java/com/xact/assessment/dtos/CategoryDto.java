@@ -23,7 +23,6 @@ public class CategoryDto implements Comparable<CategoryDto> {
     private boolean isActive;
     private Date updatedAt;
     private String comments;
-    private SortedSet<AssessmentModuleDto> modules;
 
 
     @Override

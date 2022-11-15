@@ -232,7 +232,7 @@ public class AssessmentMasterDataService {
     }
 
     public List<AssessmentModule> getModules() {
-      return moduleService.getAllModules();
+      return moduleService.moduleRepository.listOrderByUpdatedAtDesc();
     }
 
 

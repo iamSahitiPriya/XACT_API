@@ -16,8 +16,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -69,6 +68,7 @@ public class AssessmentModule {
     public boolean getIsActive() {
         return isActive;
     }
+
     public Set<AssessmentTopic> getActiveTopics() {
         return topics == null ? null : topics.stream().filter(AssessmentTopic::getIsActive).collect(Collectors.toSet());
     }

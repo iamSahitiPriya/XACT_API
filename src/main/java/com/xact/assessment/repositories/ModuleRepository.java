@@ -4,6 +4,7 @@
 
 package com.xact.assessment.repositories;
 
+import com.xact.assessment.models.AssessmentCategory;
 import com.xact.assessment.models.AssessmentModule;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
@@ -22,4 +23,6 @@ public interface ModuleRepository extends CrudRepository<AssessmentModule, Integ
     @Executable
     @Query("SELECT module FROM AssessmentModule module WHERE module.moduleId=:moduleId")
     AssessmentModule findByModuleId(Integer moduleId);
+
+    List<AssessmentModule> listOrderByUpdatedAtDesc();
 }

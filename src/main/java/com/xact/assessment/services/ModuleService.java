@@ -31,4 +31,6 @@ public class ModuleService {
     public List<AssessmentModule> getAllModules() {
         return (List<AssessmentModule>) moduleRepository.findAll();
     }
+
+    public List<AssessmentModule> getModules() { return  moduleRepository.listOrderByUpdatedAtDesc();}
 }

@@ -4,6 +4,7 @@
 
 package com.xact.assessment.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
@@ -23,10 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Introspected
 @AdminAuth
@@ -86,8 +84,8 @@ public class AdminController {
 
     @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<CategoryDto>> getMasterData(Authentication authentication) {
-        LOGGER.info("Get master data");
+    public HttpResponse<List<CategoryDto>> getCategories(Authentication authentication) {
+        LOGGER.info("Get all category data");
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getCategories();
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(assessmentCategories)) {
@@ -95,6 +93,78 @@ public class AdminController {
         }
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
+
+    @Get(value = "/modules", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<List<AdminDataResponse>> getModules(Authentication authentication) throws JsonProcessingException {
+        LOGGER.info("Get all modules data");
+        List<AdminDataResponse> dataResponses = new ArrayList<>();
+        Map<CategoryDto,List<ModuleDto>> categoryMap = new LinkedHashMap<>();
+        List<AssessmentModule> assessmentModules = assessmentMasterDataService.getModules();
+
+        if (Objects.nonNull(assessmentModules)) {
+            for(AssessmentModule assessmentModule : assessmentModules) {
+                getModulesWithCategory(categoryMap, assessmentModule);
+            }
+
+            dataResponses = getDataResponse(categoryMap);
+        }
+        return HttpResponse.ok(dataResponses);
+    }
+
+    @Get(value = "/topics", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<List<AdminDataResponse>> getTopics(Authentication authentication) {
+        LOGGER.info("Get all topics data");
+        List<AdminDataResponse> dataResponses = new ArrayList<>();
+        Map<AssessmentModule,List<TopicDto>> topicMap = new LinkedHashMap<>();
+        Map<CategoryDto, HashMap<ModuleDto, List<TopicDto>>> categoryMap = new LinkedHashMap<>();
+        List<AssessmentTopic> assessmentTopics = assessmentMasterDataService.getTopics();
+
+        if (Objects.nonNull(assessmentTopics)) {
+            for(AssessmentTopic assessmentTopic : assessmentTopics) {
+                AssessmentModule module = assessmentTopic.getModule();
+                if(topicMap.containsKey(assessmentTopic.getModule())) {
+                    List<TopicDto> topic = topicMap.get(module);
+                    topic.add(mapper.map(assessmentTopic,TopicDto.class));
+                    topicMap.put(module,topic);
+                }
+                else {
+                    List<TopicDto> topic = new ArrayList<>();
+                    topic.add(mapper.map(assessmentTopic,TopicDto.class));
+                    topicMap.put(module,topic);
+                }
+            }
+        }
+        topicMap.forEach((module,topics) -> {
+            CategoryDto categoryDto = mapper.map(module.getCategory(),CategoryDto.class);
+            ModuleDto moduleDto = mapper.map(module,ModuleDto.class);
+            if(categoryMap.containsKey(categoryDto)) {
+                HashMap<ModuleDto, List<TopicDto>> modules = categoryMap.get(categoryDto);
+                modules.put(moduleDto,topics);
+                categoryMap.put(categoryDto,modules);
+            }
+            else {
+                HashMap<ModuleDto,List<TopicDto>> modules = new LinkedHashMap<>();
+                modules.put(moduleDto,topics);
+                categoryMap.put(categoryDto,modules);
+            }
+        });
+        categoryMap.forEach((category, modules) -> {
+            AdminDataResponse adminDataResponse = new AdminDataResponse();
+            adminDataResponse.setCategory(category);
+            List<ModuleDto> moduleDtoList = new ArrayList<>();
+            modules.forEach((module, topics) -> {
+                ModuleDto moduleDto = mapper.map(module,ModuleDto.class);
+                moduleDto.setTopics(topics);
+                moduleDtoList.add(moduleDto);
+            });
+            adminDataResponse.setModules(moduleDtoList);
+            dataResponses.add(adminDataResponse);
+        });
+        return HttpResponse.ok(dataResponses);
+    }
+
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
@@ -115,9 +185,11 @@ public class AdminController {
 
     @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentTopic> createTopics(@Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
+    public HttpResponse<AssessmentTopic> createTopics(@Body @Valid List<AssessmentTopicRequest> assessmentTopicRequests, Authentication authentication) {
         LOGGER.info("Admin: Create topics");
-        assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
+        for (AssessmentTopicRequest assessmentTopicRequest : assessmentTopicRequests) {
+            assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
+        }
         return HttpResponse.ok();
     }
 
@@ -227,8 +299,8 @@ public class AdminController {
         LOGGER.info("Admin: Get assessment from {} to {}",startDate,endDate);
         AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
         List<Assessment> allAssessments = assessmentService.getTotalAssessments(startDate, endDate);
-        List<Assessment> activeAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Active).collect(Collectors.toList());
-        List<Assessment> completedAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Completed).collect(Collectors.toList());
+        List<Assessment> activeAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Active).toList();
+        List<Assessment> completedAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Completed).toList();
         adminAssessmentResponse.setTotalAssessments(allAssessments.size());
         adminAssessmentResponse.setTotalActiveAssessments(activeAssessments.size());
         adminAssessmentResponse.setTotalCompleteAssessments(completedAssessments.size());
@@ -239,5 +311,30 @@ public class AdminController {
         return assessmentMasterDataService.getCategory(categoryId);
     }
 
+
+    private void getModulesWithCategory(Map<CategoryDto, List<ModuleDto>> categoryMap, AssessmentModule assessmentModule) {
+        CategoryDto categoryDto = mapper.map(assessmentModule.getCategory(),CategoryDto.class);
+        if(categoryMap.containsKey(categoryDto)) {
+            List<ModuleDto> module = categoryMap.get(categoryDto);
+            module.add(mapper.map(assessmentModule,ModuleDto.class));
+            categoryMap.put(categoryDto,module);
+        }
+        else {
+            List<ModuleDto> module = new ArrayList<>();
+            module.add(mapper.map(assessmentModule,ModuleDto.class));
+            categoryMap.put(categoryDto,module);
+        }
+    }
+
+    private List<AdminDataResponse> getDataResponse(Map<CategoryDto, List<ModuleDto>> categoryMap) {
+        List<AdminDataResponse> dataResponses = new ArrayList<>();
+        categoryMap.forEach((category, modules) -> {
+            AdminDataResponse adminModuleResponse = new AdminDataResponse();
+            adminModuleResponse.setCategory(category);
+            adminModuleResponse.setModules(modules);
+            dataResponses.add(adminModuleResponse);
+        });
+        return dataResponses;
+    }
 
 }

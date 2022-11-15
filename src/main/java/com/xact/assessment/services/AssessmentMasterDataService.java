@@ -60,6 +60,7 @@ public class AssessmentMasterDataService {
         if (!assessmentModules.isEmpty()) {
             for (AssessmentModule assessmentModule : assessmentModules) {
                 AssessmentCategory category = assessmentModule.getCategory();
+                assessmentModule.setTopics(assessmentModule.getActiveTopics());
                 categorySet.add(category);
 
             }
@@ -215,6 +216,12 @@ public class AssessmentMasterDataService {
 
     public List<AssessmentCategory> getCategories() {
         return categoryRepository.findCategories();
+    }
+
+    public List<AssessmentModule> getModules() {return moduleService.getModules();}
+
+    public List<AssessmentTopic> getTopics() {
+        return topicService.getTopics();
     }
 }
 

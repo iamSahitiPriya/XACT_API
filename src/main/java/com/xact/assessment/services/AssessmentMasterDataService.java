@@ -223,5 +223,9 @@ public class AssessmentMasterDataService {
     public List<AssessmentTopic> getTopics() {
         return topicService.getTopics();
     }
+
+    public List<AssessmentParameter> getParameters() {
+        return parameterService.getParameters();
+    }
 }
 

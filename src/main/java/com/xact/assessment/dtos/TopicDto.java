@@ -11,7 +11,6 @@ import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
-import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
@@ -24,6 +23,7 @@ public class TopicDto implements Comparable<TopicDto> {
     private boolean isActive;
     private Date updatedAt;
     private String comments;
+    private List<ParameterDto> parameters;
 
     @Override
     public int compareTo(TopicDto topicDto) {

@@ -53,6 +53,8 @@ email:
   delay: "1m"
   notificationEnabled : true
   maskEmail : false
+  fromEmail: "project-xact@thoughtworks.net"
+  name: "X-ACT Support"
 
 flyway:
   datasources:

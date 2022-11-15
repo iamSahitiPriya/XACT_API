@@ -4,7 +4,6 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.dtos.UserDto;
@@ -19,7 +18,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
@@ -31,30 +29,20 @@ public class AssessmentService {
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
     private final UsersAssessmentsRepository usersAssessmentsRepository;
-
     private final AccessControlRepository accessControlRepository;
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
-    private final NotificationService notificationService;
-
     private final ModuleRepository moduleRepository;
     private static final String DATE_PATTERN = "yyyy-MM-dd";
-    private final AssessmentMasterDataService assessmentMasterDataService;
-    private final EmailConfig emailConfig;
-
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, NotificationService notificationService, ModuleRepository moduleRepository, AssessmentMasterDataService assessmentMasterDataService, EmailConfig emailConfig) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
         this.accessControlRepository = accessControlRepository;
-
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
-        this.notificationService = notificationService;
         this.moduleRepository = moduleRepository;
-        this.assessmentMasterDataService = assessmentMasterDataService;
-        this.emailConfig = emailConfig;
     }
 
     @Transactional

@@ -53,8 +53,6 @@ public class EmailSchedulerService {
     public void sendEmailNotifications() throws JsonProcessingException {
         if(emailConfig.isNotificationEnabled()) {
             List<Notification> notificationList = notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N,MAXIMUM_RETRIES);
-            System.out.println(notificationList.size());
-
             if (!notificationList.isEmpty()) {
                 String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
                 for (Notification notification : notificationList) {
@@ -76,7 +74,7 @@ public class EmailSchedulerService {
     private String getEmailBody(Notification notification, String emailTo) throws JsonProcessingException {
         NotificationRequest notificationRequest = new NotificationRequest();
         NotificationDetail notificationDetail= new NotificationDetail();
-        notificationDetail.setFrom(new EmailHeader());
+        notificationDetail.setFrom(new EmailHeader(emailConfig.getFromEmail(),emailConfig.getName()));
         notificationDetail.setSubject(notification.getTemplateName().getEmailSubject());
         notificationDetail.setTo(new ArrayList<>(Arrays.asList(emailTo.split(","))));
         notificationDetail.setBcc(new ArrayList<>());

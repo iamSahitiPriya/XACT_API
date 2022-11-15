@@ -12,4 +12,6 @@ public class EmailConfig {
     private boolean notificationEnabled;
     private boolean maskEmail;
     private String defaultEmail;
+    private String fromEmail;
+    private String name;
 }

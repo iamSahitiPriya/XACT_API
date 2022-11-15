@@ -34,9 +34,7 @@ class AssessmentServiceTest {
     private AssessmentRepository assessmentRepository;
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
-    private AssessmentMasterDataService assessmentMasterDataService;
     private NotificationService notificationService;
-    private EmailConfig emailConfig;
 
     private UserAssessmentModuleRepository userAssessmentModuleRepository;
     private ModuleRepository moduleRepository;
@@ -48,11 +46,9 @@ class AssessmentServiceTest {
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
         accessControlRepository = mock(AccessControlRepository.class);
         moduleRepository = mock(ModuleRepository.class);
-        assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         notificationService = mock(NotificationService.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
-        emailConfig = mock(EmailConfig.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, notificationService,moduleRepository, assessmentMasterDataService, emailConfig);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository,moduleRepository);
     }
 
     @Test

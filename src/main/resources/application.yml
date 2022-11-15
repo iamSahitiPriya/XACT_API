@@ -58,6 +58,8 @@ email:
   notificationEnabled : false
   maskEmail : true
   defaultEmail : "brindha.e@thoughtworks.com"
+  fromEmail : "project-xact@thoughtworks.net"
+  name : "X-ACT Support"
 
 
 flyway:

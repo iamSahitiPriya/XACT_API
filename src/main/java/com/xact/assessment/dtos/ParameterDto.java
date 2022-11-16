@@ -14,6 +14,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class ParameterDto implements  Comparable<ParameterDto>{
 
+    private TopicDto topic;
     private Integer parameterId ;
     private String parameterName;
     private boolean isActive;

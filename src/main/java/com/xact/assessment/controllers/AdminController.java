@@ -118,118 +118,33 @@ public class AdminController {
 
     @Get(value = "/topics", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AdminDataResponse>> getTopics(Authentication authentication) {
+    public HttpResponse<List<TopicDto>> getTopics(Authentication authentication) {
         LOGGER.info("Get all topics data");
-        List<AdminDataResponse> dataResponses = new ArrayList<>();
-        Map<AssessmentModule,List<TopicDto>> topicMap = new LinkedHashMap<>();
-        Map<CategoryDto, HashMap<ModuleDto, List<TopicDto>>> categoryMap = new LinkedHashMap<>();
+        List<TopicDto> dataResponses = new ArrayList<>();
         List<AssessmentTopic> assessmentTopics = assessmentMasterDataService.getTopics();
 
         if (Objects.nonNull(assessmentTopics)) {
-            for(AssessmentTopic assessmentTopic : assessmentTopics) {
-                AssessmentModule module = assessmentTopic.getModule();
-                if(topicMap.containsKey(assessmentTopic.getModule())) {
-                    List<TopicDto> topic = topicMap.get(module);
-                    topic.add(mapper.map(assessmentTopic,TopicDto.class));
-                    topicMap.put(module,topic);
-                }
-                else {
-                    List<TopicDto> topic = new ArrayList<>();
-                    topic.add(mapper.map(assessmentTopic,TopicDto.class));
-                    topicMap.put(module,topic);
-                }
+            for(AssessmentTopic assessmentTopic:assessmentTopics){
+                TopicDto topicDto = mapper.map(assessmentTopic,TopicDto.class);
+                topicDto.setModule(mapper.map(assessmentTopic.getModule(),ModuleDto.class));
+                dataResponses.add(topicDto);
             }
         }
-        topicMap.forEach((module,topics) -> {
-            CategoryDto categoryDto = mapper.map(module.getCategory(),CategoryDto.class);
-            ModuleDto moduleDto = mapper.map(module,ModuleDto.class);
-            if(categoryMap.containsKey(categoryDto)) {
-                HashMap<ModuleDto, List<TopicDto>> modules = categoryMap.get(categoryDto);
-                modules.put(moduleDto,topics);
-                categoryMap.put(categoryDto,modules);
-            }
-            else {
-                HashMap<ModuleDto,List<TopicDto>> modules = new LinkedHashMap<>();
-                modules.put(moduleDto,topics);
-                categoryMap.put(categoryDto,modules);
-            }
-        });
-        categoryMap.forEach((category, modules) -> {
-            AdminDataResponse adminDataResponse = new AdminDataResponse();
-            adminDataResponse.setCategory(category);
-            List<ModuleDto> moduleDtoList = new ArrayList<>();
-            modules.forEach((module, topics) -> {
-                ModuleDto moduleDto = mapper.map(module,ModuleDto.class);
-                moduleDto.setTopics(topics);
-                moduleDtoList.add(moduleDto);
-            });
-            adminDataResponse.setModules(moduleDtoList);
-            dataResponses.add(adminDataResponse);
-        });
         return HttpResponse.ok(dataResponses);
     }
     @Get(value = "/parameters", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AdminDataResponse>> getParameters(Authentication authentication) {
+    public HttpResponse<List<ParameterDto>> getParameters(Authentication authentication) {
         LOGGER.info("Get all topics data");
-        List<AdminDataResponse> dataResponses = new ArrayList<>();
+        List<ParameterDto> dataResponses = new ArrayList<>();
         List<AssessmentParameter> assessmentParameters = assessmentMasterDataService.getParameters();
-         Map<AssessmentTopic,List<ParameterDto>> parameterMap=new LinkedHashMap<>();
-         Map<AssessmentModule,List<TopicDto>> moduleMap=new LinkedHashMap<>();
-         Map<CategoryDto,List<ModuleDto>> categoryMap=new LinkedHashMap<>();
         if (Objects.nonNull(assessmentParameters)) {
-            for(AssessmentParameter assessmentParameter : assessmentParameters) {
-                AssessmentTopic assessmentTopic=mapper.map(assessmentParameter.getTopic(),AssessmentTopic.class);
-                if(parameterMap.containsKey(assessmentTopic)) {
-                    List<ParameterDto> parameter = parameterMap.get(assessmentTopic);
-                    parameter.add(mapper.map(assessmentParameter,ParameterDto.class));
-                    parameterMap.put(assessmentTopic,parameter);
-                }
-                else {
-                    List<ParameterDto> parameter=new ArrayList<>();
-                    parameter.add(mapper.map(assessmentParameter,ParameterDto.class));
-                    parameterMap.put(assessmentTopic,parameter);
-                }
+            for (AssessmentParameter assessmentParameter : assessmentParameters) {
+                ParameterDto parameterDto = mapper.map(assessmentParameter, ParameterDto.class);
+                parameterDto.setTopic(mapper.map(assessmentParameter.getTopic(),TopicDto.class));
+                dataResponses.add(parameterDto);
             }
         }
-        parameterMap.forEach((topic,parameters)->{
-            AssessmentModule assessmentModule=mapper.map(topic.getModule(),AssessmentModule.class);
-            TopicDto topicDto=mapper.map(topic,TopicDto.class);
-            topicDto.setParameters(parameters);
-
-            if(moduleMap.containsKey(assessmentModule)){
-                List<TopicDto> topics = moduleMap.get(assessmentModule);
-                topics.add(topicDto);
-                moduleMap.put(assessmentModule,topics);
-            }
-            else{
-              List<TopicDto> topics=new ArrayList<>();
-              topics.add(topicDto);
-              moduleMap.put(assessmentModule,topics);
-            }
-        });
-        moduleMap.forEach((module,topics)->{
-            CategoryDto categoryDto=mapper.map(module.getCategory(),CategoryDto.class);
-            ModuleDto moduleDto=mapper.map(module,ModuleDto.class);
-            moduleDto.setTopics(topics);
-            if(categoryMap.containsKey(categoryDto)){
-                List<ModuleDto> modules=categoryMap.get(categoryDto);
-                modules.add(moduleDto);
-                categoryMap.put(categoryDto,modules);
-
-            }else{
-                List<ModuleDto> modules=new ArrayList<>();
-                modules.add(moduleDto);
-                categoryMap.put(categoryDto,modules);
-            }
-        });
-        categoryMap.forEach((category,modules)->{
-            AdminDataResponse adminDataResponse=new AdminDataResponse();
-            adminDataResponse.setCategory(category);
-            adminDataResponse.setModules(modules);
-            dataResponses.add(adminDataResponse);
-
-        });
         return HttpResponse.ok(dataResponses);
     }
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)

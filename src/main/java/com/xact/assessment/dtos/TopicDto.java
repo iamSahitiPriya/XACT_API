@@ -18,12 +18,13 @@ import java.util.List;
 @Setter
 public class TopicDto implements Comparable<TopicDto> {
 
+    private ModuleDto module;
+
     private Integer topicId ;
     private String topicName;
     private boolean isActive;
     private Date updatedAt;
     private String comments;
-    private List<ParameterDto> parameters;
 
     @Override
     public int compareTo(TopicDto topicDto) {

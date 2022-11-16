@@ -97,9 +97,8 @@ public class EmailSchedulerService {
         StringWriter writer = new StringWriter();
 
         String version = (notification.getTemplateName().toString()).split("_")[1];
-        String resourceFile = (notification.getTemplateName().getTemplateResource().toString()).split(version+ "_")[1];
 
-        Template template = Velocity.getTemplate("templates/"+ version + "_" + resourceFile );
+        Template template = Velocity.getTemplate("templates/"+ version + "_" + notification.getTemplateName().getTemplateResource() );
 
         EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(),EmailPayload.class);
         emailPayload.setOrganisationName(namingConventionUtil.convertToPascalCase(emailPayload.getOrganisationName()));

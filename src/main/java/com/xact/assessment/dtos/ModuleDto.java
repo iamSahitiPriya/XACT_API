@@ -4,6 +4,7 @@
 
 package com.xact.assessment.dtos;
 
+import com.xact.assessment.models.AssessmentCategory;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.Date;
 @Setter
 public class ModuleDto implements Comparable<ModuleDto> {
 
+    private CategoryDto category;
     private Integer moduleId ;
     private String moduleName;
     private boolean isActive;

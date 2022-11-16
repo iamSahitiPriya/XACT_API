@@ -96,37 +96,19 @@ public class AdminController {
 
     @Get(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AdminDataResponse>> getModules(Authentication authentication) throws JsonProcessingException {
+    public HttpResponse<List<ModuleDto>> getModules(Authentication authentication){
         LOGGER.info("Get all modules data");
-        List<AdminDataResponse> dataResponses = new ArrayList<>();
-        Map<CategoryDto,List<ModuleDto>> categoryMap = new LinkedHashMap<>();
+        List<ModuleDto> moduleResponse=new ArrayList<>();
         List<AssessmentModule> assessmentModules = assessmentMasterDataService.getModules();
         if (Objects.nonNull(assessmentModules)) {
-            for(AssessmentModule assessmentModule : assessmentModules) {
-                getModulesWithCategory(categoryMap, assessmentModule);
+            for(AssessmentModule assessmentModule:assessmentModules) {
+                ModuleDto moduleDto =mapper.map(assessmentModule,ModuleDto.class);
+                moduleDto.setCategory(mapper.map(assessmentModule.getCategory(),CategoryDto.class));
+                moduleResponse.add(moduleDto);
             }
-            categoryMap.forEach((category,modules) -> {
-                AdminDataResponse adminDataResponse = new AdminDataResponse(category,modules);
-                dataResponses.add(adminDataResponse);
-            });
         }
-        return HttpResponse.ok(dataResponses);
+        return HttpResponse.ok(moduleResponse);
     }
-
-    private void getModulesWithCategory(Map<CategoryDto, List<ModuleDto>> categoryMap, AssessmentModule assessmentModule) {
-        CategoryDto categoryDto = mapper.map(assessmentModule.getCategory(),CategoryDto.class);
-        if(categoryMap.containsKey(categoryDto)) {
-            List<ModuleDto> module = categoryMap.get(categoryDto);
-            module.add(mapper.map(assessmentModule,ModuleDto.class));
-            categoryMap.put(categoryDto,module);
-        }
-        else {
-            List<ModuleDto> module = new ArrayList<>();
-            module.add(mapper.map(assessmentModule,ModuleDto.class));
-            categoryMap.put(categoryDto,module);
-        }
-    }
-
 
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)

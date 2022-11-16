@@ -29,7 +29,7 @@ public class Notification {
     @NotNull
     @Column(name = "template_name",nullable = false)
     @Enumerated(EnumType.STRING)
-    private NotificationTemplateType templateName;
+    private NotificationType templateName;
 
     @NotNull
     @Column(name = "user_email",nullable = false)

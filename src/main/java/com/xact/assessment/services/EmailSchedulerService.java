@@ -96,13 +96,17 @@ public class EmailSchedulerService {
         VelocityContext context = new VelocityContext();
         StringWriter writer = new StringWriter();
 
-        Template template = Velocity.getTemplate("templates/"+ notification.getTemplateName().getTemplateResource());
+        String version = (notification.getTemplateName().toString()).split("_")[1];
+        String resourceFile = (notification.getTemplateName().getTemplateResource().toString()).split(version+ "_")[1];
+
+        Template template = Velocity.getTemplate("templates/"+ version + "_" + resourceFile );
 
         EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(),EmailPayload.class);
         emailPayload.setOrganisationName(namingConventionUtil.convertToPascalCase(emailPayload.getOrganisationName()));
 
         context.put("assessment", emailPayload);
         context.put("url",profileConfig.getUrl());
+        context.put("homePageUrl",profileConfig.getHomePageUrl());
 
         template.merge(context,writer);
 

@@ -35,6 +35,7 @@ datasources:
 profile:
   type: "dev"
   url: "https://dev.xact.thoughtworks.net/assessment/"
+  homePageUrl: "https://dev.xact.thoughtworks.net/"
 
 token:
   username: ${AUTH_USERNAME}

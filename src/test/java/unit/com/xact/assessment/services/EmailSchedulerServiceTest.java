@@ -12,7 +12,7 @@ import com.xact.assessment.dtos.NotificationResponse;
 import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
-import com.xact.assessment.models.NotificationTemplateType;
+import com.xact.assessment.models.NotificationType;
 import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
@@ -53,8 +53,8 @@ public class EmailSchedulerServiceTest {
     void shouldSendEmailNotification() throws JsonProcessingException {
         NotificationResponse notificationResponse = new NotificationResponse("1","EMail sent successfully!");
         String scope = "email.send";
-        Notification notification = new Notification(1, NotificationTemplateType.Created,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N,0,new Date(),new Date());
-        Notification notification1 = new Notification(1, NotificationTemplateType.Created,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y,0,new Date(),new Date());
+        Notification notification = new Notification(1, NotificationType.Created_V1,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N,0,new Date(),new Date());
+        Notification notification1 = new Notification(1, NotificationType.Created_V1,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y,0,new Date(),new Date());
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(notification);
         when(emailConfig.isNotificationEnabled()).thenReturn(true);

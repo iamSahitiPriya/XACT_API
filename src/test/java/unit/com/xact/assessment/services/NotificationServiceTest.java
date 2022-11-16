@@ -30,7 +30,7 @@ public class NotificationServiceTest {
     notificationService = new NotificationService(notificationRepository,emailConfig); }
 
     @Test
-    void shouldSetNotificationTypeAsAddUserForAssessmentFacilitator() {
+    void shouldSetNotificationWhenAssessmentIsCreated() {
         String email = "abc@thoughtworks.com";
         Organisation organisation = new Organisation(1,"abC","ABC","abc",6);
         Assessment assessment = new Assessment();
@@ -52,11 +52,11 @@ public class NotificationServiceTest {
         assessmentUsers.add(assessmentUser1);
         assessment.setAssessmentUsers(assessmentUsers);
 
-        Notification notification = new Notification(1,NotificationTemplateType.AddUser,email,"",NotificationStatus.N,0,new Date(),new Date());
+        Notification notification = new Notification(1, NotificationType.AddUser_V1,email,"",NotificationStatus.N,0,new Date(),new Date());
         when(notificationRepository.save(notification)).thenReturn(notification);
 
 
-        notificationService.setNotificationTypeByUserRole(assessment, assessmentUsers);
+        notificationService.setNotificationForCreateAssessment(assessment, assessmentUsers);
         notificationRepository.save(notification);
 
         verify(notificationRepository).save(notification);
@@ -99,8 +99,8 @@ public class NotificationServiceTest {
     @Test
     void shouldUpdateNotificationAfterSendingNotification() {
         NotificationResponse notificationResponse = new NotificationResponse("1","EMail sent successfully!");
-        Notification notification = new Notification(1, NotificationTemplateType.Created,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N,0,new Date(),new Date());
-        Notification notification1 = new Notification(1, NotificationTemplateType.Created,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y,0,new Date(),new Date());
+        Notification notification = new Notification(1, NotificationType.Created_V1,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N,0,new Date(),new Date());
+        Notification notification1 = new Notification(1, NotificationType.Created_V1,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y,0,new Date(),new Date());
 
         when(notificationRepository.update(notification)).thenReturn(notification1);
 

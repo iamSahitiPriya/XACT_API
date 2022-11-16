@@ -10,4 +10,5 @@ import lombok.Setter;
 public class ProfileConfig {
     private String type;
     private String url;
+    private String homePageUrl;
 }

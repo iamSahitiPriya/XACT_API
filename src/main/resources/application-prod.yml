@@ -30,9 +30,12 @@ datasources:
     driverClassName: org.postgresql.Driver
     username: ${DB_USER}
     password: ${DB_PWD}
+
 profile:
   type: "prod"
   url: "https://xact.thoughtworks.net/assessment/"
+  homePageUrl: "https://xact.thoughtworks.net/"
+
 
 token:
   username: ${AUTH_USERNAME}

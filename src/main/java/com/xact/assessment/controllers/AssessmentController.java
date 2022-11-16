@@ -4,7 +4,7 @@
 
 package com.xact.assessment.controllers;
 
-import com.xact.assessment.config.EmailConfig;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -95,7 +95,7 @@ public class AssessmentController {
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
         assessmentResponse.setAssessmentState(assessment.getAssessmentState());
 
-        CompletableFuture.supplyAsync(() -> notificationService.setNotificationTypeByUserRole(assessment, assessment.getAssessmentUsers()));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCreateAssessment(assessment, assessment.getAssessmentUsers()));
 
         return HttpResponse.created(assessmentResponse);
     }
@@ -136,7 +136,7 @@ public class AssessmentController {
 
         AssessmentResponse assessmentResponse = modelMapper.map(openedAssessment, AssessmentResponse.class);
 
-        CompletableFuture.supplyAsync(() -> dispatchNotification(assessment, assessmentUsers, NotificationTemplateType.Reopened));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForReopenAssessment(assessment, assessmentUsers));
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -154,7 +154,7 @@ public class AssessmentController {
 
         AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
 
-        CompletableFuture.supplyAsync(() -> dispatchNotification(assessment,assessmentUsers,NotificationTemplateType.Completed));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCompleteAssessment(assessment,assessmentUsers));
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -624,13 +624,4 @@ public class AssessmentController {
         assessmentService.updateAssessment(assessment);
     }
 
-    private boolean dispatchNotification (Assessment assessment, Set<String> assessmentUsers, NotificationTemplateType notificationType) {
-        try {
-            notificationService.saveNotification(assessment, assessmentUsers, notificationType);
-        } catch (Exception exception) {
-            LOGGER.error("Notification not saved");
-            return false;
-        }
-        return true;
-    }
 }

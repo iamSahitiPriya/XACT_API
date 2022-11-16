@@ -28,6 +28,7 @@ micronaut:
 profile:
   type: "local"
   url: "http://localhost:4200/assessment/"
+  homePageUrl: "http://localhost:4200/"
 
 datasources:
   default:

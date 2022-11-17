@@ -88,7 +88,7 @@ class AssessmentServiceTest {
 
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
-        when(notificationService.setNotificationTypeByUserRole(assessment,assessmentUsers)).thenReturn(null);
+        when(notificationService.setNotificationTypeByUserRole(assessmentUsers)).thenReturn(null);
 
 
         Assessment actualAssessment = assessmentService.createAssessment(assessmentRequest, loggedinUser);

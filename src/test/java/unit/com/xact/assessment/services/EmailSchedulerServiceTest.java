@@ -19,7 +19,6 @@ import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.TokenService;
-import com.xact.assessment.utils.NamingConventionUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -30,7 +29,7 @@ import java.util.List;
 
 import static org.mockito.Mockito.*;
 
-public class EmailSchedulerServiceTest {
+class EmailSchedulerServiceTest {
     private EmailSchedulerService emailSchedulerService;
     private final EmailConfig emailConfig;
     private final TokenService tokenService;
@@ -38,7 +37,6 @@ public class EmailSchedulerServiceTest {
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
     private final ProfileConfig profileConfig;
-    private final NamingConventionUtil namingConventionUtil;
 
     public EmailSchedulerServiceTest() {
         emailConfig = mock(EmailConfig.class);
@@ -47,7 +45,6 @@ public class EmailSchedulerServiceTest {
         emailNotificationClient = mock(EmailNotificationClient.class);
         notificationService = mock(NotificationService.class);
         profileConfig = mock(ProfileConfig.class);
-        namingConventionUtil = mock(NamingConventionUtil.class);
 
         emailSchedulerService = new EmailSchedulerService(emailConfig, profileConfig, notificationRepository,tokenService,emailNotificationClient,notificationService);
     }

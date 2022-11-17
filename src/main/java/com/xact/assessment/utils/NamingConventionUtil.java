@@ -17,7 +17,7 @@ public class NamingConventionUtil {
                 builder.append(Character.toUpperCase(word.charAt(0)));
                 builder.append(word.substring(1).toLowerCase());
             }
-            if (!(builder.length() == text.length()))
+            if ((builder.length() != text.length()))
                 builder.append(" ");
         }
 

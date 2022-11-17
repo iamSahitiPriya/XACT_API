@@ -35,8 +35,8 @@ public class NotificationService {
         return notification;
     }
 
-    public Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        Map<NotificationType, Set<String>> notifications = new HashMap<>();
+    public Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Set<AssessmentUsers> assessmentUsers) {
+        Map<NotificationType, Set<String>> notifications = new EnumMap<>(NotificationType.class);
         Set<String> facilitatorEmails = new HashSet<>();
         for (AssessmentUsers eachUser : assessmentUsers) {
             if (eachUser.getRole().equals(AssessmentRole.Owner)) {
@@ -100,7 +100,7 @@ public class NotificationService {
     }
 
     public Notification setNotificationForCreateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        Map<NotificationType, Set<String>> notificationsType = setNotificationTypeByUserRole(assessment, assessmentUsers);
+        Map<NotificationType, Set<String>> notificationsType = setNotificationTypeByUserRole(assessmentUsers);
 
         notificationsType.forEach((notificationType, users) -> {
             ObjectMapper objectMapper = new ObjectMapper();

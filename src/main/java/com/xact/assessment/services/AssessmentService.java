@@ -47,7 +47,6 @@ public class AssessmentService {
 
     @Transactional
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
-        Set<AssessmentUsers> savedAssessmentUsers = new HashSet<>();
         Assessment assessment = mapper.map(assessmentRequest, Assessment.class);
         assessment.setAssessmentStatus(AssessmentStatus.Active);
 

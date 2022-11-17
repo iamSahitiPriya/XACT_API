@@ -29,13 +29,10 @@ public class AssessmentService {
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
     private final UsersAssessmentsRepository usersAssessmentsRepository;
-
     private final AccessControlRepository accessControlRepository;
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
-
     private final ModuleRepository moduleRepository;
     private static final String DATE_PATTERN = "yyyy-MM-dd";
-
 
     ModelMapper mapper = new ModelMapper();
 
@@ -44,23 +41,28 @@ public class AssessmentService {
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
         this.accessControlRepository = accessControlRepository;
-
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
         this.moduleRepository = moduleRepository;
     }
 
     @Transactional
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
+        Set<AssessmentUsers> savedAssessmentUsers = new HashSet<>();
         Assessment assessment = mapper.map(assessmentRequest, Assessment.class);
         assessment.setAssessmentStatus(AssessmentStatus.Active);
 
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
         assessment.setOrganisation(organisation);
-        Set<AssessmentUsers> assessmentUsers = getAssessmentUsers(assessmentRequest, user, assessment);
+
+        Set<AssessmentUsers> assessmentUsersSet = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
-        usersAssessmentsService.createUsersInAssessment(assessmentUsers);
+
+        usersAssessmentsService.createUsersInAssessment(assessmentUsersSet);
+        assessment.setAssessmentUsers(assessmentUsersSet);
+
         return assessment;
     }
+
 
     private void createAssessment(Assessment assessment) {
         assessmentRepository.save(assessment);
@@ -110,6 +112,10 @@ public class AssessmentService {
             assessmentUsers1.add(eachUser.getUserId().getUserEmail());
         }
         return assessmentUsers1;
+    }
+
+    public Set<String> getAllAssessmentUsers(Integer assessmentId) {
+        return usersAssessmentsRepository.getAllAssessmentUsers(assessmentId);
     }
 
     public Assessment finishAssessment(Assessment assessment) {

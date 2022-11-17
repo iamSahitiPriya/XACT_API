@@ -15,8 +15,6 @@ import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
 import com.xact.assessment.utils.ResourceFileUtil;
 import io.micronaut.context.env.Environment;
-import io.micronaut.scheduling.annotation.Scheduled;
-import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -24,61 +22,26 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Singleton
 public class AccountService {
-    private final AccountClient accountClient;
     private final AccountRepository accountRepository;
-    private final ModelMapper modelMapper = new ModelMapper();
-    private final TokenService tokenService;
-    private final ProfileConfig profileConfig;
-    private final AccountConfig accountConfig;
     private final ResourceFileUtil resourceFileUtil = new ResourceFileUtil();
+    private final ModelMapper modelMapper = new ModelMapper();
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
 
-    @Inject
-    Environment environment;
 
-    public AccountService(AccountClient accountClient, AccountRepository accountRepository, TokenService tokenService, ProfileConfig profileConfig, AccountConfig accountConfig, Environment environment) {
-        this.accountClient = accountClient;
+    public AccountService( AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-        this.tokenService = tokenService;
-        this.profileConfig = profileConfig;
-        this.accountConfig = accountConfig;
-        this.environment = environment;
     }
 
-    @Scheduled(fixedDelay = "${account.delay}")
-    public void fetchOrganisationDetails() throws IOException {
-        LOGGER.info("Fetching account details");
-        if ("local".equals(profileConfig.getType())) {
-            List<Account> accounts = readAccounts();
-            save(accounts);
-        } else {
-            fetchAccounts();
-        }
-    }
 
     public List<Account> readAccounts() throws IOException {
         String accounts = resourceFileUtil.getJsonString("localData/tbm_accounts.json");
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(accounts, new TypeReference<ArrayList<Account>>() {
         });
-    }
-
-    private void fetchAccounts() {
-        Map<String, String> parameters = new HashMap<>();
-        String token = "Bearer " + tokenService.getToken(accountConfig.getScope());
-        parameters.put("status", "active");
-        AccountResponse accountResponse;
-        do {
-            accountResponse = accountClient.getOrganisationDetails(parameters, token);
-            parameters.put("offset", accountResponse.getContent().get(accountResponse.getNumberOfElements() - 1).getId());
-            saveAccountDetails(accountResponse);
-        } while (accountResponse.getNextPageUrl() != null);
     }
 
     public void saveAccountDetails(AccountResponse accountResponse) {
@@ -88,7 +51,8 @@ public class AccountService {
         save(accounts);
     }
 
-    private void save(List<Account> accounts) {
+    public void save(List<Account> accounts) {
+        LOGGER.info("Saving account details");
         accountRepository.updateAll(accounts);
     }
 

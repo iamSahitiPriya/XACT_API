@@ -26,6 +26,8 @@ micronaut:
 
 profile:
   type: "qa"
+  url: "https://qa.xact.thoughtworks.net/assessment/"
+  homePageUrl: "https://qa.xact.thoughtworks.net/"
 
 token:
   username: ${AUTH_USERNAME}
@@ -38,6 +40,16 @@ account:
   url: "https://api.thoughtworks.net/account"
   scope: "account.read.internal"
   endpoint: "/api/accounts"
+
+email:
+  url: "https://api.thoughtworks.net"
+  scope: "email.send"
+  endpoint: "/notification/messages"
+  delay: "1m"
+  notificationEnabled : true
+  maskEmail : false
+  fromEmail: "project-xact@thoughtworks.net"
+  name: "X-ACT Support"
 
 datasources:
   default:

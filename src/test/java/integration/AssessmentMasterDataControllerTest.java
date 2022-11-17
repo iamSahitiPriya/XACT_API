@@ -135,7 +135,7 @@ class AssessmentMasterDataControllerTest {
         List<AssessmentTopic> assessmentTopics = (List<AssessmentTopic>) assessmentTopicRepository.findAll();
         Optional<AssessmentTopic> assessmentTopic = assessmentTopics.stream().filter(assessmentTopic1 -> assessmentTopic1.getTopicName().equals("Software")).findFirst();
 
-        assertEquals("Software", assessmentTopic.get().getTopicName());
+        assertEquals("Software123", assessmentTopic.get().getTopicName());
 
         assessmentTopicRepository.delete(assessmentTopic.get());
         entityManager.getTransaction().commit();
@@ -154,7 +154,7 @@ class AssessmentMasterDataControllerTest {
         List<AssessmentParameter> assessmentParameters = (List<AssessmentParameter>) assessmentParameterRepository.findAll();
         Optional<AssessmentParameter> assessmentParameter = assessmentParameters.stream().filter(assessmentParameter1 -> assessmentParameter1.getParameterName().equals("Software")).findAny();
 
-        assertEquals("Software", assessmentParameter.get().getParameterName());
+        assertEquals("Software123", assessmentParameter.get().getParameterName());
 
         assessmentParameterRepository.delete(assessmentParameter.get());
         entityManager.getTransaction().commit();

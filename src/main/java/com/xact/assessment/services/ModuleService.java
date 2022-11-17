@@ -36,8 +36,9 @@ public class ModuleService {
         return moduleRepository.getModuleNames(categoryId);
     }
 
-    public List<AssessmentModule> getModules() {
-        return  moduleRepository.listOrderByUpdatedAtDesc();}
 
+    public List<AssessmentModule> listOrderByUpdatedAtDesc() {
+       return  moduleRepository.listOrderByUpdatedAtDesc();
+    }
 }
 

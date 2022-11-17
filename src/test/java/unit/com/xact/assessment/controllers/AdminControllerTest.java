@@ -79,7 +79,7 @@ class AdminControllerTest {
         HttpResponse<List<CategoryDto>> actualResponse = adminController.getCategoriesData(authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        assertEquals(actualResponse.body().get(0).getCategoryName(),"category");
+        assertEquals("category",actualResponse.body().get(0).getCategoryName());
     }
 
     @Test
@@ -127,7 +127,7 @@ class AdminControllerTest {
         HttpResponse<List<ModuleDto>> actualResponse=adminController.getModulesData(authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        assertEquals(actualResponse.body().get(0).getModuleName(),"module");
+        assertEquals("module",actualResponse.body().get(0).getModuleName());
     }
 
     @Test

@@ -104,7 +104,7 @@ class AssessmentMasterDataControllerTest {
         List<AssessmentCategory> assessmentCategories = categoryRepository.findCategories();
         AssessmentCategory assessmentCategory = assessmentCategories.get(0);
 
-        assertEquals(assessmentCategories.get(0).getCategoryName(), "Software");
+        assertEquals( "Software",assessmentCategories.get(0).getCategoryName());
 
         categoryRepository.delete(assessmentCategory);
         entityManager.getTransaction().commit();
@@ -120,7 +120,7 @@ class AssessmentMasterDataControllerTest {
         AssessmentModule assessmentModule = assessmentModules.stream().filter(assessmentModule1 -> assessmentModule1.getModuleName().equals("ModuleName")).findFirst().get();
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-        assertEquals(assessmentModule.getModuleName(), "ModuleName");
+        assertEquals( "ModuleName",assessmentModule.getModuleName());
 
         moduleRepository.delete(assessmentModule);
         entityManager.getTransaction().commit();

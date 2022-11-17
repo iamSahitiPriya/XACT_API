@@ -91,4 +91,11 @@ public class AssessmentCategory {
         this.isActive = isActive;
         this.comments = comments;
     }
+
+    public AssessmentCategory( Integer categoryId,String categoryName, boolean isActive, String comments) {
+        this.categoryId=categoryId;
+        this.categoryName = categoryName;
+        this.isActive = isActive;
+        this.comments = comments;
+    }
 }

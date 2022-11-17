@@ -133,7 +133,7 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
         List<AssessmentTopic> assessmentTopics = (List<AssessmentTopic>) assessmentTopicRepository.findAll();
-        Optional<AssessmentTopic> assessmentTopic = assessmentTopics.stream().filter(assessmentTopic1 -> assessmentTopic1.getTopicName().equals("Software")).findFirst();
+        Optional<AssessmentTopic> assessmentTopic = assessmentTopics.stream().filter(assessmentTopic1 -> assessmentTopic1.getTopicName().equals("Software123")).findFirst();
 
         assertEquals("Software123", assessmentTopic.get().getTopicName());
 
@@ -152,7 +152,7 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
         List<AssessmentParameter> assessmentParameters = (List<AssessmentParameter>) assessmentParameterRepository.findAll();
-        Optional<AssessmentParameter> assessmentParameter = assessmentParameters.stream().filter(assessmentParameter1 -> assessmentParameter1.getParameterName().equals("Software")).findAny();
+        Optional<AssessmentParameter> assessmentParameter = assessmentParameters.stream().filter(assessmentParameter1 -> assessmentParameter1.getParameterName().equals("Software123")).findAny();
 
         assertEquals("Software123", assessmentParameter.get().getParameterName());
 

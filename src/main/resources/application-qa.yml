@@ -45,7 +45,7 @@ email:
   url: "https://api.thoughtworks.net"
   scope: "email.send"
   endpoint: "/notification/messages"
-  delay: "1m"
+  delay: "30s"
   notificationEnabled : true
   maskEmail : false
   fromEmail: "project-xact@thoughtworks.net"

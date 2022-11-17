@@ -50,7 +50,7 @@ class NotificationServiceTest {
         assessmentUsers.add(assessmentUser1);
         assessment.setAssessmentUsers(assessmentUsers);
 
-        Notification notification = new Notification(1, NotificationType.AddUser_V1, email, "", NotificationStatus.N, 0, new Date(), new Date());
+        Notification notification = new Notification(1, NotificationType.ADD_USER_V1, email, "", NotificationStatus.N, 0, new Date(), new Date());
         when(notificationRepository.save(notification)).thenReturn(notification);
 
 
@@ -71,8 +71,8 @@ class NotificationServiceTest {
 
     @Test
     void shouldUpdateNotificationAfterSendingNotification() {
-        Notification notification = new Notification(1, NotificationType.Created_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N, 0, new Date(), new Date());
-        Notification notification1 = new Notification(1, NotificationType.Created_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y, 0, new Date(), new Date());
+        Notification notification = new Notification(1, NotificationType.CREATED_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N, 0, new Date(), new Date());
+        Notification notification1 = new Notification(1, NotificationType.CREATED_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y, 0, new Date(), new Date());
 
         when(notificationRepository.update(notification)).thenReturn(notification1);
 

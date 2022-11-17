@@ -53,8 +53,8 @@ class EmailSchedulerServiceTest {
     void shouldSendEmailNotification() throws JsonProcessingException {
         NotificationResponse notificationResponse = new NotificationResponse("1", "EMail sent successfully!");
         String scope = "email.send";
-        Notification notification = new Notification(1, NotificationType.Created_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N, 0, new Date(), new Date());
-        Notification notification1 = new Notification(1, NotificationType.Created_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y, 0, new Date(), new Date());
+        Notification notification = new Notification(1, NotificationType.CREATED_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N, 0, new Date(), new Date());
+        Notification notification1 = new Notification(1, NotificationType.CREATED_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y, 0, new Date(), new Date());
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(notification);
         when(emailConfig.isNotificationEnabled()).thenReturn(true);

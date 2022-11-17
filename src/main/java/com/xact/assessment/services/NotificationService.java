@@ -42,13 +42,13 @@ public class NotificationService {
         Set<String> facilitatorEmails = new HashSet<>();
         for (AssessmentUsers eachUser : assessmentUsers) {
             if (eachUser.getRole().equals(AssessmentRole.Owner)) {
-                notifications.put(NotificationType.Created_V1, Collections.singleton(eachUser.getUserId().getUserEmail()));
+                notifications.put(NotificationType.CREATED_V1, Collections.singleton(eachUser.getUserId().getUserEmail()));
             } else if (eachUser.getRole().equals(AssessmentRole.Facilitator)) {
                 facilitatorEmails.add(eachUser.getUserId().getUserEmail());
             }
         }
         if (!facilitatorEmails.isEmpty())
-            notifications.put(NotificationType.AddUser_V1, facilitatorEmails);
+            notifications.put(NotificationType.ADD_USER_V1, facilitatorEmails);
 
         return notifications;
     }
@@ -74,7 +74,7 @@ public class NotificationService {
     public Notification setNotificationForCompleteAssessment(Assessment assessment, Set<String> assessmentUsers) {
         ObjectMapper objectMapper = new ObjectMapper();
         Notification notification = setNotification(assessmentUsers);
-        notification.setTemplateName(NotificationType.Completed_V1);
+        notification.setTemplateName(NotificationType.COMPLETED_V1);
         Map<String, String> payload = setPayloadForCompleteAssessment(assessment);
         notification.setPayload(objectMapper.writeValueAsString(payload));
 
@@ -86,7 +86,7 @@ public class NotificationService {
     public Notification setNotificationForReopenAssessment(Assessment assessment, Set<String> assessmentUsers) {
         ObjectMapper objectMapper = new ObjectMapper();
         Notification notification = setNotification(assessmentUsers);
-        notification.setTemplateName(NotificationType.Reopened_V1);
+        notification.setTemplateName(NotificationType.REOPENED_V1);
         Map<String, String> payload = setPayloadForReopenAssessment(assessment);
         notification.setPayload(objectMapper.writeValueAsString(payload));
 
@@ -120,7 +120,7 @@ public class NotificationService {
     }
 
     private boolean isNotificationTypeCreated(NotificationType notificationType) {
-        return notificationType.equals(NotificationType.Created_V1);
+        return notificationType.equals(NotificationType.CREATED_V1);
     }
 
     private Map<String, String> setPayloadForCompleteAssessment(Assessment assessment) {

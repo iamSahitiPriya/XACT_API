@@ -46,15 +46,15 @@ class EmailSchedulerServiceTest {
         notificationService = mock(NotificationService.class);
         profileConfig = mock(ProfileConfig.class);
 
-        emailSchedulerService = new EmailSchedulerService(emailConfig, profileConfig, notificationRepository,tokenService,emailNotificationClient,notificationService);
+        emailSchedulerService = new EmailSchedulerService(emailConfig, profileConfig, notificationRepository, tokenService, emailNotificationClient, notificationService);
     }
 
     @Test
     void shouldSendEmailNotification() throws JsonProcessingException {
-        NotificationResponse notificationResponse = new NotificationResponse("1","EMail sent successfully!");
+        NotificationResponse notificationResponse = new NotificationResponse("1", "EMail sent successfully!");
         String scope = "email.send";
-        Notification notification = new Notification(1, NotificationType.Created_V1,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N,0,new Date(),new Date());
-        Notification notification1 = new Notification(1, NotificationType.Created_V1,"brindha.e@thoughtworks.com","{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y,0,new Date(),new Date());
+        Notification notification = new Notification(1, NotificationType.Created_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.N, 0, new Date(), new Date());
+        Notification notification1 = new Notification(1, NotificationType.Created_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\"}", NotificationStatus.Y, 0, new Date(), new Date());
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(notification);
         when(emailConfig.isNotificationEnabled()).thenReturn(true);
@@ -71,15 +71,15 @@ class EmailSchedulerServiceTest {
         notificationRequest.setEmail(notificationEmail);
 
 
-        when(notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N,6)).thenReturn(notificationList);
+        when(notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, 6)).thenReturn(notificationList);
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
-        when(emailNotificationClient.sendNotification(token,notificationRequest)).thenReturn(notificationResponse);
+        when(emailNotificationClient.sendNotification(token, notificationRequest)).thenReturn(notificationResponse);
         when(notificationRepository.update(notification)).thenReturn(notification1);
-        doNothing().when(notificationService).update(notification,notificationResponse);
+        doNothing().when(notificationService).update(notification);
 
         emailSchedulerService.sendEmailNotifications();
         Notification notification2 = notificationRepository.update(notification);
 
-        Assertions.assertEquals(NotificationStatus.Y,notification2.getStatus());
+        Assertions.assertEquals(NotificationStatus.Y, notification2.getStatus());
     }
 }

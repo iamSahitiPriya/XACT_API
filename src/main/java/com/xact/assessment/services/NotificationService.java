@@ -3,7 +3,6 @@ package com.xact.assessment.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.config.EmailConfig;
-import com.xact.assessment.dtos.NotificationResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import jakarta.inject.Singleton;
@@ -15,9 +14,12 @@ import java.util.*;
 
 @Singleton
 public class NotificationService {
+    public static final String ORGANISATION_NAME = "organisation_name";
+    public static final String CREATED_AT = "created_at";
+    public static final String ASSESSMENT_ID = "assessment_id";
+    public static final String ASSESSMENT_NAME = "assessment_name";
     private final NotificationRepository notificationRepository;
     private final EmailConfig emailConfig;
-    private static final String notificationMessage = "EMail sent successfully!";
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
 
 
@@ -35,7 +37,7 @@ public class NotificationService {
         return notification;
     }
 
-    public Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Set<AssessmentUsers> assessmentUsers) {
+    private Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Set<AssessmentUsers> assessmentUsers) {
         Map<NotificationType, Set<String>> notifications = new EnumMap<>(NotificationType.class);
         Set<String> facilitatorEmails = new HashSet<>();
         for (AssessmentUsers eachUser : assessmentUsers) {
@@ -64,14 +66,7 @@ public class NotificationService {
         return emailConfig.isNotificationEnabled() && emailConfig.isMaskEmail();
     }
 
-    public void update(Notification notification, NotificationResponse notificationResponse) {
-        notification.setRetries(notification.getRetries() + 1);
-
-        if (notificationResponse.getMessage().equals(notificationMessage)) {
-            notification.setStatus(NotificationStatus.Y);
-        }
-
-        LOGGER.info("Updating notification retries and status for Notification Id {}", notification.getNotificationId());
+    public void update(Notification notification) {
         notificationRepository.update(notification);
     }
 
@@ -130,40 +125,40 @@ public class NotificationService {
 
     private Map<String, String> setPayloadForCompleteAssessment(Assessment assessment) {
         Map<String, String> payload = getPayload(assessment);
-        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at", assessment.getCreatedAt().toString());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
 
         return payload;
     }
 
     private Map<String, String> setPayloadForReopenAssessment(Assessment assessment) {
         Map<String, String> payload = getPayload(assessment);
-        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at", assessment.getCreatedAt().toString());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
 
         return payload;
     }
 
     private Map<String, String> setPayloadForCreateAssessment(Assessment assessment) {
         Map<String, String> payload = getPayload(assessment);
-        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at", assessment.getCreatedAt().toString());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
 
         return payload;
     }
 
     private Map<String, String> setPayloadForAddUser(Assessment assessment) {
         Map<String, String> payload = getPayload(assessment);
-        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at", assessment.getCreatedAt().toString());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
 
         return payload;
     }
 
     private Map<String, String> getPayload(Assessment assessment) {
         Map<String, String> payload = new HashMap<>();
-        payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
-        payload.put("assessment_name", assessment.getAssessmentName());
+        payload.put(ASSESSMENT_ID, String.valueOf(assessment.getAssessmentId()));
+        payload.put(ASSESSMENT_NAME, assessment.getAssessmentName());
         return payload;
     }
 }

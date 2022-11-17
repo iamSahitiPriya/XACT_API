@@ -7,7 +7,6 @@ package com.xact.assessment.dtos;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 @NoArgsConstructor
 @Getter

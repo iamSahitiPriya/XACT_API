@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -121,7 +124,7 @@ class AdminControllerTest {
         moduleDto.setUpdatedAt(assessmentModule.getUpdatedAt());
         moduleResponse.add(moduleDto);
 
-        HttpResponse<List<ModuleDto>> actualResponse=adminController.getModules(authentication);
+        HttpResponse<List<ModuleDto>> actualResponse=adminController.getModulesData(authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         assertEquals(actualResponse.body().get(0).getModuleName(),"module");

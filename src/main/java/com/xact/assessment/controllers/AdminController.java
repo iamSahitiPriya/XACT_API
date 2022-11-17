@@ -4,7 +4,6 @@
 
 package com.xact.assessment.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
@@ -24,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Introspected
 @AdminAuth
@@ -96,7 +97,7 @@ public class AdminController {
 
     @Get(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<ModuleDto>> getModules(Authentication authentication){
+    public HttpResponse<List<ModuleDto>> getModulesData(Authentication authentication){
         LOGGER.info("Get all modules data");
         List<ModuleDto> moduleResponse=new ArrayList<>();
         List<AssessmentModule> assessmentModules = assessmentMasterDataService.getModules();

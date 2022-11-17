@@ -4,7 +4,6 @@
 
 package unit.com.xact.assessment.controllers;
 
-import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.controllers.AssessmentController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;

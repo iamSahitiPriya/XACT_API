@@ -51,14 +51,15 @@ public class EmailSchedulerService {
 
     @Scheduled(fixedDelay = "${email.delay}")
     public void sendEmailNotifications() throws JsonProcessingException {
+        LOGGER.info("Scheduling notifications ...");
         if(emailConfig.isNotificationEnabled()) {
             List<Notification> notificationList = notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N,MAXIMUM_RETRIES);
             if (!notificationList.isEmpty()) {
                 String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
                 for (Notification notification : notificationList) {
                     String emailTo = setUserEmail(notification);
-                    String body = getEmailBody(notification,emailTo);
-                    sendEmail(accessToken,notification,emailTo,body);
+                    NotificationRequest notificationRequest = getEmailBody(notification,emailTo);
+                    sendEmail(accessToken,notification,emailTo,notificationRequest);
                 }
             }
         }
@@ -71,12 +72,12 @@ public class EmailSchedulerService {
         return notification.getUserEmail();
     }
 
-    private String getEmailBody(Notification notification, String emailTo) throws JsonProcessingException {
+    private NotificationRequest getEmailBody(Notification notification, String emailTo) throws JsonProcessingException {
         NotificationRequest notificationRequest = new NotificationRequest();
         NotificationDetail notificationDetail= new NotificationDetail();
         notificationDetail.setFrom(new EmailHeader(emailConfig.getFromEmail(),emailConfig.getName()));
         notificationDetail.setSubject(notification.getTemplateName().getEmailSubject());
-        notificationDetail.setTo(new ArrayList<>(Arrays.asList(emailTo.split(","))));
+        notificationDetail.setTo(Arrays.asList(emailTo.split(",")));
         notificationDetail.setBcc(new ArrayList<>());
         notificationDetail.setCc(new ArrayList<>());
         notificationDetail.setReplyTo("");
@@ -87,7 +88,7 @@ public class EmailSchedulerService {
 
         notificationRequest.setEmail(notificationDetail);
 
-        return new ObjectMapper().writeValueAsString(notificationRequest);
+        return notificationRequest;
     }
 
     private String getNotificationContent(Notification notification) throws JsonProcessingException {
@@ -112,10 +113,10 @@ public class EmailSchedulerService {
         return writer.toString();
     }
 
-    private void sendEmail(String accessToken, Notification notification, String emailTo, String body) {
+    private void sendEmail(String accessToken, Notification notification, String emailTo, NotificationRequest notificationRequest) {
         LOGGER.info("Sending notification to {}",emailTo);
 
-        NotificationResponse notificationResponse = emailNotificationClient.sendNotification(accessToken, body);
+        NotificationResponse notificationResponse = emailNotificationClient.sendNotification(accessToken, notificationRequest);
 
         notificationService.update(notification,notificationResponse);
     }

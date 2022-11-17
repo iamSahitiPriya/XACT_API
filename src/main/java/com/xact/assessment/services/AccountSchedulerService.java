@@ -9,12 +9,10 @@ import com.xact.assessment.config.AccountConfig;
 import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.models.Account;
-import com.xact.assessment.utils.ResourceFileUtil;
 import io.micronaut.context.env.Environment;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

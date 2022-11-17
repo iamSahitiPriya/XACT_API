@@ -27,27 +27,26 @@ public class NotificationService {
     }
 
     @SneakyThrows
-    public Notification setNotification(Set<String> userEmails ) {
+    public Notification setNotification(Set<String> userEmails) {
         Notification notification = new Notification();
-        notification.setUserEmail(String.join(",",userEmails));
+        notification.setUserEmail(String.join(",", userEmails));
         notification.setStatus(NotificationStatus.N);
 
         return notification;
     }
 
     public Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        Map<NotificationType,Set<String>> notifications = new HashMap<>();
+        Map<NotificationType, Set<String>> notifications = new HashMap<>();
         Set<String> facilitatorEmails = new HashSet<>();
-        for(AssessmentUsers eachUser : assessmentUsers) {
+        for (AssessmentUsers eachUser : assessmentUsers) {
             if (eachUser.getRole().equals(AssessmentRole.Owner)) {
                 notifications.put(NotificationType.Created_V1, Collections.singleton(eachUser.getUserId().getUserEmail()));
-            }
-            else if (eachUser.getRole().equals(AssessmentRole.Facilitator)) {
-               facilitatorEmails.add(eachUser.getUserId().getUserEmail());
+            } else if (eachUser.getRole().equals(AssessmentRole.Facilitator)) {
+                facilitatorEmails.add(eachUser.getUserId().getUserEmail());
             }
         }
-        if(!facilitatorEmails.isEmpty())
-            notifications.put(NotificationType.AddUser_V1,facilitatorEmails);
+        if (!facilitatorEmails.isEmpty())
+            notifications.put(NotificationType.AddUser_V1, facilitatorEmails);
 
         return notifications;
     }
@@ -56,23 +55,24 @@ public class NotificationService {
         LOGGER.info("Saving notification for {} {}", notification.getTemplateName(), notification.getPayload());
         try {
             notificationRepository.save(notification);
-        }catch (Exception exception) {
+        } catch (Exception exception) {
             LOGGER.error("Notification not saved");
         }
     }
 
-    public boolean isEmailMasked(){
+    public boolean isEmailMasked() {
         return emailConfig.isNotificationEnabled() && emailConfig.isMaskEmail();
     }
 
     public void update(Notification notification, NotificationResponse notificationResponse) {
         notification.setRetries(notification.getRetries() + 1);
-        notification.setStatus(NotificationStatus.Y);
 
-        if(notificationResponse.getMessage().equals(notificationMessage)) {
-            LOGGER.info("Updating notification retries and status for Notification Id {}", notification.getNotificationId());
-            notificationRepository.update(notification);
+        if (notificationResponse.getMessage().equals(notificationMessage)) {
+            notification.setStatus(NotificationStatus.Y);
         }
+
+        LOGGER.info("Updating notification retries and status for Notification Id {}", notification.getNotificationId());
+        notificationRepository.update(notification);
     }
 
     @SneakyThrows
@@ -100,15 +100,15 @@ public class NotificationService {
     }
 
     public Notification setNotificationForCreateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        Map<NotificationType, Set<String>> notificationsType = setNotificationTypeByUserRole(assessment,assessmentUsers);
+        Map<NotificationType, Set<String>> notificationsType = setNotificationTypeByUserRole(assessment, assessmentUsers);
 
-        notificationsType.forEach((notificationType,users) -> {
+        notificationsType.forEach((notificationType, users) -> {
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> payload = new HashMap<>();
             Notification notification = setNotification(users);
             notification.setTemplateName(notificationType);
 
-            if(isNotificationTypeCreated(notificationType))
+            if (isNotificationTypeCreated(notificationType))
                 payload = setPayloadForCreateAssessment(assessment);
             else
                 payload = setPayloadForAddUser(assessment);
@@ -121,7 +121,7 @@ public class NotificationService {
 
             saveNotification(notification);
         });
-       return null;
+        return null;
     }
 
     private boolean isNotificationTypeCreated(NotificationType notificationType) {

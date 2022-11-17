@@ -6,15 +6,11 @@ package com.xact.assessment.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xact.assessment.client.AccountClient;
-import com.xact.assessment.config.AccountConfig;
-import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.dtos.OrganisationResponse;
 import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
 import com.xact.assessment.utils.ResourceFileUtil;
-import io.micronaut.context.env.Environment;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;

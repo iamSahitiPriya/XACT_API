@@ -4,6 +4,7 @@
 
 package com.xact.assessment.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -21,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -39,6 +41,7 @@ public class AssessmentController {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
+    private final NotificationService notificationService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
@@ -46,7 +49,7 @@ public class AssessmentController {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, NotificationService notificationService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
@@ -55,6 +58,7 @@ public class AssessmentController {
         this.parameterService = parameterService;
         this.topicService = topicService;
         this.questionService = questionService;
+        this.notificationService = notificationService;
     }
 
 
@@ -88,9 +92,11 @@ public class AssessmentController {
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
 
-
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
         assessmentResponse.setAssessmentState(assessment.getAssessmentState());
+
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCreateAssessment(assessment, assessment.getAssessmentUsers()));
+
         return HttpResponse.created(assessmentResponse);
     }
 
@@ -124,10 +130,17 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         Assessment openedAssessment = assessmentService.reopenAssessment(assessment);
+
+        Set<String> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
+
+
         AssessmentResponse assessmentResponse = modelMapper.map(openedAssessment, AssessmentResponse.class);
+
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForReopenAssessment(assessment, assessmentUsers));
 
         return HttpResponse.ok(assessmentResponse);
     }
+
 
     @Put(value = "/{assessmentId}/statuses/finish", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -136,7 +149,13 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         Assessment finishedAssessment = assessmentService.finishAssessment(assessment);
+
+        Set<String> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
+
         AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
+
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCompleteAssessment(assessment,assessmentUsers));
+
         return HttpResponse.ok(assessmentResponse);
     }
 
@@ -447,9 +466,6 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
-
-
-
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
@@ -607,4 +623,5 @@ public class AssessmentController {
         LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessmentService.updateAssessment(assessment);
     }
+
 }

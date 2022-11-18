@@ -4,8 +4,8 @@
 
 package com.xact.assessment.client;
 
+import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.dtos.NotificationResponse;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Post;
@@ -20,6 +20,6 @@ public interface EmailNotificationClient {
 
     @Post(value = "${email.endpoint}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    NotificationResponse sendNotification(@Header(AUTHORIZATION) String authorization, @Body String content);
+    NotificationResponse sendNotification(@Header(AUTHORIZATION) String authorization, @Body NotificationRequest content);
 
 }

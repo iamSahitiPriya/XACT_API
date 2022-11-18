@@ -3,7 +3,6 @@ package com.xact.assessment.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.config.EmailConfig;
-import com.xact.assessment.dtos.NotificationResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import jakarta.inject.Singleton;
@@ -15,9 +14,12 @@ import java.util.*;
 
 @Singleton
 public class NotificationService {
+    public static final String ORGANISATION_NAME = "organisation_name";
+    public static final String CREATED_AT = "created_at";
+    public static final String ASSESSMENT_ID = "assessment_id";
+    public static final String ASSESSMENT_NAME = "assessment_name";
     private final NotificationRepository notificationRepository;
     private final EmailConfig emailConfig;
-    private static final String notificationMessage = "EMail sent successfully!";
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationService.class);
 
 
@@ -27,27 +29,26 @@ public class NotificationService {
     }
 
     @SneakyThrows
-    public Notification setNotification(Set<String> userEmails ) {
+    public Notification setNotification(Set<String> userEmails) {
         Notification notification = new Notification();
-        notification.setUserEmail(String.join(",",userEmails));
+        notification.setUserEmail(String.join(",", userEmails));
         notification.setStatus(NotificationStatus.N);
 
         return notification;
     }
 
-    public Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        Map<NotificationType,Set<String>> notifications = new HashMap<>();
+    private Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Set<AssessmentUsers> assessmentUsers) {
+        Map<NotificationType, Set<String>> notifications = new EnumMap<>(NotificationType.class);
         Set<String> facilitatorEmails = new HashSet<>();
-        for(AssessmentUsers eachUser : assessmentUsers) {
+        for (AssessmentUsers eachUser : assessmentUsers) {
             if (eachUser.getRole().equals(AssessmentRole.Owner)) {
-                notifications.put(NotificationType.Created_V1, Collections.singleton(eachUser.getUserId().getUserEmail()));
-            }
-            else if (eachUser.getRole().equals(AssessmentRole.Facilitator)) {
-               facilitatorEmails.add(eachUser.getUserId().getUserEmail());
+                notifications.put(NotificationType.CREATED_V1, Collections.singleton(eachUser.getUserId().getUserEmail()));
+            } else if (eachUser.getRole().equals(AssessmentRole.Facilitator)) {
+                facilitatorEmails.add(eachUser.getUserId().getUserEmail());
             }
         }
-        if(!facilitatorEmails.isEmpty())
-            notifications.put(NotificationType.AddUser_V1,facilitatorEmails);
+        if (!facilitatorEmails.isEmpty())
+            notifications.put(NotificationType.ADD_USER_V1, facilitatorEmails);
 
         return notifications;
     }
@@ -56,30 +57,24 @@ public class NotificationService {
         LOGGER.info("Saving notification for {} {}", notification.getTemplateName(), notification.getPayload());
         try {
             notificationRepository.save(notification);
-        }catch (Exception exception) {
+        } catch (Exception exception) {
             LOGGER.error("Notification not saved");
         }
     }
 
-    public boolean isEmailMasked(){
+    public boolean isEmailMasked() {
         return emailConfig.isNotificationEnabled() && emailConfig.isMaskEmail();
     }
 
-    public void update(Notification notification, NotificationResponse notificationResponse) {
-        notification.setRetries(notification.getRetries() + 1);
-        notification.setStatus(NotificationStatus.Y);
-
-        if(notificationResponse.getMessage().equals(notificationMessage)) {
-            LOGGER.info("Updating notification retries and status for Notification Id {}", notification.getNotificationId());
-            notificationRepository.update(notification);
-        }
+    public void update(Notification notification) {
+        notificationRepository.update(notification);
     }
 
     @SneakyThrows
     public Notification setNotificationForCompleteAssessment(Assessment assessment, Set<String> assessmentUsers) {
         ObjectMapper objectMapper = new ObjectMapper();
         Notification notification = setNotification(assessmentUsers);
-        notification.setTemplateName(NotificationType.Completed_V1);
+        notification.setTemplateName(NotificationType.COMPLETED_V1);
         Map<String, String> payload = setPayloadForCompleteAssessment(assessment);
         notification.setPayload(objectMapper.writeValueAsString(payload));
 
@@ -91,7 +86,7 @@ public class NotificationService {
     public Notification setNotificationForReopenAssessment(Assessment assessment, Set<String> assessmentUsers) {
         ObjectMapper objectMapper = new ObjectMapper();
         Notification notification = setNotification(assessmentUsers);
-        notification.setTemplateName(NotificationType.Reopened_V1);
+        notification.setTemplateName(NotificationType.REOPENED_V1);
         Map<String, String> payload = setPayloadForReopenAssessment(assessment);
         notification.setPayload(objectMapper.writeValueAsString(payload));
 
@@ -100,15 +95,15 @@ public class NotificationService {
     }
 
     public Notification setNotificationForCreateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        Map<NotificationType, Set<String>> notificationsType = setNotificationTypeByUserRole(assessment,assessmentUsers);
+        Map<NotificationType, Set<String>> notificationsType = setNotificationTypeByUserRole(assessmentUsers);
 
-        notificationsType.forEach((notificationType,users) -> {
+        notificationsType.forEach((notificationType, users) -> {
             ObjectMapper objectMapper = new ObjectMapper();
             Map<String, String> payload = new HashMap<>();
             Notification notification = setNotification(users);
             notification.setTemplateName(notificationType);
 
-            if(isNotificationTypeCreated(notificationType))
+            if (isNotificationTypeCreated(notificationType))
                 payload = setPayloadForCreateAssessment(assessment);
             else
                 payload = setPayloadForAddUser(assessment);
@@ -121,49 +116,49 @@ public class NotificationService {
 
             saveNotification(notification);
         });
-       return null;
+        return null;
     }
 
     private boolean isNotificationTypeCreated(NotificationType notificationType) {
-        return notificationType.equals(NotificationType.Created_V1);
+        return notificationType.equals(NotificationType.CREATED_V1);
     }
 
     private Map<String, String> setPayloadForCompleteAssessment(Assessment assessment) {
         Map<String, String> payload = getPayload(assessment);
-        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at", assessment.getCreatedAt().toString());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
 
         return payload;
     }
 
     private Map<String, String> setPayloadForReopenAssessment(Assessment assessment) {
         Map<String, String> payload = getPayload(assessment);
-        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at", assessment.getCreatedAt().toString());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
 
         return payload;
     }
 
     private Map<String, String> setPayloadForCreateAssessment(Assessment assessment) {
         Map<String, String> payload = getPayload(assessment);
-        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at", assessment.getCreatedAt().toString());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
 
         return payload;
     }
 
     private Map<String, String> setPayloadForAddUser(Assessment assessment) {
         Map<String, String> payload = getPayload(assessment);
-        payload.put("organisation_name", assessment.getOrganisation().getOrganisationName());
-        payload.put("created_at", assessment.getCreatedAt().toString());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
 
         return payload;
     }
 
     private Map<String, String> getPayload(Assessment assessment) {
         Map<String, String> payload = new HashMap<>();
-        payload.put("assessment_id", String.valueOf(assessment.getAssessmentId()));
-        payload.put("assessment_name", assessment.getAssessmentName());
+        payload.put(ASSESSMENT_ID, String.valueOf(assessment.getAssessmentId()));
+        payload.put(ASSESSMENT_NAME, assessment.getAssessmentName());
         return payload;
     }
 }

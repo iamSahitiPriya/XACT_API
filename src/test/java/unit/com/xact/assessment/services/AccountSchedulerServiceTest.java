@@ -23,7 +23,7 @@ import java.util.*;
 
 import static org.mockito.Mockito.*;
 
-public class AccountSchedulerServiceTest {
+class AccountSchedulerServiceTest {
     AccountClient accountClient = mock(AccountClient.class);
     AccountSchedulerService accountSchedulerService;
     TokenService tokenService = mock(TokenService.class);

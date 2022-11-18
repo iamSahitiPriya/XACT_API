@@ -45,8 +45,8 @@ account:
   delay: "4h"
 
 token:
-  username: ${AUTH_USERNAME}
-  password: ${AUTH_PASSWORD}
+  username: '${AUTH_USERNAME:`dummy`}'
+  password: '${AUTH_PASSWORD:`dummy`}'
   url: "https://thoughtworks.okta.com"
   endpoint: "/oauth2/aus1fjygi70z7ZtVB0h8/v1/token"
   grantType: "client_credentials"
@@ -55,10 +55,10 @@ email:
   url: "https://api.thoughtworks.net"
   scope: "email.send"
   endpoint: "/notification/messages"
-  delay: "1m"
+  delay: "30s"
   notificationEnabled : false
   maskEmail : true
-  defaultEmail : "brindha.e@thoughtworks.com"
+  defaultEmail : "shashank.mishra@thoughtworks.com"
   fromEmail : "project-xact@thoughtworks.net"
   name : "X-ACT Support"
 

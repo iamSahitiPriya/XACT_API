@@ -33,6 +33,9 @@ datasources:
     schema: test_schema
     auto-commit: true
 
+email:
+  notificationEnabled : false
+
 flyway:
   datasources:
     default:

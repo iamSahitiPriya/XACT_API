@@ -1,10 +1,10 @@
 package com.xact.assessment.models;
 
 public enum NotificationType {
-    Completed_V1("Notification_For_Complete_Assessment.vm","Complete Assessment"),
-    Created_V1("Notification_For_Create_Assessment.vm", "Assessment Created"),
-    AddUser_V1("Notification_For_Add_User.vm", "User added"),
-    Reopened_V1("Notification_For_Reopen_Assessment.vm", "Assessment Reopened");
+    COMPLETED_V1("v1_notification_for_complete_assessment.vm","Assessment completed"),
+    CREATED_V1("v1_notification_for_create_assessment.vm", "Assessment created"),
+    ADD_USER_V1("v1_notification_for_add_user.vm", "User added to assessment"),
+    REOPENED_V1("v1_notification_for_reopen_assessment.vm", "Assessment reopened");
 
     private final String templateResource;
     private final String emailSubject;

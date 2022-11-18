@@ -4,14 +4,12 @@
 
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentRequest;
 import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
-import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UsersAssessmentsService;
@@ -90,8 +88,6 @@ class AssessmentServiceTest {
 
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
-        when(notificationService.setNotificationTypeByUserRole(assessment,assessmentUsers)).thenReturn(null);
-
 
         Assessment actualAssessment = assessmentService.createAssessment(assessmentRequest, loggedinUser);
 

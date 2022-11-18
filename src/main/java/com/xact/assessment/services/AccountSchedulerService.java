@@ -9,12 +9,8 @@ import com.xact.assessment.config.AccountConfig;
 import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.models.Account;
-import com.xact.assessment.utils.ResourceFileUtil;
-import io.micronaut.context.env.Environment;
 import io.micronaut.scheduling.annotation.Scheduled;
-import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +27,7 @@ public class AccountSchedulerService {
     private final ProfileConfig profileConfig;
     private final AccountConfig accountConfig;
     private final  AccountService accountService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
-
-    @Inject
-    Environment environment;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountSchedulerService.class);
 
     public AccountSchedulerService(AccountClient accountClient, TokenService tokenService, ProfileConfig profileConfig, AccountConfig accountConfig, AccountService accountService) {
         this.accountClient = accountClient;

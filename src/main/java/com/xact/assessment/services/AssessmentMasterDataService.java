@@ -217,5 +217,9 @@ public class AssessmentMasterDataService {
     public List<AssessmentModule> getModules() {
       return moduleService.getAllModules();
     }
+
+    public List<AssessmentParameter> getParameters() {
+        return parameterService.getParameters();
+    }
 }
 

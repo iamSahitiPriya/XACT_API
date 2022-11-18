@@ -95,16 +95,22 @@ public class AdminController {
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
 
-    @Get(value="/modules",produces= MediaType.APPLICATION_JSON)
+    @Get(value = "/parameters", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<ModuleDto>> getModuleMasterData(Authentication authentication){
-        LOGGER.info("Get Module Data");
-        List<AssessmentModule> assessmentModules=assessmentMasterDataService.getModules();
-        List<ModuleDto> assessmentModulesResponse = new ArrayList<>();
-        if(Objects.nonNull(assessmentModules)){
-            assessmentModules.forEach(assessmentModule ->assessmentModulesResponse.add(mapper.map(assessmentModule,ModuleDto.class)));
+    public HttpResponse<List<ParameterDto>> getParameters(Authentication authentication) {
+        LOGGER.info("Get all topics data");
+
+        List<ParameterDto> dataResponses = new ArrayList<>();
+        List<AssessmentParameter> assessmentParameters = assessmentMasterDataService.getParameters();
+
+        if (Objects.nonNull(assessmentParameters)) {
+            for (AssessmentParameter assessmentParameter : assessmentParameters) {
+                ParameterDto parameterDto = mapper.map(assessmentParameter, ParameterDto.class);
+                parameterDto.setTopic(mapper.map(assessmentParameter.getTopic(),TopicDto.class));
+                dataResponses.add(parameterDto);
+            }
         }
-        return HttpResponse.ok(assessmentModulesResponse);
+        return HttpResponse.ok(dataResponses);
     }
 
 

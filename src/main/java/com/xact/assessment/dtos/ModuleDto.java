@@ -13,11 +13,10 @@ import java.util.SortedSet;
 @EqualsAndHashCode
 @Setter
 public class ModuleDto {
+    private CategoryDto category;
     private Integer moduleId ;
     private String moduleName;
-    private String categoryName;
     private boolean isActive;
     private Date updatedAt;
     private String comments;
-    private SortedSet<AssessmentTopicDto> topics;
 }

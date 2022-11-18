@@ -298,14 +298,15 @@ class AssessmentMasterDataServiceTest {
         names.add(assessmentModule1.getModuleName());
 
         when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
-        when(moduleService.getModule(assessmentModule1.getModuleId())).thenReturn(assessmentModule1);
+        Integer moduleId = assessmentModule1.getModuleId();
+        when(moduleService.getModule(moduleId)).thenReturn(assessmentModule1);
         when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(assessmentCategory);
         when(moduleService.getModuleNames(assessmentCategory.getCategoryId())).thenReturn(names);
         doNothing().when(moduleService).updateModule(assessmentModule);
         when(moduleRepository.update(assessmentModule)).thenReturn(assessmentModule);
 
 
-        assertThrows(DuplicateRecordException.class,()-> assessmentMasterDataService.updateModule(assessmentModule1.getModuleId(),assessmentModuleRequest));
+        assertThrows(DuplicateRecordException.class,()-> assessmentMasterDataService.updateModule(moduleId,assessmentModuleRequest));
     }
 
     @Test

@@ -133,9 +133,9 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
         List<AssessmentTopic> assessmentTopics = (List<AssessmentTopic>) assessmentTopicRepository.findAll();
-        Optional<AssessmentTopic> assessmentTopic = assessmentTopics.stream().filter(assessmentTopic1 -> assessmentTopic1.getTopicName().equals("Software123")).findFirst();
+        Optional<AssessmentTopic> assessmentTopic = assessmentTopics.stream().filter(assessmentTopic1 -> assessmentTopic1.getTopicName().equals("Software1234")).findAny();
 
-        assertEquals("Software123", assessmentTopic.get().getTopicName());
+        assertEquals("Software1234", assessmentTopic.get().getTopicName());
 
         assessmentTopicRepository.delete(assessmentTopic.get());
         entityManager.getTransaction().commit();
@@ -152,9 +152,9 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
         List<AssessmentParameter> assessmentParameters = (List<AssessmentParameter>) assessmentParameterRepository.findAll();
-        Optional<AssessmentParameter> assessmentParameter = assessmentParameters.stream().filter(assessmentParameter1 -> assessmentParameter1.getParameterName().equals("Software123")).findAny();
+        Optional<AssessmentParameter> assessmentParameter = assessmentParameters.stream().filter(assessmentParameter1 -> assessmentParameter1.getParameterName().equals("Software1234")).findAny();
 
-        assertEquals("Software123", assessmentParameter.get().getParameterName());
+        assertEquals("Software1234", assessmentParameter.get().getParameterName());
 
         assessmentParameterRepository.delete(assessmentParameter.get());
         entityManager.getTransaction().commit();

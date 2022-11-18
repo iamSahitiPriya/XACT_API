@@ -85,7 +85,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testGetAssessmentsResponse() throws IOException {
+    void testGetAssessmentsResponse() {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
@@ -121,7 +121,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testGetAssessmentResponse() throws IOException {
+    void testGetAssessmentResponse()  {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();

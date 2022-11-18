@@ -75,7 +75,6 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldCreateTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
-        topicRequest.setTopicId(1);
         topicRequest.setTopicName("topic");
         topicRequest.setModule(1);
         topicRequest.setComments("");
@@ -200,7 +199,6 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldUpdateTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
-        topicRequest.setTopicId(1);
         topicRequest.setTopicName("topic");
         topicRequest.setModule(1);
         topicRequest.setComments("");

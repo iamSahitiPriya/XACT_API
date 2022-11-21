@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -22,6 +23,7 @@ public class CategoryDto implements Comparable<CategoryDto> {
     private boolean isActive;
     private Date updatedAt;
     private String comments;
+    private List<ModuleDto> modules;
 
     @Override
     public int compareTo(CategoryDto o) {

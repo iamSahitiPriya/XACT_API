@@ -126,7 +126,7 @@ public class AdminController {
         if (Objects.nonNull(assessmentTopics)) {
             for(AssessmentTopic assessmentTopic:assessmentTopics){
                 TopicDto topicDto = mapper.map(assessmentTopic,TopicDto.class);
-                topicDto.setModule(mapper.map(assessmentTopic.getModule(),ModuleDto.class));
+//                topicDto.setModule(mapper.map(assessmentTopic.getModule(),ModuleDto.class));
                 dataResponses.add(topicDto);
             }
         }
@@ -141,7 +141,7 @@ public class AdminController {
         if (Objects.nonNull(assessmentParameters)) {
             for (AssessmentParameter assessmentParameter : assessmentParameters) {
                 ParameterDto parameterDto = mapper.map(assessmentParameter, ParameterDto.class);
-                parameterDto.setTopic(mapper.map(assessmentParameter.getTopic(),TopicDto.class));
+//                parameterDto.setTopic(mapper.map(assessmentParameter.getTopic(),TopicDto.class));
                 dataResponses.add(parameterDto);
             }
         }

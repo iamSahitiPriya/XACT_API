@@ -16,12 +16,12 @@ import java.util.List;
 @AllArgsConstructor
 public class ModuleDto implements Comparable<ModuleDto> {
 
-    private CategoryDto category;
     private Integer moduleId ;
     private String moduleName;
     private boolean isActive;
     private Date updatedAt;
     private String comments;
+    private List<TopicDto> topics;
 
     @Override
     public int compareTo(ModuleDto moduleDto) {

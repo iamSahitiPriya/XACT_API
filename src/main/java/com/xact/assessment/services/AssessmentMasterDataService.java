@@ -231,9 +231,6 @@ public class AssessmentMasterDataService {
         return categoryRepository.findCategories();
     }
 
-    public List<AssessmentModule> getModules() {
-      return moduleService.listOrderByUpdatedAtDesc();
-    }
 
 
 }

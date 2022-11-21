@@ -91,7 +91,7 @@ public class AssessmentMasterDataService {
         List<String> categories = categoryRepository.getAllCategories();
         List<String> result = categories.stream()
                 .map(String::toLowerCase).map(option->option.replaceAll("\\s",""))
-                .collect(Collectors.toList());
+                .toList();
         return result.contains(categoryName.toLowerCase().replaceAll("\\s",""));
     }
 
@@ -158,7 +158,7 @@ public class AssessmentMasterDataService {
     }
     private boolean checkIfModuleUnique(String moduleName, AssessmentCategory assessmentCategory){
         List<String> modules=moduleService.getModuleNames(assessmentCategory.getCategoryId());
-        List<String> result= modules.stream().map(String :: toLowerCase).map(option ->option.replaceAll("\\s","")).collect(Collectors.toList());
+        List<String> result= modules.stream().map(String::toLowerCase).map(option -> option.replaceAll("\\s", "")).toList();
         return result.contains(moduleName.toLowerCase().replaceAll("\\s",""));
     }
 

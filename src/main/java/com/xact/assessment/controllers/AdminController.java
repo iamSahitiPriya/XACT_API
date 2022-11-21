@@ -85,7 +85,7 @@ public class AdminController {
 
     @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<CategoryDto>> getCategoriesData(Authentication authentication) {
+    public HttpResponse<List<CategoryDto>> getMasterData(Authentication authentication) {
         LOGGER.info("Get master data");
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getCategories();
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
@@ -95,21 +95,6 @@ public class AdminController {
         return HttpResponse.ok(assessmentCategoriesResponse);
     }
 
-    @Get(value = "/modules", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<ModuleDto>> getModulesData(Authentication authentication){
-        LOGGER.info("Get all modules data");
-        List<ModuleDto> moduleResponse=new ArrayList<>();
-        List<AssessmentModule> assessmentModules = assessmentMasterDataService.getModules();
-        if (Objects.nonNull(assessmentModules)) {
-            for(AssessmentModule assessmentModule:assessmentModules) {
-                ModuleDto moduleDto =mapper.map(assessmentModule,ModuleDto.class);
-                moduleDto.setCategory(mapper.map(assessmentModule.getCategory(),CategoryDto.class));
-                moduleResponse.add(moduleDto);
-            }
-        }
-        return HttpResponse.ok(moduleResponse);
-    }
 
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)

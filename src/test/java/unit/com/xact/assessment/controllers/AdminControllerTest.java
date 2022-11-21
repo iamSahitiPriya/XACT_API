@@ -76,7 +76,7 @@ class AdminControllerTest {
         assessmentCategoriesResponse.add(categoryDto);
         when(assessmentMasterDataService.getCategories()).thenReturn(categories);
 
-        HttpResponse<List<CategoryDto>> actualResponse = adminController.getCategoriesData(authentication);
+        HttpResponse<List<CategoryDto>> actualResponse = adminController.getMasterData(authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         assertEquals("category",actualResponse.body().get(0).getCategoryName());
@@ -118,7 +118,6 @@ class AdminControllerTest {
         categoryDto.setActive(assessmentCategory.getIsActive());
         categoryDto.setComments(assessmentCategory.getComments());
         categoryDto.setUpdatedAt(assessmentCategory.getUpdatedAt());
-        moduleDto.setCategory(categoryDto);
         moduleDto.setComments(assessmentModule.getComments());
         moduleDto.setActive(assessmentModule.getIsActive());
         moduleDto.setUpdatedAt(assessmentModule.getUpdatedAt());

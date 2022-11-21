@@ -102,10 +102,10 @@ public class AdminControllerTest {
                 .bearerAuth("anything"));
 
         List<AssessmentModule> assessmentModules = (List<AssessmentModule>) moduleRepository.findAll();
-        AssessmentModule assessmentModule = assessmentModules.stream().filter(assessmentModule1 -> assessmentModule1.getModuleName().equals("Module1")).findFirst().get();
+        AssessmentModule assessmentModule = assessmentModules.stream().filter(assessmentModule1 -> assessmentModule1.getModuleName().equals("ModuleName")).findFirst().get();
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-        assertEquals("Module1", assessmentModule.getModuleName());
+        assertEquals("ModuleName", assessmentModule.getModuleName());
 
         moduleRepository.delete(assessmentModule);
         entityManager.getTransaction().commit();
@@ -255,16 +255,8 @@ public class AdminControllerTest {
     }
 
     @Test
-    void getAllCategories()  {
-        var actualResult  = client.toBlocking().exchange(HttpRequest.GET("/v1/admin/categories")
-                .bearerAuth("anything"));
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResult.getStatus());
-    }
-
-    @Test
-    void getAllTopics() throws IOException {
-        var actualResult  = client.toBlocking().exchange(HttpRequest.GET("/v1/admin/topics")
+    void getAllCategories() {
+        var actualResult = client.toBlocking().exchange(HttpRequest.GET("/v1/admin/categories")
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), actualResult.getStatus());
@@ -272,7 +264,7 @@ public class AdminControllerTest {
 
     @Test
     void updateCategory() {
-        AssessmentCategory assessmentCategory = new AssessmentCategory("new category",true,"");
+        AssessmentCategory assessmentCategory = new AssessmentCategory("new category", true, "");
 
         categoryRepository.save(assessmentCategory);
         entityManager.getTransaction().commit();
@@ -281,7 +273,7 @@ public class AdminControllerTest {
 
         String dataRequest = "{" + "\"categoryId\"" + ":" + assessmentCategory.getCategoryId() + "," + "\"categoryName\"" + ":" + "\"modified category\"" + "," + "\"isActive\"" + ":" + "\"true\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/categories/" + assessmentCategory.getCategoryId(),dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/categories/" + assessmentCategory.getCategoryId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -289,7 +281,7 @@ public class AdminControllerTest {
         entityManager.getTransaction().begin();
         AssessmentCategory assessmentCategory1 = categoryRepository.findCategoryById(assessmentCategory.getCategoryId());
 
-        assertEquals("modified category",assessmentCategory1.getCategoryName());
+        assertEquals("modified category", assessmentCategory1.getCategoryName());
 
         categoryRepository.delete(assessmentCategory1);
         entityManager.getTransaction().commit();
@@ -308,7 +300,7 @@ public class AdminControllerTest {
 
         String dataRequest = "[{" + "\"moduleName\"" + ":" + "\"" + assessmentModule.getModuleName() + "\"" + "," + "\"isActive\"" + ":" + expectedResult + "," + "\"category\"" + ":" + assessmentModule.getCategory().getCategoryId() + "}]";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/modules/" + assessmentModule.getModuleId(),dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/modules/" + assessmentModule.getModuleId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -316,7 +308,7 @@ public class AdminControllerTest {
         entityManager.getTransaction().begin();
         AssessmentModule assessmentModule1 = moduleRepository.findByModuleId(assessmentModule.getModuleId());
 
-        assertEquals(expectedResult,assessmentModule1.getIsActive());
+        assertEquals(expectedResult, assessmentModule1.getIsActive());
 
         moduleRepository.update(assessmentModule);
         entityManager.getTransaction().commit();
@@ -335,7 +327,7 @@ public class AdminControllerTest {
 
         String dataRequest = "[{" + "\"topicName\"" + ":" + "\"" + assessmentTopic.getTopicName() + "\"" + "," + "\"isActive\"" + ":" + expectedResult + "," + "\"module\"" + ":" + assessmentTopic.getModule().getModuleId() + "}]";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/topics/" + assessmentTopic.getTopicId(),dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/topics/" + assessmentTopic.getTopicId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -343,7 +335,7 @@ public class AdminControllerTest {
         entityManager.getTransaction().begin();
         AssessmentTopic assessmentTopic1 = assessmentTopicRepository.findByTopicId(assessmentTopic.getTopicId());
 
-        assertEquals(expectedResult,assessmentTopic1.getIsActive());
+        assertEquals(expectedResult, assessmentTopic1.getIsActive());
 
         assessmentTopicRepository.update(assessmentTopic);
         entityManager.getTransaction().commit();
@@ -362,7 +354,7 @@ public class AdminControllerTest {
 
         String dataRequest = "[{" + "\"parameterName\"" + ":" + "\"" + assessmentParameter.getParameterName() + "\"" + "," + "\"isActive\"" + ":" + expectedResult + "," + "\"topic\"" + ":" + assessmentParameter.getTopic().getTopicId() + "}]";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/parameters/" + assessmentParameter.getParameterId(),dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/parameters/" + assessmentParameter.getParameterId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -370,7 +362,7 @@ public class AdminControllerTest {
         entityManager.getTransaction().begin();
         AssessmentParameter assessmentParameter1 = assessmentParameterRepository.findByParameterId(assessmentParameter.getParameterId());
 
-        assertEquals(expectedResult,assessmentParameter1.getIsActive());
+        assertEquals(expectedResult, assessmentParameter1.getIsActive());
 
         assessmentParameterRepository.update(assessmentParameter);
         entityManager.getTransaction().commit();
@@ -378,8 +370,8 @@ public class AdminControllerTest {
 
     @Test
     void updateQuestion() {
-        Optional<Question> question= questionRepository.findById(1);
-        Question question1 =question.get();
+        Optional<Question> question = questionRepository.findById(1);
+        Question question1 = question.get();
 
         String questionText = question1.getQuestionText();
 
@@ -387,18 +379,18 @@ public class AdminControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"questionId\"" + ":" +  question1.getQuestionId()  + "," + "\"questionText\"" + ":" + "\"Updated Question\"" + "," + "\"parameter\"" + ":" + question1.getParameter().getParameterId() + "}";
+        String dataRequest = "{" + "\"questionId\"" + ":" + question1.getQuestionId() + "," + "\"questionText\"" + ":" + "\"Updated Question\"" + "," + "\"parameter\"" + ":" + question1.getParameter().getParameterId() + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/questions/" + question1.getQuestionId(),dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/questions/" + question1.getQuestionId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
         entityManager.getTransaction().begin();
-        Optional<Question> question2= questionRepository.findById(1);
+        Optional<Question> question2 = questionRepository.findById(1);
         Question question3 = question2.get();
 
-        assertEquals("Updated Question",question3.getQuestionText());
+        assertEquals("Updated Question", question3.getQuestionText());
 
         question3.setQuestionText(questionText);
 
@@ -418,9 +410,9 @@ public class AdminControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"referenceId\"" + ":" +  assessmentTopicReference1.getReferenceId()  + "," + "\"reference\"" + ":" + "\"Updated Reference\"" + "," + "\"topic\"" + ":" + assessmentTopicReference1.getTopic().getTopicId() + "}";
+        String dataRequest = "{" + "\"referenceId\"" + ":" + assessmentTopicReference1.getReferenceId() + "," + "\"reference\"" + ":" + "\"Updated Reference\"" + "," + "\"topic\"" + ":" + assessmentTopicReference1.getTopic().getTopicId() + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/topicReferences/" + assessmentTopicReference1.getReferenceId(),dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/topicReferences/" + assessmentTopicReference1.getReferenceId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -429,7 +421,7 @@ public class AdminControllerTest {
         Optional<AssessmentTopicReference> assessmentTopicReference2 = assessmentTopicReferenceRepository.findById(1);
         AssessmentTopicReference assessmentTopicReference3 = assessmentTopicReference2.get();
 
-        assertEquals("Updated Reference",assessmentTopicReference3.getReference());
+        assertEquals("Updated Reference", assessmentTopicReference3.getReference());
 
         assessmentTopicReference3.setReference(reference);
 
@@ -449,20 +441,20 @@ public class AdminControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"referenceId\"" + ":" +  assessmentParameterReference1.getReferenceId()  + "," + "\"reference\"" + ":" + "\"Updated Reference\"" + "," + "\"parameter\"" + ":" + assessmentParameterReference1.getParameter().getParameterId() + "}";
+        String dataRequest = "{" + "\"referenceId\"" + ":" + assessmentParameterReference1.getReferenceId() + "," + "\"reference\"" + ":" + "\"Updated Reference\"" + "," + "\"parameter\"" + ":" + assessmentParameterReference1.getParameter().getParameterId() + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/parameterReferences/" + assessmentParameterReference1.getReferenceId(),dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/parameterReferences/" + assessmentParameterReference1.getReferenceId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
         entityManager.getTransaction().begin();
-        Optional<AssessmentParameterReference> assessmentParameterReference2 =assessmentParameterReferenceRepository.findById(1);
+        Optional<AssessmentParameterReference> assessmentParameterReference2 = assessmentParameterReferenceRepository.findById(1);
         AssessmentParameterReference assessmentParameterReference3 = assessmentParameterReference2.get();
 
-        assertEquals("Updated Reference",assessmentParameterReference3.getReference());
+        assertEquals("Updated Reference", assessmentParameterReference3.getReference());
 
-       assessmentParameterReference3.setReference(reference);
+        assessmentParameterReference3.setReference(reference);
 
         assessmentParameterReferenceRepository.update(assessmentParameterReference1);
         entityManager.getTransaction().commit();

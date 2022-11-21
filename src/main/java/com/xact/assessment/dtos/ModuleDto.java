@@ -4,16 +4,18 @@
 
 package com.xact.assessment.dtos;
 
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
-import java.util.List;
+import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
 @Setter
-@AllArgsConstructor
 public class ModuleDto implements Comparable<ModuleDto> {
 
     private Integer moduleId ;
@@ -21,12 +23,12 @@ public class ModuleDto implements Comparable<ModuleDto> {
     private boolean isActive;
     private Date updatedAt;
     private String comments;
-    private List<TopicDto> topics;
+    private SortedSet<TopicDto> topics;
+
 
     @Override
     public int compareTo(ModuleDto moduleDto) {
         return moduleDto.updatedAt.compareTo(updatedAt);
     }
+
 }
-
-

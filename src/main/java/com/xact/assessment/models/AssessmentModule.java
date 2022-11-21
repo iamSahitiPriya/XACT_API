@@ -73,7 +73,6 @@ public class AssessmentModule {
         return topics == null ? null : topics.stream().filter(AssessmentTopic::getIsActive).collect(Collectors.toSet());
     }
 
-
     public double getModuleAverage() {
         double topicSum = 0;
         int topicCount = 0;
@@ -93,6 +92,13 @@ public class AssessmentModule {
 
 
     public AssessmentModule(String moduleName, AssessmentCategory category, boolean isActive, String comments) {
+        this.moduleName = moduleName;
+        this.category = category;
+        this.isActive = isActive;
+        this.comments = comments;
+    }
+    public AssessmentModule(Integer moduleId,String moduleName, AssessmentCategory category, boolean isActive, String comments) {
+        this.moduleId=moduleId;
         this.moduleName = moduleName;
         this.category = category;
         this.isActive = isActive;

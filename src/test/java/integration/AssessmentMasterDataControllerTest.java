@@ -5,7 +5,6 @@
 package integration;
 
 import com.xact.assessment.repositories.AccessControlRepository;
-import com.xact.assessment.utils.ResourceFileUtil;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
@@ -15,7 +14,6 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

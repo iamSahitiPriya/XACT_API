@@ -88,8 +88,8 @@ public class AdminController {
 
     @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<CategoryDto>> getCategories(Authentication authentication) {
-        LOGGER.info("Get all category data");
+    public HttpResponse<List<CategoryDto>> getMasterData(Authentication authentication) {
+        LOGGER.info("Get master data");
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getCategories();
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(assessmentCategories)) {
@@ -100,53 +100,19 @@ public class AdminController {
 
     @Get(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AdminDataResponse>> getModules(Authentication authentication) throws JsonProcessingException {
+    public HttpResponse<List<ModuleDto>> getModulesData(Authentication authentication){
         LOGGER.info("Get all modules data");
-        List<AdminDataResponse> dataResponses = new ArrayList<>();
-        Map<CategoryDto,List<ModuleDto>> categoryMap = new LinkedHashMap<>();
+        List<ModuleDto> moduleResponse=new ArrayList<>();
         List<AssessmentModule> assessmentModules = assessmentMasterDataService.getModules();
-
         if (Objects.nonNull(assessmentModules)) {
-            for(AssessmentModule assessmentModule : assessmentModules) {
-                getModulesWithCategory(categoryMap, assessmentModule);
-            }
-
-            dataResponses = getDataResponse(categoryMap);
-        }
-        return HttpResponse.ok(dataResponses);
-    }
-
-    @Get(value = "/topics", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<TopicDto>> getTopics(Authentication authentication) {
-        LOGGER.info("Get all topics data");
-        List<TopicDto> dataResponses = new ArrayList<>();
-        List<AssessmentTopic> assessmentTopics = assessmentMasterDataService.getTopics();
-
-        if (Objects.nonNull(assessmentTopics)) {
-            for(AssessmentTopic assessmentTopic:assessmentTopics){
-                TopicDto topicDto = mapper.map(assessmentTopic,TopicDto.class);
-//                topicDto.setModule(mapper.map(assessmentTopic.getModule(),ModuleDto.class));
-                dataResponses.add(topicDto);
+            for(AssessmentModule assessmentModule:assessmentModules) {
+                ModuleDto moduleDto =mapper.map(assessmentModule,ModuleDto.class);
+                moduleResponse.add(moduleDto);
             }
         }
-        return HttpResponse.ok(dataResponses);
+        return HttpResponse.ok(moduleResponse);
     }
-    @Get(value = "/parameters", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<ParameterDto>> getParameters(Authentication authentication) {
-        LOGGER.info("Get all topics data");
-        List<ParameterDto> dataResponses = new ArrayList<>();
-        List<AssessmentParameter> assessmentParameters = assessmentMasterDataService.getParameters();
-        if (Objects.nonNull(assessmentParameters)) {
-            for (AssessmentParameter assessmentParameter : assessmentParameters) {
-                ParameterDto parameterDto = mapper.map(assessmentParameter, ParameterDto.class);
-//                parameterDto.setTopic(mapper.map(assessmentParameter.getTopic(),TopicDto.class));
-                dataResponses.add(parameterDto);
-            }
-        }
-        return HttpResponse.ok(dataResponses);
-    }
+
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
@@ -157,11 +123,9 @@ public class AdminController {
 
     @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentModule> createAssessmentModule(@Body @Valid List<AssessmentModuleRequest> assessmentModules, Authentication authentication) {
+    public HttpResponse<AssessmentModule> createAssessmentModule(@Body @Valid AssessmentModuleRequest assessmentModule, Authentication authentication) {
         LOGGER.info("Admin: Create module");
-        for (AssessmentModuleRequest assessmentModule : assessmentModules) {
             assessmentMasterDataService.createAssessmentModule(assessmentModule);
-        }
         return HttpResponse.ok();
     }
 
@@ -291,30 +255,5 @@ public class AdminController {
         return assessmentMasterDataService.getCategory(categoryId);
     }
 
-
-    private void getModulesWithCategory(Map<CategoryDto, List<ModuleDto>> categoryMap, AssessmentModule assessmentModule) {
-        CategoryDto categoryDto = mapper.map(assessmentModule.getCategory(),CategoryDto.class);
-        if(categoryMap.containsKey(categoryDto)) {
-            List<ModuleDto> module = categoryMap.get(categoryDto);
-            module.add(mapper.map(assessmentModule,ModuleDto.class));
-            categoryMap.put(categoryDto,module);
-        }
-        else {
-            List<ModuleDto> module = new ArrayList<>();
-            module.add(mapper.map(assessmentModule,ModuleDto.class));
-            categoryMap.put(categoryDto,module);
-        }
-    }
-
-    private List<AdminDataResponse> getDataResponse(Map<CategoryDto, List<ModuleDto>> categoryMap) {
-        List<AdminDataResponse> dataResponses = new ArrayList<>();
-        categoryMap.forEach((category, modules) -> {
-            AdminDataResponse adminModuleResponse = new AdminDataResponse();
-            adminModuleResponse.setCategory(category);
-            adminModuleResponse.setModules(modules);
-            dataResponses.add(adminModuleResponse);
-        });
-        return dataResponses;
-    }
 
 }

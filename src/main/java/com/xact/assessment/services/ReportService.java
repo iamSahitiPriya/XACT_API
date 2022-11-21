@@ -72,11 +72,11 @@ public class ReportService {
     public List<AssessmentCategory> generateSunburstData(Integer assessmentId) {
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
-        List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
-        for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
+        List<AssessmentCategory> assessmentCategories = categoryRepository.findAll();
+        for (AssessmentCategory assessmentCategory : assessmentCategories) {
             fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData);
         }
-        return assessmentCategoryList;
+        return assessmentCategories;
 
 
     }

@@ -610,7 +610,12 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
             AssessmentParameter parameter = parameterService.getParameter(parameterId).orElseThrow();
-            userQuestionService.saveUserQuestion(assessment,parameter,questionText,answerText);
+            UserQuestion userQuestion = new UserQuestion();
+            userQuestion.setAssessment(assessment);
+            userQuestion.setParameter(parameter);
+            userQuestion.setQuestion(questionText);
+            userQuestion.setAnswer(answerText);
+            userQuestionService.saveUserQuestion(userQuestion);
             updateAssessment(assessment);
         }
         return HttpResponse.ok();

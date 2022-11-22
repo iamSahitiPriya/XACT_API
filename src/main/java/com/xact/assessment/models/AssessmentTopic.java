@@ -78,7 +78,7 @@ public class AssessmentTopic {
         return isActive;
     }
 
-    public Set<AssessmentParameter> getParameters() {
+    public Set<AssessmentParameter> getActiveParameters() {
         return parameters == null ? null : parameters.stream().filter(AssessmentParameter::getIsActive).collect(Collectors.toSet());
     }
 

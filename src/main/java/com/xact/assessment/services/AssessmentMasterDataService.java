@@ -58,6 +58,7 @@ public class AssessmentMasterDataService {
         List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
         if (!assessmentModules.isEmpty()) {
             for (AssessmentModule assessmentModule : assessmentModules) {
+                assessmentModule.setTopics(assessmentModule.getActiveTopics());
                 AssessmentCategory category = assessmentModule.getCategory();
                 categorySet.add(category);
 

@@ -13,10 +13,7 @@ import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Singleton
 public class AssessmentMasterDataService {
@@ -179,15 +176,16 @@ public class AssessmentMasterDataService {
 
     }
 
-    public void updateTopic(Integer topicId, AssessmentTopicRequest assessmentTopicRequest) {
+    public AssessmentTopic updateTopic(Integer topicId, AssessmentTopicRequest assessmentTopicRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
         assessmentTopic.setModule(assessmentModule);
         assessmentTopic.setTopicName(assessmentTopicRequest.getTopicName());
         assessmentTopic.setActive(assessmentTopicRequest.isActive());
         assessmentTopic.setComments(assessmentTopicRequest.getComments());
-
+        assessmentTopic.setUpdatedAt(new Date());
         topicService.updateTopic(assessmentTopic);
+        return assessmentTopic;
     }
 
     public void updateParameter(Integer parameterId, AssessmentParameterRequest assessmentParameterRequest) {

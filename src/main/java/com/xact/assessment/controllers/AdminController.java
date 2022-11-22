@@ -17,6 +17,7 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import org.apache.poi.ss.formula.functions.T;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
@@ -203,10 +204,13 @@ public class AdminController {
 
     @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentTopic> updateTopic(@PathVariable("topicId") Integer topicId, @Body  @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
+    public HttpResponse<TopicResponse> updateTopic(@PathVariable("topicId") Integer topicId, @Body  @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
         LOGGER.info("Admin: Update topic: {}",topicId);
-        assessmentMasterDataService.updateTopic(topicId, assessmentTopicRequest);
-        return HttpResponse.ok();
+        AssessmentTopic assessmentTopic = assessmentMasterDataService.updateTopic(topicId, assessmentTopicRequest);
+        TopicResponse topicResponse = mapper.map(assessmentTopic,TopicResponse.class);
+        topicResponse.setUpdatedAt(assessmentTopic.getUpdatedAt());
+        topicResponse.setCategoryId(assessmentTopic.getModule().getCategory().getCategoryId());
+        return HttpResponse.ok(topicResponse);
     }
 
     @Put(value = "/parameters/{parameterId}", produces = MediaType.APPLICATION_JSON)

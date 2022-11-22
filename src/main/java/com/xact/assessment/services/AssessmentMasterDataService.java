@@ -105,10 +105,11 @@ public class AssessmentMasterDataService {
         }
     }
 
-    public void createAssessmentTopics(AssessmentTopicRequest assessmentTopicRequest) {
+    public AssessmentTopic createAssessmentTopics(AssessmentTopicRequest assessmentTopicRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
         AssessmentTopic assessmentTopic = new AssessmentTopic(assessmentTopicRequest.getTopicName(), assessmentModule, assessmentTopicRequest.isActive(), assessmentTopicRequest.getComments());
         topicService.createTopic(assessmentTopic);
+        return assessmentTopic;
     }
 
 

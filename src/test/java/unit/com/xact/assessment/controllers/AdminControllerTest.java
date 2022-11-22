@@ -135,7 +135,7 @@ class AdminControllerTest {
         topicRequest.setTopicName("Hello this is a topic");
         topicRequest.setActive(false);
 
-        HttpResponse<AssessmentTopic> actualResponse = adminController.createTopics(topicRequest, authentication);
+        HttpResponse<TopicResponse> actualResponse = adminController.createTopics(topicRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 

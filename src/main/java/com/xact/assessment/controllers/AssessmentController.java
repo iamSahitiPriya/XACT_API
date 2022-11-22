@@ -39,6 +39,7 @@ public class AssessmentController {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
+    private final UserQuestionService userQuestionService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
@@ -46,7 +47,7 @@ public class AssessmentController {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, UserQuestionService userQuestionService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
@@ -55,6 +56,7 @@ public class AssessmentController {
         this.parameterService = parameterService;
         this.topicService = topicService;
         this.questionService = questionService;
+        this.userQuestionService = userQuestionService;
     }
 
 
@@ -601,10 +603,23 @@ public class AssessmentController {
         }
     }
 
+    @Patch(value = "/user_question/{assessmentId}/{parameterId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse saveUserQuestionAndAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String questionText,@Body @Nullable String answerText, Authentication authentication) {
+        LOGGER.info("Update individual user added questions. assessment: {}, parameter:{}", assessmentId, parameterId);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if (assessment.isEditable()) {
+            AssessmentParameter parameter = parameterService.getParameter(parameterId).orElseThrow();
+            userQuestionService.saveUserQuestion(assessment,parameter,questionText,answerText);
+            updateAssessment(assessment);
+        }
+        return HttpResponse.ok();
+    }
 
     private void updateAssessment(Assessment assessment) {
         assessment.setUpdatedAt(new Date());
         LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessmentService.updateAssessment(assessment);
     }
+
 }

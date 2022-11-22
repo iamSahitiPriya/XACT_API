@@ -39,37 +39,7 @@ class AdminControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), categoryHttpResponse.getStatus());
     }
 
-    @Test
-    void shouldGetCategories() {
-        Date created = new Date(2022 - 11 - 14);
-        Date updated = new Date(2022 - 11 - 24);
 
-        AssessmentCategory assessmentCategory=new AssessmentCategory();
-        assessmentCategory.setCategoryId(1);
-        assessmentCategory.setCategoryName("category");
-        assessmentCategory.setActive(true);
-        assessmentCategory.setComments("comments");
-        assessmentCategory.setCreatedAt(created);
-        assessmentCategory.setCreatedAt(updated);
-
-        CategoryDto categoryDto= new CategoryDto();
-        categoryDto.setCategoryId(assessmentCategory.getCategoryId());
-        categoryDto.setCategoryName(assessmentCategory.getCategoryName());
-        categoryDto.setActive(assessmentCategory.getIsActive());
-        categoryDto.setComments(assessmentCategory.getComments());
-        categoryDto.setUpdatedAt(assessmentCategory.getUpdatedAt());
-
-        List<AssessmentCategory> categories=new ArrayList<>();
-        categories.add(assessmentCategory);
-        List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        assessmentCategoriesResponse.add(categoryDto);
-        when(assessmentMasterDataService.getCategories()).thenReturn(categories);
-
-        HttpResponse<List<CategoryDto>> actualResponse = adminController.getMasterData(authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        assertEquals("category",actualResponse.body().get(0).getCategoryName());
-    }
     @Test
     void createAssessmentModule() {
         AssessmentModuleRequest moduleRequest = new AssessmentModuleRequest();

@@ -97,4 +97,11 @@ public class AssessmentModule {
         this.isActive = isActive;
         this.comments = comments;
     }
+    public AssessmentModule(Integer moduleId,String moduleName, AssessmentCategory category, boolean isActive, String comments) {
+        this.moduleId=moduleId;
+        this.moduleName = moduleName;
+        this.category = category;
+        this.isActive = isActive;
+        this.comments = comments;
+    }
 }

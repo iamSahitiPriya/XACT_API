@@ -176,7 +176,8 @@ public class AssessmentMasterDataService {
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameterRequest.getTopic()).orElseThrow();
         assessmentParameter.setParameterName(assessmentParameterRequest.getParameterName());
         assessmentParameter.setTopic(assessmentTopic);
-
+        assessmentParameter.setActive(assessmentParameterRequest.isActive());
+        assessmentParameter.setComments(assessmentParameterRequest.getComments());
         parameterService.updateParameter(assessmentParameter);
     }
 

@@ -74,10 +74,11 @@ public class AssessmentMasterDataService {
         return categories;
     }
 
-    public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
+    public AssessmentCategory createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
         if (!checkIfCategoryUnique(assessmentCategoryRequest.getCategoryName())) {
             AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
             categoryRepository.save(assessmentCategory);
+            return assessmentCategory;
         } else {
             throw new DuplicateRecordException("Duplicate records are not allowed");
         }
@@ -137,7 +138,7 @@ public class AssessmentMasterDataService {
 
     }
 
-    public void updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
+    public AssessmentCategory updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
         if (assessmentCategory.getCategoryName().equals(assessmentCategoryRequest.getCategoryName())) {
             assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
             assessmentCategory.setActive(assessmentCategoryRequest.isActive());
@@ -153,6 +154,7 @@ public class AssessmentMasterDataService {
                 throw new DuplicateRecordException("Duplicate records are not allowed");
             }
         }
+        return assessmentCategory;
     }
     private boolean checkIfModuleUnique(String moduleName, AssessmentCategory assessmentCategory){
         List<String> modules=moduleService.getModuleNames(assessmentCategory.getCategoryId());

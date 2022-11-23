@@ -116,10 +116,11 @@ public class AdminController {
 
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
+    public HttpResponse<CategoryDto> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
         LOGGER.info("Admin: Create category");
-        assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
-            return HttpResponse.ok();
+        AssessmentCategory assessmentCategory1 = assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
+        CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
+            return HttpResponse.ok(categoryDto);
     }
 
     @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)
@@ -184,14 +185,15 @@ public class AdminController {
 
     @Put(value = "/categories/{categoryId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentCategory> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body  @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
+    public HttpResponse<CategoryDto> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body  @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
         LOGGER.info("Admin: Update category: {}",categoryId);
         AssessmentCategory assessmentCategory = getCategory(categoryId);
         assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
         assessmentCategory.setActive(assessmentCategoryRequest.isActive());
         assessmentCategory.setComments(assessmentCategoryRequest.getComments());
-        assessmentMasterDataService.updateCategory(assessmentCategory,assessmentCategoryRequest);
-        return HttpResponse.ok();
+        AssessmentCategory assessmentCategory1 = assessmentMasterDataService.updateCategory(assessmentCategory,assessmentCategoryRequest);
+        CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
+        return HttpResponse.ok(categoryDto);
     }
 
     @Put(value = "/modules/{moduleId}", produces = MediaType.APPLICATION_JSON)

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.dtos;
@@ -15,18 +15,17 @@ import java.util.Date;
 @Getter
 @EqualsAndHashCode
 @Setter
-public class CategoryDto implements Comparable<CategoryDto> {
+public class ModuleDto implements Comparable<ModuleDto> {
 
-    private Integer categoryId;
-    private String categoryName;
+    private CategoryDto category;
+    private Integer moduleId ;
+    private String moduleName;
     private boolean isActive;
     private Date updatedAt;
     private String comments;
 
-
     @Override
-    public int compareTo(CategoryDto o) {
-        return o.categoryId - categoryId;
+    public int compareTo(ModuleDto moduleDto) {
+        return moduleDto.updatedAt.compareTo(updatedAt);
     }
 }
-

@@ -1,0 +1,23 @@
+<html>
+<body>
+<div style="height:50%; width: 50%;margin: 10%;background-color: white;">
+    <hr style="height: 4px;background: #4BA1AC; border: none;"/>
+    <h1 style="color: #4BA1AC; font-size: 20px;">Thoughtworks X-Act</h1>
+    <p style="padding-left: 5px;font-size: 15px;">Hello there,</p>
+    <p style="padding-left: 5px;font-size: 13px;font-style: italic;">You are receiving this email as you have created an assessment <b style="color:#4BA1AC ;">${assessment.assessmentName}</b> on X- Act.</p>
+    <br>
+    <p>You can access X -Act Link <a style="text-decoration: none;color: #4BA1AC" href="${homePageUrl}"> here </a>.</p>
+    <p>Please visit our microsite for information on X - Act.</p>
+    <p>If you have any questions reach out to Support mail id.</p>
+    <br>
+    <button style="color: white; background-color: #4BA1AC; border: none;height: 30px;"><a style="text-decoration: none;color: white" href="${url}${assessment.assessmentId}">View Assessment</a></button>
+    </div>
+</div>
+</body>
+</html>
+
+
+
+
+
+

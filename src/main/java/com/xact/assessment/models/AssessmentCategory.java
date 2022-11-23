@@ -18,7 +18,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
@@ -92,6 +91,7 @@ public class AssessmentCategory {
         this.isActive = isActive;
         this.comments = comments;
     }
+
     public AssessmentCategory( Integer categoryId,String categoryName, boolean isActive, String comments) {
         this.categoryId=categoryId;
         this.categoryName = categoryName;

@@ -34,6 +34,8 @@ datasources:
 
 profile:
   type: "dev"
+  url: "https://dev.xact.thoughtworks.net/assessment/"
+  homePageUrl: "https://dev.xact.thoughtworks.net/"
 
 token:
   username: ${AUTH_USERNAME}
@@ -46,6 +48,16 @@ account:
   url: "https://api.thoughtworks.net/account"
   scope: "account.read.internal"
   endpoint: "/api/accounts"
+
+email:
+  url: "https://api.thoughtworks.net"
+  scope: "email.send"
+  endpoint: "/notification/messages"
+  delay: "30s"
+  notificationEnabled : true
+  maskEmail : false
+  fromEmail: "project-xact@thoughtworks.net"
+  name: "X-ACT Support"
 
 flyway:
   datasources:

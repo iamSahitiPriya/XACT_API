@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -135,11 +136,11 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
         List<AssessmentTopic> assessmentTopics = (List<AssessmentTopic>) assessmentTopicRepository.findAll();
-        AssessmentTopic assessmentTopic = assessmentTopics.get(assessmentTopics.size() - 1);
+        Optional<AssessmentTopic> assessmentTopic = assessmentTopics.stream().filter(assessmentTopic1 -> assessmentTopic1.getTopicName().equals("Software1234")).findAny();
 
-        assertEquals("Software", assessmentTopic.getTopicName());
+        assertEquals("Software1234", assessmentTopic.get().getTopicName());
 
-        assessmentTopicRepository.delete(assessmentTopic);
+        assessmentTopicRepository.delete(assessmentTopic.get());
         entityManager.getTransaction().commit();
 
     }
@@ -154,11 +155,11 @@ class AssessmentMasterDataControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
         List<AssessmentParameter> assessmentParameters = (List<AssessmentParameter>) assessmentParameterRepository.findAll();
-        AssessmentParameter assessmentParameter = assessmentParameters.get(assessmentParameters.size() - 1);
+        Optional<AssessmentParameter> assessmentParameter = assessmentParameters.stream().filter(assessmentParameter1 -> assessmentParameter1.getParameterName().equals("Software1234")).findAny();
 
-        assertEquals("Software", assessmentParameter.getParameterName());
+        assertEquals("Software1234", assessmentParameter.get().getParameterName());
 
-        assessmentParameterRepository.delete(assessmentParameter);
+        assessmentParameterRepository.delete(assessmentParameter.get());
         entityManager.getTransaction().commit();
     }
 

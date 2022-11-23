@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Singleton
 public class AssessmentMasterDataService {
@@ -158,13 +157,13 @@ public class AssessmentMasterDataService {
     }
     private boolean checkIfModuleUnique(String moduleName, AssessmentCategory assessmentCategory){
         List<String> modules=moduleService.getModuleNames(assessmentCategory.getCategoryId());
-        List<String> result= modules.stream().map(String::toLowerCase).map(option -> option.replaceAll("\\s", "")).toList();
+        List<String> result= modules.stream().map(String :: toLowerCase).map(option ->option.replaceAll("\\s","")).toList();
         return result.contains(moduleName.toLowerCase().replaceAll("\\s",""));
     }
 
     public void updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(moduleId);
-        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());;
+        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());
         if (assessmentModule.getModuleName().equals(assessmentModuleRequest.getModuleName()) || !checkIfModuleUnique(assessmentModuleRequest.getModuleName(), assessmentCategory)) {
             assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
             assessmentModule.setCategory(assessmentCategory);
@@ -230,8 +229,5 @@ public class AssessmentMasterDataService {
     public List<AssessmentCategory> getCategories() {
         return categoryRepository.findCategories();
     }
-
-
-
 }
 

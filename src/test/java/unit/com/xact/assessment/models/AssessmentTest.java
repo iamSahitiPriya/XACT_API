@@ -11,7 +11,7 @@ import java.util.Set;
 class AssessmentTest {
 
     @Test
-    void shouldCheckForAssessmentStatus() {
+    void shouldCheckForAssessmentStatusWhenNotDeleted() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -30,6 +30,51 @@ class AssessmentTest {
 
         boolean actualResponse = assessment.isEditable();
         Assertions.assertFalse(actualResponse);
+    }
+
+    @Test
+    void shouldCheckForAssessmentStatusWhenDeleted() {
+        String userEmail = "dummy@test.com";
+        Assessment assessment = new Assessment();
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        Organisation organisation = new Organisation();
+        organisation.setSize(5);
+        organisation.setIndustry("new");
+        organisation.setDomain("new");
+        organisation.setOrganisationName("testorg");
+        assessment.setAssessmentName("mocked assessment");
+        assessment.setAssessmentPurpose("Client Assessment");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        assessment.setDeleted(true);
+        assessment.setOrganisation(organisation);
+        UserId userId = new UserId(userEmail, assessment);
+        assessmentUsers.setUserId(userId);
+        assessmentUsers.setRole(AssessmentRole.Owner);
+
+        boolean actualResponse = assessment.isEditable();
+        Assertions.assertFalse(actualResponse);
+    }
+
+    @Test
+    void shouldCheckForAssessmentStatusWhenNotDeletedNotCompleted() {
+        String userEmail = "dummy@test.com";
+        Assessment assessment = new Assessment();
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        Organisation organisation = new Organisation();
+        organisation.setSize(5);
+        organisation.setIndustry("new");
+        organisation.setDomain("new");
+        organisation.setOrganisationName("testorg");
+        assessment.setAssessmentName("mocked assessment");
+        assessment.setAssessmentPurpose("Client Assessment");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        assessment.setOrganisation(organisation);
+        UserId userId = new UserId(userEmail, assessment);
+        assessmentUsers.setUserId(userId);
+        assessmentUsers.setRole(AssessmentRole.Owner);
+
+        boolean actualResponse = assessment.isEditable();
+        Assertions.assertTrue(actualResponse);
     }
 
     @Test

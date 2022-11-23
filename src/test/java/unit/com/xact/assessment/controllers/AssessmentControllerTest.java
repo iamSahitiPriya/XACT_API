@@ -18,8 +18,7 @@ import java.util.*;
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationEffort.MEDIUM;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -1516,6 +1515,54 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
+    }
+
+    @Test
+    void shouldDeleteAssessmentIfEditable() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
+
+        doNothing().when(assessmentService).softDeleteAssessment(assessment);
+
+        assertDoesNotThrow(()->assessmentController.deleteAssessment(assessment.getAssessmentId(), authentication));
+
+        verify(assessmentService).softDeleteAssessment(assessment);
+    }
+
+    @Test
+    void shouldNotDeleteAssessmentIfNotEditable() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment",organisation, AssessmentStatus.Completed, created, updated);
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
+
+        doNothing().when(assessmentService).softDeleteAssessment(assessment);
+
+        assertDoesNotThrow(()->assessmentController.deleteAssessment(assessment.getAssessmentId(), authentication));
+
+        verify(assessmentService,times(0)).softDeleteAssessment(assessment);
     }
 }
 

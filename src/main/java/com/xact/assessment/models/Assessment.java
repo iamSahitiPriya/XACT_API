@@ -68,6 +68,10 @@ public class Assessment {
     @ElementCollection()
     private Set<AssessmentUsers> assessmentUsers;
 
+    @NotNull
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
 
     @Override
     public boolean equals(Object o) {
@@ -85,7 +89,7 @@ public class Assessment {
 
 
     public boolean isEditable() {
-        return assessmentStatus == AssessmentStatus.Active;
+        return !isDeleted && (assessmentStatus == AssessmentStatus.Active);
     }
 
     public AssessmentStateDto getAssessmentState() {

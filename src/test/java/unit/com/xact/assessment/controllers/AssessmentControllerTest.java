@@ -34,9 +34,13 @@ class AssessmentControllerTest {
     private final QuestionService questionService = Mockito.mock(QuestionService.class);
     private final ParameterService parameterService = Mockito.mock(ParameterService.class);
     private final TopicService topicService = Mockito.mock(TopicService.class);
+
     private final UserQuestionService userQuestionService = Mockito.mock(UserQuestionService.class);
+    private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
-    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService, questionService, userQuestionService);
+    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService, questionService,notificationService,userQuestionService);
+
+
 
     @Test
     void testGetAssessments() {

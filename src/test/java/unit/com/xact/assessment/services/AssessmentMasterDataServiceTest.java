@@ -5,6 +5,7 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.exceptions.DuplicateRecordException;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.*;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class AssessmentMasterDataServiceTest {
@@ -22,6 +24,7 @@ class AssessmentMasterDataServiceTest {
     private final TopicService topicService = mock(TopicService.class);
     private final ParameterService parameterService = mock(ParameterService.class);
     private final QuestionService questionService = mock(QuestionService.class);
+
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
     private final UserAssessmentModuleRepository userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
     private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository = mock(AssessmentTopicReferenceRepository.class);
@@ -58,16 +61,59 @@ class AssessmentMasterDataServiceTest {
     }
 
     @Test
+    void shouldGetModules() {
+        Date created = new Date(2022 - 11 - 14);
+        Date updated = new Date(2022 - 11 - 24);
+
+        AssessmentCategory assessmentCategory=new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+        assessmentCategory.setCategoryName("category");
+        assessmentCategory.setActive(true);
+        assessmentCategory.setComments("comments");
+        assessmentCategory.setCreatedAt(created);
+        assessmentCategory.setCreatedAt(updated);
+
+        AssessmentModule assessmentModule=new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("module");
+        assessmentModule.setCategory(assessmentCategory);
+        assessmentModule.setActive(true);
+        assessmentModule.setComments("comments");
+        assessmentModule.setCreatedAt(created);
+        assessmentModule.setUpdatedAt(updated);
+
+        List<AssessmentModule> assessmentModules=new ArrayList<>();
+        assessmentModules.add(assessmentModule);
+
+
+        when(moduleService.listOrderByUpdatedAtDesc()).thenReturn(assessmentModules);
+        when(moduleRepository.listOrderByUpdatedAtDesc()).thenReturn(assessmentModules);
+
+        List<AssessmentModule> modules=assessmentMasterDataService.getModules();
+
+        assertEquals(modules,assessmentModules);
+
+    }
+
+    @Test
     void shouldCreateModule() {
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryName("Dummy");
+        category.setCategoryId(1);
+        category.setActive(true);
+
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
         assessmentModuleRequest.setCategory(1);
-        AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
-        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
+
+        List<String> assessmentModules = new ArrayList<>();
+
+        when(moduleService.getModuleNames(category.getCategoryId())).thenReturn(assessmentModules);
+        when(categoryRepository.findCategoryById(category.getCategoryId())).thenReturn(category);
+
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
-        List<AssessmentModule> assessmentModules = new ArrayList<>();
-        when(moduleService.getAllModules()).thenReturn(assessmentModules);
+
         assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest);
         verify(moduleService).createModule(assessmentModule);
     }
@@ -195,6 +241,72 @@ class AssessmentMasterDataServiceTest {
 
         assessmentMasterDataService.updateModule(1, assessmentModuleRequest);
         verify(moduleService).updateModule(assessmentModule);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenModuleIsCreatedWithDuplicateName() throws DuplicateRecordException {
+        AssessmentCategory assessmentCategory=new AssessmentCategory();
+        assessmentCategory.setCategoryName("category");
+        assessmentCategory.setActive(true);
+        assessmentCategory.setComments("comments");
+
+
+        AssessmentModule assessmentModule=new AssessmentModule();
+        assessmentModule.setModuleName("module");
+        assessmentModule.setCategory(assessmentCategory);
+        assessmentModule.setActive(true);
+        assessmentModule.setComments("comments");
+
+        AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
+        assessmentModuleRequest.setModuleName("module");
+        assessmentModuleRequest.setActive(false);
+        assessmentModuleRequest.setCategory(1);
+
+        List<AssessmentModule> assessmentModules = new ArrayList<>();
+        assessmentModules.add(assessmentModule);
+        List<String>  names = new ArrayList<>();
+        names.add(assessmentModule.getModuleName());
+
+        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(assessmentCategory);
+        when(moduleService.getAllModules()).thenReturn(assessmentModules);
+        doNothing().when(moduleService).createModule(assessmentModule);
+        when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
+        when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
+        when(moduleService.getModuleNames(assessmentCategory.getCategoryId())).thenReturn(names);
+
+
+      assertThrows(DuplicateRecordException.class,()-> assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest));
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenModuleIsUpdatedWithDuplicateName() throws DuplicateRecordException {
+        AssessmentCategory assessmentCategory=new AssessmentCategory(1,"category",true,"comments");
+        AssessmentModule assessmentModule=new AssessmentModule(1,"module",assessmentCategory,true,"comments");
+        AssessmentModule assessmentModule1=new AssessmentModule(2,"module1",assessmentCategory,true,"comments");
+
+        AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
+        assessmentModuleRequest.setModuleName("module");
+        assessmentModuleRequest.setActive(false);
+        assessmentModuleRequest.setCategory(1);
+
+        List<AssessmentModule> assessmentModules = new ArrayList<>();
+        assessmentModules.add(assessmentModule);
+        assessmentModules.add(assessmentModule1);
+        List<String>  names = new ArrayList<>();
+        names.add(assessmentModule.getModuleName());
+        names.add(assessmentModule1.getModuleName());
+
+        when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
+        Integer moduleId = assessmentModule1.getModuleId();
+        when(moduleService.getModule(moduleId)).thenReturn(assessmentModule1);
+        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(assessmentCategory);
+        when(moduleService.getModuleNames(assessmentCategory.getCategoryId())).thenReturn(names);
+        doNothing().when(moduleService).updateModule(assessmentModule);
+        when(moduleRepository.update(assessmentModule)).thenReturn(assessmentModule);
+
+
+        assertThrows(DuplicateRecordException.class,()-> assessmentMasterDataService.updateModule(moduleId,assessmentModuleRequest));
     }
 
     @Test

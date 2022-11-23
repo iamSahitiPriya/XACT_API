@@ -13,36 +13,40 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Introspected
 @Entity
-@Table(name = "tbl_user_assessment_question")
-public class UserQuestion {
-
+@Table(name = "tbl_notification")
+public class Notification {
     @Id
-    @Column(name = "question_id", nullable = false, unique = true)
+    @Column(name = "notification_id", nullable = false, unique = true)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Integer questionId;
+    private Integer notificationId;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assessment")
-    Assessment assessment;
+    @Column(name = "template_name",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NotificationType templateName;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "parameter")
-    AssessmentParameter parameter;
+    @Column(name = "user_email",nullable = false)
+    private String userEmail;
 
-    @Column(name = "question_text")
-    private String question;
+    @NotNull
+    @Column(name= "payload")
+    private String payload;
 
-    @Column(name = "answer_text")
-    private String answer;
+    @NotNull
+    @Column(name="status",nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NotificationStatus status;
+
+
+    @Column(name = "retries",nullable = false)
+    private Integer retries = 0;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -54,7 +58,6 @@ public class UserQuestion {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
-    public boolean hasQuestion() {
-        return question != null && !question.isBlank();
-    }
 }
+
+

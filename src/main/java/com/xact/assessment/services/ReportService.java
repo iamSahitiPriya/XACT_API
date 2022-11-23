@@ -33,7 +33,7 @@ public class ReportService {
     private final AssessmentMasterDataService assessmentMasterDataService;
 
     private List<AssessmentCategory> assessmentCategoryList;
-    private Set<Integer> selectedModules;
+    private Set<Integer> selectedModulesSet;
 
 
     public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService) {
@@ -48,7 +48,7 @@ public class ReportService {
     public Workbook generateReport(Integer assessmentId) {
         List<Answer> answers = answerService.getAnswers(assessmentId);
         assessmentCategoryList = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
-        selectedModules = mapSelectedModulesInSet(assessmentCategoryList);
+        selectedModulesSet = mapSelectedModulesInSet(assessmentCategoryList);
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
         List<TopicLevelRecommendation> topicLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId);
@@ -72,11 +72,11 @@ public class ReportService {
     public List<AssessmentCategory> generateSunburstData(Integer assessmentId) {
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
-        List<AssessmentCategory> assessmentCategoryList = categoryRepository.findAll();
-        for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
+        List<AssessmentCategory> assessmentCategories = categoryRepository.findAll();
+        for (AssessmentCategory assessmentCategory : assessmentCategories) {
             fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData);
         }
-        return assessmentCategoryList;
+        return assessmentCategories;
 
 
     }
@@ -111,7 +111,7 @@ public class ReportService {
     private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId) {
         Workbook workbook = new XSSFWorkbook();
 
-        writeReport(answers, parameterLevelAssessments, topicLevelAssessments, topicLevelRecommendations, parameterLevelRecommendations, workbook, assessmentId);
+        writeReport(answers, parameterLevelAssessments, topicLevelAssessments, topicLevelRecommendations, parameterLevelRecommendations, workbook);
 
         createDataAndGenerateChart(workbook, assessmentId, parameterLevelAssessments, topicLevelAssessments);
 
@@ -119,7 +119,7 @@ public class ReportService {
     }
 
 
-    private void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook, Integer assessmentId) {
+    private void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook) {
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
         }
@@ -181,7 +181,7 @@ public class ReportService {
     }
 
     private boolean checkIfModuleSelected(Integer moduleId) {
-        return selectedModules.contains(moduleId);
+        return selectedModulesSet.contains(moduleId);
     }
 
     private void createDataAndGenerateChart(Workbook workbook, Integer assessmentId, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments) {

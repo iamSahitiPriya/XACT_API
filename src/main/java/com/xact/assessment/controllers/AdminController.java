@@ -33,7 +33,7 @@ import java.util.Objects;
 public class AdminController {
     private static final ModelMapper mapper = new ModelMapper();
 
-    private static  final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
     static {
         PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
@@ -73,6 +73,7 @@ public class AdminController {
         mapper.addMappings(topicReferenceMap);
         mapper.addMappings(parameterReferenceMap);
     }
+
     private final AssessmentMasterDataService assessmentMasterDataService;
 
     private final AssessmentService assessmentService;
@@ -80,35 +81,6 @@ public class AdminController {
     public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService) {
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.assessmentService = assessmentService;
-    }
-
-
-    @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<CategoryDto>> getCategoriesData(Authentication authentication) {
-        LOGGER.info("Get master data");
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getCategories();
-        List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(assessmentCategories)) {
-            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(mapper.map(assessmentCategory, CategoryDto.class)));
-        }
-        return HttpResponse.ok(assessmentCategoriesResponse);
-    }
-
-    @Get(value = "/modules", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<ModuleDto>> getModulesData(Authentication authentication){
-        LOGGER.info("Get all modules data");
-        List<ModuleDto> moduleResponse=new ArrayList<>();
-        List<AssessmentModule> assessmentModules = assessmentMasterDataService.getModules();
-        if (Objects.nonNull(assessmentModules)) {
-            for(AssessmentModule assessmentModule:assessmentModules) {
-                ModuleDto moduleDto =mapper.map(assessmentModule,ModuleDto.class);
-                moduleDto.setCategory(mapper.map(assessmentModule.getCategory(),CategoryDto.class));
-                moduleResponse.add(moduleDto);
-            }
-        }
-        return HttpResponse.ok(moduleResponse);
     }
 
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
@@ -179,28 +151,28 @@ public class AdminController {
 
     @Put(value = "/categories/{categoryId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentCategory> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body  @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
-        LOGGER.info("Admin: Update category: {}",categoryId);
+    public HttpResponse<AssessmentCategory> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update category: {}", categoryId);
         AssessmentCategory assessmentCategory = getCategory(categoryId);
         assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
         assessmentCategory.setActive(assessmentCategoryRequest.isActive());
         assessmentCategory.setComments(assessmentCategoryRequest.getComments());
-        assessmentMasterDataService.updateCategory(assessmentCategory,assessmentCategoryRequest);
+        assessmentMasterDataService.updateCategory(assessmentCategory, assessmentCategoryRequest);
         return HttpResponse.ok();
     }
 
     @Put(value = "/modules/{moduleId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentModule> updateModule(@PathVariable("moduleId") Integer moduleId, @Body @Valid AssessmentModuleRequest assessmentModuleRequest, Authentication authentication) {
-        LOGGER.info("Admin: Update module: {}",moduleId);
+        LOGGER.info("Admin: Update module: {}", moduleId);
         assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
         return HttpResponse.ok();
     }
 
     @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentTopic> updateTopic(@PathVariable("topicId") Integer topicId, @Body  @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
-        LOGGER.info("Admin: Update topic: {}",topicId);
+    public HttpResponse<AssessmentTopic> updateTopic(@PathVariable("topicId") Integer topicId, @Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update topic: {}", topicId);
         assessmentMasterDataService.updateTopic(topicId, assessmentTopicRequest);
         return HttpResponse.ok();
     }
@@ -208,7 +180,7 @@ public class AdminController {
     @Put(value = "/parameters/{parameterId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameter> updateParameter(@PathVariable("parameterId") Integer parameterId, @Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
-        LOGGER.info("Admin: Update parameter: {}",parameterId);
+        LOGGER.info("Admin: Update parameter: {}", parameterId);
         assessmentMasterDataService.updateParameter(parameterId, assessmentParameterRequest);
         return HttpResponse.ok();
     }
@@ -216,7 +188,7 @@ public class AdminController {
     @Put(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest, Authentication authentication) {
-        LOGGER.info("Admin: Update question: {}",questionId);
+        LOGGER.info("Admin: Update question: {}", questionId);
         assessmentMasterDataService.updateQuestion(questionId, questionRequest);
         return HttpResponse.ok();
     }
@@ -240,7 +212,7 @@ public class AdminController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @AdminAuth
     public HttpResponse<AdminAssessmentResponse> getAssessmentsCount(@PathVariable("startDate") String startDate, @PathVariable("endDate") String endDate, Authentication authentication) throws ParseException {
-        LOGGER.info("Admin: Get assessment from {} to {}",startDate,endDate);
+        LOGGER.info("Admin: Get assessment from {} to {}", startDate, endDate);
         AdminAssessmentResponse adminAssessmentResponse = new AdminAssessmentResponse();
         List<Assessment> allAssessments = assessmentService.getTotalAssessments(startDate, endDate);
         List<Assessment> activeAssessments = allAssessments.stream().filter(assessment -> assessment.getAssessmentStatus() == AssessmentStatus.Active).toList();

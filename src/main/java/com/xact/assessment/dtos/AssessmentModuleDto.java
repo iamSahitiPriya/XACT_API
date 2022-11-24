@@ -20,6 +20,7 @@ public class AssessmentModuleDto implements Comparable<AssessmentModuleDto> {
     private Integer moduleId;
     private String moduleName;
     private Integer category;
+    private boolean active;
     private SortedSet<AssessmentTopicDto> topics;
 
     @Override

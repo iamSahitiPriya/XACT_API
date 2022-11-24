@@ -4,6 +4,7 @@
 
 package com.xact.assessment.dtos;
 
+import com.xact.assessment.models.UserQuestion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +42,8 @@ public class AssessmentResponse {
     private List<ParameterRatingAndRecommendation> parameterRatingAndRecommendation;
 
     private List<TopicRatingAndRecommendation> topicRatingAndRecommendation;
+
+    private List<UserQuestionResponse> userQuestionResponseList;
 
     public String getAssessmentName() {
         return assessmentName.toLowerCase();

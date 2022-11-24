@@ -29,13 +29,13 @@ public class UserQuestion {
     Integer questionId;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "assessment")
+    @ManyToOne
+    @JoinColumn(name = "assessment",referencedColumnName = "assessment_id")
     Assessment assessment;
 
     @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "parameter")
+    @ManyToOne
+    @JoinColumn(name = "parameter",referencedColumnName = "parameter_id")
     AssessmentParameter parameter;
 
     @Column(name = "question_text")

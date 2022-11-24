@@ -6,7 +6,9 @@ import com.xact.assessment.services.UserQuestionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -104,4 +106,31 @@ public class UserQuestionServiceTest {
 
 
     }
+
+    @Test
+    void shouldBeAbleToGetAllUSerAddedQuestions(){
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("example");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion("question Text?");
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+
+        when(userQuestionRepository.findByAssessment(1)).thenReturn(Collections.singletonList(userQuestion));
+
+        List<UserQuestion> userQuestionList= userQuestionService.findAllUserQuestion(assessment.getAssessmentId());
+
+        assertEquals(1,userQuestionList.size());
+
+    }
+
 }

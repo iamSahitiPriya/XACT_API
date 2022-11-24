@@ -174,6 +174,9 @@ public class AssessmentController {
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
         List<AnswerResponse> answerResponseList = getAnswerResponseList(answerResponse);
 
+        List<UserQuestion> userQuestionList = userQuestionService.findAllUserQuestion(assessment.getAssessmentId());
+        List<UserQuestionResponse> userQuestionResponseList = getUserQuestionResponseList(userQuestionList);
+
         List<String> users = assessmentService.getAssessmentUsers(assessmentId);
 
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
@@ -182,6 +185,7 @@ public class AssessmentController {
         List<TopicRatingAndRecommendation> topicRecommendationResponses = mergeTopicRatingAndRecommendation(topicLevelAssessmentList, topicLevelRecommendationList);
 
         List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId());
+
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessment.getAssessmentId());
 
 
@@ -198,6 +202,7 @@ public class AssessmentController {
         assessmentResponse.setAssessmentState(assessment.getAssessmentState());
         assessmentResponse.setUsers(users);
         assessmentResponse.setAssessmentPurpose(assessment.getAssessmentPurpose());
+        assessmentResponse.setUserQuestionResponseList(userQuestionResponseList);
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -572,6 +577,17 @@ public class AssessmentController {
         }
         return answerResponseList;
     }
+    private List<UserQuestionResponse> getUserQuestionResponseList(List<UserQuestion> userQuestionList){
+        List<UserQuestionResponse> userQuestionResponseList = new ArrayList<>();
+        for (UserQuestion eachUserQuestion : userQuestionList){
+            UserQuestionResponse userQuestionResponse = new UserQuestionResponse();
+            userQuestionResponse.setQuestionId(eachUserQuestion.getQuestionId());
+            userQuestionResponse.setQuestion(eachUserQuestion.getQuestion());
+            userQuestionResponse.setAnswer(eachUserQuestion.getAnswer());
+            userQuestionResponseList.add(userQuestionResponse);
+        }
+        return  userQuestionResponseList;
+    }
 
 
     private void saveTopicRecommendationEffort(TopicLevelRecommendationRequest topicLevelRecommendationRequest, TopicLevelRecommendation topicLevelRecommendation) {
@@ -623,16 +639,23 @@ public class AssessmentController {
 
     @Patch(value = "/user_question/{assessmentId}/{parameterId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveUserQuestionAndAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String questionText,@Body @Nullable String answerText, Authentication authentication) {
+    public HttpResponse saveUserQuestionAndAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body UserQuestionRequest userQuestionRequest, Authentication authentication) {
         LOGGER.info("Update individual user added questions. assessment: {}, parameter:{}", assessmentId, parameterId);
+
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
             AssessmentParameter parameter = parameterService.getParameter(parameterId).orElseThrow();
             UserQuestion userQuestion = new UserQuestion();
+
+            if (userQuestionRequest.getQuestionId() == null) {
+                userQuestion.setQuestionId(userQuestionRequest.getQuestionId());
+            } else {
+                userQuestion = userQuestionService.searchUserQuestion(userQuestionRequest.getQuestionId()).orElse(new UserQuestion());
+            }
             userQuestion.setAssessment(assessment);
             userQuestion.setParameter(parameter);
-            userQuestion.setQuestion(questionText);
-            userQuestion.setAnswer(answerText);
+            userQuestion.setQuestion(userQuestionRequest.getQuestion());
+            userQuestion.setAnswer(userQuestionRequest.getAnswer());
             userQuestionService.saveUserQuestion(userQuestion);
             updateAssessment(assessment);
         }
@@ -644,5 +667,7 @@ public class AssessmentController {
         LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessmentService.updateAssessment(assessment);
     }
+
+
 
 }

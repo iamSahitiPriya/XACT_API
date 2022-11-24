@@ -2,7 +2,12 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.models.UserQuestion;
 import com.xact.assessment.repositories.UserQuestionRepository;
+import jakarta.inject.Singleton;
 
+import java.util.List;
+import java.util.Optional;
+
+@Singleton
 public class UserQuestionService {
     UserQuestionRepository userQuestionRepository;
 
@@ -10,9 +15,9 @@ public class UserQuestionService {
         this.userQuestionRepository = userQuestionRepository;
     }
 
-    public void saveUserQuestion(UserQuestion userQuestion) {
+    public UserQuestion saveUserQuestion(UserQuestion userQuestion) {
 
-        if (userQuestionRepository.existsById(userQuestion.getQuestionId())) {
+        if (userQuestion.getQuestion()!=null) {
             if (userQuestion.hasQuestion()) {
                 userQuestionRepository.update(userQuestion);
             } else {
@@ -23,6 +28,13 @@ public class UserQuestionService {
                 userQuestionRepository.save(userQuestion);
             }
         }
+        return  userQuestion;
+    }
+    public List<UserQuestion> findAllUserQuestion(Integer assessmentId){
+        return userQuestionRepository.findByAssessment(assessmentId);
     }
 
+    public Optional<UserQuestion> searchUserQuestion(Integer questionId) {
+        return  userQuestionRepository.findById(questionId);
+    }
 }

@@ -11,8 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class UserQuestionServiceTest {
 
@@ -130,6 +129,33 @@ public class UserQuestionServiceTest {
         List<UserQuestion> userQuestionList= userQuestionService.findAllUserQuestion(assessment.getAssessmentId());
 
         assertEquals(1,userQuestionList.size());
+
+    }
+    @Test
+    void shouldDeleteUserAddedQuestionAndAnswer() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("example");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion("question Text?");
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+        userQuestionRepository.save(userQuestion);
+
+        userQuestionService.deleteUserQuestion(userQuestion.getQuestionId());
+
+        verify(userQuestionRepository).deleteById(userQuestion.getQuestionId());
+
+
+
 
     }
 

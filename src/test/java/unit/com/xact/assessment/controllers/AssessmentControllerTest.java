@@ -1640,7 +1640,54 @@ class AssessmentControllerTest {
     HttpResponse actualResponse = assessmentController.saveUserQuestionAndAnswer(assessmentId, assessmentParameter.getParameterId(), userQuestionRequest, authentication);
 
     assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-}
+    }
+
+    @Test
+    void testDeleteUserQuestionWithQuestionId() {
+        Integer assessmentId = 1;
+        Integer parameterId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        assessmentUsers.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+        userQuestion.setQuestion("question");
+
+        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+
+        HttpResponse actualResponse = assessmentController.deleteUserQuestion(assessmentId,1, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+        verify(userQuestionService).deleteUserQuestion(1);
+    }
 
 }
 

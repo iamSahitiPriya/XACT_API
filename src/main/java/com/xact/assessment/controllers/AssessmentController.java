@@ -668,6 +668,17 @@ public class AssessmentController {
         assessmentService.updateAssessment(assessment);
     }
 
-
+    @Delete(value = "/deleteUserQuestion/{assessmentId}/{questionId}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<UserQuestion> deleteUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        LOGGER.info("Delete user question. assessment: {}" , assessmentId);
+        if (assessment.isEditable()) {
+            if(userQuestionService.searchUserQuestion(questionId).isPresent()) {
+                userQuestionService.deleteUserQuestion(questionId);
+            }
+        }
+        return HttpResponse.ok();
+    }
 
 }

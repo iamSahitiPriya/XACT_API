@@ -37,4 +37,8 @@ public class UserQuestionService {
     public Optional<UserQuestion> searchUserQuestion(Integer questionId) {
         return  userQuestionRepository.findById(questionId);
     }
+
+    public void deleteUserQuestion(Integer questionId) {
+        userQuestionRepository.deleteById(questionId);
+    }
 }

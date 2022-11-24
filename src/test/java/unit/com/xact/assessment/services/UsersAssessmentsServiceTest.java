@@ -97,10 +97,10 @@ class UsersAssessmentsServiceTest {
         List<AssessmentUsers> assessmentUsers1 = new ArrayList<>();
         assessmentUsers1.add(assessmentUsers);
 
-        doNothing().when(usersAssessmentsRepository).deleteById(assessment.getAssessmentId());
+        doNothing().when(usersAssessmentsRepository).deleteUsersByAssessmentId(assessment.getAssessmentId());
 
-        usersAssessmentsRepository.deleteById(assessment.getAssessmentId());
-        verify(usersAssessmentsRepository).deleteById(assessment.getAssessmentId());
+        usersAssessmentsRepository.deleteUsersByAssessmentId(assessment.getAssessmentId());
+        verify(usersAssessmentsRepository).deleteUsersByAssessmentId(assessment.getAssessmentId());
 
     }
 }

@@ -46,7 +46,7 @@ class AssessmentServiceTest {
         moduleRepository = mock(ModuleRepository.class);
         notificationService = mock(NotificationService.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository,moduleRepository);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository);
     }
 
     @Test
@@ -379,4 +379,18 @@ class AssessmentServiceTest {
 
         verify(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
     }
+
+    @Test
+    void softDeleteAssessment() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        assessment.setDeleted(true);
+
+        when(assessmentRepository.update(assessment)).thenReturn(assessment);
+        assessmentService.softDeleteAssessment(assessment);
+        verify(assessmentRepository).update(assessment);
+    }
+
 }

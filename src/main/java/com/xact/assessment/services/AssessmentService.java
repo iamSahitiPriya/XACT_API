@@ -178,4 +178,10 @@ public class AssessmentService {
         userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
         saveAssessmentModules(moduleRequest, assessment);
     }
+
+    public void softDeleteAssessment(Assessment assessment) {
+        assessment.setDeleted(true);
+        assessment.setUpdatedAt(new Date());
+        assessmentRepository.update(assessment);
+    }
 }

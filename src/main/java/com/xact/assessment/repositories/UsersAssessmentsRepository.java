@@ -22,11 +22,11 @@ import java.util.Set;
 public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUsers, UserId> {
 
     @Executable
-    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail")
+    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail and au.userId.assessment.isDeleted=false")
     List<AssessmentUsers> findByUserEmail(@Parameter("userEmail") String userEmail);
 
     @Executable
-    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail AND au.userId.assessment.assessmentId=:assessmentId")
+    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail AND au.userId.assessment.assessmentId=:assessmentId and au.userId.assessment.isDeleted=false")
     AssessmentUsers findByUserEmail(@Parameter("userEmail") String userEmail, @Parameter("assessmentId") Integer assessmentId);
 
     @Executable
@@ -35,7 +35,7 @@ public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUse
 
     @Executable
     @Query("DELETE FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId")
-    void deleteById(Integer assessmentId);
+    void deleteUsersByAssessmentId(Integer assessmentId);
 
 
     @Executable

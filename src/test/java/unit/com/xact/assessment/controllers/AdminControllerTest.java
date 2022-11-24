@@ -35,12 +35,13 @@ class AdminControllerTest {
         categoryRequest.setComments("comment");
         categoryRequest.setActive(false);
 
-        AssessmentCategory category = new AssessmentCategory("hello",false,"");
+        AssessmentCategory category = new AssessmentCategory("hello", false, "");
         when(assessmentMasterDataService.createAssessmentCategory(categoryRequest)).thenReturn(category);
 
         HttpResponse<CategoryDto> categoryHttpResponse = adminController.createAssessmentCategory(categoryRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), categoryHttpResponse.getStatus());
     }
+
 
     @Test
     void createAssessmentModule() {
@@ -54,85 +55,6 @@ class AdminControllerTest {
     }
 
     @Test
-    void shouldGetCategories() {
-        Date created = new Date(2022 - 11 - 14);
-        Date updated = new Date(2022 - 11 - 24);
-
-        AssessmentCategory assessmentCategory = new AssessmentCategory();
-        assessmentCategory.setCategoryId(1);
-        assessmentCategory.setCategoryName("category");
-        assessmentCategory.setActive(true);
-        assessmentCategory.setComments("comments");
-        assessmentCategory.setCreatedAt(created);
-        assessmentCategory.setCreatedAt(updated);
-
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setCategoryId(assessmentCategory.getCategoryId());
-        categoryDto.setCategoryName(assessmentCategory.getCategoryName());
-        categoryDto.setActive(assessmentCategory.getIsActive());
-        categoryDto.setComments(assessmentCategory.getComments());
-        categoryDto.setUpdatedAt(assessmentCategory.getUpdatedAt());
-
-        List<AssessmentCategory> categories = new ArrayList<>();
-        categories.add(assessmentCategory);
-        List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        assessmentCategoriesResponse.add(categoryDto);
-        when(assessmentMasterDataService.getCategories()).thenReturn(categories);
-
-        HttpResponse<List<CategoryDto>> actualResponse = adminController.getMasterData(authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        assertEquals("category", actualResponse.body().get(0).getCategoryName());
-    }
-
-    @Test
-    void shouldGetModule() {
-        Date created = new Date(2022 - 11 - 14);
-        Date updated = new Date(2022 - 11 - 24);
-
-        AssessmentCategory assessmentCategory = new AssessmentCategory();
-        assessmentCategory.setCategoryId(1);
-        assessmentCategory.setCategoryName("category");
-        assessmentCategory.setActive(true);
-        assessmentCategory.setComments("comments");
-        assessmentCategory.setCreatedAt(created);
-        assessmentCategory.setCreatedAt(updated);
-
-        AssessmentModule assessmentModule = new AssessmentModule();
-        assessmentModule.setModuleId(1);
-        assessmentModule.setModuleName("module");
-        assessmentModule.setCategory(assessmentCategory);
-        assessmentModule.setActive(true);
-        assessmentModule.setComments("comments");
-        assessmentModule.setCreatedAt(created);
-        assessmentModule.setUpdatedAt(updated);
-
-        List<AssessmentModule> assessmentModules = new ArrayList<>();
-        List<ModuleDto> moduleResponse = new ArrayList<>();
-        ModuleDto moduleDto = new ModuleDto();
-        CategoryDto categoryDto = new CategoryDto();
-        assessmentModules.add(assessmentModule);
-        when(assessmentMasterDataService.getModules()).thenReturn(assessmentModules);
-
-        moduleDto.setModuleId(assessmentModule.getModuleId());
-        moduleDto.setModuleName(assessmentModule.getModuleName());
-        categoryDto.setCategoryId(assessmentCategory.getCategoryId());
-        categoryDto.setCategoryName(assessmentCategory.getCategoryName());
-        categoryDto.setActive(assessmentCategory.getIsActive());
-        categoryDto.setComments(assessmentCategory.getComments());
-        categoryDto.setUpdatedAt(assessmentCategory.getUpdatedAt());
-        moduleDto.setComments(assessmentModule.getComments());
-        moduleDto.setActive(assessmentModule.getIsActive());
-        moduleDto.setUpdatedAt(assessmentModule.getUpdatedAt());
-        moduleResponse.add(moduleDto);
-
-        HttpResponse<List<ModuleDto>> actualResponse = adminController.getModulesData(authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        assertEquals("module", actualResponse.body().get(0).getModuleName());
-    }
-
-    @Test
     void createAssessmentTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
         topicRequest.setTopicName("Hello this is a topic");
@@ -141,7 +63,7 @@ class AdminControllerTest {
         assessmentTopic.setTopicId(1);
         assessmentTopic.setTopicName("Hello this is a topic");
         assessmentTopic.setActive(false);
-        assessmentTopic.setModule(new AssessmentModule("hello",new AssessmentCategory("hello",false,""),false,""));
+        assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
 
         when(assessmentMasterDataService.createAssessmentTopics(topicRequest)).thenReturn(assessmentTopic);
         HttpResponse<TopicResponse> actualResponse = adminController.createTopics(topicRequest, authentication);
@@ -230,10 +152,10 @@ class AdminControllerTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
         assessmentTopic.setTopicName("this is a module");
-        assessmentTopic.setModule(new AssessmentModule("hello",new AssessmentCategory("hello",false,""),false,""));
+        assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
 
 
-        when(assessmentMasterDataService.updateTopic(1,topicRequest)).thenReturn(assessmentTopic);
+        when(assessmentMasterDataService.updateTopic(1, topicRequest)).thenReturn(assessmentTopic);
 
         HttpResponse actualResponse = adminController.updateTopic(topicId, topicRequest, authentication);
 

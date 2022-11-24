@@ -37,8 +37,5 @@ public class ModuleService {
     }
 
 
-    public List<AssessmentModule> listOrderByUpdatedAtDesc() {
-       return  moduleRepository.listOrderByUpdatedAtDesc();
-    }
 }
 

@@ -124,11 +124,11 @@ public class AssessmentMasterDataService {
         questionService.createQuestion(question);
     }
 
-    public void createAssessmentTopicReferences(TopicReferencesRequest topicReferencesRequest) {
+    public AssessmentTopicReference createAssessmentTopicReferences(TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
         assessmentTopicReferenceRepository.save(assessmentTopicReference);
-
+        return assessmentTopicReference;
     }
 
     public void createAssessmentParameterReferences(ParameterReferencesRequest parameterReferencesRequest) {
@@ -211,14 +211,14 @@ public class AssessmentMasterDataService {
 
     }
 
-    public void updateTopicReference(Integer referenceId, TopicReferencesRequest topicReferencesRequest) {
+    public AssessmentTopicReference updateTopicReference(Integer referenceId, TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         AssessmentTopicReference assessmentTopicReference = assessmentTopicReferenceRepository.findById(referenceId).orElseThrow();
         assessmentTopicReference.setReference(topicReferencesRequest.getReference());
         assessmentTopicReference.setTopic(assessmentTopic);
         assessmentTopicReference.setRating(topicReferencesRequest.getRating());
 
-        assessmentTopicReferenceRepository.update(assessmentTopicReference);
+        return assessmentTopicReferenceRepository.update(assessmentTopicReference);
     }
 
     public void updateParameterReferences(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
@@ -240,5 +240,8 @@ public class AssessmentMasterDataService {
     }
 
 
+    public void deleteTopicReference(Integer referenceId) {
+        assessmentTopicReferenceRepository.deleteById(referenceId);
+    }
 }
 

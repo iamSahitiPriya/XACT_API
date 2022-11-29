@@ -182,7 +182,7 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentTopic topic = new AssessmentTopic();
         when(topicService.getTopic(1)).thenReturn(Optional.of(topic));
-        assessmentMasterDataService.createAssessmentTopicReferences(topicReferencesRequest);
+        assessmentMasterDataService.createAssessmentTopicReferences(topicId, topicReferencesRequest);
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(topic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
 
         when(assessmentTopicReferenceRepository.save(assessmentTopicReference)).thenReturn(assessmentTopicReference);

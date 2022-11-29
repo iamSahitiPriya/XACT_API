@@ -146,7 +146,7 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentTopic topic = new AssessmentTopic();
         when(topicService.getTopic(1)).thenReturn(Optional.of(topic));
-        assessmentMasterDataService.createAssessmentTopicReferences(topicId, topicReferencesRequest);
+        assessmentMasterDataService.createAssessmentTopicReferences(topicReferencesRequest);
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(topic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
 
         when(assessmentTopicReferenceRepository.save(assessmentTopicReference)).thenReturn(assessmentTopicReference);
@@ -425,5 +425,14 @@ class AssessmentMasterDataServiceTest {
 
         verify(userAssessmentModuleRepository).findModuleByAssessment(assessmentId);
 
+    }
+
+    @Test
+    void deleteTopicReference() {
+        doNothing().when(assessmentTopicReferenceRepository).deleteById(1);
+
+        assessmentMasterDataService.deleteTopicReference(1);
+
+        verify(assessmentTopicReferenceRepository).deleteById(1);
     }
 }

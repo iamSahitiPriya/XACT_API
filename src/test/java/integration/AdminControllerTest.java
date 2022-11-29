@@ -263,7 +263,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void updateCategory() {
+    void shouldUpdateCategory() {
         AssessmentCategory assessmentCategory = new AssessmentCategory("new category", true, "");
 
         categoryRepository.save(assessmentCategory);
@@ -288,7 +288,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void updateModule() {
+    void shouldUpdateModule() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
 
         boolean expectedResult = !assessmentModule.getIsActive();
@@ -315,7 +315,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void updateTopic() {
+    void shouldUpdateTopic() {
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
         boolean expectedResult = !assessmentTopic.getIsActive();
@@ -342,7 +342,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void updateParameter() {
+    void shouldUpdateParameter() {
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
         boolean expectedResult = !assessmentParameter.getIsActive();
@@ -369,7 +369,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void updateQuestion() {
+    void shouldUpdateQuestion() {
         Optional<Question> question = questionRepository.findById(1);
         Question question1 = question.get();
 
@@ -399,7 +399,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void updateTopicReferences() {
+    void shouldUpdateTopicReferences() {
         Optional<AssessmentTopicReference> assessmentTopicReference = assessmentTopicReferenceRepository.findById(1);
         AssessmentTopicReference assessmentTopicReference1 = assessmentTopicReference.get();
 
@@ -430,7 +430,7 @@ public class AdminControllerTest {
     }
 
     @Test
-    void updateParameterReferences() {
+    void shouldUpdateParameterReferences() {
         Optional<AssessmentParameterReference> assessmentParameterReference = assessmentParameterReferenceRepository.findById(1);
         AssessmentParameterReference assessmentParameterReference1 = assessmentParameterReference.get();
 
@@ -457,6 +457,53 @@ public class AdminControllerTest {
         assessmentParameterReference3.setReference(reference);
 
         assessmentParameterReferenceRepository.update(assessmentParameterReference1);
+        entityManager.getTransaction().commit();
+    }
+
+    @Test
+    void shouldDeleteTopicReference() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryName("Category Name 1 Example");
+        assessmentCategory.setActive(true);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleName("Module Name 1 Example");
+        assessmentModule.setCategory(assessmentCategory);
+        assessmentModule.setActive(true);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicName("Topic Name 1 Example");
+        assessmentTopic.setModule(assessmentModule);
+        assessmentTopic.setActive(true);
+
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic,Rating.FIVE,"New Reference");
+
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        assessmentCategory.setModules(Collections.singleton(assessmentModule));
+
+        categoryRepository.save(assessmentCategory);
+        moduleRepository.save(assessmentModule);
+        assessmentTopicRepository.save(assessmentTopic);
+        assessmentTopicReferenceRepository.save(assessmentTopicReference);
+        entityManager.getTransaction().commit();
+        entityManager.clear();
+        entityManager.close();
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/admin/topicReferences/" + assessmentTopicReference.getReferenceId())
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+
+        Set<AssessmentTopicReference> assessmentTopicReferences = assessmentTopicRepository.findByTopicId(assessmentTopic.getTopicId()).getReferences();
+
+        assertEquals(assessmentTopicReferences.size(),0);
+
+        entityManager.getTransaction().begin();
+
+        assessmentTopicRepository.deleteById(assessmentTopic.getTopicId());
+        moduleRepository.deleteById(assessmentModule.getModuleId());
+        categoryRepository.deleteById(assessmentCategory.getCategoryId());
         entityManager.getTransaction().commit();
     }
 }

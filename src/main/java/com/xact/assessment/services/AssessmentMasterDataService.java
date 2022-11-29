@@ -235,11 +235,6 @@ public class AssessmentMasterDataService {
         return categoryRepository.findCategories();
     }
 
-    public List<AssessmentModule> getModules() {
-      return moduleService.listOrderByUpdatedAtDesc();
-    }
-
-
     public void deleteTopicReference(Integer referenceId) {
         assessmentTopicReferenceRepository.deleteById(referenceId);
     }

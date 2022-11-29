@@ -44,7 +44,7 @@ public class UsersAssessmentsService {
 
     @Transactional
     public void updateUsersInAssessment(Set<AssessmentUsers> assessmentUsers, Integer assessmentId) {
-        usersAssessmentsRepository.deleteById(assessmentId);
+        usersAssessmentsRepository.deleteUsersByAssessmentId(assessmentId);
         usersAssessmentsRepository.saveAll(assessmentUsers);
     }
 

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.SortedSet;
 
 @NoArgsConstructor
@@ -21,8 +22,9 @@ public class AssessmentModuleDto implements Comparable<AssessmentModuleDto> {
     private String moduleName;
     private Integer category;
     private boolean active;
+    private Date updatedAt;
+    private String comments;
     private SortedSet<AssessmentTopicDto> topics;
-
     @Override
     public int compareTo(AssessmentModuleDto currentModule) {
         return moduleId - currentModule.moduleId;

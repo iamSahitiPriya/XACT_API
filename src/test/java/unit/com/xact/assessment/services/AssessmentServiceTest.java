@@ -11,6 +11,7 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ class AssessmentServiceTest {
     private AssessmentRepository assessmentRepository;
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
+    private NotificationService notificationService;
 
     private UserAssessmentModuleRepository userAssessmentModuleRepository;
     private ModuleRepository moduleRepository;
@@ -42,12 +44,14 @@ class AssessmentServiceTest {
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
         accessControlRepository = mock(AccessControlRepository.class);
         moduleRepository = mock(ModuleRepository.class);
+        notificationService = mock(NotificationService.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
         assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository);
     }
 
     @Test
     void shouldAddUsersToAssessment() {
+        String email = "abc@thoughtworks.com";
         AssessmentRequest assessmentRequest = new AssessmentRequest();
         assessmentRequest.setAssessmentName("assessment1");
         assessmentRequest.setTeamSize(1);
@@ -84,8 +88,6 @@ class AssessmentServiceTest {
 
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
-        doNothing().when(usersAssessmentsService).createUsersInAssessment(assessmentUsers);
-
 
         Assessment actualAssessment = assessmentService.createAssessment(assessmentRequest, loggedinUser);
 
@@ -377,4 +379,18 @@ class AssessmentServiceTest {
 
         verify(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
     }
+
+    @Test
+    void softDeleteAssessment() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        assessment.setDeleted(true);
+
+        when(assessmentRepository.update(assessment)).thenReturn(assessment);
+        assessmentService.softDeleteAssessment(assessment);
+        verify(assessmentRepository).update(assessment);
+    }
+
 }

@@ -15,17 +15,18 @@ import io.micronaut.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 
 @Repository
 public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUsers, UserId> {
 
     @Executable
-    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail")
+    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail and au.userId.assessment.isDeleted=false")
     List<AssessmentUsers> findByUserEmail(@Parameter("userEmail") String userEmail);
 
     @Executable
-    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail AND au.userId.assessment.assessmentId=:assessmentId")
+    @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.userEmail=:userEmail AND au.userId.assessment.assessmentId=:assessmentId and au.userId.assessment.isDeleted=false")
     AssessmentUsers findByUserEmail(@Parameter("userEmail") String userEmail, @Parameter("assessmentId") Integer assessmentId);
 
     @Executable
@@ -34,11 +35,16 @@ public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUse
 
     @Executable
     @Query("DELETE FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId")
-    void deleteById(Integer assessmentId);
+    void deleteUsersByAssessmentId(Integer assessmentId);
+
 
     @Executable
     @Query("SELECT au FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId AND au.role='Owner'")
     Optional<AssessmentUsers> findOwnerByAssessmentId(@Parameter("assessmentId") Integer assessmentId);
+
+    @Executable
+    @Query("SELECT au.userId.userEmail FROM AssessmentUsers au WHERE au.userId.assessment.assessmentId=:assessmentId")
+    Set<String> getAllAssessmentUsers(@Parameter("assessmentId") Integer assessmentId);
 }
 
 

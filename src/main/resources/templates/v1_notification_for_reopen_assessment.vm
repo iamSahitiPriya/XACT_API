@@ -1,0 +1,21 @@
+<html>
+<body>
+<div style="height:50%; width: 50%;margin: 10%;background-color: white;">
+    <hr style="height: 4px;background: #4BA1AC; border: none;"/>
+    <h1 style="color: #4BA1AC; font-size: 20px;">Thoughtworks X-Act</h1>
+    <p style="padding-left: 5px;font-size: 15px;">Hello there,</p>
+    <p style="padding-left: 5px;font-size: 13px;font-style: italic;">Your Assessment <b style="color:#4BA1AC ;">${assessment.assessmentName}</b> has been reopened. You can find the details of the assessment by clicking the below button.</p>
+    <br>
+    <hr>
+    <div style="padding-top: 8px;">
+        <heading style="font-size: 13px;">Organisation Name:</heading>
+        <p style="font-style: italic;font-size: 12px;">${assessment.organisationName}</p>
+        <br>
+        <heading style="font-size: 13px;">Created Date:</heading>
+        <p style="font-style: italic;font-size: 12px;">${assessment.createdAt}</p>
+        <br>
+        <button style="color: white; background-color: #4BA1AC; border: none;height: 30px;"><a style="text-decoration: none;color: white" href="${url}${assessment.assessmentId}">View Assessment</a></button>
+    </div>
+</div>
+</body>
+</html>

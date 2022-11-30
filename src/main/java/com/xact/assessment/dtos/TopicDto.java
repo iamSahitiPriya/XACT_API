@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.dtos;
@@ -16,19 +16,18 @@ import java.util.SortedSet;
 @Getter
 @EqualsAndHashCode
 @Setter
-public class CategoryDto implements Comparable<CategoryDto> {
+public class TopicDto implements Comparable<TopicDto> {
 
-    private Integer categoryId;
-    private String categoryName;
+    private Integer topicId ;
+    private String topicName;
     private boolean isActive;
     private Date updatedAt;
     private String comments;
-    private SortedSet<AssessmentModuleDto> modules;
-
+    private SortedSet<ParameterDto> parameters;
 
     @Override
-    public int compareTo(CategoryDto o) {
-        return o.updatedAt.compareTo(updatedAt);
+    public int compareTo(TopicDto topicDto) {
+        return topicDto.updatedAt.compareTo(updatedAt);
     }
 
 }

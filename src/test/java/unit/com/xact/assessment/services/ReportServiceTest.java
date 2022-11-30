@@ -205,6 +205,7 @@ class ReportServiceTest {
         ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment();
         parameterAssessment.setRating(3);
 
+
         parameterAssessment.setParameterLevelId(new ParameterLevelId(assessment, parameter));
         parameterAssessments.add(parameterAssessment);
 
@@ -376,6 +377,8 @@ class ReportServiceTest {
         parameterRecommendationMap.put(parameter.getParameterId(), parameterLevelRecommendationList);
 
         when(assessmentMasterDataService.getUserAssessmentCategories(assessmentId)).thenReturn(Collections.singletonList(category));
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(new ArrayList<>());
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(new ArrayList<>());
         when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
         when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(parameterLevelRecommendationList);
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId, parameter.getParameterId())).thenReturn(parameterLevelRecommendationList);
@@ -402,7 +405,6 @@ class ReportServiceTest {
         assertEquals(report.getSheetAt(0).getSheetName(), getMockWorkbook().getSheetAt(0).getSheetName());
 
     }
-
 
     private Workbook getMockWorkbook() {
         Workbook workbook = new XSSFWorkbook();

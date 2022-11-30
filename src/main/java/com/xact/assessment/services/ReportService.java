@@ -466,7 +466,7 @@ public class ReportService {
 
     private void fillInMaturityScore(AssessmentCategory assessmentCategory, List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments) {
         for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
-            for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
+            for (AssessmentTopic assessmentTopic : assessmentModule.getActiveTopics()) {
                 if (assessmentTopic.hasReferences()) {
                     for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
                         if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(assessmentTopic.getTopicId())) {

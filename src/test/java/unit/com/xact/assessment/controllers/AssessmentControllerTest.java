@@ -119,6 +119,13 @@ class AssessmentControllerTest {
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
         Assessment assessment = new Assessment(123, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+
+        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        AssessmentUsers assessmentUser = new AssessmentUsers(new UserId(userEmail,assessment),AssessmentRole.Owner);
+        assessmentUsers.add(assessmentUser);
+        assessment.setAssessmentUsers(assessmentUsers);
+
+
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         Integer assessmentId = 123;
@@ -1529,6 +1536,11 @@ class AssessmentControllerTest {
         Profile profile = new Profile();
         profile.setEmail(userEmail);
         user.setProfile(profile);
+
+        Set<AssessmentUsers> assessmentUsers =  new HashSet<>();
+        AssessmentUsers assessmentUser = new AssessmentUsers(new UserId(userEmail,assessment),AssessmentRole.Owner);
+        assessmentUsers.add(assessmentUser);
+        assessment.setAssessmentUsers(assessmentUsers);
 
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
 

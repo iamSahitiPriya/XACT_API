@@ -35,4 +35,5 @@ public class TopicService {
         return (List<AssessmentTopic>) assessmentTopicRepository.findAll();
     }
 
+    public List<AssessmentTopic> getTopics() { return assessmentTopicRepository.listOrderByUpdatedAtDesc();}
 }

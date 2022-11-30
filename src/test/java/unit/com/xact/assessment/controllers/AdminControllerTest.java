@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 class AdminControllerTest {
     AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
 
-    AssessmentService assessmentService=Mockito.mock(AssessmentService.class);
+    AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
     AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService);
@@ -35,7 +35,10 @@ class AdminControllerTest {
         categoryRequest.setComments("comment");
         categoryRequest.setActive(false);
 
-        HttpResponse<AssessmentCategory> categoryHttpResponse = adminController.createAssessmentCategory(categoryRequest, authentication);
+        AssessmentCategory category = new AssessmentCategory("hello", false, "");
+        when(assessmentMasterDataService.createAssessmentCategory(categoryRequest)).thenReturn(category);
+
+        HttpResponse<CategoryDto> categoryHttpResponse = adminController.createAssessmentCategory(categoryRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), categoryHttpResponse.getStatus());
     }
 
@@ -46,20 +49,25 @@ class AdminControllerTest {
         moduleRequest.setModuleName("This is a module");
         moduleRequest.setActive(false);
 
-        HttpResponse<AssessmentModule> actualResponse = adminController.createAssessmentModule(moduleRequest,authentication);
+        HttpResponse<AssessmentModule> actualResponse = adminController.createAssessmentModule(moduleRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
     }
-
 
     @Test
     void createAssessmentTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
         topicRequest.setTopicName("Hello this is a topic");
         topicRequest.setActive(false);
-        List<AssessmentTopicRequest> assessmentTopicRequests = Collections.singletonList(topicRequest);
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Hello this is a topic");
+        assessmentTopic.setActive(false);
+        assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
 
-        HttpResponse<AssessmentTopic> actualResponse = adminController.createTopics(assessmentTopicRequests, authentication);
+        when(assessmentMasterDataService.createAssessmentTopics(topicRequest)).thenReturn(assessmentTopic);
+        HttpResponse<TopicResponse> actualResponse = adminController.createTopics(topicRequest, authentication);
+
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -115,10 +123,11 @@ class AdminControllerTest {
         assessmentCategory.setCategoryName("this is a category");
 
         when(assessmentMasterDataService.getCategory(1)).thenReturn(assessmentCategory);
+        when(assessmentMasterDataService.updateCategory(assessmentCategory, categoryRequest)).thenReturn(assessmentCategory);
 
-        HttpResponse actualResponse = adminController.updateCategory(categoryId, categoryRequest, authentication);
+        HttpResponse<CategoryDto> actualResponse = adminController.updateCategory(categoryId, categoryRequest, authentication);
 
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+        assertEquals(HttpResponse.ok().getStatus().getCode(), actualResponse.getStatus().getCode());
     }
 
     @Test
@@ -143,6 +152,10 @@ class AdminControllerTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
         assessmentTopic.setTopicName("this is a module");
+        assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
+
+
+        when(assessmentMasterDataService.updateTopic(1, topicRequest)).thenReturn(assessmentTopic);
 
         HttpResponse actualResponse = adminController.updateTopic(topicId, topicRequest, authentication);
 
@@ -188,6 +201,7 @@ class AdminControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
     @Test
     void shouldUpdateParameterReferences() {
         ParameterReferencesRequest referencesRequest = new ParameterReferencesRequest();
@@ -209,8 +223,8 @@ class AdminControllerTest {
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment1 = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created1, updated1);
-        Assessment assessment2 = new Assessment(2, "Name","Client Assessment", organisation, AssessmentStatus.Completed, created2, updated2);
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", "Client Assessment", organisation, AssessmentStatus.Completed, created2, updated2);
 
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
@@ -238,8 +252,8 @@ class AdminControllerTest {
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment1 = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created1, updated1);
-        Assessment assessment2 = new Assessment(2, "Name","Client Assessment", organisation, AssessmentStatus.Completed, created2, updated2);
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", "Client Assessment", organisation, AssessmentStatus.Completed, created2, updated2);
 
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
@@ -262,8 +276,8 @@ class AdminControllerTest {
         Date updated2 = new Date(2022 - 6 - 11);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment1 = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created1, updated1);
-        Assessment assessment2 = new Assessment(2, "Name","Client Assessment", organisation, AssessmentStatus.Completed, created2, updated2);
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created1, updated1);
+        Assessment assessment2 = new Assessment(2, "Name", "Client Assessment", organisation, AssessmentStatus.Completed, created2, updated2);
 
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
@@ -278,5 +292,4 @@ class AdminControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
-
 }

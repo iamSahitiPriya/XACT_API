@@ -34,4 +34,8 @@ public class ParameterService {
     public List<AssessmentParameter> getAllParameters() {
         return (List<AssessmentParameter>) assessmentParameterRepository.findAll();
     }
+
+    public List<AssessmentParameter> getParameters() {
+        return assessmentParameterRepository.listOrderByUpdatedAtDesc();
+    }
 }

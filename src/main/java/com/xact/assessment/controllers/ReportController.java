@@ -115,7 +115,7 @@ public class ReportController {
             for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
                 ReportModuleResponse reportModuleResponse = getReportModuleResponse(assessmentModule);
                 List<ReportTopicResponse> reportTopicResponseList = new ArrayList<>();
-                for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
+                for (AssessmentTopic assessmentTopic : assessmentModule.getActiveTopics()) {
                     ReportTopicResponse reportTopicResponse = getReportTopicResponse(assessmentTopic);
                     if (assessmentTopic.hasReferences()) {
                         reportTopicResponse.setValue(assessmentTopic.getRating());

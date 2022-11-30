@@ -116,6 +116,11 @@ public class Assessment {
         return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Facilitator).map(assessmentUsers1 -> assessmentUsers1.getUserId().getUserEmail()).toList();
     }
 
+    @Transient
+    public String getOwner() {
+        return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Owner).map(assessmentUsers1 -> assessmentUsers1.getUserId().getUserEmail()).findFirst().get();
+    }
+
     public Assessment(Integer assessmentId, String assessmentName, String assessmentPurpose, Organisation organisation, AssessmentStatus assessmentStatus, Date createdAt, Date updatedAt) {
         this.assessmentId = assessmentId;
         this.assessmentName = assessmentName;

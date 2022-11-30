@@ -50,4 +50,6 @@ public class AssessmentResponse {
         return organisationName.toLowerCase();
     }
 
+    private boolean isOwner = false;
+
 }

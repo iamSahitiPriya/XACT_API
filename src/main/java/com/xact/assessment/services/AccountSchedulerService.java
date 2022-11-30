@@ -40,7 +40,7 @@ public class AccountSchedulerService {
     @Scheduled(fixedDelay = "${account.delay}")
     public void fetchOrganisationDetails() throws IOException {
         LOGGER.info("Fetching account details");
-        if ("local".equals(profileConfig.getType())) {
+        if ("local".equals(profileConfig.getType()) || "test".equals(profileConfig.getType())) {
             List<Account> accounts = accountService.readAccounts();
             accountService.save(accounts);
         } else {

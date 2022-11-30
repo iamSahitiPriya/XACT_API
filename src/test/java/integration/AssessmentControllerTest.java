@@ -85,7 +85,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testGetAssessmentsResponse() throws IOException {
+    void testGetAssessmentsResponse() {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
@@ -114,14 +114,14 @@ class AssessmentControllerTest {
 
 
         String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Assessment\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + organisation.getSize() + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "}]";
+                "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + organisation.getSize() + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\",\"owner\":true}]";
 
         assertEquals(expectedResponse, assessmentResponse);
 
     }
 
     @Test
-    void testGetAssessmentResponse() throws IOException {
+    void testGetAssessmentResponse() {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
@@ -200,7 +200,7 @@ class AssessmentControllerTest {
                 "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + 1 + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
                 "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
                 "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," +
-                "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]}";
+                "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"}]}],\"owner\":true}";
 
         String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId())
                 .bearerAuth("anything"), String.class);
@@ -210,7 +210,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void finishAssessment() throws IOException {
+    void finishAssessment() {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
@@ -247,7 +247,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void reopenAssessment() throws IOException {
+    void reopenAssessment() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUsers assessmentUsers = new AssessmentUsers();

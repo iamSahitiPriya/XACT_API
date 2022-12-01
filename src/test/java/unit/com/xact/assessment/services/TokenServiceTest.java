@@ -42,4 +42,5 @@ class TokenServiceTest {
 
         Assertions.assertNotNull(token);
     }
+
 }

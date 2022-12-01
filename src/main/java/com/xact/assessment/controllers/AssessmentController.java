@@ -16,6 +16,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +47,16 @@ public class AssessmentController {
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
 
-    private final ModelMapper modelMapper = new ModelMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
+
+    static {
+        modelMapper.addMappings(new PropertyMap<Assessment,AssessmentResponse>() {
+            @Override
+            protected void configure() {
+                skip(destination.isOwner());
+            }
+        });
+    }
 
     public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, NotificationService notificationService) {
         this.usersAssessmentsService = usersAssessmentsService;
@@ -77,6 +87,7 @@ public class AssessmentController {
                 assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
                 assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
                 assessmentResponse.setUsers(assessment.getFacilitators());
+                assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwner()));
                 assessmentResponses.add(assessmentResponse);
             });
         return HttpResponse.ok(assessmentResponses);
@@ -163,7 +174,7 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> getAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Get assessment : {}", assessmentId);
-
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
@@ -192,6 +203,7 @@ public class AssessmentController {
         assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
         assessmentResponse.setAssessmentState(assessment.getAssessmentState());
         assessmentResponse.setUsers(users);
+        assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwner()));
         assessmentResponse.setAssessmentPurpose(assessment.getAssessmentPurpose());
 
         return HttpResponse.ok(assessmentResponse);
@@ -410,9 +422,10 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public void deleteAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Delete assessment : {}", assessmentId);
+        User loggedInUser = userAuthService.getLoggedInUser(authentication);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable())
+        if (assessment.isEditable() && (assessment.getOwner().equals(loggedInUser.getUserEmail())))
             assessmentService.softDeleteAssessment(assessment);
     }
 

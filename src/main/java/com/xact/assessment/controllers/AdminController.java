@@ -23,9 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Introspected
 @AdminAuth
@@ -84,10 +82,11 @@ public class AdminController {
 
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentCategory> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
+    public HttpResponse<CategoryDto> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
         LOGGER.info("Admin: Create category");
-        assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
-            return HttpResponse.ok();
+        AssessmentCategory assessmentCategory1 = assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
+        CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
+            return HttpResponse.ok(categoryDto);
     }
 
     @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)
@@ -100,12 +99,14 @@ public class AdminController {
 
     @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentTopic> createTopics(@Body @Valid List<AssessmentTopicRequest> assessmentTopicRequests, Authentication authentication) {
+    public HttpResponse<TopicResponse> createTopics(@Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
         LOGGER.info("Admin: Create topics");
-        for (AssessmentTopicRequest assessmentTopicRequest : assessmentTopicRequests) {
-            assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
-        }
-        return HttpResponse.ok();
+        AssessmentTopic assessmentTopic = assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
+        TopicResponse topicResponse = mapper.map(assessmentTopic,TopicResponse.class);
+        topicResponse.setModuleId(assessmentTopic.getModule().getModuleId());
+        topicResponse.setCategoryId(assessmentTopic.getModule().getCategory().getCategoryId());
+
+        return HttpResponse.ok(topicResponse);
     }
 
     @Post(value = "/parameters", produces = MediaType.APPLICATION_JSON)
@@ -150,14 +151,15 @@ public class AdminController {
 
     @Put(value = "/categories/{categoryId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentCategory> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
-        LOGGER.info("Admin: Update category: {}", categoryId);
+    public HttpResponse<CategoryDto> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body  @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update category: {}",categoryId);
         AssessmentCategory assessmentCategory = getCategory(categoryId);
         assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
         assessmentCategory.setActive(assessmentCategoryRequest.isActive());
         assessmentCategory.setComments(assessmentCategoryRequest.getComments());
-        assessmentMasterDataService.updateCategory(assessmentCategory, assessmentCategoryRequest);
-        return HttpResponse.ok();
+        AssessmentCategory assessmentCategory1 = assessmentMasterDataService.updateCategory(assessmentCategory,assessmentCategoryRequest);
+        CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
+        return HttpResponse.ok(categoryDto);
     }
 
     @Put(value = "/modules/{moduleId}", produces = MediaType.APPLICATION_JSON)
@@ -170,10 +172,13 @@ public class AdminController {
 
     @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentTopic> updateTopic(@PathVariable("topicId") Integer topicId, @Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
-        LOGGER.info("Admin: Update topic: {}", topicId);
-        assessmentMasterDataService.updateTopic(topicId, assessmentTopicRequest);
-        return HttpResponse.ok();
+    public HttpResponse<TopicResponse> updateTopic(@PathVariable("topicId") Integer topicId, @Body  @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
+        LOGGER.info("Admin: Update topic: {}",topicId);
+        AssessmentTopic assessmentTopic = assessmentMasterDataService.updateTopic(topicId, assessmentTopicRequest);
+        TopicResponse topicResponse = mapper.map(assessmentTopic,TopicResponse.class);
+        topicResponse.setUpdatedAt(assessmentTopic.getUpdatedAt());
+        topicResponse.setCategoryId(assessmentTopic.getModule().getCategory().getCategoryId());
+        return HttpResponse.ok(topicResponse);
     }
 
     @Put(value = "/parameters/{parameterId}", produces = MediaType.APPLICATION_JSON)

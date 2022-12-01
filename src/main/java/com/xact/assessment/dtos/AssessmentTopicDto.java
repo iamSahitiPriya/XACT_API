@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
 import java.util.SortedSet;
 
 @NoArgsConstructor
@@ -21,6 +22,8 @@ public class AssessmentTopicDto implements Comparable<AssessmentTopicDto> {
     private Integer topicId;
     private String topicName;
     private Integer module;
+    private Date updatedAt;
+    private String comments;
     private boolean active;
     private SortedSet<AssessmentParameterDto> parameters;
     private SortedSet<AssessmentTopicReferenceDto> references;

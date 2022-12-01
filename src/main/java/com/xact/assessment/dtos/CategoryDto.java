@@ -30,7 +30,8 @@ public class CategoryDto implements Comparable<CategoryDto> {
 
     @Override
     public int compareTo(CategoryDto o) {
-        return o.categoryId - categoryId;
+        return o.updatedAt.compareTo(updatedAt);
     }
+
 }
 

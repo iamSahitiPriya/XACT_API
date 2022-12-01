@@ -13,10 +13,7 @@ import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Singleton
 public class AssessmentMasterDataService {
@@ -58,8 +55,8 @@ public class AssessmentMasterDataService {
         List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
         if (!assessmentModules.isEmpty()) {
             for (AssessmentModule assessmentModule : assessmentModules) {
-                assessmentModule.setTopics(assessmentModule.getActiveTopics());
                 AssessmentCategory category = assessmentModule.getCategory();
+                assessmentModule.setTopics(assessmentModule.getActiveTopics());
                 categorySet.add(category);
 
             }
@@ -77,10 +74,11 @@ public class AssessmentMasterDataService {
         return categories;
     }
 
-    public void createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
+    public AssessmentCategory createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
         if (!checkIfCategoryUnique(assessmentCategoryRequest.getCategoryName())) {
             AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
             categoryRepository.save(assessmentCategory);
+            return assessmentCategory;
         } else {
             throw new DuplicateRecordException("Duplicate records are not allowed");
         }
@@ -105,10 +103,11 @@ public class AssessmentMasterDataService {
         }
     }
 
-    public void createAssessmentTopics(AssessmentTopicRequest assessmentTopicRequest) {
+    public AssessmentTopic createAssessmentTopics(AssessmentTopicRequest assessmentTopicRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
         AssessmentTopic assessmentTopic = new AssessmentTopic(assessmentTopicRequest.getTopicName(), assessmentModule, assessmentTopicRequest.isActive(), assessmentTopicRequest.getComments());
         topicService.createTopic(assessmentTopic);
+        return assessmentTopic;
     }
 
 
@@ -139,7 +138,7 @@ public class AssessmentMasterDataService {
 
     }
 
-    public void updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
+    public AssessmentCategory updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
         if (assessmentCategory.getCategoryName().equals(assessmentCategoryRequest.getCategoryName())) {
             assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
             assessmentCategory.setActive(assessmentCategoryRequest.isActive());
@@ -155,6 +154,7 @@ public class AssessmentMasterDataService {
                 throw new DuplicateRecordException("Duplicate records are not allowed");
             }
         }
+        return assessmentCategory;
     }
     private boolean checkIfModuleUnique(String moduleName, AssessmentCategory assessmentCategory){
         List<String> modules=moduleService.getModuleNames(assessmentCategory.getCategoryId());
@@ -178,13 +178,16 @@ public class AssessmentMasterDataService {
 
     }
 
-    public void updateTopic(Integer topicId, AssessmentTopicRequest assessmentTopicRequest) {
+    public AssessmentTopic updateTopic(Integer topicId, AssessmentTopicRequest assessmentTopicRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
         assessmentTopic.setModule(assessmentModule);
         assessmentTopic.setTopicName(assessmentTopicRequest.getTopicName());
-
+        assessmentTopic.setActive(assessmentTopicRequest.isActive());
+        assessmentTopic.setComments(assessmentTopicRequest.getComments());
+        assessmentTopic.setUpdatedAt(new Date());
         topicService.updateTopic(assessmentTopic);
+        return assessmentTopic;
     }
 
     public void updateParameter(Integer parameterId, AssessmentParameterRequest assessmentParameterRequest) {

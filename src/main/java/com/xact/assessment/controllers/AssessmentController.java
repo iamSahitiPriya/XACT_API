@@ -297,14 +297,15 @@ public class AssessmentController {
 
         if (assessment.isEditable()) {
             List<Answer> answerList = setAnswerListToSave(topicLevelAssessmentRequests, assessment);
+            List<UserQuestion> userQuestionList = setUserQuestionListToSave(topicLevelAssessmentRequests,assessment);
             if (topicLevelAssessmentRequests.isRatedAtTopicLevel()) {
                 TopicLevelAssessment topicLevelRatingAndRecommendation = setTopicLevelRatingAndRecommendation(topicLevelAssessmentRequests, assessment);
                 List<TopicLevelRecommendation> topicLevelRecommendationList = setTopicLevelRecommendation(topicLevelAssessmentRequests, assessment);
-                topicAndParameterLevelAssessmentService.saveTopicLevelAssessment(topicLevelRatingAndRecommendation, topicLevelRecommendationList, answerList);
+                topicAndParameterLevelAssessmentService.saveTopicLevelAssessment(topicLevelRatingAndRecommendation, topicLevelRecommendationList, answerList,userQuestionList);
             } else {
                 List<ParameterLevelAssessment> parameterLevelAssessmentList = setParameterLevelRatingAndResommendationList(topicLevelAssessmentRequests, assessment);
                 List<ParameterLevelRecommendation> parameterLevelRecommendationList = setParameterLevelRecommendation(assessment, topicLevelAssessmentRequests.getParameterLevelAssessmentRequestList());
-                topicAndParameterLevelAssessmentService.saveParameterLevelAssessment(parameterLevelAssessmentList, parameterLevelRecommendationList, answerList);
+                topicAndParameterLevelAssessmentService.saveParameterLevelAssessment(parameterLevelAssessmentList, parameterLevelRecommendationList, answerList,userQuestionList);
             }
             updateAssessment(assessment);
         }
@@ -565,6 +566,19 @@ public class AssessmentController {
         }
         return answerList;
     }
+    private List<UserQuestion> setUserQuestionListToSave(TopicLevelAssessmentRequest topicLevelAssessmentRequests, Assessment assessment) {
+        List<UserQuestion> userQuestionList = new ArrayList<>();
+        for (ParameterLevelAssessmentRequest parameterLevelAssessmentRequest : topicLevelAssessmentRequests.getParameterLevelAssessmentRequestList()) {
+            for (UserQuestionRequest userQuestionRequest : parameterLevelAssessmentRequest.getUserQuestionRequestList()) {
+                UserQuestion userQuestion= modelMapper.map(userQuestionRequest, UserQuestion.class);
+                userQuestion.setAssessment(assessment);
+                AssessmentParameter parameter = parameterService.getParameter(parameterLevelAssessmentRequest.getParameterRatingAndRecommendation().getParameterId()).orElseThrow();
+                userQuestion.setParameter(parameter);
+                userQuestionList.add(userQuestion);
+            }
+        }
+        return userQuestionList;
+    }
 
     private List<AnswerResponse> getAnswerResponseList(List<Answer> answerList) {
         List<AnswerResponse> answerResponseList = new ArrayList<>();
@@ -582,6 +596,7 @@ public class AssessmentController {
         for (UserQuestion eachUserQuestion : userQuestionList){
             UserQuestionResponse userQuestionResponse = new UserQuestionResponse();
             userQuestionResponse.setQuestionId(eachUserQuestion.getQuestionId());
+            userQuestionResponse.setParameterId(eachUserQuestion.getParameter().getParameterId());
             userQuestionResponse.setQuestion(eachUserQuestion.getQuestion());
             userQuestionResponse.setAnswer(eachUserQuestion.getAnswer());
             userQuestionResponseList.add(userQuestionResponse);

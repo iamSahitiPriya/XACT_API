@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 public class UserQuestionResponse {
     Integer questionId;
+    Integer parameterId;
     String question;
     String answer;
 }

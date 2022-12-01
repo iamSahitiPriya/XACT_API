@@ -41,7 +41,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
         answerService = mock(AnswerService.class);
         topicLevelRecommendationRepository = mock(TopicLevelRecommendationRepository.class);
         parameterLevelRecommendationRepository=mock(ParameterLevelRecommendationRepository.class);
-        topicAndParameterLevelAssessmentService = new TopicAndParameterLevelAssessmentService(topicLevelAssessmentRepository, parameterLevelAssessmentRepository, topicLevelRecommendationRepository, parameterLevelRecommendationRepository, answerService);
+        topicAndParameterLevelAssessmentService = new TopicAndParameterLevelAssessmentService(topicLevelAssessmentRepository, parameterLevelAssessmentRepository, topicLevelRecommendationRepository, parameterLevelRecommendationRepository, answerService, userQuestionService);
     }
 
     @Test

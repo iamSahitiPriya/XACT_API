@@ -91,10 +91,12 @@ public class AdminController {
 
     @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentModule> createAssessmentModule(@Body @Valid AssessmentModuleRequest assessmentModule, Authentication authentication) {
+    public HttpResponse<ModuleResponse> createAssessmentModule(@Body @Valid AssessmentModuleRequest assessmentModule, Authentication authentication) {
         LOGGER.info("Admin: Create module");
-            assessmentMasterDataService.createAssessmentModule(assessmentModule);
-        return HttpResponse.ok();
+            AssessmentModule assessmentModule1=assessmentMasterDataService.createAssessmentModule(assessmentModule);
+            ModuleResponse moduleResponse = mapper.map(assessmentModule1,ModuleResponse.class);
+            moduleResponse.setCategoryId(assessmentModule1.getCategory().getCategoryId());
+        return HttpResponse.ok(moduleResponse);
     }
 
     @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
@@ -164,10 +166,13 @@ public class AdminController {
 
     @Put(value = "/modules/{moduleId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentModule> updateModule(@PathVariable("moduleId") Integer moduleId, @Body @Valid AssessmentModuleRequest assessmentModuleRequest, Authentication authentication) {
+    public HttpResponse<ModuleResponse> updateModule(@PathVariable("moduleId") Integer moduleId, @Body @Valid AssessmentModuleRequest assessmentModuleRequest, Authentication authentication) {
         LOGGER.info("Admin: Update module: {}", moduleId);
-        assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
-        return HttpResponse.ok();
+        AssessmentModule assessmentModule=assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
+        ModuleResponse moduleResponse=mapper.map(assessmentModule,ModuleResponse.class);
+        moduleResponse.setCategoryId(assessmentModule.getCategory().getCategoryId());
+        moduleResponse.setUpdatedAt(assessmentModule.getUpdatedAt());
+        return HttpResponse.ok(moduleResponse);
     }
 
     @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)

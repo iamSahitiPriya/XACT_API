@@ -48,10 +48,11 @@ class AdminControllerTest {
         AssessmentModuleRequest moduleRequest = new AssessmentModuleRequest();
         moduleRequest.setModuleName("This is a module");
         moduleRequest.setActive(false);
-
-        HttpResponse<AssessmentModule> actualResponse = adminController.createAssessmentModule(moduleRequest, authentication);
+        AssessmentCategory category=new AssessmentCategory(1,"categoryName",true,"");
+        AssessmentModule assessmentModule=new AssessmentModule(1,"moduleName",category,true,"");
+        when(assessmentMasterDataService.createAssessmentModule(moduleRequest)).thenReturn(assessmentModule);
+        HttpResponse<ModuleResponse> actualResponse = adminController.createAssessmentModule(moduleRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-
     }
 
     @Test
@@ -135,9 +136,10 @@ class AdminControllerTest {
         AssessmentModuleRequest moduleRequest = new AssessmentModuleRequest();
         moduleRequest.setModuleName("Module");
         Integer moduleId = 1;
-        AssessmentModule assessmentModule = new AssessmentModule();
-        assessmentModule.setModuleId(1);
-        assessmentModule.setModuleName("this is a module");
+        AssessmentCategory category=new AssessmentCategory(1,"categoryName",true,"");
+        AssessmentModule assessmentModule=new AssessmentModule(1,"moduleName",category,true,"");
+        when(assessmentMasterDataService.updateModule(1,moduleRequest)).thenReturn(assessmentModule);
+
 
         HttpResponse actualResponse = adminController.updateModule(moduleId, moduleRequest, authentication);
 

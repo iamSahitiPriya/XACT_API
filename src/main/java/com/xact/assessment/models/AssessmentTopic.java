@@ -119,4 +119,12 @@ public class AssessmentTopic {
         this.isActive = isActive;
         this.comments = comments;
     }
+
+    public AssessmentTopic(Integer topicId,String topicName, AssessmentModule module, boolean isActive, String comments) {
+        this.topicId=topicId;
+        this.topicName = topicName;
+        this.module = module;
+        this.isActive = isActive;
+        this.comments = comments;
+    }
 }

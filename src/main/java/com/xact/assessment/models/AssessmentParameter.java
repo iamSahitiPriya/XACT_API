@@ -89,4 +89,11 @@ public class AssessmentParameter {
         this.isActive = isActive;
         this.comments = comments;
     }
+
+    public AssessmentParameter(Integer parameterId,String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
+        this.parameterName = parameterName;
+        this.topic = topic;
+        this.isActive = isActive;
+        this.comments = comments;
+    }
 }

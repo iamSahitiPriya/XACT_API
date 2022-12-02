@@ -77,9 +77,14 @@ class AdminControllerTest {
         AssessmentParameterRequest parameterRequest = new AssessmentParameterRequest();
         parameterRequest.setParameterName("Parameter");
         parameterRequest.setActive(false);
-        List<AssessmentParameterRequest> assessmentParameterRequests = Collections.singletonList(parameterRequest);
 
-        HttpResponse<AssessmentParameter> actualResponse = adminController.createParameters(assessmentParameterRequests, authentication);
+        AssessmentCategory assessmentCategory=new AssessmentCategory(1,"category",true,"");
+        AssessmentModule assessmentModule=new AssessmentModule(1,"moduleName",assessmentCategory,true,"");
+        AssessmentTopic topic=new AssessmentTopic(1,"topicName",assessmentModule,true,"");
+        AssessmentParameter assessmentParameter=new AssessmentParameter(1,"parameterName",topic,true,"");
+        when(assessmentMasterDataService.createAssessmentParameter(parameterRequest)).thenReturn(assessmentParameter);
+
+        HttpResponse<ParameterResponse> actualResponse = adminController.createParameters(parameterRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -168,12 +173,14 @@ class AdminControllerTest {
     void shouldUpdateParameter() {
         AssessmentParameterRequest parameterRequest = new AssessmentParameterRequest();
         parameterRequest.setParameterName("Module");
-        Integer parameterId = 1;
-        AssessmentParameter assessmentParameter = new AssessmentParameter();
-        assessmentParameter.setParameterId(1);
-        assessmentParameter.setParameterName("this is a module");
 
-        HttpResponse actualResponse = adminController.updateParameter(parameterId, parameterRequest, authentication);
+        AssessmentCategory assessmentCategory=new AssessmentCategory(1,"category",true,"");
+        AssessmentModule assessmentModule=new AssessmentModule(1,"moduleName",assessmentCategory,true,"");
+        AssessmentTopic topic=new AssessmentTopic(1,"topicName",assessmentModule,true,"");
+        AssessmentParameter assessmentParameter=new AssessmentParameter(1,"parameterName",topic,true,"");
+        when(assessmentMasterDataService.updateParameter(assessmentParameter.getParameterId(),parameterRequest)).thenReturn(assessmentParameter);
+
+        HttpResponse actualResponse = adminController.updateParameter(assessmentParameter.getParameterId(), parameterRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }

@@ -112,11 +112,11 @@ public class AssessmentMasterDataService {
     }
 
 
-    public void createAssessmentParameter(AssessmentParameterRequest assessmentParameter) {
+    public AssessmentParameter createAssessmentParameter(AssessmentParameterRequest assessmentParameter) {
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameter.getTopic()).orElseThrow();
         AssessmentParameter assessmentParameter1 = new AssessmentParameter(assessmentParameter.getParameterName(), assessmentTopic, assessmentParameter.isActive(), assessmentParameter.getComments());
         parameterService.createParameter(assessmentParameter1);
-
+        return assessmentParameter1;
     }
 
     public void createAssessmentQuestions(QuestionRequest questionRequest) {
@@ -192,7 +192,7 @@ public class AssessmentMasterDataService {
         return assessmentTopic;
     }
 
-    public void updateParameter(Integer parameterId, AssessmentParameterRequest assessmentParameterRequest) {
+    public AssessmentParameter updateParameter(Integer parameterId, AssessmentParameterRequest assessmentParameterRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameterRequest.getTopic()).orElseThrow();
         assessmentParameter.setParameterName(assessmentParameterRequest.getParameterName());
@@ -200,6 +200,7 @@ public class AssessmentMasterDataService {
         assessmentParameter.setActive(assessmentParameterRequest.isActive());
         assessmentParameter.setComments(assessmentParameterRequest.getComments());
         parameterService.updateParameter(assessmentParameter);
+        return assessmentParameter;
     }
 
     public void updateQuestion(Integer questionId, QuestionRequest questionRequest) {

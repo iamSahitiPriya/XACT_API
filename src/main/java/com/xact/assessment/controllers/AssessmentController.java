@@ -112,7 +112,7 @@ public class AssessmentController {
 
     @Put(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse updateAssessment(@PathVariable("assessmentId") Integer assessmentId, @Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
+    public HttpResponse<Assessment> updateAssessment(@PathVariable("assessmentId") Integer assessmentId, @Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
         LOGGER.info("Update assessment : {}", assessmentId);
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         assessmentRequest.validate(emailPattern);
@@ -134,7 +134,7 @@ public class AssessmentController {
 
     @Put(value = "/{assessmentId}/statuses/open", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse reopenAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+    public HttpResponse<AssessmentResponse> reopenAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
 
         LOGGER.info("Reopen assessment : {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
@@ -235,7 +235,7 @@ public class AssessmentController {
 
     @Patch(value = "/answers/{assessmentId}/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveNotesAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable String notes, Authentication authentication) {
+    public HttpResponse<Assessment> saveNotesAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable String notes, Authentication authentication) {
         LOGGER.info("Update individual notes. assessment: {}, question:{}", assessmentId, questionId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
@@ -360,7 +360,7 @@ public class AssessmentController {
 
     @Patch(value = "/topicRating/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveTopicRating(@PathVariable("assessmentId") Integer
+    public HttpResponse<TopicLevelAssessment> saveTopicRating(@PathVariable("assessmentId") Integer
                                                 assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String rating, Authentication
                                                 authentication) {
         LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, topicId);
@@ -380,7 +380,7 @@ public class AssessmentController {
 
     @Patch(value = "/parameterRating/{assessmentId}/{parameterId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveParameterRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String rating, Authentication authentication) {
+    public HttpResponse<ParameterLevelAssessment> saveParameterRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String rating, Authentication authentication) {
         LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, parameterId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
@@ -398,7 +398,7 @@ public class AssessmentController {
 
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
+    public HttpResponse<Assessment> saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {
         LOGGER.info("Save modules: {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
@@ -409,7 +409,7 @@ public class AssessmentController {
 
     @Put(value = "/{assessmentId}/modules")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication) {
+    public HttpResponse<Assessment> updateModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequest, Authentication authentication) {
         LOGGER.info("Update modules. assessment: {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {

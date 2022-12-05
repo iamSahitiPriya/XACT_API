@@ -75,7 +75,7 @@ public class NotificationService {
         ObjectMapper objectMapper = new ObjectMapper();
         Notification notification = setNotification(assessmentUsers);
         notification.setTemplateName(NotificationType.COMPLETED_V1);
-        Map<String, String> payload = setPayloadForCompleteAssessment(assessment);
+        Map<String, String> payload = getAssessmentCommonPayload(assessment);
         notification.setPayload(objectMapper.writeValueAsString(payload));
 
         saveNotification(notification);
@@ -87,7 +87,7 @@ public class NotificationService {
         ObjectMapper objectMapper = new ObjectMapper();
         Notification notification = setNotification(assessmentUsers);
         notification.setTemplateName(NotificationType.REOPENED_V1);
-        Map<String, String> payload = setPayloadForReopenAssessment(assessment);
+        Map<String, String> payload = getAssessmentCommonPayload(assessment);
         notification.setPayload(objectMapper.writeValueAsString(payload));
 
         saveNotification(notification);
@@ -99,14 +99,14 @@ public class NotificationService {
 
         notificationsType.forEach((notificationType, users) -> {
             ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, String> payload = new HashMap<>();
+            Map<String, String> payload;
             Notification notification = setNotification(users);
             notification.setTemplateName(notificationType);
 
             if (isNotificationTypeCreated(notificationType))
-                payload = setPayloadForCreateAssessment(assessment);
+                payload = getAssessmentCommonPayload(assessment);
             else
-                payload = setPayloadForAddUser(assessment);
+                payload = getAssessmentCommonPayload(assessment);
 
             try {
                 notification.setPayload(objectMapper.writeValueAsString(payload));
@@ -123,42 +123,12 @@ public class NotificationService {
         return notificationType.equals(NotificationType.CREATED_V1);
     }
 
-    private Map<String, String> setPayloadForCompleteAssessment(Assessment assessment) {
-        Map<String, String> payload = getPayload(assessment);
-        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
-        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
-
-        return payload;
-    }
-
-    private Map<String, String> setPayloadForReopenAssessment(Assessment assessment) {
-        Map<String, String> payload = getPayload(assessment);
-        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
-        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
-
-        return payload;
-    }
-
-    private Map<String, String> setPayloadForCreateAssessment(Assessment assessment) {
-        Map<String, String> payload = getPayload(assessment);
-        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
-        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
-
-        return payload;
-    }
-
-    private Map<String, String> setPayloadForAddUser(Assessment assessment) {
-        Map<String, String> payload = getPayload(assessment);
-        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
-        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
-
-        return payload;
-    }
-
-    private Map<String, String> getPayload(Assessment assessment) {
+    private Map<String, String> getAssessmentCommonPayload(Assessment assessment) {
         Map<String, String> payload = new HashMap<>();
         payload.put(ASSESSMENT_ID, String.valueOf(assessment.getAssessmentId()));
         payload.put(ASSESSMENT_NAME, assessment.getAssessmentName());
+        payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
+        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
         return payload;
     }
 }

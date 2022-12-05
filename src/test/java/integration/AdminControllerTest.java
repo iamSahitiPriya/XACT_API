@@ -27,7 +27,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @MicronautTest
-public class AdminControllerTest {
+class AdminControllerTest {
 
     @Inject
     @Client("/")
@@ -496,7 +496,7 @@ public class AdminControllerTest {
 
         Set<AssessmentTopicReference> assessmentTopicReferences = assessmentTopicRepository.findByTopicId(assessmentTopic.getTopicId()).getReferences();
 
-        assertEquals(assessmentTopicReferences.size(),0);
+        assertEquals(0,assessmentTopicReferences.size());
 
         entityManager.getTransaction().begin();
 

@@ -474,7 +474,7 @@ public class ReportService {
                         }
                     }
                 } else {
-                    for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
+                    for (AssessmentParameter assessmentParameter : assessmentTopic.getActiveParameters()) {
                         for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {
                             if (parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(assessmentParameter.getParameterId())) {
                                 assessmentParameter.setRating(parameterLevelAssessment.getRating());

@@ -71,7 +71,6 @@ public class AdminController {
         mapper.addMappings(topicReferenceMap);
         mapper.addMappings(parameterReferenceMap);
     }
-
     private final AssessmentMasterDataService assessmentMasterDataService;
 
     private final AssessmentService assessmentService;
@@ -92,10 +91,12 @@ public class AdminController {
 
     @Post(value = "/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentModule> createAssessmentModule(@Body @Valid AssessmentModuleRequest assessmentModule, Authentication authentication) {
+    public HttpResponse<ModuleResponse> createAssessmentModule(@Body @Valid AssessmentModuleRequest assessmentModule, Authentication authentication) {
         LOGGER.info("Admin: Create module");
-            assessmentMasterDataService.createAssessmentModule(assessmentModule);
-        return HttpResponse.ok();
+            AssessmentModule assessmentModule1=assessmentMasterDataService.createAssessmentModule(assessmentModule);
+            ModuleResponse moduleResponse = mapper.map(assessmentModule1,ModuleResponse.class);
+            moduleResponse.setCategoryId(assessmentModule1.getCategory().getCategoryId());
+        return HttpResponse.ok(moduleResponse);
     }
 
     @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
@@ -112,12 +113,15 @@ public class AdminController {
 
     @Post(value = "/parameters", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentParameter> createParameters(@Body @Valid List<AssessmentParameterRequest> assessmentParameterRequests, Authentication authentication) {
+    public HttpResponse<ParameterResponse> createParameters(@Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
         LOGGER.info("Admin: Create parameter");
-        for (AssessmentParameterRequest assessmentParameter : assessmentParameterRequests) {
-            assessmentMasterDataService.createAssessmentParameter(assessmentParameter);
-        }
-        return HttpResponse.ok();
+
+            AssessmentParameter assessmentParameter=assessmentMasterDataService.createAssessmentParameter(assessmentParameterRequest);
+            ParameterResponse parameterResponse=mapper.map(assessmentParameter,ParameterResponse.class);
+            parameterResponse.setModuleId(assessmentParameter.getTopic().getModule().getModuleId());
+            parameterResponse.setTopicId(assessmentParameter.getTopic().getTopicId());
+            parameterResponse.setCategoryId(assessmentParameter.getTopic().getModule().getCategory().getCategoryId());
+        return HttpResponse.ok(parameterResponse);
     }
 
     @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
@@ -164,10 +168,13 @@ public class AdminController {
 
     @Put(value = "/modules/{moduleId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentModule> updateModule(@PathVariable("moduleId") Integer moduleId, @Body @Valid AssessmentModuleRequest assessmentModuleRequest, Authentication authentication) {
+    public HttpResponse<ModuleResponse> updateModule(@PathVariable("moduleId") Integer moduleId, @Body @Valid AssessmentModuleRequest assessmentModuleRequest, Authentication authentication) {
         LOGGER.info("Admin: Update module: {}", moduleId);
-        assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
-        return HttpResponse.ok();
+        AssessmentModule assessmentModule=assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
+        ModuleResponse moduleResponse=mapper.map(assessmentModule,ModuleResponse.class);
+        moduleResponse.setCategoryId(assessmentModule.getCategory().getCategoryId());
+        moduleResponse.setUpdatedAt(assessmentModule.getUpdatedAt());
+        return HttpResponse.ok(moduleResponse);
     }
 
     @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)
@@ -183,10 +190,14 @@ public class AdminController {
 
     @Put(value = "/parameters/{parameterId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentParameter> updateParameter(@PathVariable("parameterId") Integer parameterId, @Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
+    public HttpResponse<ParameterResponse> updateParameter(@PathVariable("parameterId") Integer parameterId, @Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
         LOGGER.info("Admin: Update parameter: {}", parameterId);
-        assessmentMasterDataService.updateParameter(parameterId, assessmentParameterRequest);
-        return HttpResponse.ok();
+        AssessmentParameter assessmentParameter=assessmentMasterDataService.updateParameter(parameterId, assessmentParameterRequest);
+        ParameterResponse parameterResponse=mapper.map(assessmentParameter,ParameterResponse.class);
+        parameterResponse.setModuleId(assessmentParameter.getTopic().getModule().getModuleId());
+        parameterResponse.setTopicId(assessmentParameter.getTopic().getTopicId());
+        parameterResponse.setCategoryId(assessmentParameter.getTopic().getModule().getCategory().getCategoryId());
+        return HttpResponse.ok(parameterResponse);
     }
 
     @Put(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)

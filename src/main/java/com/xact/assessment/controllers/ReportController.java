@@ -122,7 +122,7 @@ public class ReportController {
                     } else {
                         reportTopicResponse.setRating(assessmentTopic.getTopicAverage());
                         List<ReportParameterResponse> reportParameterResponseList = new ArrayList<>();
-                        for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
+                        for (AssessmentParameter assessmentParameter : assessmentTopic.getActiveParameters()) {
                             ReportParameterResponse reportParameterResponse = getReportParameterResponse(assessmentParameter);
                             reportParameterResponseList.add(reportParameterResponse);
                         }

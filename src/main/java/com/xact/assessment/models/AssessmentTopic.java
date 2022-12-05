@@ -78,7 +78,7 @@ public class AssessmentTopic {
         return isActive;
     }
 
-    public Set<AssessmentParameter> getParameters() {
+    public Set<AssessmentParameter> getActiveParameters() {
         return parameters == null ? null : parameters.stream().filter(AssessmentParameter::getIsActive).collect(Collectors.toSet());
     }
 
@@ -114,6 +114,14 @@ public class AssessmentTopic {
     }
 
     public AssessmentTopic(String topicName, AssessmentModule module, boolean isActive, String comments) {
+        this.topicName = topicName;
+        this.module = module;
+        this.isActive = isActive;
+        this.comments = comments;
+    }
+
+    public AssessmentTopic(Integer topicId,String topicName, AssessmentModule module, boolean isActive, String comments) {
+        this.topicId=topicId;
         this.topicName = topicName;
         this.module = module;
         this.isActive = isActive;

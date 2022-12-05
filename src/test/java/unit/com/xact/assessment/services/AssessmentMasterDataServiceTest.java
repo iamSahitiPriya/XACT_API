@@ -426,4 +426,13 @@ class AssessmentMasterDataServiceTest {
         verify(userAssessmentModuleRepository).findModuleByAssessment(assessmentId);
 
     }
+
+    @Test
+    void deleteTopicReference() {
+        doNothing().when(assessmentTopicReferenceRepository).deleteById(1);
+
+        assessmentMasterDataService.deleteTopicReference(1);
+
+        verify(assessmentTopicReferenceRepository).deleteById(1);
+    }
 }

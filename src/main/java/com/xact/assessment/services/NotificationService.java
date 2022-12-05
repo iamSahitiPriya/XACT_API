@@ -102,11 +102,7 @@ public class NotificationService {
             Map<String, String> payload;
             Notification notification = setNotification(users);
             notification.setTemplateName(notificationType);
-
-            if (isNotificationTypeCreated(notificationType))
-                payload = getAssessmentCommonPayload(assessment);
-            else
-                payload = getAssessmentCommonPayload(assessment);
+            payload = getAssessmentCommonPayload(assessment);
 
             try {
                 notification.setPayload(objectMapper.writeValueAsString(payload));
@@ -117,10 +113,6 @@ public class NotificationService {
             saveNotification(notification);
         });
         return null;
-    }
-
-    private boolean isNotificationTypeCreated(NotificationType notificationType) {
-        return notificationType.equals(NotificationType.CREATED_V1);
     }
 
     private Map<String, String> getAssessmentCommonPayload(Assessment assessment) {

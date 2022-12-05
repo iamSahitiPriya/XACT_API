@@ -96,9 +96,12 @@ class AdminControllerTest {
     void createAssessmentTopicReferences() {
         TopicReferencesRequest referencesRequest = new TopicReferencesRequest();
         referencesRequest.setReference("references");
-        List<TopicReferencesRequest> referencesRequests = Collections.singletonList(referencesRequest);
+        referencesRequest.setRating(Rating.FIVE);
+        referencesRequest.setTopic(1);
 
-        HttpResponse<AssessmentTopicReference> actualResponse = adminController.createTopicReference(referencesRequests, authentication);
+        when(assessmentMasterDataService.createAssessmentTopicReferences(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(),Rating.FIVE,"reference"));
+
+        HttpResponse<AssessmentTopicReferenceDto> actualResponse = adminController.createTopicReference(referencesRequest, authentication);
         assertEquals(actualResponse.getStatus(), HttpResponse.ok().getStatus());
     }
 
@@ -197,6 +200,9 @@ class AdminControllerTest {
         AssessmentTopicReference topicReference = new AssessmentTopicReference();
         topicReference.setReference("Hello");
 
+        when(assessmentMasterDataService.updateTopicReference(referenceId,referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(),Rating.FIVE,"reference"));
+
+
         HttpResponse actualResponse = adminController.updateTopicReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -213,6 +219,16 @@ class AdminControllerTest {
         HttpResponse actualResponse = adminController.updateParameterReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void shouldDeleteTopicReference() {
+        Integer referenceId = 10;
+
+        HttpResponse actualResponse = adminController.deleteTopicReference(referenceId,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+        verify(assessmentMasterDataService).deleteTopicReference(referenceId);
     }
 
     @Test

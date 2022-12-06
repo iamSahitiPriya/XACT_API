@@ -115,10 +115,12 @@ class AdminControllerTest {
     void createParameterReferences() {
         ParameterReferencesRequest referencesRequest = new ParameterReferencesRequest();
         referencesRequest.setReference("References");
-        List<ParameterReferencesRequest> referencesRequests = Collections.singletonList(referencesRequest);
+        referencesRequest.setRating(Rating.FIVE);
+        referencesRequest.setParameter(1);
 
-        HttpResponse<AssessmentParameterReference> actualResponse = adminController.createParameterReferences(referencesRequests, authentication);
+        when(assessmentMasterDataService.createAssessmentParameterReferences(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
 
+        HttpResponse<AssessmentParameterReferenceDto> actualResponse = adminController.createParameterReferences(referencesRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -211,7 +213,6 @@ class AdminControllerTest {
 
         when(assessmentMasterDataService.updateTopicReference(referenceId,referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(),Rating.FIVE,"reference"));
 
-
         HttpResponse actualResponse = adminController.updateTopicReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -225,6 +226,7 @@ class AdminControllerTest {
         AssessmentParameterReference parameterReference = new AssessmentParameterReference();
         parameterReference.setReference("Hello");
 
+        when(assessmentMasterDataService.updateParameterReferences(referenceId,referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
         HttpResponse actualResponse = adminController.updateParameterReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -238,6 +240,16 @@ class AdminControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         verify(assessmentMasterDataService).deleteTopicReference(referenceId);
+    }
+
+    @Test
+    void shouldDeleteParameterReference() {
+        Integer referenceId = 10;
+
+        HttpResponse actualResponse = adminController.deleteParameterReference(referenceId,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+        verify(assessmentMasterDataService).deleteParameterReference(referenceId);
     }
 
     @Test

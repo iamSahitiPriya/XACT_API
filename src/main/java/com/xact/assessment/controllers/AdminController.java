@@ -145,12 +145,11 @@ public class AdminController {
 
     @Post(value = "/parameterReferences", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentParameterReference> createParameterReferences(@Body List<ParameterReferencesRequest> parameterReferencesRequests, Authentication authentication) {
+    public HttpResponse<AssessmentParameterReferenceDto> createParameterReferences(@Body ParameterReferencesRequest parameterReferencesRequests, Authentication authentication) {
         LOGGER.info("Admin: Create parameter reference");
-        for (ParameterReferencesRequest parameterReferencesRequest : parameterReferencesRequests) {
-            assessmentMasterDataService.createAssessmentParameterReferences(parameterReferencesRequest);
-        }
-        return HttpResponse.ok();
+        AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.createAssessmentParameterReferences(parameterReferencesRequests);
+        AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
+        return HttpResponse.ok(assessmentParameterReferenceDto);
     }
 
     @Put(value = "/categories/{categoryId}", produces = MediaType.APPLICATION_JSON)
@@ -218,9 +217,10 @@ public class AdminController {
 
     @Put(value = "/parameterReferences/{referenceId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentParameterReference> updateParameterReference(@PathVariable("referenceId") Integer referenceId, ParameterReferencesRequest parameterReferencesRequest, Authentication authentication) {
-        assessmentMasterDataService.updateParameterReferences(referenceId, parameterReferencesRequest);
-        return HttpResponse.ok();
+    public HttpResponse<AssessmentParameterReferenceDto> updateParameterReference(@PathVariable("referenceId") Integer referenceId, ParameterReferencesRequest parameterReferencesRequest, Authentication authentication) {
+        AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.updateParameterReferences(referenceId, parameterReferencesRequest);
+        AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
+        return HttpResponse.ok(assessmentParameterReferenceDto);
 
     }
 
@@ -229,6 +229,14 @@ public class AdminController {
     public HttpResponse<TopicReferencesRequest> deleteTopicReference(@PathVariable("referenceId") Integer referenceId, Authentication authentication) {
         LOGGER.info("Admin: Delete topic reference. referenceId: {}" , referenceId);
         assessmentMasterDataService.deleteTopicReference(referenceId);
+        return  HttpResponse.ok();
+    }
+
+    @Delete(value="parameterReferences/{referenceId}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<ParameterReferencesRequest> deleteParameterReference(@PathVariable("referenceId") Integer referenceId, Authentication authentication) {
+        LOGGER.info("Admin: Delete parameter reference. referenceId: {}" , referenceId);
+        assessmentMasterDataService.deleteParameterReference(referenceId);
         return  HttpResponse.ok();
     }
 

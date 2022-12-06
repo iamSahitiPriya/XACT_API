@@ -132,11 +132,11 @@ public class AssessmentMasterDataService {
         return assessmentTopicReference;
     }
 
-    public void createAssessmentParameterReferences(ParameterReferencesRequest parameterReferencesRequest) {
+    public AssessmentParameterReference createAssessmentParameterReferences(ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference());
         assessmentParameterRRepository.save(assessmentParameterReference);
-
+        return assessmentParameterReference;
     }
 
     public AssessmentCategory updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
@@ -224,7 +224,7 @@ public class AssessmentMasterDataService {
         return assessmentTopicReferenceRepository.update(assessmentTopicReference);
     }
 
-    public void updateParameterReferences(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
+    public AssessmentParameterReference updateParameterReferences(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         AssessmentParameterReference assessmentParameterReference = assessmentParameterRRepository.findById(referenceId).orElseThrow();
         assessmentParameterReference.setParameter(assessmentParameter);
@@ -232,6 +232,7 @@ public class AssessmentMasterDataService {
         assessmentParameterReference.setRating(parameterReferencesRequest.getRating());
 
         assessmentParameterRRepository.update(assessmentParameterReference);
+        return assessmentParameterReference;
     }
 
     public List<AssessmentCategory> getCategories() {
@@ -240,6 +241,10 @@ public class AssessmentMasterDataService {
 
     public void deleteTopicReference(Integer referenceId) {
         assessmentTopicReferenceRepository.deleteById(referenceId);
+    }
+
+    public void deleteParameterReference(Integer referenceId) {
+        assessmentParameterRRepository.deleteById(referenceId);
     }
 }
 

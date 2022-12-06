@@ -185,7 +185,7 @@ class AssessmentServiceTest {
             expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
         }
         when(usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator)).thenReturn(assessmentUsersList);
-        List<String> actualResponse = assessmentService.getAssessmentUsers(assessmentId);
+        List<String> actualResponse = assessmentService.getAssessmentFacilitators(assessmentId);
         assertEquals(expectedAssessmentUsersList, actualResponse);
 
     }
@@ -211,7 +211,19 @@ class AssessmentServiceTest {
         AssessmentUsers assessmentUsers2 = new AssessmentUsers(userId2, AssessmentRole.Facilitator);
         assessmentUsersSet.add(assessmentUsers2);
 
+        UserId addedUser = new UserId("newUser@gmail.com", assessment);
+        AssessmentUsers newUser = new AssessmentUsers(addedUser, AssessmentRole.Facilitator);
+        assessmentUsersSet.add(newUser);
+
+        List<AssessmentUsers> assessmentUsers = new ArrayList<>();
+        assessmentUsers.add(assessmentUsers2);
+        assessmentUsers.add(assessmentUsers1);
+
         doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUsersSet, assessment.getAssessmentId());
+        when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUsers);
+
+        assessmentService.getNewlyAddedUser(assessment,assessmentUsersSet);
+
 
         assessmentService.updateAssessment(assessment, assessmentUsersSet);
 

@@ -50,7 +50,7 @@ public class AssessmentController {
     private static final ModelMapper modelMapper = new ModelMapper();
 
     static {
-        modelMapper.addMappings(new PropertyMap<Assessment,AssessmentResponse>() {
+        modelMapper.addMappings(new PropertyMap<Assessment, AssessmentResponse>() {
             @Override
             protected void configure() {
                 skip(destination.isOwner());
@@ -126,6 +126,10 @@ public class AssessmentController {
             assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
             Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
+            Set<String> newUsers = assessmentService.getNewlyAddedUser(assessment, assessmentUsers);
+
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(assessment, newUsers));
+
             assessmentService.updateAssessment(assessment, assessmentUsers);
         }
         return HttpResponse.ok();
@@ -180,7 +184,7 @@ public class AssessmentController {
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
         List<AnswerResponse> answerResponseList = getAnswerResponseList(answerResponse);
 
-        List<String> users = assessmentService.getAssessmentUsers(assessmentId);
+        List<String> users = assessmentService.getAssessmentFacilitators(assessmentId);
 
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
 
@@ -361,8 +365,8 @@ public class AssessmentController {
     @Patch(value = "/topicRating/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelAssessment> saveTopicRating(@PathVariable("assessmentId") Integer
-                                                assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String rating, Authentication
-                                                authentication) {
+                                                                      assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String rating, Authentication
+                                                                      authentication) {
         LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, topicId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {

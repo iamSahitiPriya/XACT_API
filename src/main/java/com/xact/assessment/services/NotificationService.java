@@ -38,10 +38,10 @@ public class NotificationService {
         return notification;
     }
 
-    private Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Set<AssessmentUsers> assessmentUsers) {
+    private Map<NotificationType, Set<String>> setNotificationTypeByUserRole(Set<AssessmentUser> assessmentUsers) {
         Map<NotificationType, Set<String>> notifications = new EnumMap<>(NotificationType.class);
         Set<String> facilitatorEmails = new HashSet<>();
-        for (AssessmentUsers eachUser : assessmentUsers) {
+        for (AssessmentUser eachUser : assessmentUsers) {
             if (eachUser.getRole().equals(AssessmentRole.Owner)) {
                 notifications.put(NotificationType.CREATED_V1, Collections.singleton(eachUser.getUserId().getUserEmail()));
             } else if (eachUser.getRole().equals(AssessmentRole.Facilitator)) {

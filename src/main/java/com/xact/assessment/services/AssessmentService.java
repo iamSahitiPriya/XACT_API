@@ -53,11 +53,11 @@ public class AssessmentService {
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
         assessment.setOrganisation(organisation);
 
-        Set<AssessmentUsers> assessmentUsersSet = getAssessmentUsers(assessmentRequest, user, assessment);
+        Set<AssessmentUser> assessmentUserSet = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
 
-        usersAssessmentsService.createUsersInAssessment(assessmentUsersSet);
-        assessment.setAssessmentUsers(assessmentUsersSet);
+        usersAssessmentsService.createUsersInAssessment(assessmentUserSet);
+        assessment.setAssessmentUsers(assessmentUserSet);
 
         return assessment;
     }
@@ -67,16 +67,16 @@ public class AssessmentService {
         assessmentRepository.save(assessment);
     }
 
-    public Set<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedInUser, Assessment assessment) {
+    public Set<AssessmentUser> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedInUser, Assessment assessment) {
         List<UserDto> users = assessmentRequest.getUsers();
 
 
-        Optional<AssessmentUsers> assessmentOwner = Optional.empty();
+        Optional<AssessmentUser> assessmentOwner = Optional.empty();
         if (assessment.getAssessmentId() != null) {
             assessmentOwner = usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId());
         }
 
-        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
         assessmentOwner.ifPresent(assessmentUsers::add);
         for (UserDto user : users) {
             if (!user.getEmail().isBlank()) {
@@ -90,7 +90,7 @@ public class AssessmentService {
                         continue;
                     }
                 }
-                AssessmentUsers assessmentUser = mapper.map(user, AssessmentUsers.class);
+                AssessmentUser assessmentUser = mapper.map(user, AssessmentUser.class);
                 assessmentUser.setUserId(new UserId(user.getEmail(), assessment));
                 assessmentUsers.add(assessmentUser);
             }
@@ -99,8 +99,8 @@ public class AssessmentService {
     }
 
     public Assessment getAssessment(Integer assessmentId, User user) {
-        AssessmentUsers assessmentUsers = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);
-        return assessmentUsers.getUserId().getAssessment();
+        AssessmentUser assessmentUser = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);
+        return assessmentUser.getUserId().getAssessment();
     }
 
     public Assessment finishAssessment(Assessment assessment) {
@@ -117,7 +117,7 @@ public class AssessmentService {
 
 
     @Transactional
-    public void updateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+    public void updateAssessment(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
         assessment.setAssessmentUsers(assessmentUsers);
         updateAssessment(assessment);

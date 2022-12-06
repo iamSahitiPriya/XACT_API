@@ -15,7 +15,7 @@ class AssessmentTest {
     void shouldCheckForAssessmentStatusWhenNotDeleted() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         Organisation organisation = new Organisation();
         organisation.setSize(5);
         organisation.setIndustry("new");
@@ -26,8 +26,8 @@ class AssessmentTest {
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         assessment.setOrganisation(organisation);
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         boolean actualResponse = assessment.isEditable();
         Assertions.assertFalse(actualResponse);
@@ -37,7 +37,7 @@ class AssessmentTest {
     void shouldCheckForAssessmentStatusWhenDeleted() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         Organisation organisation = new Organisation();
         organisation.setSize(5);
         organisation.setIndustry("new");
@@ -49,8 +49,8 @@ class AssessmentTest {
         assessment.setDeleted(true);
         assessment.setOrganisation(organisation);
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         boolean actualResponse = assessment.isEditable();
         Assertions.assertFalse(actualResponse);
@@ -60,7 +60,7 @@ class AssessmentTest {
     void shouldCheckForAssessmentStatusWhenNotDeletedNotCompleted() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         Organisation organisation = new Organisation();
         organisation.setSize(5);
         organisation.setIndustry("new");
@@ -71,8 +71,8 @@ class AssessmentTest {
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(organisation);
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         boolean actualResponse = assessment.isEditable();
         Assertions.assertTrue(actualResponse);
@@ -82,7 +82,7 @@ class AssessmentTest {
     void shouldCheckForAssessmentState() {
         String userEmail = "dummytest@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         Organisation organisation = new Organisation();
         organisation.setSize(9);
         organisation.setIndustry("industry");
@@ -100,8 +100,8 @@ class AssessmentTest {
         Set<UserAssessmentModule> assessmentModules= Collections.singleton(userAssessmentModule);
         assessment.setAssessmentModules(assessmentModules);
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         boolean actualCategoryStatus = assessment.getCategoryStatus();
         Assertions.assertTrue(actualCategoryStatus);
@@ -121,13 +121,13 @@ class AssessmentTest {
         assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
         assessment.setOrganisation(organisation);
-        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
 
-        AssessmentUsers assessmentUser1 = new AssessmentUsers();
+        AssessmentUser assessmentUser1 = new AssessmentUser();
         UserId userId1 = new UserId("some-facilitator@test.com", assessment);
         assessmentUser1.setUserId(userId1);
         assessmentUser1.setRole(AssessmentRole.Facilitator);
-        AssessmentUsers assessmentUser2 = new AssessmentUsers();
+        AssessmentUser assessmentUser2 = new AssessmentUser();
         UserId userId2 = new UserId(userEmail, assessment);
         assessmentUser2.setUserId(userId2);
         assessmentUser2.setRole(AssessmentRole.Owner);

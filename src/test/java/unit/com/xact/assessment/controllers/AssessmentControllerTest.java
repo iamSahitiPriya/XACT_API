@@ -48,10 +48,10 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
-        AssessmentUsers assessmentUser =  new AssessmentUsers(new UserId("test@thoughtworks.com",assessment),AssessmentRole.Owner);
+        AssessmentUsers assessmentUser = new AssessmentUsers(new UserId("test@thoughtworks.com", assessment), AssessmentRole.Owner);
         assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
         when(usersAssessmentsService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
@@ -93,8 +93,14 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        AssessmentUsers assessmentUser = new AssessmentUsers();
+        UserId userId = new UserId(userEmail, assessment);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
+        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        assessmentUsers.add(assessmentUser);
+        assessment.setAssessmentUsers(assessmentUsers);
 
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         when(assessmentService.createAssessment(assessmentRequest, user)).thenReturn(assessment);
@@ -118,10 +124,10 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(123, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(123, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
         Set<AssessmentUsers> assessmentUsers = new HashSet<>();
-        AssessmentUsers assessmentUser = new AssessmentUsers(new UserId(userEmail,assessment),AssessmentRole.Owner);
+        AssessmentUsers assessmentUser = new AssessmentUsers(new UserId(userEmail, assessment), AssessmentRole.Owner);
         assessmentUsers.add(assessmentUser);
         assessment.setAssessmentUsers(assessmentUsers);
 
@@ -260,7 +266,7 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(123, "xact","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(123, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         Integer assessmentId = 123;
@@ -269,6 +275,14 @@ class AssessmentControllerTest {
         expectedAssessment.setAssessmentName("xact");
         expectedAssessment.setAssessmentStatus(AssessmentStatus.Completed);
         expectedAssessment.setUpdatedAt(updated);
+        expectedAssessment.setOrganisation(organisation);
+        AssessmentUsers assessmentUser = new AssessmentUsers();
+        UserId userId = new UserId(userEmail, expectedAssessment);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
+        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        assessmentUsers.add(assessmentUser);
+        expectedAssessment.setAssessmentUsers(assessmentUsers);
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(assessmentService.finishAssessment(assessment)).thenReturn(expectedAssessment);
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
@@ -292,7 +306,7 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(123, "xact","Client Assessment", organisation, AssessmentStatus.Completed, created, updated);
+        Assessment assessment = new Assessment(123, "xact", "Client Assessment", organisation, AssessmentStatus.Completed, created, updated);
         Map<String, Object> authMap = new HashMap<>();
         authMap.put("sub", userEmail);
         Integer assessmentId = 123;
@@ -301,6 +315,14 @@ class AssessmentControllerTest {
         expectedAssessment.setAssessmentName("xact");
         expectedAssessment.setAssessmentStatus(AssessmentStatus.Active);
         expectedAssessment.setUpdatedAt(updated);
+        expectedAssessment.setOrganisation(organisation);
+        AssessmentUsers assessmentUser = new AssessmentUsers();
+        UserId userId = new UserId(userEmail, expectedAssessment);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
+        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        assessmentUsers.add(assessmentUser);
+        expectedAssessment.setAssessmentUsers(assessmentUsers);
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(assessmentService.reopenAssessment(assessment)).thenReturn(expectedAssessment);
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
@@ -361,7 +383,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -413,7 +435,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -471,7 +493,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -519,7 +541,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -570,7 +592,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -627,7 +649,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -683,7 +705,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -740,7 +762,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -798,7 +820,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -858,7 +880,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -912,7 +934,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -963,7 +985,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1022,7 +1044,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1084,7 +1106,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1144,7 +1166,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1204,7 +1226,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1264,7 +1286,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1325,7 +1347,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1377,7 +1399,7 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUsers assessmentUsers = new AssessmentUsers();
@@ -1432,7 +1454,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(1, "Name", "Industry", "Domain", 1);
-        Assessment assessment = new Assessment(1, "Assessment","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Assessment", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
 
@@ -1462,7 +1484,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName","Client Assessment" ,organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
@@ -1495,7 +1517,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
@@ -1516,7 +1538,7 @@ class AssessmentControllerTest {
         moduleRequests.add(moduleRequest2);
 
         doNothing().when(assessmentService).saveAssessmentModules(moduleRequests, assessment);
-        doNothing().when(assessmentService).updateAssessmentModules(moduleRequests,assessment);
+        doNothing().when(assessmentService).updateAssessmentModules(moduleRequests, assessment);
 
         HttpResponse actualResponse = assessmentController.updateModules(assessment.getAssessmentId(), moduleRequests, authentication);
 
@@ -1529,7 +1551,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment",organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
@@ -1537,8 +1559,8 @@ class AssessmentControllerTest {
         profile.setEmail(userEmail);
         user.setProfile(profile);
 
-        Set<AssessmentUsers> assessmentUsers =  new HashSet<>();
-        AssessmentUsers assessmentUser = new AssessmentUsers(new UserId(userEmail,assessment),AssessmentRole.Owner);
+        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        AssessmentUsers assessmentUser = new AssessmentUsers(new UserId(userEmail, assessment), AssessmentRole.Owner);
         assessmentUsers.add(assessmentUser);
         assessment.setAssessmentUsers(assessmentUsers);
 
@@ -1548,7 +1570,7 @@ class AssessmentControllerTest {
 
         doNothing().when(assessmentService).softDeleteAssessment(assessment);
 
-        assertDoesNotThrow(()->assessmentController.deleteAssessment(assessment.getAssessmentId(), authentication));
+        assertDoesNotThrow(() -> assessmentController.deleteAssessment(assessment.getAssessmentId(), authentication));
 
         verify(assessmentService).softDeleteAssessment(assessment);
     }
@@ -1558,7 +1580,7 @@ class AssessmentControllerTest {
         Date created = new Date(2022 - 7 - 13);
         Date updated = new Date(2022 - 9 - 24);
         Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment",organisation, AssessmentStatus.Completed, created, updated);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Completed, created, updated);
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
@@ -1572,9 +1594,9 @@ class AssessmentControllerTest {
 
         doNothing().when(assessmentService).softDeleteAssessment(assessment);
 
-        assertDoesNotThrow(()->assessmentController.deleteAssessment(assessment.getAssessmentId(), authentication));
+        assertDoesNotThrow(() -> assessmentController.deleteAssessment(assessment.getAssessmentId(), authentication));
 
-        verify(assessmentService,times(0)).softDeleteAssessment(assessment);
+        verify(assessmentService, times(0)).softDeleteAssessment(assessment);
     }
 }
 

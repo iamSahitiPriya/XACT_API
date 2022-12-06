@@ -103,20 +103,6 @@ public class AssessmentService {
         return assessmentUsers.getUserId().getAssessment();
     }
 
-    public List<String> getAssessmentUsers(Integer assessmentId) {
-        List<AssessmentUsers> assessmentUsers = usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator);
-        List<String> assessmentUsers1 = new ArrayList<>();
-        for (AssessmentUsers eachUser : assessmentUsers) {
-
-            assessmentUsers1.add(eachUser.getUserId().getUserEmail());
-        }
-        return assessmentUsers1;
-    }
-
-    public Set<String> getAllAssessmentUsers(Integer assessmentId) {
-        return usersAssessmentsRepository.getAllAssessmentUsers(assessmentId);
-    }
-
     public Assessment finishAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Completed);
         assessment.setUpdatedAt(new Date());
@@ -134,10 +120,11 @@ public class AssessmentService {
     public void updateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
         assessment.setAssessmentUsers(assessmentUsers);
-        assessmentRepository.update(assessment);
+        updateAssessment(assessment);
     }
 
     public void updateAssessment(Assessment assessment) {
+        assessment.setUpdatedAt(new Date());
         assessmentRepository.update(assessment);
     }
 
@@ -182,6 +169,6 @@ public class AssessmentService {
     public void softDeleteAssessment(Assessment assessment) {
         assessment.setDeleted(true);
         assessment.setUpdatedAt(new Date());
-        assessmentRepository.update(assessment);
+        updateAssessment(assessment);
     }
 }

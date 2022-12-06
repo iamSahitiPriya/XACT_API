@@ -54,7 +54,7 @@ class NotificationServiceTest {
         when(notificationRepository.save(notification)).thenReturn(notification);
 
 
-        notificationService.setNotificationForCreateAssessment(assessment, assessmentUsers);
+        notificationService.setNotificationForCreateAssessment(assessment);
         notificationRepository.save(notification);
 
         verify(notificationRepository).save(notification);

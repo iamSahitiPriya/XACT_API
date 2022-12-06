@@ -43,6 +43,7 @@ account:
   scope: "account.read.internal"
   endpoint: "/api/accounts"
   delay: "4h"
+  initialDelay: "30m"
 
 token:
   username: '${AUTH_USERNAME:`dummy`}'

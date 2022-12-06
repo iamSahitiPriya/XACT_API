@@ -116,6 +116,10 @@ public class AssessmentController {
             assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
             Set<AssessmentUser> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
+            Set<String> newUsers = assessmentService.getNewlyAddedUser(assessment, assessmentUsers);
+
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(assessment, newUsers));
+
             assessmentService.updateAssessment(assessment, assessmentUsers);
         }
         return HttpResponse.ok();

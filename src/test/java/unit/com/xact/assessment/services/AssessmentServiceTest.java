@@ -163,6 +163,34 @@ class AssessmentServiceTest {
     }
 
     @Test
+    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
+        List<AssessmentUser> assessmentUsersList = new ArrayList<>();
+
+        Integer assessmentId = 1;
+
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+
+        UserId userId1 = new UserId("hello@gmail.com", assessment);
+        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
+        assessmentUsersList.add(assessmentUsers1);
+
+        UserId userId2 = new UserId("new@gmail.com", assessment);
+        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
+        assessmentUsersList.add(assessmentUsers2);
+
+        List<String> expectedAssessmentUsersList = new ArrayList<>();
+        for (AssessmentUser eachUser : assessmentUsersList) {
+            expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
+        }
+        when(usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator)).thenReturn(assessmentUsersList);
+        List<String> actualResponse = assessmentService.getAssessmentFacilitators(assessmentId);
+        assertEquals(expectedAssessmentUsersList, actualResponse);
+
+    }
+
+    @Test
     void shouldUpdateAssessment() {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
@@ -184,6 +212,19 @@ class AssessmentServiceTest {
         assessmentUserSet.add(assessmentUser2);
 
         doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUserSet, assessment.getAssessmentId());
+        UserId addedUser = new UserId("newUser@gmail.com", assessment);
+        AssessmentUser newUser = new AssessmentUser(addedUser, AssessmentRole.Facilitator);
+        assessmentUserSet.add(newUser);
+
+        List<AssessmentUser> assessmentUsers = new ArrayList<>();
+        assessmentUsers.add(assessmentUser2);
+        assessmentUsers.add(assessmentUser1);
+
+        doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUserSet, assessment.getAssessmentId());
+        when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUsers);
+
+        assessmentService.getNewlyAddedUser(assessment,assessmentUserSet);
+
 
         assessmentService.updateAssessment(assessment, assessmentUserSet);
 

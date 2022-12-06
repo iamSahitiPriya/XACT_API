@@ -11,6 +11,7 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
+import org.apache.commons.compress.utils.Sets;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
@@ -98,9 +99,36 @@ public class AssessmentService {
         return assessmentUsers;
     }
 
+    public Set<String> getNewlyAddedUser(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+        List<AssessmentUser> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
+        Set<AssessmentUser> assessmentUsersSet = new HashSet<>(assessmentUsers);
+        Set<AssessmentUser> assessmentFacilitatorsSet = new HashSet<>(assessmentFacilitators);
+        assessmentUsersSet.removeAll(assessmentFacilitatorsSet);
+        Set<String> users = new HashSet<>();
+        for (AssessmentUser user : assessmentUsersSet) {
+            if (user.getRole() == AssessmentRole.Facilitator) {
+                users.add(user.getUserId().getUserEmail());
+            }
+        }
+        return users;
+    }
+
     public Assessment getAssessment(Integer assessmentId, User user) {
         AssessmentUser assessmentUser = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);
         return assessmentUser.getUserId().getAssessment();
+    }
+
+    public List<String> getAssessmentFacilitators(Integer assessmentId) {
+        List<AssessmentUser> assessmentUsers = usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator);
+        List<String> assessmentUsers1 = new ArrayList<>();
+        for (AssessmentUser eachUser : assessmentUsers) {
+            assessmentUsers1.add(eachUser.getUserId().getUserEmail());
+        }
+        return assessmentUsers1;
+    }
+
+    public Set<String> getAllAssessmentUsers(Integer assessmentId) {
+        return usersAssessmentsRepository.getAllAssessmentUsers(assessmentId);
     }
 
     public Assessment finishAssessment(Assessment assessment) {

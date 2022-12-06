@@ -37,7 +37,7 @@ public class AccountSchedulerService {
         this.accountService = accountService;
     }
 
-    @Scheduled(fixedDelay = "${account.delay}", initialDelay="${account.delay}")
+    @Scheduled(fixedDelay = "${account.delay}", initialDelay="${account.initialDelay}")
     public void fetchOrganisationDetails() throws IOException {
         LOGGER.info("Fetching account details");
         if ("local".equals(profileConfig.getType()) || "test".equals(profileConfig.getType())) {

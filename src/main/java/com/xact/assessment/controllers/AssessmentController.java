@@ -127,8 +127,11 @@ public class AssessmentController {
             Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
             Set<String> newUsers = assessmentService.getNewlyAddedUser(assessment, assessmentUsers);
+            Set<String> deletedUsers = assessmentService.getDeletedUser(assessment, assessmentUsers);
 
             CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(assessment, newUsers));
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(assessment, deletedUsers));
+
 
             assessmentService.updateAssessment(assessment, assessmentUsers);
         }

@@ -11,7 +11,6 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
-import org.apache.commons.compress.utils.Sets;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
@@ -100,10 +99,25 @@ public class AssessmentService {
     }
 
     public Set<String> getNewlyAddedUser(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        List<AssessmentUsers> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
+        Set<AssessmentUsers> assessmentFacilitatorsSet = getAssessmentFacilitatorsSet(assessment);
         Set<AssessmentUsers> assessmentUsersSet = new HashSet<>(assessmentUsers);
-        Set<AssessmentUsers> assessmentFacilitatorsSet = new HashSet<>(assessmentFacilitators);
-        assessmentUsersSet.removeAll(assessmentFacilitatorsSet);
+        return getUpdatedUsers(assessmentFacilitatorsSet, assessmentUsersSet);
+    }
+
+    public Set<String> getDeletedUser(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+        Set<AssessmentUsers> assessmentFacilitatorsSet = getAssessmentFacilitatorsSet(assessment);
+        Set<AssessmentUsers> assessmentUsersSet = new HashSet<>(assessmentUsers);
+        return getUpdatedUsers(assessmentUsersSet, assessmentFacilitatorsSet);
+    }
+
+
+    private Set<AssessmentUsers> getAssessmentFacilitatorsSet(Assessment assessment) {
+        List<AssessmentUsers> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
+        return new HashSet<>(assessmentFacilitators);
+    }
+
+    private Set<String> getUpdatedUsers(Set<AssessmentUsers> assessmentUsers, Set<AssessmentUsers> assessmentUsersSet) {
+        assessmentUsersSet.removeAll(assessmentUsers);
         Set<String> users = new HashSet<>();
         for (AssessmentUsers user : assessmentUsersSet) {
             if (user.getRole() == AssessmentRole.Facilitator) {
@@ -112,6 +126,7 @@ public class AssessmentService {
         }
         return users;
     }
+
 
     public Assessment getAssessment(Integer assessmentId, User user) {
         AssessmentUsers assessmentUsers = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);

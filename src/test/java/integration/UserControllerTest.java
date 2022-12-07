@@ -68,16 +68,16 @@ class UserControllerTest {
         organisation.setDomain("new");
         organisation.setOrganisationName("new");
         assessment.setOrganisation(organisation);
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         UserId userId = new UserId(userEmail, assessment);
 
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
         AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.Admin);
 
         assessmentRepository.save(assessment);
         accessControlRepository.save(accessControlList);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         entityManager.getTransaction().commit();
         entityManager.clear();
 

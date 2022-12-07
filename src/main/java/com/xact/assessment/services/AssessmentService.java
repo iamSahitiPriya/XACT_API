@@ -11,6 +11,7 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
+import org.apache.commons.compress.utils.Sets;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;
@@ -53,11 +54,11 @@ public class AssessmentService {
         Organisation organisation = mapper.map(assessmentRequest, Organisation.class);
         assessment.setOrganisation(organisation);
 
-        Set<AssessmentUsers> assessmentUsersSet = getAssessmentUsers(assessmentRequest, user, assessment);
+        Set<AssessmentUser> assessmentUserSet = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
 
-        usersAssessmentsService.createUsersInAssessment(assessmentUsersSet);
-        assessment.setAssessmentUsers(assessmentUsersSet);
+        usersAssessmentsService.createUsersInAssessment(assessmentUserSet);
+        assessment.setAssessmentUsers(assessmentUserSet);
 
         return assessment;
     }
@@ -67,16 +68,16 @@ public class AssessmentService {
         assessmentRepository.save(assessment);
     }
 
-    public Set<AssessmentUsers> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedInUser, Assessment assessment) {
+    public Set<AssessmentUser> getAssessmentUsers(AssessmentRequest assessmentRequest, User loggedInUser, Assessment assessment) {
         List<UserDto> users = assessmentRequest.getUsers();
 
 
-        Optional<AssessmentUsers> assessmentOwner = Optional.empty();
+        Optional<AssessmentUser> assessmentOwner = Optional.empty();
         if (assessment.getAssessmentId() != null) {
             assessmentOwner = usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId());
         }
 
-        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
         assessmentOwner.ifPresent(assessmentUsers::add);
         for (UserDto user : users) {
             if (!user.getEmail().isBlank()) {
@@ -90,7 +91,7 @@ public class AssessmentService {
                         continue;
                     }
                 }
-                AssessmentUsers assessmentUser = mapper.map(user, AssessmentUsers.class);
+                AssessmentUser assessmentUser = mapper.map(user, AssessmentUser.class);
                 assessmentUser.setUserId(new UserId(user.getEmail(), assessment));
                 assessmentUsers.add(assessmentUser);
             }
@@ -98,28 +99,28 @@ public class AssessmentService {
         return assessmentUsers;
     }
 
-    public Set<String> getNewlyAddedUser(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        Set<AssessmentUsers> assessmentFacilitatorsSet = getAssessmentFacilitatorsSet(assessment);
-        Set<AssessmentUsers> assessmentUsersSet = new HashSet<>(assessmentUsers);
+    public Set<String> getNewlyAddedUser(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
+        Set<AssessmentUser> assessmentFacilitatorsSet = getAssessmentFacilitatorsSet(assessment);
+        Set<AssessmentUser> assessmentUsersSet = new HashSet<>(assessmentUsers);
         return getUpdatedUsers(assessmentFacilitatorsSet, assessmentUsersSet);
     }
 
-    public Set<String> getDeletedUser(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
-        Set<AssessmentUsers> assessmentFacilitatorsSet = getAssessmentFacilitatorsSet(assessment);
-        Set<AssessmentUsers> assessmentUsersSet = new HashSet<>(assessmentUsers);
+    public Set<String> getDeletedUser(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
+        Set<AssessmentUser> assessmentFacilitatorsSet = getAssessmentFacilitatorsSet(assessment);
+        Set<AssessmentUser> assessmentUsersSet = new HashSet<>(assessmentUsers);
         return getUpdatedUsers(assessmentUsersSet, assessmentFacilitatorsSet);
     }
 
 
-    private Set<AssessmentUsers> getAssessmentFacilitatorsSet(Assessment assessment) {
-        List<AssessmentUsers> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
+    private Set<AssessmentUser> getAssessmentFacilitatorsSet(Assessment assessment) {
+        List<AssessmentUser> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
         return new HashSet<>(assessmentFacilitators);
     }
 
-    private Set<String> getUpdatedUsers(Set<AssessmentUsers> assessmentUsers, Set<AssessmentUsers> assessmentUsersSet) {
+    private Set<String> getUpdatedUsers(Set<AssessmentUser> assessmentUsers, Set<AssessmentUser> assessmentUsersSet) {
         assessmentUsersSet.removeAll(assessmentUsers);
         Set<String> users = new HashSet<>();
-        for (AssessmentUsers user : assessmentUsersSet) {
+        for (AssessmentUser user : assessmentUsersSet) {
             if (user.getRole() == AssessmentRole.Facilitator) {
                 users.add(user.getUserId().getUserEmail());
             }
@@ -129,21 +130,17 @@ public class AssessmentService {
 
 
     public Assessment getAssessment(Integer assessmentId, User user) {
-        AssessmentUsers assessmentUsers = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);
-        return assessmentUsers.getUserId().getAssessment();
+        AssessmentUser assessmentUser = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);
+        return assessmentUser.getUserId().getAssessment();
     }
 
     public List<String> getAssessmentFacilitators(Integer assessmentId) {
-        List<AssessmentUsers> assessmentUsers = usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator);
+        List<AssessmentUser> assessmentUsers = usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator);
         List<String> assessmentUsers1 = new ArrayList<>();
-        for (AssessmentUsers eachUser : assessmentUsers) {
+        for (AssessmentUser eachUser : assessmentUsers) {
             assessmentUsers1.add(eachUser.getUserId().getUserEmail());
         }
         return assessmentUsers1;
-    }
-
-    public Set<String> getAllAssessmentUsers(Integer assessmentId) {
-        return usersAssessmentsRepository.getAllAssessmentUsers(assessmentId);
     }
 
     public Assessment finishAssessment(Assessment assessment) {
@@ -160,13 +157,14 @@ public class AssessmentService {
 
 
     @Transactional
-    public void updateAssessment(Assessment assessment, Set<AssessmentUsers> assessmentUsers) {
+    public void updateAssessment(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
         assessment.setAssessmentUsers(assessmentUsers);
-        assessmentRepository.update(assessment);
+        updateAssessment(assessment);
     }
 
     public void updateAssessment(Assessment assessment) {
+        assessment.setUpdatedAt(new Date());
         assessmentRepository.update(assessment);
     }
 
@@ -211,6 +209,6 @@ public class AssessmentService {
     public void softDeleteAssessment(Assessment assessment) {
         assessment.setDeleted(true);
         assessment.setUpdatedAt(new Date());
-        assessmentRepository.update(assessment);
+        updateAssessment(assessment);
     }
 }

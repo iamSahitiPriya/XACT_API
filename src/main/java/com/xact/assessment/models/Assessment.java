@@ -66,7 +66,7 @@ public class Assessment {
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "userId.assessment")
     @ElementCollection()
-    private Set<AssessmentUsers> assessmentUsers;
+    private Set<AssessmentUser> assessmentUsers;
 
     @NotNull
     @Column(name = "is_deleted")

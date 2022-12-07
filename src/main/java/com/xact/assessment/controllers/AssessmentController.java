@@ -5,6 +5,7 @@
 package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.mappers.AssessmentMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
 import io.micronaut.context.annotation.Value;
@@ -15,8 +16,8 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import jakarta.inject.Inject;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,20 +44,15 @@ public class AssessmentController {
     private final QuestionService questionService;
     private final NotificationService notificationService;
 
+    private AssessmentMapper assessmentMapper = new AssessmentMapper();
+
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
+    @Inject
+
 
     private static final ModelMapper modelMapper = new ModelMapper();
-
-    static {
-        modelMapper.addMappings(new PropertyMap<Assessment, AssessmentResponse>() {
-            @Override
-            protected void configure() {
-                skip(destination.isOwner());
-            }
-        });
-    }
 
     public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, NotificationService notificationService) {
         this.usersAssessmentsService = usersAssessmentsService;
@@ -81,12 +77,7 @@ public class AssessmentController {
         if (Objects.nonNull(assessments))
             assessments.forEach(assessment ->
             {
-                AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
-                assessmentResponse.setAssessmentState(assessment.getAssessmentState());
-                assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
-                assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
-                assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
-                assessmentResponse.setUsers(assessment.getFacilitators());
+                AssessmentResponse assessmentResponse = assessmentMapper.map(assessment);
                 assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwner()));
                 assessmentResponses.add(assessmentResponse);
             });
@@ -102,10 +93,9 @@ public class AssessmentController {
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
 
-        AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
-        assessmentResponse.setAssessmentState(assessment.getAssessmentState());
+        AssessmentResponse assessmentResponse = assessmentMapper.map(assessment);
 
-        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCreateAssessment(assessment, assessment.getAssessmentUsers()));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCreateAssessment(assessment));
 
         return HttpResponse.created(assessmentResponse);
     }
@@ -124,7 +114,7 @@ public class AssessmentController {
             assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
             assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
             assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
-            Set<AssessmentUsers> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
+            Set<AssessmentUser> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
 
             Set<String> newUsers = assessmentService.getNewlyAddedUser(assessment, assessmentUsers);
             Set<String> deletedUsers = assessmentService.getDeletedUser(assessment, assessmentUsers);
@@ -145,15 +135,10 @@ public class AssessmentController {
 
         LOGGER.info("Reopen assessment : {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-
         Assessment openedAssessment = assessmentService.reopenAssessment(assessment);
+        AssessmentResponse assessmentResponse = assessmentMapper.map(openedAssessment);
 
-        Set<String> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
-
-
-        AssessmentResponse assessmentResponse = modelMapper.map(openedAssessment, AssessmentResponse.class);
-
-        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForReopenAssessment(assessment, assessmentUsers));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForReopenAssessment(assessment));
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -164,14 +149,10 @@ public class AssessmentController {
     public HttpResponse<AssessmentResponse> finishAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Finish assessment : {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-
         Assessment finishedAssessment = assessmentService.finishAssessment(assessment);
+        AssessmentResponse assessmentResponse = assessmentMapper.map(finishedAssessment);
 
-        Set<String> assessmentUsers = assessmentService.getAllAssessmentUsers(assessment.getAssessmentId());
-
-        AssessmentResponse assessmentResponse = modelMapper.map(finishedAssessment, AssessmentResponse.class);
-
-        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCompleteAssessment(assessment, assessmentUsers));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCompleteAssessment(assessment));
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -185,33 +166,15 @@ public class AssessmentController {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
-        List<AnswerResponse> answerResponseList = getAnswerResponseList(answerResponse);
-
-        List<String> users = assessmentService.getAssessmentFacilitators(assessmentId);
-
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
-
         List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessment.getAssessmentId());
         List<TopicRatingAndRecommendation> topicRecommendationResponses = mergeTopicRatingAndRecommendation(topicLevelAssessmentList, topicLevelRecommendationList);
-
         List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId());
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessment.getAssessmentId());
-
-
         List<ParameterRatingAndRecommendation> paramRecommendationResponses = mergeParamRatingAndRecommendation(parameterLevelAssessmentList, parameterLevelRecommendationList);
 
-
-        AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
-        assessmentResponse.setAnswerResponseList(answerResponseList);
-        assessmentResponse.setTopicRatingAndRecommendation(topicRecommendationResponses);
-        assessmentResponse.setParameterRatingAndRecommendation(paramRecommendationResponses);
-        assessmentResponse.setDomain(assessment.getOrganisation().getDomain());
-        assessmentResponse.setIndustry(assessment.getOrganisation().getIndustry());
-        assessmentResponse.setTeamSize(assessment.getOrganisation().getSize());
-        assessmentResponse.setAssessmentState(assessment.getAssessmentState());
-        assessmentResponse.setUsers(users);
+        AssessmentResponse assessmentResponse = assessmentMapper.map(assessment, answerResponse, topicRecommendationResponses, paramRecommendationResponses);
         assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwner()));
-        assessmentResponse.setAssessmentPurpose(assessment.getAssessmentPurpose());
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -437,6 +400,8 @@ public class AssessmentController {
     }
 
 
+
+
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         return assessmentService.getAssessment(assessmentId, loggedInUser);
@@ -504,18 +469,6 @@ public class AssessmentController {
             }
         }
         return answerList;
-    }
-
-    private List<AnswerResponse> getAnswerResponseList(List<Answer> answerList) {
-        List<AnswerResponse> answerResponseList = new ArrayList<>();
-        for (Answer eachAnswer : answerList) {
-            AnswerResponse eachAnswerResponse = new AnswerResponse();
-            QuestionDto eachQuestion = modelMapper.map(eachAnswer.getAnswerId(), QuestionDto.class);
-            eachAnswerResponse.setQuestionId(eachQuestion.getQuestionId());
-            eachAnswerResponse.setAnswer(eachAnswer.getAnswer());
-            answerResponseList.add(eachAnswerResponse);
-        }
-        return answerResponseList;
     }
 
 
@@ -648,7 +601,6 @@ public class AssessmentController {
     }
 
     private void updateAssessment(Assessment assessment) {
-        assessment.setUpdatedAt(new Date());
         LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessmentService.updateAssessment(assessment);
     }

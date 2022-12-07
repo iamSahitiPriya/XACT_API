@@ -6,7 +6,7 @@ package com.xact.assessment.services;
 
 
 import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentUsers;
+import com.xact.assessment.models.AssessmentUser;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
 
@@ -25,10 +25,10 @@ public class UsersAssessmentsService {
     }
 
     public List<Assessment> findAssessments(String userEmail) {
-        List<AssessmentUsers> assessmentUsers = usersAssessmentsRepository.findByUserEmail(userEmail);
+        List<AssessmentUser> assessmentUsers = usersAssessmentsRepository.findByUserEmail(userEmail);
 
         List<Assessment> usersAssessments = new ArrayList<>();
-        for (AssessmentUsers user : assessmentUsers) {
+        for (AssessmentUser user : assessmentUsers) {
             usersAssessments.add(user.getUserId().getAssessment());
         }
 
@@ -37,18 +37,18 @@ public class UsersAssessmentsService {
     }
 
     @Transactional
-    public void createUsersInAssessment(Set<AssessmentUsers> assessmentUsers) {
+    public void createUsersInAssessment(Set<AssessmentUser> assessmentUsers) {
         usersAssessmentsRepository.saveAll(assessmentUsers);
     }
 
 
     @Transactional
-    public void updateUsersInAssessment(Set<AssessmentUsers> assessmentUsers, Integer assessmentId) {
+    public void updateUsersInAssessment(Set<AssessmentUser> assessmentUsers, Integer assessmentId) {
         usersAssessmentsRepository.deleteUsersByAssessmentId(assessmentId);
         usersAssessmentsRepository.saveAll(assessmentUsers);
     }
 
-    public Optional<AssessmentUsers> findOwnerByAssessmentId(Integer assessmentId) {
+    public Optional<AssessmentUser> findOwnerByAssessmentId(Integer assessmentId) {
        return  usersAssessmentsRepository.findOwnerByAssessmentId(assessmentId);
     }
 }

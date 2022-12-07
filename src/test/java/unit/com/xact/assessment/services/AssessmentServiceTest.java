@@ -69,7 +69,7 @@ class AssessmentServiceTest {
         loggedinUser.setProfile(profile);
 
 
-        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(123);
         assessment.setAssessmentStatus(Active);
@@ -83,8 +83,8 @@ class AssessmentServiceTest {
 
 
         UserId userId1 = new UserId("test@email.com", assessment);
-        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, AssessmentRole.Owner);
-        assessmentUsers.add(assessmentUsers1);
+        AssessmentUser assessmentUser1 = new AssessmentUser(userId1, AssessmentRole.Owner);
+        assessmentUsers.add(assessmentUser1);
 
 
         when(assessmentRepository.save(assessment)).thenReturn(assessment);
@@ -104,7 +104,7 @@ class AssessmentServiceTest {
         loggedinUser.setProfile(profile);
         Assessment mockAssessment = new Assessment();
         mockAssessment.setAssessmentId(assessmentId);
-        AssessmentUsers assessmentUser = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         UserId userId = new UserId(loggedinUser.getUserEmail(), mockAssessment);
         assessmentUser.setUserId(userId);
 
@@ -164,7 +164,7 @@ class AssessmentServiceTest {
 
     @Test
     void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
-        List<AssessmentUsers> assessmentUsersList = new ArrayList<>();
+        List<AssessmentUser> assessmentUsersList = new ArrayList<>();
 
         Integer assessmentId = 1;
 
@@ -173,15 +173,15 @@ class AssessmentServiceTest {
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
 
         UserId userId1 = new UserId("hello@gmail.com", assessment);
-        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, AssessmentRole.Facilitator);
+        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
         assessmentUsersList.add(assessmentUsers1);
 
         UserId userId2 = new UserId("new@gmail.com", assessment);
-        AssessmentUsers assessmentUsers2 = new AssessmentUsers(userId2, AssessmentRole.Facilitator);
+        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
         assessmentUsersList.add(assessmentUsers2);
 
         List<String> expectedAssessmentUsersList = new ArrayList<>();
-        for (AssessmentUsers eachUser : assessmentUsersList) {
+        for (AssessmentUser eachUser : assessmentUsersList) {
             expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
         }
         when(usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator)).thenReturn(assessmentUsersList);
@@ -202,36 +202,37 @@ class AssessmentServiceTest {
         assessment.setAssessmentName("New Assessment");
 
         when(assessmentRepository.update(assessment)).thenReturn(assessment);
-        Set<AssessmentUsers> assessmentUsersSet = new HashSet<>(Set.of());
+        Set<AssessmentUser> assessmentUserSet = new HashSet<>(Set.of());
         UserId userId1 = new UserId("hello@gmail.com", assessment);
-        AssessmentUsers assessmentUsers1 = new AssessmentUsers(userId1, AssessmentRole.Facilitator);
-        assessmentUsersSet.add(assessmentUsers1);
+        AssessmentUser assessmentUser1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
+        assessmentUserSet.add(assessmentUser1);
 
         UserId userId2 = new UserId("new@gmail.com", assessment);
-        AssessmentUsers assessmentUsers2 = new AssessmentUsers(userId2, AssessmentRole.Facilitator);
-        assessmentUsersSet.add(assessmentUsers2);
+        AssessmentUser assessmentUser2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
+        assessmentUserSet.add(assessmentUser2);
 
+        doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUserSet, assessment.getAssessmentId());
         UserId addedUser = new UserId("newUser@gmail.com", assessment);
-        AssessmentUsers newUser = new AssessmentUsers(addedUser, AssessmentRole.Facilitator);
-        assessmentUsersSet.add(newUser);
+        AssessmentUser newUser = new AssessmentUser(addedUser, AssessmentRole.Facilitator);
+        assessmentUserSet.add(newUser);
 
-        List<AssessmentUsers> assessmentUsers = new ArrayList<>();
-        assessmentUsers.add(assessmentUsers2);
-        assessmentUsers.add(assessmentUsers1);
+        List<AssessmentUser> assessmentUsers = new ArrayList<>();
+        assessmentUsers.add(assessmentUser2);
+        assessmentUsers.add(assessmentUser1);
 
-        doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUsersSet, assessment.getAssessmentId());
+        doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUserSet, assessment.getAssessmentId());
         when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUsers);
 
-        assessmentService.getNewlyAddedUser(assessment,assessmentUsersSet);
+        assessmentService.getNewlyAddedUser(assessment,assessmentUserSet);
 
 
-        assessmentService.updateAssessment(assessment, assessmentUsersSet);
+        assessmentService.updateAssessment(assessment, assessmentUserSet);
 
         User user = new User();
         Profile profile = new Profile();
         profile.setEmail("hello@email.com");
         user.setProfile(profile);
-        when(usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), 1)).thenReturn(assessmentUsers1);
+        when(usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), 1)).thenReturn(assessmentUser1);
 
         Assessment expectedAssessment = assessmentService.getAssessment(1, user);
 

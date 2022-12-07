@@ -220,7 +220,7 @@ public class ReportService {
         //Adds a picture to the workbook
         int pictureIdx = workbook.addPicture(bytes, Workbook.PICTURE_TYPE_PNG);
         CreationHelper helper = workbook.getCreationHelper();
-        Drawing drawing = sheet.createDrawingPatriarch();
+        Drawing<?> drawing = sheet.createDrawingPatriarch();
         ClientAnchor anchor = helper.createClientAnchor();
 
         //create an anchor with upper left cell _and_ bottom right cell

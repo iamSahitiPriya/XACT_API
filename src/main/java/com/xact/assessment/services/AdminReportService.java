@@ -5,7 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentUsers;
+import com.xact.assessment.models.AssessmentUser;
 import jakarta.inject.Singleton;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -132,7 +132,7 @@ public class AdminReportService {
     }
 
     private String getEmail(Integer assessmentId) {
-        Optional<AssessmentUsers> assessmentUsers = usersAssessmentsService.findOwnerByAssessmentId(assessmentId);
+        Optional<AssessmentUser> assessmentUsers = usersAssessmentsService.findOwnerByAssessmentId(assessmentId);
         if (assessmentUsers.isPresent()) {
             return assessmentUsers.get().getUserId().getUserEmail();
         }

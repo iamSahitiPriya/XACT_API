@@ -60,8 +60,8 @@ class ReportControllerTest {
         Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
-        assessmentUsers.setUserId(userId);
+        AssessmentUser assessmentUser = new AssessmentUser();
+        assessmentUser.setUserId(userId);
 
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(reportService.generateReport(assessmentId)).thenReturn(getMockWorkbook());
@@ -108,8 +108,8 @@ class ReportControllerTest {
         Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
-        assessmentUsers.setUserId(userId);
+        AssessmentUser assessmentUser = new AssessmentUser();
+        assessmentUser.setUserId(userId);
 
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
 

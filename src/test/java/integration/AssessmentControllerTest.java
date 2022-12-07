@@ -89,7 +89,7 @@ class AssessmentControllerTest {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         Organisation organisation = new Organisation();
         organisation.setSize(5);
         organisation.setIndustry("new");
@@ -100,11 +100,11 @@ class AssessmentControllerTest {
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         assessment.setOrganisation(organisation);
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         entityManager.getTransaction().commit();
         entityManager.clear();
         entityManager.close();
@@ -113,7 +113,7 @@ class AssessmentControllerTest {
                 .bearerAuth("anything"), String.class);
 
 
-        String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Assessment\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
+        String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
                 "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + organisation.getSize() + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\",\"owner\":true}]";
 
         assertEquals(expectedResponse, assessmentResponse);
@@ -125,7 +125,7 @@ class AssessmentControllerTest {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("testorg");
@@ -140,8 +140,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
@@ -187,7 +187,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setTopic(assessmentTopic);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         answerRepository.save(answer);
         parameterLevelAssessmentRepository.save(parameterLevelAssessment);
         topicLevelAssessmentRepository.save(topicLevelAssessment);
@@ -195,7 +195,7 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," +"\"assessmentPurpose\""+ ":"+"\"Client Assessment\""+","+ "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
+        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
                 "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 10 + "," + "\"domain\"" + ":" + "\"Telecom\"" + "," + "\"industry\"" + ":" + "\"IT\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "," +
                 "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
                 "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
@@ -214,7 +214,7 @@ class AssessmentControllerTest {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -229,11 +229,11 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         entityManager.getTransaction().commit();
         entityManager.clear();
         entityManager.close();
@@ -250,7 +250,7 @@ class AssessmentControllerTest {
     void reopenAssessment() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -265,11 +265,11 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         entityManager.getTransaction().commit();
         entityManager.clear();
         entityManager.close();
@@ -286,7 +286,7 @@ class AssessmentControllerTest {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -301,11 +301,11 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         entityManager.getTransaction().commit();
 
         String dataRequest = resourceFileUtil.getJsonString("dto/set-topic-level-request.json");
@@ -321,7 +321,7 @@ class AssessmentControllerTest {
     void testSaveParameterLevelAssessmentResponse() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -336,11 +336,11 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         entityManager.getTransaction().commit();
 
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-level-request.json");
@@ -356,7 +356,7 @@ class AssessmentControllerTest {
     void testUpdateAssessmentAnswer() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -371,8 +371,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         List<Question> questions = (List<Question>) questionRepository.findAll();
         Question question = questions.get(0);
@@ -384,7 +384,7 @@ class AssessmentControllerTest {
         answer.setAnswer("Ans");
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         answerRepository.save(answer);
         entityManager.getTransaction().commit();
 
@@ -402,7 +402,7 @@ class AssessmentControllerTest {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -417,8 +417,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
@@ -431,7 +431,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setDeliveryHorizon("Low");
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
         entityManager.clear();
@@ -449,7 +449,7 @@ class AssessmentControllerTest {
     void testUpdateParameterRecommendationText() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -464,8 +464,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
@@ -478,7 +478,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setDeliveryHorizon("HIGH");
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
         entityManager.getTransaction().commit();
         entityManager.clear();
@@ -495,7 +495,7 @@ class AssessmentControllerTest {
     void testUpdateTopicRecommendationImpact() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -510,8 +510,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
@@ -523,7 +523,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setAssessment(assessment);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
         entityManager.clear();
@@ -542,7 +542,7 @@ class AssessmentControllerTest {
     void testUpdateParameterRecommendationImpact() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -557,8 +557,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
@@ -570,7 +570,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setAssessment(assessment);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
         entityManager.getTransaction().commit();
         entityManager.clear();
@@ -588,7 +588,7 @@ class AssessmentControllerTest {
     void testUpdateTopicRecommendationEffect() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -603,8 +603,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
@@ -616,7 +616,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setAssessment(assessment);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
         entityManager.clear();
@@ -635,7 +635,7 @@ class AssessmentControllerTest {
     void testUpdateParameterRating() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -650,8 +650,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
@@ -661,7 +661,7 @@ class AssessmentControllerTest {
         parameterLevelAssessment.setRating(1);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         parameterLevelAssessmentRepository.save(parameterLevelAssessment);
         entityManager.getTransaction().commit();
 
@@ -679,7 +679,7 @@ class AssessmentControllerTest {
     void testUpdateTopicRating() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -694,8 +694,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
@@ -705,7 +705,7 @@ class AssessmentControllerTest {
         topicLevelAssessment.setRating(1);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         topicLevelAssessmentRepository.save(topicLevelAssessment);
         entityManager.getTransaction().commit();
 
@@ -723,7 +723,7 @@ class AssessmentControllerTest {
     void testDeleteParameterRecommendation() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -738,8 +738,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
@@ -750,7 +750,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setAssessment(assessment);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
         entityManager.getTransaction().commit();
 
@@ -765,7 +765,7 @@ class AssessmentControllerTest {
     void testDeleteTopicRecommendation() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
 
         Organisation org = new Organisation();
         org.setOrganisationName("org");
@@ -780,8 +780,8 @@ class AssessmentControllerTest {
         assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
@@ -792,7 +792,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setAssessment(assessment);
 
         assessmentRepository.save(assessment);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
@@ -815,16 +815,16 @@ class AssessmentControllerTest {
         organisation.setDomain("new");
         organisation.setOrganisationName("new");
         assessment.setOrganisation(organisation);
-        AssessmentUsers assessmentUsers = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         UserId userId = new UserId(userEmail, assessment);
 
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
         AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.Admin);
 
         assessmentRepository.save(assessment);
         accessControlRepository.save(accessControlList);
-        usersAssessmentsRepository.save(assessmentUsers);
+        usersAssessmentsRepository.save(assessmentUser);
         entityManager.getTransaction().commit();
         entityManager.clear();
         entityManager.close();

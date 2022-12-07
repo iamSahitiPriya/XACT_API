@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Entity
 @EqualsAndHashCode
 @Table(name = "tbl_assessment_users")
-public class AssessmentUsers implements Serializable {
+public class AssessmentUser implements Serializable {
 
     @EmbeddedId
     @AttributeOverride(name = "userEmail", column = @Column(name = "user_email"))

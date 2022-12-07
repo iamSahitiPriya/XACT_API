@@ -37,15 +37,15 @@ class NotificationServiceTest {
         assessment.setCreatedAt(new Date());
         assessment.setOrganisation(organisation);
 
-        AssessmentUsers assessmentUser = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         UserId userId = new UserId(email, assessment);
         assessmentUser.setUserId(userId);
         assessmentUser.setRole(AssessmentRole.Facilitator);
-        AssessmentUsers assessmentUser1 = new AssessmentUsers();
+        AssessmentUser assessmentUser1 = new AssessmentUser();
         UserId userId1 = new UserId(email, assessment);
         assessmentUser1.setUserId(userId1);
         assessmentUser1.setRole(AssessmentRole.Owner);
-        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
         assessmentUsers.add(assessmentUser);
         assessmentUsers.add(assessmentUser1);
         assessment.setAssessmentUsers(assessmentUsers);
@@ -54,7 +54,7 @@ class NotificationServiceTest {
         when(notificationRepository.save(notification)).thenReturn(notification);
 
 
-        notificationService.setNotificationForCreateAssessment(assessment, assessmentUsers);
+        notificationService.setNotificationForCreateAssessment(assessment);
         notificationRepository.save(notification);
 
         verify(notificationRepository).save(notification);
@@ -91,15 +91,15 @@ class NotificationServiceTest {
         assessment.setCreatedAt(new Date());
         assessment.setOrganisation(organisation);
 
-        AssessmentUsers assessmentUser = new AssessmentUsers();
+        AssessmentUser assessmentUser = new AssessmentUser();
         UserId userId = new UserId(email, assessment);
         assessmentUser.setUserId(userId);
         assessmentUser.setRole(AssessmentRole.Facilitator);
-        AssessmentUsers assessmentUser1 = new AssessmentUsers();
+        AssessmentUser assessmentUser1 = new AssessmentUser();
         UserId userId1 = new UserId(email, assessment);
         assessmentUser1.setUserId(userId1);
         assessmentUser1.setRole(AssessmentRole.Owner);
-        Set<AssessmentUsers> assessmentUsers = new HashSet<>();
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
         assessmentUsers.add(assessmentUser);
         assessmentUsers.add(assessmentUser1);
         assessment.setAssessmentUsers(assessmentUsers);

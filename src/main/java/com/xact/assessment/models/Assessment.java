@@ -15,6 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.*;
 
 @Getter
@@ -25,7 +26,7 @@ import java.util.*;
 @Introspected
 @Entity
 @Table(name = "tbl_assessment")
-public class Assessment {
+public class Assessment implements Serializable {
 
     @Id
     @Column(name = "assessment_id", nullable = false, unique = true)

@@ -5,9 +5,7 @@
 package com.xact.assessment.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.micronaut.core.annotation.Introspected;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,9 +22,6 @@ import javax.validation.constraints.NotNull;
 @Introspected
 @Entity
 @Table(name = "tbm_assessment_question")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "questionId")
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

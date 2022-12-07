@@ -38,7 +38,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void getOrganisationNames() throws IOException {
+    void getOrganisationNames() {
         Account accounts = new Account("abc", "Shell Singapore", "Commodities, Utilities and Energy");
         Account accounts1 = new Account("def", "Equinor", "Finance");
         accountRepository.save(accounts);

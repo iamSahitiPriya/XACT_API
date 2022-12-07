@@ -47,9 +47,5 @@ public class UsersAssessmentsService {
         usersAssessmentsRepository.deleteUsersByAssessmentId(assessmentId);
         usersAssessmentsRepository.saveAll(assessmentUsers);
     }
-
-    public Optional<AssessmentUser> findOwnerByAssessmentId(Integer assessmentId) {
-       return  usersAssessmentsRepository.findOwnerByAssessmentId(assessmentId);
-    }
 }
 

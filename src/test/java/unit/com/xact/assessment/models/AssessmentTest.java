@@ -109,7 +109,7 @@ class AssessmentTest {
 
 
     @Test
-    void shouldGetOwnerTrue() {
+    void shouldGetOwnerEmail() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         Organisation organisation = new Organisation();
@@ -135,8 +135,39 @@ class AssessmentTest {
         assessmentUsers.add(assessmentUser2);
         assessment.setAssessmentUsers(assessmentUsers);
 
-        String actualResponse = assessment.getOwner();
+        String actualResponse = assessment.getOwnerEmail();
         Assertions.assertEquals(userEmail,actualResponse);
+    }
+
+    @Test
+    void shouldGetOwner() {
+        String userEmail = "dummy@test.com";
+        Assessment assessment = new Assessment();
+        Organisation organisation = new Organisation();
+        organisation.setSize(5);
+        organisation.setIndustry("new");
+        organisation.setDomain("new");
+        organisation.setOrganisationName("testorg");
+        assessment.setAssessmentName("mocked assessment");
+        assessment.setAssessmentPurpose("Client Assessment");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        assessment.setOrganisation(organisation);
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
+
+        AssessmentUser assessmentUser1 = new AssessmentUser();
+        UserId userId1 = new UserId("some-facilitator@test.com", assessment);
+        assessmentUser1.setUserId(userId1);
+        assessmentUser1.setRole(AssessmentRole.Facilitator);
+        AssessmentUser assessmentUser2 = new AssessmentUser();
+        UserId userId2 = new UserId(userEmail, assessment);
+        assessmentUser2.setUserId(userId2);
+        assessmentUser2.setRole(AssessmentRole.Owner);
+        assessmentUsers.add(assessmentUser1);
+        assessmentUsers.add(assessmentUser2);
+        assessment.setAssessmentUsers(assessmentUsers);
+
+        AssessmentUser actualResponse = assessment.getOwner().get();
+        Assertions.assertEquals(assessmentUser2,actualResponse);
     }
 
 

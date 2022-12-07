@@ -5,14 +5,12 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentUser;
 import jakarta.inject.Singleton;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.text.ParseException;
 import java.util.List;
-import java.util.Optional;
 
 @Singleton
 public class AdminReportService {
@@ -21,14 +19,11 @@ public class AdminReportService {
 
     private final AssessmentService assessmentService;
 
-    private final UsersAssessmentsService usersAssessmentsService;
-
     private String assessmentStartDate;
     private String assessmentEndDate;
 
-    public AdminReportService(AssessmentService assessmentService, UsersAssessmentsService usersAssessmentsService) {
+    public AdminReportService(AssessmentService assessmentService) {
         this.assessmentService = assessmentService;
-        this.usersAssessmentsService = usersAssessmentsService;
     }
 
     public Workbook generateAdminReport(String startDate, String endDate) throws ParseException {
@@ -114,7 +109,7 @@ public class AdminReportService {
         CellStyle style = workbook.createCellStyle();
 
 
-        String userEmail = getEmail(assessment.getAssessmentId());
+        String userEmail = assessment.getOwnerEmail();
 
 
         createStyledCell(row, 0, assessment.getAssessmentId().toString(), style);
@@ -130,14 +125,4 @@ public class AdminReportService {
         createStyledCell(row, 10, userEmail, style);
 
     }
-
-    private String getEmail(Integer assessmentId) {
-        Optional<AssessmentUser> assessmentUsers = usersAssessmentsService.findOwnerByAssessmentId(assessmentId);
-        if (assessmentUsers.isPresent()) {
-            return assessmentUsers.get().getUserId().getUserEmail();
-        }
-        return "";
-    }
-
-
 }

@@ -117,8 +117,13 @@ public class Assessment {
     }
 
     @Transient
-    public String getOwner() {
+    public String getOwnerEmail() {
         return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Owner).map(assessmentUsers1 -> assessmentUsers1.getUserId().getUserEmail()).findFirst().orElse("");
+    }
+
+    @Transient
+    public Optional<AssessmentUser> getOwner() {
+        return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Owner).findFirst();
     }
 
     public Assessment(Integer assessmentId, String assessmentName, String assessmentPurpose, Organisation organisation, AssessmentStatus assessmentStatus, Date createdAt, Date updatedAt) {

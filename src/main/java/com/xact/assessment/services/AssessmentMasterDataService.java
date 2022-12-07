@@ -18,15 +18,17 @@ import java.util.*;
 @Singleton
 public class AssessmentMasterDataService {
 
-    CategoryRepository categoryRepository;
-    AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
+    private final CategoryRepository categoryRepository;
+    private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
 
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
-    AssessmentParameterReferenceRepository assessmentParameterRRepository;
+    private final AssessmentParameterReferenceRepository assessmentParameterRRepository;
     private final ModuleService moduleService;
+    private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
+
 
 
     public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
@@ -80,7 +82,7 @@ public class AssessmentMasterDataService {
             categoryRepository.save(assessmentCategory);
             return assessmentCategory;
         } else {
-            throw new DuplicateRecordException("Duplicate records are not allowed");
+            throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
         }
 
     }

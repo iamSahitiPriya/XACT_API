@@ -14,6 +14,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @NoArgsConstructor
 @Getter
@@ -22,7 +23,7 @@ import javax.validation.constraints.NotNull;
 @Introspected
 @Entity
 @Table(name = "tbm_assessment_question")
-public class Question {
+public class Question implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_id", nullable = false, unique = true)

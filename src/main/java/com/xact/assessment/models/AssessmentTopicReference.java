@@ -13,6 +13,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @NoArgsConstructor
 @Getter
@@ -20,7 +21,7 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 @Entity
 @Table(name = "tbm_assessment_topic_reference")
-public class AssessmentTopicReference {
+public class AssessmentTopicReference implements Serializable {
 
     @Id
     @Column(name = "reference_id", nullable = false, unique = true)

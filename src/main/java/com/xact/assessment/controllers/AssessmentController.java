@@ -654,13 +654,14 @@ public class AssessmentController {
 
     @Patch(value = "/user_question/{assessmentId}/{parameterId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveUserQuestionAndAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body UserQuestionRequest userQuestionRequest, Authentication authentication) {
+    public HttpResponse<UserQuestionResponse> saveUserQuestionAndAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body UserQuestionRequest userQuestionRequest, Authentication authentication) {
         LOGGER.info("Update individual user added questions. assessment: {}, parameter:{}", assessmentId, parameterId);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        UserQuestion userQuestion = new UserQuestion();
+        UserQuestion savedQuestion = new UserQuestion();
         if (assessment.isEditable()) {
             AssessmentParameter parameter = parameterService.getParameter(parameterId).orElseThrow();
-            UserQuestion userQuestion = new UserQuestion();
 
             if (userQuestionRequest.getQuestionId() == null) {
                 userQuestion.setQuestionId(userQuestionRequest.getQuestionId());
@@ -671,10 +672,15 @@ public class AssessmentController {
             userQuestion.setParameter(parameter);
             userQuestion.setQuestion(userQuestionRequest.getQuestion());
             userQuestion.setAnswer(userQuestionRequest.getAnswer());
-            userQuestionService.saveUserQuestion(userQuestion);
+            savedQuestion = userQuestionService.saveUserQuestion(userQuestion);
             updateAssessment(assessment);
         }
-        return HttpResponse.ok();
+        UserQuestionResponse userQuestionResponseAnswer = new UserQuestionResponse();
+        userQuestionResponseAnswer.setQuestionId(savedQuestion.getQuestionId());
+        userQuestionResponseAnswer.setQuestion(savedQuestion.getQuestion());
+        userQuestionResponseAnswer.setAnswer(savedQuestion.getAnswer());
+        userQuestionResponseAnswer.setParameterId(savedQuestion.getParameter().getParameterId());
+        return HttpResponse.ok(userQuestionResponseAnswer);
     }
 
     private void updateAssessment(Assessment assessment) {

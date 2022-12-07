@@ -34,19 +34,22 @@ public class ReportService {
 
     private List<AssessmentCategory> assessmentCategoryList;
     private Set<Integer> selectedModulesSet;
+    private  UserQuestionService userQuestionService;
 
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService) {
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService,UserQuestionService userQuestionService) {
 
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
         this.chartService = chartService;
         this.categoryRepository = categoryRepository;
         this.assessmentMasterDataService = assessmentMasterDataService;
+        this.userQuestionService=userQuestionService;
     }
 
     public Workbook generateReport(Integer assessmentId) {
         List<Answer> answers = answerService.getAnswers(assessmentId);
+        List<UserQuestion>  userQuestions = userQuestionService.findAllUserQuestion(assessmentId);
         assessmentCategoryList = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         selectedModulesSet = mapSelectedModulesInSet(assessmentCategoryList);
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
@@ -55,7 +58,7 @@ public class ReportService {
         List<ParameterLevelRecommendation> parameterLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId);
         Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendationMap = getTopicWiseRecommendations(topicLevelRecommendationData);
         Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = getParameterWiseRecommendations(parameterLevelRecommendationData);
-        return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap, parameterLevelRecommendationMap, assessmentId);
+        return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap, parameterLevelRecommendationMap, assessmentId,userQuestions);
     }
 
     private Set<Integer> mapSelectedModulesInSet(List<AssessmentCategory> assessmentCategoryList) {
@@ -108,10 +111,10 @@ public class ReportService {
         return topicLevelRecommendationMap;
     }
 
-    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId) {
+    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId,List<UserQuestion> userQuestions) {
         Workbook workbook = new XSSFWorkbook();
 
-        writeReport(answers, parameterLevelAssessments, topicLevelAssessments, topicLevelRecommendations, parameterLevelRecommendations, workbook);
+        writeReport(answers,userQuestions, parameterLevelAssessments, topicLevelAssessments, topicLevelRecommendations, parameterLevelRecommendations, workbook);
 
         createDataAndGenerateChart(workbook, assessmentId, parameterLevelAssessments, topicLevelAssessments);
 
@@ -119,9 +122,12 @@ public class ReportService {
     }
 
 
-    private void writeReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook) {
+    private void writeReport(List<Answer> answers,List<UserQuestion> userQuestions, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook) {
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
+        }
+        for(UserQuestion userQuestion: userQuestions){
+            writeUserQuestionRow(workbook,userQuestion);
         }
         if (!parameterLevelAssessments.isEmpty()) {
             for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {
@@ -283,6 +289,29 @@ public class ReportService {
                     0,
                     question.getQuestionText(),
                     answer.getAnswer());
+        }
+    }
+    private void writeUserQuestionRow(Workbook workbook,UserQuestion userQuestion){
+        AssessmentParameter assessmentParameter = userQuestion.getParameter();
+        AssessmentTopic assessmentTopic = assessmentParameter.getTopic();
+        AssessmentModule assessmentModule = assessmentTopic.getModule();
+        if(checkIfModuleSelected(assessmentModule.getModuleId())){
+            AssessmentCategory assessmentCategory = assessmentModule.getCategory();
+            Sheet sheet = getMatchingSheet(workbook,assessmentCategory);
+            generateHeaderIfNotExist(sheet, workbook);
+            writeDataOnSheet(workbook, sheet,
+                    assessmentModule,
+                    assessmentTopic,
+                    ZERO,
+                    new TopicLevelRecommendation(),
+                    0,
+                    assessmentParameter,
+                    ZERO,
+                    new ParameterLevelRecommendation(),
+                    0,
+                    userQuestion.getQuestion(),
+                    userQuestion.getAnswer());
+
         }
     }
 

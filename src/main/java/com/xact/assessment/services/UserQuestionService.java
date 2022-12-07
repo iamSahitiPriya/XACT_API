@@ -17,7 +17,7 @@ public class UserQuestionService {
 
     public UserQuestion saveUserQuestion(UserQuestion userQuestion) {
 
-        if (userQuestion.getQuestion()!=null) {
+        if (userQuestion.getQuestionId()!=null) {
             if (userQuestion.hasQuestion()) {
                 userQuestionRepository.update(userQuestion);
             } else {

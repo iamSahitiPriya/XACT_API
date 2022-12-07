@@ -7,10 +7,7 @@ package com.xact.assessment.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Introspected;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -21,6 +18,8 @@ import java.util.Date;
 import java.util.Set;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"questions", "references"})
@@ -77,19 +76,5 @@ public class AssessmentParameter implements Serializable {
 
     public Integer getRating() {
         return rating == null ? 0 : rating;
-    }
-
-    public AssessmentParameter(String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
-        this.parameterName = parameterName;
-        this.topic = topic;
-        this.isActive = isActive;
-        this.comments = comments;
-    }
-
-    public AssessmentParameter(Integer parameterId,String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
-        this.parameterName = parameterName;
-        this.topic = topic;
-        this.isActive = isActive;
-        this.comments = comments;
     }
 }

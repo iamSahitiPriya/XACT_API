@@ -110,7 +110,7 @@ class AssessmentMasterDataServiceTest {
         parameterRequest.setComments("");
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
-        AssessmentParameter assessmentParameter = new AssessmentParameter(parameterRequest.getParameterName(), assessmentTopic, parameterRequest.isActive(), parameterRequest.getComments());
+        AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterName(parameterRequest.getParameterName()).topic(assessmentTopic).isActive(parameterRequest.isActive()).comments(parameterRequest.getComments()).build();
         List<AssessmentParameter> parameters = new ArrayList<>();
         when(parameterService.getAllParameters()).thenReturn(parameters);
         when(topicService.getTopic(1)).thenReturn(Optional.of(assessmentTopic));
@@ -208,13 +208,13 @@ class AssessmentMasterDataServiceTest {
 
     @Test
     void shouldThrowExceptionWhenModuleIsCreatedWithDuplicateName() throws DuplicateRecordException {
-        AssessmentCategory assessmentCategory=new AssessmentCategory();
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
         assessmentCategory.setCategoryName("category");
         assessmentCategory.setActive(true);
         assessmentCategory.setComments("comments");
 
 
-        AssessmentModule assessmentModule=new AssessmentModule();
+        AssessmentModule assessmentModule = new AssessmentModule();
         assessmentModule.setModuleName("module");
         assessmentModule.setCategory(assessmentCategory);
         assessmentModule.setActive(true);
@@ -227,7 +227,7 @@ class AssessmentMasterDataServiceTest {
 
         List<AssessmentModule> assessmentModules = new ArrayList<>();
         assessmentModules.add(assessmentModule);
-        List<String>  names = new ArrayList<>();
+        List<String> names = new ArrayList<>();
         names.add(assessmentModule.getModuleName());
 
         when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(assessmentCategory);
@@ -238,15 +238,15 @@ class AssessmentMasterDataServiceTest {
         when(moduleService.getModuleNames(assessmentCategory.getCategoryId())).thenReturn(names);
 
 
-        assertThrows(DuplicateRecordException.class,()-> assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest));
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest));
 
     }
 
     @Test
     void shouldThrowExceptionWhenModuleIsUpdatedWithDuplicateName() throws DuplicateRecordException {
-        AssessmentCategory assessmentCategory=new AssessmentCategory(1,"category",true,"comments");
-        AssessmentModule assessmentModule=new AssessmentModule(1,"module",assessmentCategory,true,"comments");
-        AssessmentModule assessmentModule1=new AssessmentModule(2,"module1",assessmentCategory,true,"comments");
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "comments");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "module", assessmentCategory, true, "comments");
+        AssessmentModule assessmentModule1 = new AssessmentModule(2, "module1", assessmentCategory, true, "comments");
 
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
         assessmentModuleRequest.setModuleName("module");
@@ -256,7 +256,7 @@ class AssessmentMasterDataServiceTest {
         List<AssessmentModule> assessmentModules = new ArrayList<>();
         assessmentModules.add(assessmentModule);
         assessmentModules.add(assessmentModule1);
-        List<String>  names = new ArrayList<>();
+        List<String> names = new ArrayList<>();
         names.add(assessmentModule.getModuleName());
         names.add(assessmentModule1.getModuleName());
         Integer moduleId = assessmentModule1.getModuleId();
@@ -268,7 +268,7 @@ class AssessmentMasterDataServiceTest {
         when(moduleRepository.update(assessmentModule)).thenReturn(assessmentModule);
 
 
-        assertThrows(DuplicateRecordException.class,()-> assessmentMasterDataService.updateModule(moduleId,assessmentModuleRequest));
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest));
     }
 
 
@@ -304,7 +304,7 @@ class AssessmentMasterDataServiceTest {
         parameterRequest.setComments("");
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
-        AssessmentParameter assessmentParameter = new AssessmentParameter(parameterRequest.getParameterName(), assessmentTopic, parameterRequest.isActive(), parameterRequest.getComments());
+        AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterName(parameterRequest.getParameterName()).topic(assessmentTopic).isActive(parameterRequest.isActive()).comments(parameterRequest.getComments()).build();
 
         AssessmentParameterRequest assessmentParameterRequest = new AssessmentParameterRequest();
         assessmentParameterRequest.setTopic(1);

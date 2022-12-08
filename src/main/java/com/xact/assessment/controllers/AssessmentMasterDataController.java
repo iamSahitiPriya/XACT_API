@@ -68,7 +68,7 @@ public class AssessmentMasterDataController {
         List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(userAssessmentCategories)) {
-            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.map(assessmentCategory)));
+            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapAssessmentCategory(assessmentCategory)));
         }
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
         userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);

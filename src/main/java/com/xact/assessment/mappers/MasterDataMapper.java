@@ -66,7 +66,7 @@ public class MasterDataMapper {
         return moduleMapper.map(assessmentCategory, AssessmentCategoryDto.class);
     }
 
-    public AssessmentCategoryDto map(AssessmentCategory assessmentCategory) {
+    public AssessmentCategoryDto mapAssessmentCategory(AssessmentCategory assessmentCategory) {
         return mapper.map(assessmentCategory, AssessmentCategoryDto.class);
     }
 

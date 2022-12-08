@@ -206,7 +206,7 @@ public class AssessmentController {
             AnswerId answerId = new AnswerId(assessment, question);
             Answer answer = answerService.getAnswer(answerId).orElse(new Answer());
             answer.setAnswerId(answerId);
-            answer.setAnswer(notes);
+            answer.setAnswerNote(notes);
             answerService.saveAnswer(answer);
             updateAssessment(assessment);
         }

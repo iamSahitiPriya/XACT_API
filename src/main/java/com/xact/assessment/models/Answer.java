@@ -33,7 +33,7 @@ public class Answer implements Serializable {
 
 
     @Column(name = "notes")
-    private String answer;
+    private String answerNote;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -47,6 +47,6 @@ public class Answer implements Serializable {
 
 
     public boolean hasNotes() {
-        return answer != null && !answer.isBlank();
+        return answerNote != null && !answerNote.isBlank();
     }
 }

@@ -43,7 +43,7 @@ class AnswerServiceTest {
         when(answerRepository.save(answer)).thenReturn(answer);
         Answer actualAnswer = answerService.saveAnswer(answer);
 
-        assertEquals(answer.getAnswer(), actualAnswer.getAnswer());
+        assertEquals(answer.getAnswerNote(), actualAnswer.getAnswerNote());
         assertEquals(answer.getAnswerId(), actualAnswer.getAnswerId());
 
     }
@@ -78,7 +78,7 @@ class AnswerServiceTest {
         when(answerRepository.update(answer2)).thenReturn(answer2);
         Answer actualAnswer = answerService.saveAnswer(answer2);
 
-        assertEquals(answer2.getAnswer(), actualAnswer.getAnswer());
+        assertEquals(answer2.getAnswerNote(), actualAnswer.getAnswerNote());
         assertEquals(answer2.getAnswerId(), actualAnswer.getAnswerId());
 
     }
@@ -99,12 +99,12 @@ class AnswerServiceTest {
 
         answerRepository.save(answer);
 
-        answer.setAnswer("new Answer");
+        answer.setAnswerNote("new Answer");
         when(answerRepository.existsById(answerId)).thenReturn(true);
         when(answerRepository.update(answer)).thenReturn(answer);
         Answer actualAnswer = answerService.saveAnswer(answer);
 
-        assertEquals(answer.getAnswer(), actualAnswer.getAnswer());
+        assertEquals(answer.getAnswerNote(), actualAnswer.getAnswerNote());
         assertEquals(answer.getAnswerId(), actualAnswer.getAnswerId());
     }
 
@@ -123,7 +123,7 @@ class AnswerServiceTest {
 
         answerRepository.save(answer);
 
-        answer.setAnswer("");
+        answer.setAnswerNote("");
         when(answerRepository.existsById(answerId)).thenReturn(true);
         answerService.saveAnswer(answer);
 

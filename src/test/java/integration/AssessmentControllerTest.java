@@ -152,7 +152,7 @@ class AssessmentControllerTest {
         AnswerId answerId = new AnswerId(assessment, question);
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
-        answer.setAnswer("answer");
+        answer.setAnswerNote("answer");
 
         ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
@@ -380,7 +380,7 @@ class AssessmentControllerTest {
 
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
-        answer.setAnswer("Ans");
+        answer.setAnswerNote("Ans");
 
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);

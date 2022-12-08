@@ -511,7 +511,7 @@ class AssessmentControllerTest {
         AnswerId answerId = new AnswerId(assessment, question);
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
-        answer.setAnswer("Answer");
+        answer.setAnswerNote("Answer");
 
         when(answerService.getAnswer(answerId)).thenReturn(Optional.of(answer));
         when(answerService.saveAnswer(answer)).thenReturn(answer);

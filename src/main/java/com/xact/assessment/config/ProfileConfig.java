@@ -11,4 +11,6 @@ public class ProfileConfig {
     private String type;
     private String url;
     private String homePageUrl;
+    private String microSiteUrl;
+    private String supportUrl;
 }

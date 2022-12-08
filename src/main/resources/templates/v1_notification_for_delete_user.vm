@@ -6,13 +6,16 @@
     <p style="padding-left: 5px;font-size: 15px;">Hello there,</p>
     <p style="padding-left: 5px;font-size: 13px;font-style: italic;">You have been removed from the Assessment <b style="color:#4BA1AC ;">${assessment.assessmentName}</b>.</p>
     <br>
+    <p style="padding-left: 5px;">Please visit our microSite for information on X - Act <a style="text-decoration: none;color: #4BA1AC" href="${microSiteUrl}"> here</a>.</p>
+    <p style="padding-left: 5px;">If you have any questions reach out to Support mail id <a style="text-decoration: none;color: #4BA1AC" href="${supportUrl}"> here</a>.</p>
     <hr>
-    <div style="padding-top: 8px;">
+    <div style="padding-top: 8px;padding-left: 5px">
         <heading style="font-size: 13px;">Organisation Name:</heading>
         <p style="font-style: italic;font-size: 12px;">${assessment.organisationName}</p>
         <br>
-        <heading style="font-size: 13px;">Created Date:</heading>
-        <p style="font-style: italic;font-size: 12px;">${assessment.createdAt}</p>
+        <heading style="font-size: 13px;">Created On:</heading>
+        <p style="font-style: italic;font-size: 12px;">${date}</p>
+        <p style="font-style: italic;font-size: 12px;">${time}</p>
         <br>
     </div>
 </div>

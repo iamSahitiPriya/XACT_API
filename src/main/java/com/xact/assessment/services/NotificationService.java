@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,27 +86,33 @@ public class NotificationService {
     }
 
     @SneakyThrows
-    public Notification setNotificationForDeleteUser(Assessment assessment, Set<String> assessmentUsers){
-        ObjectMapper objectMapper = new ObjectMapper();
-        Notification notification = setNotification(assessmentUsers);
-        notification.setTemplateName(NotificationType.DELETE_USER_V1);
-        Map<String, String> payload = getAssessmentCommonPayload(assessment);
-        notification.setPayload(objectMapper.writeValueAsString(payload));
+    public Notification setNotificationForDeleteUser(Assessment assessment, Set<String> assessmentUsers) {
+        if (assessmentUsers.size() > 0) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Notification notification = setNotification(assessmentUsers);
+            notification.setTemplateName(NotificationType.DELETE_USER_V1);
+            Map<String, String> payload = getAssessmentCommonPayload(assessment);
+            notification.setPayload(objectMapper.writeValueAsString(payload));
 
-        saveNotification(notification);
-        return notification;
+            saveNotification(notification);
+            return notification;
+        }
+        return null;
     }
 
     @SneakyThrows
-    public Notification setNotificationForAddUser(Assessment assessment, Set<String> assessmentUsers){
-        ObjectMapper objectMapper = new ObjectMapper();
-        Notification notification = setNotification(assessmentUsers);
-        notification.setTemplateName(NotificationType.ADD_USER_V1);
-        Map<String, String> payload = getAssessmentCommonPayload(assessment);
-        notification.setPayload(objectMapper.writeValueAsString(payload));
+    public Notification setNotificationForAddUser(Assessment assessment, Set<String> assessmentUsers) {
+        if (assessmentUsers.size() > 0) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Notification notification = setNotification(assessmentUsers);
+            notification.setTemplateName(NotificationType.ADD_USER_V1);
+            Map<String, String> payload = getAssessmentCommonPayload(assessment);
+            notification.setPayload(objectMapper.writeValueAsString(payload));
 
-        saveNotification(notification);
-        return notification;
+            saveNotification(notification);
+            return notification;
+        }
+        return null;
     }
 
     @SneakyThrows
@@ -147,7 +154,12 @@ public class NotificationService {
         payload.put(ASSESSMENT_ID, String.valueOf(assessment.getAssessmentId()));
         payload.put(ASSESSMENT_NAME, assessment.getAssessmentName());
         payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
-        payload.put(CREATED_AT, assessment.getCreatedAt().toString());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+        String date = simpleDateFormat.format(assessment.getCreatedAt());
+        String time = timeFormat.format(assessment.getCreatedAt());
+        String createdAt=date+" "+time;
+        payload.put(CREATED_AT,createdAt);
         return payload;
     }
 }

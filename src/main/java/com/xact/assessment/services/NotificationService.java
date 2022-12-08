@@ -85,6 +85,18 @@ public class NotificationService {
     }
 
     @SneakyThrows
+    public Notification setNotificationForDeleteUser(Assessment assessment, Set<String> assessmentUsers){
+        ObjectMapper objectMapper = new ObjectMapper();
+        Notification notification = setNotification(assessmentUsers);
+        notification.setTemplateName(NotificationType.DELETE_USER_V1);
+        Map<String, String> payload = getAssessmentCommonPayload(assessment);
+        notification.setPayload(objectMapper.writeValueAsString(payload));
+
+        saveNotification(notification);
+        return notification;
+    }
+
+    @SneakyThrows
     public Notification setNotificationForAddUser(Assessment assessment, Set<String> assessmentUsers){
         ObjectMapper objectMapper = new ObjectMapper();
         Notification notification = setNotification(assessmentUsers);

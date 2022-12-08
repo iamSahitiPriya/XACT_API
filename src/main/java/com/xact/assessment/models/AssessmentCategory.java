@@ -4,8 +4,6 @@
 
 package com.xact.assessment.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.micronaut.core.annotation.Introspected;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,6 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -26,10 +25,7 @@ import java.util.Set;
 @Introspected
 @Entity
 @Table(name = "tbm_assessment_category")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "categoryId")
-public class AssessmentCategory {
+public class AssessmentCategory implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "category_id", nullable = false, unique = true)

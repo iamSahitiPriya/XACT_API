@@ -57,9 +57,9 @@ email:
   scope: "email.send"
   endpoint: "/notification/messages"
   delay: "30s"
-  notificationEnabled : true
+  notificationEnabled : false
   maskEmail : true
-  defaultEmail : "sahitipriya.a@thoughtworks.com"
+  defaultEmail : "shashank.mishra@thoughtworks.com"
   fromEmail : "project-xact@thoughtworks.net"
   name : "X-ACT Support"
 

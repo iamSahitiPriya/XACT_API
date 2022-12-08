@@ -5,8 +5,12 @@
 package com.xact.assessment.controllers;
 
 
-import com.xact.assessment.dtos.*;
-import com.xact.assessment.models.*;
+import com.xact.assessment.dtos.ReportCategoryResponse;
+import com.xact.assessment.dtos.ReportDataResponse;
+import com.xact.assessment.mappers.ReportDataMapper;
+import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.AssessmentCategory;
+import com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.ReportService;
 import com.xact.assessment.services.UserAuthService;
@@ -25,7 +29,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -40,6 +43,7 @@ public class ReportController {
     private final ReportService reportService;
     private final UserAuthService userAuthService;
     private final AssessmentService assessmentService;
+    private final ReportDataMapper reportDataMapper = new ReportDataMapper();
 
 
     public ReportController(ReportService reportService, AssessmentService assessmentService, UserAuthService userAuthService) {
@@ -78,7 +82,7 @@ public class ReportController {
         ReportDataResponse reportDataResponse = new ReportDataResponse();
         reportDataResponse.setName(assessment.getAssessmentName());
         List<ReportCategoryResponse> reportCategoryResponseList = new ArrayList<>();
-        mapToResponseStructure(assessmentCategories, reportCategoryResponseList);
+        reportDataMapper.mapToResponseStructure(assessmentCategories, reportCategoryResponseList);
         reportDataResponse.setChildren(reportCategoryResponseList);
 
         return HttpResponse.ok(reportDataResponse);
@@ -106,68 +110,6 @@ public class ReportController {
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         return assessmentService.getAssessment(assessmentId, loggedInUser);
-    }
-
-    private void mapToResponseStructure(List<AssessmentCategory> assessmentCategories, List<ReportCategoryResponse> reportCategoryResponseList) {
-        for (AssessmentCategory assessmentCategory : assessmentCategories) {
-            ReportCategoryResponse reportCategoryResponse = getReportCategoryResponse(assessmentCategory);
-            List<ReportModuleResponse> reportModuleResponseList = new ArrayList<>();
-            for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
-                ReportModuleResponse reportModuleResponse = getReportModuleResponse(assessmentModule);
-                List<ReportTopicResponse> reportTopicResponseList = new ArrayList<>();
-                for (AssessmentTopic assessmentTopic : assessmentModule.getActiveTopics()) {
-                    ReportTopicResponse reportTopicResponse = getReportTopicResponse(assessmentTopic);
-                    if (assessmentTopic.hasReferences()) {
-                        reportTopicResponse.setValue(assessmentTopic.getRating());
-                    } else {
-                        reportTopicResponse.setRating(assessmentTopic.getTopicAverage());
-                        List<ReportParameterResponse> reportParameterResponseList = new ArrayList<>();
-                        for (AssessmentParameter assessmentParameter : assessmentTopic.getActiveParameters()) {
-                            ReportParameterResponse reportParameterResponse = getReportParameterResponse(assessmentParameter);
-                            reportParameterResponseList.add(reportParameterResponse);
-                        }
-                        reportTopicResponse.setChildren(reportParameterResponseList);
-                    }
-                    reportTopicResponseList.add(reportTopicResponse);
-                }
-                reportModuleResponse.setChildren(reportTopicResponseList);
-                reportModuleResponseList.add(reportModuleResponse);
-            }
-            reportCategoryResponse.setChildren(reportModuleResponseList);
-            reportCategoryResponseList.add(reportCategoryResponse);
-
-        }
-    }
-
-    @NotNull
-    private ReportParameterResponse getReportParameterResponse(AssessmentParameter assessmentParameter) {
-        ReportParameterResponse reportParameterResponse = new ReportParameterResponse();
-        reportParameterResponse.setName(assessmentParameter.getParameterName());
-        reportParameterResponse.setValue(assessmentParameter.getRating());
-        return reportParameterResponse;
-    }
-
-    @NotNull
-    private ReportTopicResponse getReportTopicResponse(AssessmentTopic assessmentTopic) {
-        ReportTopicResponse reportTopicResponse = new ReportTopicResponse();
-        reportTopicResponse.setName(assessmentTopic.getTopicName());
-        return reportTopicResponse;
-    }
-
-    @NotNull
-    private ReportModuleResponse getReportModuleResponse(AssessmentModule assessmentModule) {
-        ReportModuleResponse reportModuleResponse = new ReportModuleResponse();
-        reportModuleResponse.setName(assessmentModule.getModuleName());
-        reportModuleResponse.setRating(assessmentModule.getModuleAverage());
-        return reportModuleResponse;
-    }
-
-    @NotNull
-    private ReportCategoryResponse getReportCategoryResponse(AssessmentCategory assessmentCategory) {
-        ReportCategoryResponse reportCategoryResponse = new ReportCategoryResponse();
-        reportCategoryResponse.setName(assessmentCategory.getCategoryName());
-        reportCategoryResponse.setRating(assessmentCategory.getCategoryAverage());
-        return reportCategoryResponse;
     }
 
 }

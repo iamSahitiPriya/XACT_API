@@ -74,7 +74,7 @@ public class AssessmentService {
 
         Optional<AssessmentUser> assessmentOwner = Optional.empty();
         if (assessment.getAssessmentId() != null) {
-            assessmentOwner = usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId());
+            assessmentOwner = assessment.getOwner();
         }
 
         Set<AssessmentUser> assessmentUsers = new HashSet<>();

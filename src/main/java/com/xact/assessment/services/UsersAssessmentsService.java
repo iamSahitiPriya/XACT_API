@@ -13,7 +13,6 @@ import jakarta.inject.Singleton;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Singleton
@@ -46,10 +45,6 @@ public class UsersAssessmentsService {
     public void updateUsersInAssessment(Set<AssessmentUser> assessmentUsers, Integer assessmentId) {
         usersAssessmentsRepository.deleteUsersByAssessmentId(assessmentId);
         usersAssessmentsRepository.saveAll(assessmentUsers);
-    }
-
-    public Optional<AssessmentUser> findOwnerByAssessmentId(Integer assessmentId) {
-       return  usersAssessmentsRepository.findOwnerByAssessmentId(assessmentId);
     }
 }
 

@@ -5,33 +5,28 @@
 package com.xact.assessment.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import io.micronaut.core.annotation.Introspected;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @EqualsAndHashCode(exclude = {"questions", "references"})
 @Introspected
 @Entity
 @Table(name = "tbm_assessment_parameter")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "parameterId")
-public class AssessmentParameter {
+public class AssessmentParameter implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "parameter_id", nullable = false, unique = true)
@@ -81,19 +76,5 @@ public class AssessmentParameter {
 
     public Integer getRating() {
         return rating == null ? 0 : rating;
-    }
-
-    public AssessmentParameter(String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
-        this.parameterName = parameterName;
-        this.topic = topic;
-        this.isActive = isActive;
-        this.comments = comments;
-    }
-
-    public AssessmentParameter(Integer parameterId,String parameterName, AssessmentTopic topic, boolean isActive, String comments) {
-        this.parameterName = parameterName;
-        this.topic = topic;
-        this.isActive = isActive;
-        this.comments = comments;
     }
 }

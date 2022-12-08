@@ -18,15 +18,16 @@ import java.util.*;
 @Singleton
 public class AssessmentMasterDataService {
 
-    CategoryRepository categoryRepository;
-    AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
+    private final CategoryRepository categoryRepository;
+    private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
 
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
-    AssessmentParameterReferenceRepository assessmentParameterRRepository;
+    private final AssessmentParameterReferenceRepository assessmentParameterRRepository;
     private final ModuleService moduleService;
+    private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
 
 
     public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
@@ -80,7 +81,7 @@ public class AssessmentMasterDataService {
             categoryRepository.save(assessmentCategory);
             return assessmentCategory;
         } else {
-            throw new DuplicateRecordException("Duplicate records are not allowed");
+            throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
         }
 
     }
@@ -100,7 +101,7 @@ public class AssessmentMasterDataService {
             moduleService.createModule(assessmentModule);
             return assessmentModule;
         } else {
-            throw new DuplicateRecordException("Duplicate records are not allowed");
+            throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
         }
     }
 
@@ -114,7 +115,10 @@ public class AssessmentMasterDataService {
 
     public AssessmentParameter createAssessmentParameter(AssessmentParameterRequest assessmentParameter) {
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameter.getTopic()).orElseThrow();
-        AssessmentParameter assessmentParameter1 = new AssessmentParameter(assessmentParameter.getParameterName(), assessmentTopic, assessmentParameter.isActive(), assessmentParameter.getComments());
+        AssessmentParameter assessmentParameter1 = AssessmentParameter.builder().parameterName(assessmentParameter.getParameterName()).topic(assessmentTopic)
+                .isActive(assessmentParameter.isActive()).comments(assessmentParameter.getComments()).build();
+
+
         parameterService.createParameter(assessmentParameter1);
         return assessmentParameter1;
     }
@@ -152,7 +156,7 @@ public class AssessmentMasterDataService {
                 assessmentCategory.setComments(assessmentCategoryRequest.getComments());
                 categoryRepository.update(assessmentCategory);
             } else {
-                throw new DuplicateRecordException("Duplicate records are not allowed");
+                throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
             }
         }
         return assessmentCategory;
@@ -175,7 +179,7 @@ public class AssessmentMasterDataService {
             moduleService.updateModule(assessmentModule);
             return assessmentModule;
         } else {
-            throw new DuplicateRecordException("Duplicate records are not allowed");
+            throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
         }
 
     }

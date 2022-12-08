@@ -68,23 +68,6 @@ class UsersAssessmentsServiceTest {
     }
 
     @Test
-    void shouldGetTheOwnerOfTheAssessment() {
-        Date created = new Date(22 - 10 - 2022);
-        Date updated = new Date(22 - 10 - 2022);
-
-        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        UserId userId = new UserId("hello@thoughtworks.com", assessment);
-        AssessmentUser assessmentUser = new AssessmentUser(userId, AssessmentRole.Owner);
-
-        when(usersAssessmentsRepository.findOwnerByAssessmentId(assessment.getAssessmentId())).thenReturn(Optional.of(assessmentUser));
-
-        Optional<AssessmentUser> assessmentUsers1 = usersAssessmentsService.findOwnerByAssessmentId(assessment.getAssessmentId());
-        assertEquals("hello@thoughtworks.com", assessmentUsers1.get().getUserId().getUserEmail());
-
-    }
-
-    @Test
     void shouldUpdateUserInAssessment() {
         Date created = new Date(22 - 10 - 2022);
         Date updated = new Date(22 - 10 - 2022);

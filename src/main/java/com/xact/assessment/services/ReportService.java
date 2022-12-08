@@ -282,7 +282,7 @@ public class ReportService {
                     new ParameterLevelRecommendation(),
                     0,
                     question.getQuestionText(),
-                    answer.getAnswer());
+                    answer.getAnswerNote());
         }
     }
 

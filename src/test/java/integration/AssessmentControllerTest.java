@@ -23,7 +23,6 @@ import org.modelmapper.ModelMapper;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
@@ -153,7 +152,7 @@ class AssessmentControllerTest {
         AnswerId answerId = new AnswerId(assessment, question);
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
-        answer.setAnswer("answer");
+        answer.setAnswerNote("answer");
 
         ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
@@ -381,7 +380,7 @@ class AssessmentControllerTest {
 
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
-        answer.setAnswer("Ans");
+        answer.setAnswerNote("Ans");
 
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
@@ -398,7 +397,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testUpdateTopicRecommendation() throws IOException {
+    void testUpdateTopicRecommendation() {
 
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
@@ -446,7 +445,7 @@ class AssessmentControllerTest {
 
 
     @Test
-    void testUpdateParameterRecommendationText() throws IOException {
+    void testUpdateParameterRecommendationText() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -492,7 +491,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testUpdateTopicRecommendationImpact() throws IOException {
+    void testUpdateTopicRecommendationImpact() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -539,7 +538,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testUpdateParameterRecommendationImpact() throws IOException {
+    void testUpdateParameterRecommendationImpact() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -585,7 +584,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testUpdateTopicRecommendationEffect() throws IOException {
+    void testUpdateTopicRecommendationEffect() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -720,7 +719,7 @@ class AssessmentControllerTest {
 
 
     @Test
-    void testDeleteParameterRecommendation() throws IOException {
+    void testDeleteParameterRecommendation() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -762,7 +761,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testDeleteTopicRecommendation() throws IOException {
+    void testDeleteTopicRecommendation() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -803,7 +802,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testGetAdminAssessmentsResponse() throws IOException, ParseException {
+    void testGetAdminAssessmentsResponse() throws IOException {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
         assessment.setAssessmentName("new");

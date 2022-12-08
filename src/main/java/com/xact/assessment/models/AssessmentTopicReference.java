@@ -5,9 +5,7 @@
 package com.xact.assessment.models;
 
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +13,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @NoArgsConstructor
 @Getter
@@ -22,10 +21,7 @@ import javax.validation.constraints.NotNull;
 @EqualsAndHashCode
 @Entity
 @Table(name = "tbm_assessment_topic_reference")
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "referenceId")
-public class AssessmentTopicReference {
+public class AssessmentTopicReference implements Serializable {
 
     @Id
     @Column(name = "reference_id", nullable = false, unique = true)

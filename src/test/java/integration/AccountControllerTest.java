@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
-import java.io.IOException;
 
 @MicronautTest
 class AccountControllerTest {
@@ -38,7 +37,7 @@ class AccountControllerTest {
     }
 
     @Test
-    void getOrganisationNames() throws IOException {
+    void getOrganisationNames() {
         Account accounts = new Account("abc", "Shell Singapore", "Commodities, Utilities and Energy");
         Account accounts1 = new Account("def", "Equinor", "Finance");
         accountRepository.save(accounts);

@@ -43,7 +43,7 @@ account:
   scope: "account.read.internal"
   endpoint: "/api/accounts"
   delay: "4h"
-  initialDelay: "30m"
+  initialDelay: "1m"
 
 token:
   username: '${AUTH_USERNAME:`dummy`}'
@@ -57,9 +57,9 @@ email:
   scope: "email.send"
   endpoint: "/notification/messages"
   delay: "30s"
-  notificationEnabled : false
+  notificationEnabled : true
   maskEmail : true
-  defaultEmail : "shashank.mishra@thoughtworks.com"
+  defaultEmail : "sahitipriya.a@thoughtworks.com"
   fromEmail : "project-xact@thoughtworks.net"
   name : "X-ACT Support"
 

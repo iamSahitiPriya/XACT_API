@@ -5,8 +5,7 @@
 package com.xact.assessment.mappers;
 
 import com.xact.assessment.dtos.*;
-import com.xact.assessment.models.Answer;
-import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.*;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
@@ -26,13 +25,16 @@ public class AssessmentMapper {
         });
     }
 
-    public AssessmentResponse map(Assessment assessment, List<Answer> answers, List<TopicRatingAndRecommendation> topicRecommendationResponses, List<ParameterRatingAndRecommendation> paramRecommendationResponses) {
+    public AssessmentResponse map(Assessment assessment, List<Answer> answers, List<UserQuestion> userQuestionList,List<TopicRatingAndRecommendation> topicRecommendationResponses, List<ParameterRatingAndRecommendation> paramRecommendationResponses) {
         AssessmentResponse assessmentResponse = map(assessment);
         assessmentResponse.setAnswerResponseList(mapAnswers(answers));
+        assessmentResponse.setUserQuestionResponseList(mapUserQuestions(userQuestionList));
         assessmentResponse.setTopicRatingAndRecommendation(topicRecommendationResponses);
         assessmentResponse.setParameterRatingAndRecommendation(paramRecommendationResponses);
         return assessmentResponse;
     }
+
+
 
     public AssessmentResponse map(Assessment assessment) {
         AssessmentResponse assessmentResponse = modelMapper.map(assessment, AssessmentResponse.class);
@@ -55,6 +57,18 @@ public class AssessmentMapper {
             answerResponseList.add(eachAnswerResponse);
         }
         return answerResponseList;
+    }
+    private List<UserQuestionResponse> mapUserQuestions(List<UserQuestion> userQuestionList) {
+        List<UserQuestionResponse> userQuestionResponseList = new ArrayList<>();
+        for (UserQuestion eachUserQuestion : userQuestionList){
+            UserQuestionResponse userQuestionResponse = new UserQuestionResponse();
+            userQuestionResponse.setQuestionId(eachUserQuestion.getQuestionId());
+            userQuestionResponse.setParameterId(eachUserQuestion.getParameter().getParameterId());
+            userQuestionResponse.setQuestion(eachUserQuestion.getQuestion());
+            userQuestionResponse.setAnswer(eachUserQuestion.getAnswer());
+            userQuestionResponseList.add(userQuestionResponse);
+        }
+        return  userQuestionResponseList;
     }
 
 

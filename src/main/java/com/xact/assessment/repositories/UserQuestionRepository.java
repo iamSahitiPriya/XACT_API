@@ -1,6 +1,5 @@
 package com.xact.assessment.repositories;
 
-import com.xact.assessment.models.Answer;
 import com.xact.assessment.models.UserQuestion;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
@@ -14,6 +13,6 @@ import java.util.List;
 public interface UserQuestionRepository extends CrudRepository<UserQuestion, Integer> {
 
     @Executable
-    @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentId=:assessmentId")
+    @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentId=:assessmentId ORDER BY userQues.questionId")
     List<UserQuestion> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
 }

@@ -34,7 +34,7 @@ public class ReportService {
 
     private List<AssessmentCategory> assessmentCategoryList;
     private Set<Integer> selectedModulesSet;
-    private  UserQuestionService userQuestionService;
+    private  final UserQuestionService userQuestionService;
 
 
     public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService,UserQuestionService userQuestionService) {
@@ -127,7 +127,9 @@ public class ReportService {
             writeAnswerRow(workbook, answer);
         }
         for(UserQuestion userQuestion: userQuestions){
-            writeUserQuestionRow(workbook,userQuestion);
+            if(userQuestion.getAnswer()!=null) {
+                writeUserQuestionRow(workbook, userQuestion);
+            }
         }
         if (!parameterLevelAssessments.isEmpty()) {
             for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {

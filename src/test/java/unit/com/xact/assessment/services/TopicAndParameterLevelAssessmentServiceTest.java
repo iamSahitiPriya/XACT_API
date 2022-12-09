@@ -129,10 +129,12 @@ class TopicAndParameterLevelAssessmentServiceTest {
 
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
 
-
+        List<TopicLevelRecommendation> topicLevelRecommendationList = Collections.singletonList(topicLevelRecommendation);
         when(topicLevelAssessmentRepository.existsById(topicLevelId1)).thenReturn(true);
         when(topicLevelAssessmentRepository.update(topicLevelAssessment1)).thenReturn(topicLevelAssessment1);
         TopicLevelAssessment actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment1);
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId1,topicId)).thenReturn(topicLevelRecommendationList);
+        when(topicLevelRecommendationRepository.existsById(1)).thenReturn(true);
 
 
         when(topicLevelRecommendationRepository.existsById(topicLevelRecommendationRequest.getRecommendationId())).thenReturn(true);

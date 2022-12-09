@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory;
 @Produces
 @Singleton
 @Requires(classes = {UnauthorisedUserException.class, ExceptionHandler.class})
-public class GlobalExceptionHandler implements ExceptionHandler<UnauthorisedUserException, HttpResponse> {
+public class GlobalExceptionHandler implements ExceptionHandler<UnauthorisedUserException, HttpResponse<Void>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
 
     @Override
-    public HttpResponse handle(HttpRequest request, UnauthorisedUserException exception) {
+    public HttpResponse<Void> handle(HttpRequest request, UnauthorisedUserException exception) {
         LOGGER.info("Unauthorised user");
         return HttpResponse.unauthorized();
     }

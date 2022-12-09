@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
@@ -23,10 +24,13 @@ public class CategoryDto implements Comparable<CategoryDto> {
     private Date updatedAt;
     private String comments;
 
+    private SortedSet<AssessmentModuleDto> modules;
+
 
     @Override
     public int compareTo(CategoryDto o) {
-        return o.categoryId - categoryId;
+        return o.updatedAt.compareTo(updatedAt);
     }
+
 }
 

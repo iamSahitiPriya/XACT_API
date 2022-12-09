@@ -28,6 +28,4 @@ public interface ModuleRepository extends CrudRepository<AssessmentModule, Integ
     List<String> getModuleNames(Integer categoryId);
 
 
-
-    List<AssessmentModule> listOrderByUpdatedAtDesc();
 }

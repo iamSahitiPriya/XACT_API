@@ -45,14 +45,14 @@ class AdminReportServiceTest {
         List<Assessment> assessments = new ArrayList<>();
         assessments.add(assessment1);
 
-        AssessmentUsers assessmentUsers=new AssessmentUsers();
+        AssessmentUser assessmentUser =new AssessmentUser();
         UserId userId=new UserId("test@gmail.com",assessment1);
-        assessmentUsers.setUserId(userId);
-        assessmentUsers.setRole(AssessmentRole.Owner);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Owner);
 
 
         when(assessmentService.getAdminAssessmentsData("2022-05-30", "2022-09-30")).thenReturn(assessments);
-        when(usersAssessmentsService.findOwnerByAssessmentId(assessment1.getAssessmentId())).thenReturn(Optional.of(assessmentUsers));
+        when(usersAssessmentsService.findOwnerByAssessmentId(assessment1.getAssessmentId())).thenReturn(Optional.of(assessmentUser));
 
         Workbook report = adminReportService.generateAdminReport("2022-05-30", "2022-09-30");
 

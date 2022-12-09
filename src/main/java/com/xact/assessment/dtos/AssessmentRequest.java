@@ -4,6 +4,7 @@
 
 package com.xact.assessment.dtos;
 
+import com.xact.assessment.exceptions.InvalidEmailException;
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -61,7 +62,7 @@ public class AssessmentRequest {
         if (users != null) {
             for (UserDto user : users) {
                 if (!user.isValid(pattern)) {
-                    throw new RuntimeException("Invalid email of user");
+                    throw new InvalidEmailException("Invalid email of user : " + user);
                 }
             }
         }

@@ -10,22 +10,25 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode
 @Setter
-public class ModuleDto implements Comparable<ModuleDto> {
+public class TopicDto implements Comparable<TopicDto> {
 
-    private CategoryDto category;
-    private Integer moduleId ;
-    private String moduleName;
+    private Integer topicId ;
+    private String topicName;
     private boolean isActive;
     private Date updatedAt;
     private String comments;
+    private SortedSet<ParameterDto> parameters;
 
     @Override
-    public int compareTo(ModuleDto moduleDto) {
-        return moduleDto.updatedAt.compareTo(updatedAt);
+    public int compareTo(TopicDto topicDto) {
+        return topicDto.updatedAt.compareTo(updatedAt);
     }
+
 }
+

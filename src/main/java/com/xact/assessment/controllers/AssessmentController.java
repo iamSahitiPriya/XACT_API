@@ -479,7 +479,7 @@ public class AssessmentController {
             for (UserQuestionRequest userQuestionRequest : parameterLevelAssessmentRequest.getUserQuestionRequestList()) {
                 UserQuestion userQuestion= modelMapper.map(userQuestionRequest, UserQuestion.class);
                 userQuestion.setAssessment(assessment);
-                AssessmentParameter parameter = parameterService.getParameter(parameterLevelAssessmentRequest.getParameterRatingAndRecommendation().getParameterId()).orElseThrow();
+                AssessmentParameter parameter = parameterService.getParameter(userQuestionRequest.getParameterId()).orElseThrow();
                 userQuestion.setParameter(parameter);
                 userQuestionList.add(userQuestion);
             }

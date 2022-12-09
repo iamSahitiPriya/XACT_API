@@ -374,6 +374,9 @@ class AssessmentControllerTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(topicId);
 
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+
         topicRatingAndRecommendation.setTopicLevelRecommendationRequest(topicLevelRecommendationRequest);
 
 
@@ -388,6 +391,12 @@ class AssessmentControllerTest {
 
         ParameterLevelAssessmentRequest parameterLevelAssessmentRequest = new ParameterLevelAssessmentRequest();
         parameterLevelAssessmentRequest.setAnswerRequest(answerRequestList);
+
+        List<UserQuestionRequest> userQuestionList = new ArrayList<>();
+        UserQuestionRequest userQuestionRequest = new UserQuestionRequest(1,1,"question","answer");
+        userQuestionList.add(userQuestionRequest);
+        parameterLevelAssessmentRequest.setUserQuestionRequestList(userQuestionList);
+
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
         Profile profile = new Profile();
@@ -410,6 +419,7 @@ class AssessmentControllerTest {
         when(assessmentService.getAssessment(any(), any())).thenReturn(assessmentUser.getUserId().getAssessment());
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(parameterService.getParameter(1)).thenReturn(Optional.of(assessmentParameter));
 
         topicLevelAssessmentRequest.setParameterLevelAssessmentRequestList(Collections.singletonList(parameterLevelAssessmentRequest));
         topicLevelAssessmentRequest.setTopicRatingAndRecommendation((topicRatingAndRecommendation));
@@ -417,7 +427,7 @@ class AssessmentControllerTest {
 
         HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveAnswer(assessmentId, topicLevelAssessmentRequest, authentication);
 
-        verify(topicAndParameterLevelAssessmentService).saveTopicLevelAssessment((TopicLevelAssessment) any(), any(), any(),any());
+        verify(topicAndParameterLevelAssessmentService).saveTopicLevelAssessment(any(), any(), any(),any());
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -440,6 +450,12 @@ class AssessmentControllerTest {
 
         ParameterLevelAssessmentRequest parameterLevelAssessmentRequest = new ParameterLevelAssessmentRequest();
         parameterLevelAssessmentRequest.setAnswerRequest(answerRequestList);
+
+        List<UserQuestionRequest> userQuestionList = new ArrayList<>();
+        UserQuestionRequest userQuestionRequest = new UserQuestionRequest(1,2,"question","answer");
+        userQuestionList.add(userQuestionRequest);
+        parameterLevelAssessmentRequest.setUserQuestionRequestList(userQuestionList);
+
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
         Profile profile = new Profile();
@@ -482,12 +498,13 @@ class AssessmentControllerTest {
 
         topicLevelAssessmentRequest.setParameterLevelAssessmentRequestList(parameterLevelAssessmentRequestList);
 
+
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessmentUser.getUserId().getAssessment());
         when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveAnswer(assessmentId, topicLevelAssessmentRequest, authentication);
 
-        verify(topicAndParameterLevelAssessmentService).saveParameterLevelAssessment((List<ParameterLevelAssessment>) any(), any(),any(),any());
+        verify(topicAndParameterLevelAssessmentService).saveParameterLevelAssessment(any(), any(),any(),any());
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }

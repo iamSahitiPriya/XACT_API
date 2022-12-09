@@ -844,44 +844,5 @@ class AssessmentControllerTest {
 
     }
 
-//    @Test
-//    void testSaveUserAddedQuestionAndAnswer() throws IOException {
-//        String userEmail = "dummy@test.com";
-//        Assessment assessment = new Assessment();
-//        AssessmentUsers assessmentUsers = new AssessmentUsers();
-//
-//        Organisation org = new Organisation();
-//        org.setOrganisationName("org");
-//        org.setIndustry("IT");
-//        org.setDomain("Telecom");
-//        org.setSize(10);
-//
-//        assessment.setOrganisation(org);
-//        assessment.setAssessmentName("Mocked Assessment");
-//        assessment.setAssessmentStatus(Active);
-//        assessment.setAssessmentPurpose("Client Assessment");
-//        assessment.setOrganisation(org);
-//
-//        AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
-//
-//        UserQuestion  userQuestion = new UserQuestion();
-//        userQuestion.setAssessment(assessment);
-//        userQuestion.setParameter(assessmentParameter);
-//        userQuestion.setQuestion("new question?");
-//        userQuestion.setAnswer("new answer");
-//
-//        assessmentRepository.save(assessment);
-//        entityManager.getTransaction().commit();
-//        entityManager.clear();
-//        entityManager.close();
-//
-//        String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-string-value.json");
-//
-//        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/user_question/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId(), dataRequest)
-//                .bearerAuth("anything"));
-//
-//        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-//
-//    }
 
 }

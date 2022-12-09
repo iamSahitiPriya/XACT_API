@@ -158,9 +158,6 @@ public class AdminController {
     public HttpResponse<CategoryDto> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body  @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
         LOGGER.info("Admin: Update category: {}",categoryId);
         AssessmentCategory assessmentCategory = getCategory(categoryId);
-        assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
-        assessmentCategory.setActive(assessmentCategoryRequest.isActive());
-        assessmentCategory.setComments(assessmentCategoryRequest.getComments());
         AssessmentCategory assessmentCategory1 = assessmentMasterDataService.updateCategory(assessmentCategory,assessmentCategoryRequest);
         CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
         return HttpResponse.ok(categoryDto);

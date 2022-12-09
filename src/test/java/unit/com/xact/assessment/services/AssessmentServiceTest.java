@@ -224,7 +224,8 @@ class AssessmentServiceTest {
         when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUsers);
 
         assessmentService.getNewlyAddedUser(assessment,assessmentUserSet);
-
+        assessmentUserSet.remove(assessmentUser1);
+        assessmentService.getDeletedUser(assessment,assessmentUserSet);
 
         assessmentService.updateAssessment(assessment, assessmentUserSet);
 

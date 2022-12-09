@@ -60,6 +60,34 @@ class AssessmentMasterDataServiceTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenCategoryIsCreatedWithDuplicateName() throws DuplicateRecordException {
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryName("category");
+        assessmentCategory.setActive(true);
+        assessmentCategory.setComments("comments");
+
+
+        List<AssessmentCategory> assessmentCategories = new ArrayList<>();
+        assessmentCategories.add(assessmentCategory);
+        List<String> categoryNames = new ArrayList<>();
+        categoryNames.add(assessmentCategory.getCategoryName());
+
+        AssessmentCategoryRequest categoryRequest = new AssessmentCategoryRequest();
+        categoryRequest.setCategoryName("category");
+        categoryRequest.setActive(false);
+
+        when(categoryRepository.findAll()).thenReturn(assessmentCategories);
+        when(categoryRepository.getAllCategories()).thenReturn(categoryNames);
+        AssessmentCategory assessmentCategory1 = new AssessmentCategory(categoryRequest.getCategoryName(), categoryRequest.isActive(), categoryRequest.getComments());
+
+        when(categoryRepository.save(assessmentCategory1)).thenReturn(assessmentCategory1);
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentCategory(categoryRequest));
+
+    }
+
+
+    @Test
     void shouldCreateModule() {
         AssessmentCategory category = new AssessmentCategory();
         category.setCategoryName("Dummy");
@@ -182,6 +210,33 @@ class AssessmentMasterDataServiceTest {
         assessmentCategory.setCategoryName("this is a category");
         assessmentMasterDataService.updateCategory(assessmentCategory, categoryRequest);
         verify(categoryRepository).update(assessmentCategory);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenCategoryIsUpdatesWithDuplicateName() throws DuplicateRecordException {
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryName("category");
+        assessmentCategory.setActive(true);
+        assessmentCategory.setComments("comments");
+
+        AssessmentCategory assessmentCategory1 = new AssessmentCategory(2, "secondCategory", true, "");
+
+        List<AssessmentCategory> assessmentCategories = new ArrayList<>();
+        assessmentCategories.add(assessmentCategory);
+        assessmentCategories.add(assessmentCategory1);
+        List<String> categoryNames = new ArrayList<>();
+        categoryNames.add(assessmentCategory.getCategoryName());
+        categoryNames.add(assessmentCategory1.getCategoryName());
+
+        AssessmentCategoryRequest categoryRequest = new AssessmentCategoryRequest();
+        categoryRequest.setCategoryName("category");
+        categoryRequest.setActive(false);
+
+        when(categoryRepository.findAll()).thenReturn(assessmentCategories);
+        when(categoryRepository.getAllCategories()).thenReturn(categoryNames);
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateCategory(assessmentCategory1, categoryRequest));
+
     }
 
     @Test

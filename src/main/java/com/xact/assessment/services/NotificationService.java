@@ -156,6 +156,7 @@ public class NotificationService {
         payload.put(ORGANISATION_NAME, assessment.getOrganisation().getOrganisationName());
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a");
+        System.out.println("......."+timeFormat);
         String date = simpleDateFormat.format(assessment.getCreatedAt());
         String time = timeFormat.format(assessment.getCreatedAt());
         String createdAt=date+" "+time;

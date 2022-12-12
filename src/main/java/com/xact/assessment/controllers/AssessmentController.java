@@ -668,10 +668,8 @@ public class AssessmentController {
     public HttpResponse<UserQuestion> deleteUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         LOGGER.info("Delete user question. assessment: {}" , assessmentId);
-        if (assessment.isEditable()) {
-            if(userQuestionService.searchUserQuestion(questionId).isPresent()) {
+        if (assessment.isEditable() && userQuestionService.searchUserQuestion(questionId).isPresent()) {
                 userQuestionService.deleteUserQuestion(questionId);
-            }
         }
         return HttpResponse.ok();
     }

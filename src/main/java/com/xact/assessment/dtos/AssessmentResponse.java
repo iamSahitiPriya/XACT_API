@@ -4,7 +4,6 @@
 
 package com.xact.assessment.dtos;
 
-import com.xact.assessment.models.UserQuestion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

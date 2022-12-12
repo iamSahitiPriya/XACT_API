@@ -87,6 +87,7 @@ class AssessmentControllerTest {
         assessmentRepository.deleteAll();
         userQuestionRepository.deleteAll();
 
+
     }
 
     @Test
@@ -143,7 +144,6 @@ class AssessmentControllerTest {
         assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         assessment.setOrganisation(org);
-
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
         assessmentUser.setRole(AssessmentRole.Owner);
@@ -159,6 +159,13 @@ class AssessmentControllerTest {
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
         answer.setAnswerNote("answer");
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setAssessment(assessment);
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion("question?");
+        userQuestion.setAnswer("answer");
 
         ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
@@ -194,6 +201,7 @@ class AssessmentControllerTest {
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
         answerRepository.save(answer);
+//        userQuestionRepository.save(userQuestion);
         parameterLevelAssessmentRepository.save(parameterLevelAssessment);
         topicLevelAssessmentRepository.save(topicLevelAssessment);
         parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
@@ -205,10 +213,12 @@ class AssessmentControllerTest {
                 "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
                 "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
                 "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," +
-                "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"}]}],\"owner\":true}";
+                "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"}]}],\"owner\":false}";
 
         String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId())
                 .bearerAuth("anything"), String.class);
+
+//        System.out.println(assessmentResponse);
 
         assertEquals(expectedResponse, assessmentResponse);
 

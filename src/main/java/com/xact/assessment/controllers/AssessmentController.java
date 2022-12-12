@@ -176,7 +176,7 @@ public class AssessmentController {
 
 
         AssessmentResponse assessmentResponse = assessmentMapper.map(assessment, answerResponse,userQuestionList, topicRecommendationResponses, paramRecommendationResponses);
-        assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwner()));
+        assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwnerEmail()));
 
         return HttpResponse.ok(assessmentResponse);
     }

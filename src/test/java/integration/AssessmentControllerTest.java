@@ -218,8 +218,6 @@ class AssessmentControllerTest {
         String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId())
                 .bearerAuth("anything"), String.class);
 
-//        System.out.println(assessmentResponse);
-
         assertEquals(expectedResponse, assessmentResponse);
 
     }

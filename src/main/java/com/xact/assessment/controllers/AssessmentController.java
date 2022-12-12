@@ -541,14 +541,11 @@ public class AssessmentController {
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         UserQuestion savedQuestion = new UserQuestion();
-        UserQuestionResponse userQuestionResponse = new UserQuestionResponse();
         if (assessment.isEditable()) {
             savedQuestion = userQuestionService.saveUserQuestion(assessment,parameterId,userQuestion);
             updateAssessment(assessment);
         }
-        userQuestionResponse.setQuestionId(savedQuestion.getQuestionId());
-        userQuestionResponse.setQuestion(savedQuestion.getQuestion());
-        userQuestionResponse.setParameterId(parameterId);
+        UserQuestionResponse userQuestionResponse = modelMapper.map(savedQuestion,UserQuestionResponse.class);
         return HttpResponse.ok(userQuestionResponse);
     }
 

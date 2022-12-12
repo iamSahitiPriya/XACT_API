@@ -201,7 +201,6 @@ class AssessmentControllerTest {
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
         answerRepository.save(answer);
-//        userQuestionRepository.save(userQuestion);
         parameterLevelAssessmentRepository.save(parameterLevelAssessment);
         topicLevelAssessmentRepository.save(topicLevelAssessment);
         parameterLevelRecommendationRepository.save(parameterLevelRecommendation);

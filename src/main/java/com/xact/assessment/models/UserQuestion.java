@@ -38,6 +38,7 @@ public class UserQuestion {
     @JoinColumn(name = "parameter",referencedColumnName = "parameter_id")
     AssessmentParameter parameter;
 
+    @NotNull
     @Column(name = "question_text")
     private String question;
 

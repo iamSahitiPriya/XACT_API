@@ -82,7 +82,7 @@ public class AssessmentController {
             assessments.forEach(assessment ->
             {
                 AssessmentResponse assessmentResponse = assessmentMapper.map(assessment);
-                assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwner()));
+                assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwnerEmail()));
                 assessmentResponses.add(assessmentResponse);
             });
         return HttpResponse.ok(assessmentResponses);
@@ -216,7 +216,7 @@ public class AssessmentController {
             AnswerId answerId = new AnswerId(assessment, question);
             Answer answer = answerService.getAnswer(answerId).orElse(new Answer());
             answer.setAnswerId(answerId);
-            answer.setAnswer(notes);
+            answer.setAnswerNote(notes);
             answerService.saveAnswer(answer);
             updateAssessment(assessment);
         }
@@ -398,7 +398,7 @@ public class AssessmentController {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable() && (assessment.getOwner().equals(loggedInUser.getUserEmail())))
+        if (assessment.isEditable() && (assessment.getOwnerEmail().equals(loggedInUser.getUserEmail())))
             assessmentService.softDeleteAssessment(assessment);
     }
 

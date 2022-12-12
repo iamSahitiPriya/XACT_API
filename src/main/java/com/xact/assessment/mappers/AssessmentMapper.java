@@ -53,7 +53,7 @@ public class AssessmentMapper {
             AnswerResponse eachAnswerResponse = new AnswerResponse();
             QuestionDto eachQuestion = modelMapper.map(eachAnswer.getAnswerId(), QuestionDto.class);
             eachAnswerResponse.setQuestionId(eachQuestion.getQuestionId());
-            eachAnswerResponse.setAnswer(eachAnswer.getAnswer());
+            eachAnswerResponse.setAnswerNote(eachAnswer.getAnswerNote());
             answerResponseList.add(eachAnswerResponse);
         }
         return answerResponseList;

@@ -14,8 +14,6 @@ import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 
 import java.util.List;
-import java.util.Optional;
-
 
 @Repository
 public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUser, UserId> {
@@ -35,11 +33,6 @@ public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUse
     @Executable
     @Query("DELETE FROM AssessmentUser au WHERE au.userId.assessment.assessmentId=:assessmentId")
     void deleteUsersByAssessmentId(Integer assessmentId);
-
-
-    @Executable
-    @Query("SELECT au FROM AssessmentUser au WHERE au.userId.assessment.assessmentId=:assessmentId AND au.role='Owner'")
-    Optional<AssessmentUser> findOwnerByAssessmentId(@Parameter("assessmentId") Integer assessmentId);
 }
 
 

@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment{
+        CURRENT_BRANCH = "${env.GIT_BRANCH}"
+    }
 
     stages {
 
@@ -63,6 +66,9 @@ pipeline {
         }
 
         stage('Build & Push to artifactory') {
+            when {
+                  equals(actual: (CURRENT_BRANCH.contains('release') || CURRENT_BRANCH == 'develop'), expected: true)
+            }
             steps {
                 sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:${env.GIT_COMMIT}"
                 sh "./gradlew jib --image 730911736748.dkr.ecr.ap-south-1.amazonaws.com/xact:latest"
@@ -71,13 +77,15 @@ pipeline {
         }
 
         stage('Deploy To Dev') {
+            when {
+                  equals(actual: (CURRENT_BRANCH.contains('release') || CURRENT_BRANCH == 'develop'), expected: true)
+            }
             steps {
                 sh 'aws ecs update-service --cluster xact-backend-cluster --service xact-service --force-new-deployment'
             }
         }
         stage('Archive & Cleanup') {
                 steps {
-                    //archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
                     archiveArtifacts artifacts: 'build/classes/**/**/META-INF/swagger/swagger.yml', fingerprint: true
                     archiveArtifacts artifacts: 'build/dependencyUpdates/report.txt', fingerprint: true
                     publishHTML (target : [allowMissing: false,

@@ -290,7 +290,7 @@ public class ReportService {
                     new ParameterLevelRecommendation(),
                     0,
                     question.getQuestionText(),
-                    answer.getAnswer());
+                    answer.getAnswerNote());
         }
     }
     private void writeUserQuestionRow(Workbook workbook,UserQuestion userQuestion){

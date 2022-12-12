@@ -48,8 +48,8 @@ class AdminControllerTest {
         AssessmentModuleRequest moduleRequest = new AssessmentModuleRequest();
         moduleRequest.setModuleName("This is a module");
         moduleRequest.setActive(false);
-        AssessmentCategory category=new AssessmentCategory(1,"categoryName",true,"");
-        AssessmentModule assessmentModule=new AssessmentModule(1,"moduleName",category,true,"");
+        AssessmentCategory category = new AssessmentCategory(1, "categoryName", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", category, true, "");
         when(assessmentMasterDataService.createAssessmentModule(moduleRequest)).thenReturn(assessmentModule);
         HttpResponse<ModuleResponse> actualResponse = adminController.createAssessmentModule(moduleRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -78,10 +78,10 @@ class AdminControllerTest {
         parameterRequest.setParameterName("Parameter");
         parameterRequest.setActive(false);
 
-        AssessmentCategory assessmentCategory=new AssessmentCategory(1,"category",true,"");
-        AssessmentModule assessmentModule=new AssessmentModule(1,"moduleName",assessmentCategory,true,"");
-        AssessmentTopic topic=new AssessmentTopic(1,"topicName",assessmentModule,true,"");
-        AssessmentParameter assessmentParameter=new AssessmentParameter(1,"parameterName",topic,true,"");
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
         when(assessmentMasterDataService.createAssessmentParameter(parameterRequest)).thenReturn(assessmentParameter);
 
         HttpResponse<ParameterResponse> actualResponse = adminController.createParameters(parameterRequest, authentication);
@@ -105,7 +105,7 @@ class AdminControllerTest {
         referencesRequest.setRating(Rating.FIVE);
         referencesRequest.setTopic(1);
 
-        when(assessmentMasterDataService.createAssessmentTopicReferences(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(),Rating.FIVE,"reference"));
+        when(assessmentMasterDataService.createAssessmentTopicReferences(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
 
         HttpResponse<AssessmentTopicReferenceDto> actualResponse = adminController.createTopicReference(referencesRequest, authentication);
         assertEquals(actualResponse.getStatus(), HttpResponse.ok().getStatus());
@@ -144,9 +144,9 @@ class AdminControllerTest {
         AssessmentModuleRequest moduleRequest = new AssessmentModuleRequest();
         moduleRequest.setModuleName("Module");
         Integer moduleId = 1;
-        AssessmentCategory category=new AssessmentCategory(1,"categoryName",true,"");
-        AssessmentModule assessmentModule=new AssessmentModule(1,"moduleName",category,true,"");
-        when(assessmentMasterDataService.updateModule(1,moduleRequest)).thenReturn(assessmentModule);
+        AssessmentCategory category = new AssessmentCategory(1, "categoryName", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", category, true, "");
+        when(assessmentMasterDataService.updateModule(1, moduleRequest)).thenReturn(assessmentModule);
 
 
         HttpResponse actualResponse = adminController.updateModule(moduleId, moduleRequest, authentication);
@@ -177,11 +177,13 @@ class AdminControllerTest {
         AssessmentParameterRequest parameterRequest = new AssessmentParameterRequest();
         parameterRequest.setParameterName("Module");
 
-        AssessmentCategory assessmentCategory=new AssessmentCategory(1,"category",true,"");
-        AssessmentModule assessmentModule=new AssessmentModule(1,"moduleName",assessmentCategory,true,"");
-        AssessmentTopic topic=new AssessmentTopic(1,"topicName",assessmentModule,true,"");
-        AssessmentParameter assessmentParameter=new AssessmentParameter(1,"parameterName",topic,true,"");
-        when(assessmentMasterDataService.updateParameter(assessmentParameter.getParameterId(),parameterRequest)).thenReturn(assessmentParameter);
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).comments("").build();
+
+
+        when(assessmentMasterDataService.updateParameter(assessmentParameter.getParameterId(), parameterRequest)).thenReturn(assessmentParameter);
 
         HttpResponse actualResponse = adminController.updateParameter(assessmentParameter.getParameterId(), parameterRequest, authentication);
 
@@ -209,7 +211,7 @@ class AdminControllerTest {
         AssessmentTopicReference topicReference = new AssessmentTopicReference();
         topicReference.setReference("Hello");
 
-        when(assessmentMasterDataService.updateTopicReference(referenceId,referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(),Rating.FIVE,"reference"));
+        when(assessmentMasterDataService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
 
 
         HttpResponse actualResponse = adminController.updateTopicReference(referenceId, referencesRequest, authentication);
@@ -234,7 +236,7 @@ class AdminControllerTest {
     void shouldDeleteTopicReference() {
         Integer referenceId = 10;
 
-        HttpResponse actualResponse = adminController.deleteTopicReference(referenceId,authentication);
+        HttpResponse actualResponse = adminController.deleteTopicReference(referenceId, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         verify(assessmentMasterDataService).deleteTopicReference(referenceId);

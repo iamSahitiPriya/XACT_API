@@ -15,6 +15,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.*;
 
 @Getter
@@ -25,7 +26,7 @@ import java.util.*;
 @Introspected
 @Entity
 @Table(name = "tbl_assessment")
-public class Assessment {
+public class Assessment implements Serializable {
 
     @Id
     @Column(name = "assessment_id", nullable = false, unique = true)
@@ -117,8 +118,13 @@ public class Assessment {
     }
 
     @Transient
-    public String getOwner() {
+    public String getOwnerEmail() {
         return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Owner).map(assessmentUsers1 -> assessmentUsers1.getUserId().getUserEmail()).findFirst().orElse("");
+    }
+
+    @Transient
+    public Optional<AssessmentUser> getOwner() {
+        return assessmentUsers.stream().filter(assessmentUsers1 -> assessmentUsers1.getRole() == AssessmentRole.Owner).findFirst();
     }
 
     public Assessment(Integer assessmentId, String assessmentName, String assessmentPurpose, Organisation organisation, AssessmentStatus assessmentStatus, Date createdAt, Date updatedAt) {

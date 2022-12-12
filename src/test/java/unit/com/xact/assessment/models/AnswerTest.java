@@ -20,21 +20,21 @@ class AnswerTest {
     @Test
     void hasEmptyNotes() {
         Answer answer = new Answer();
-        answer.setAnswer("");
+        answer.setAnswerNote("");
         assertEquals(false, answer.hasNotes());
     }
 
     @Test
     void hasBlankNotes() {
         Answer answer = new Answer();
-        answer.setAnswer("     ");
+        answer.setAnswerNote("     ");
         assertEquals(false, answer.hasNotes());
     }
 
     @Test
     void hasValidNotes() {
         Answer answer = new Answer();
-        answer.setAnswer("Hello");
+        answer.setAnswerNote("Hello");
         assertEquals(true, answer.hasNotes());
     }
 }

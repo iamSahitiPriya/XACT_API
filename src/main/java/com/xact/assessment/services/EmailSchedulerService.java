@@ -104,15 +104,12 @@ public class EmailSchedulerService {
 
         EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(), EmailPayload.class);
         emailPayload.setOrganisationName(namingConventionUtil.convertToPascalCase(emailPayload.getOrganisationName()));
-        String[] dateAndTime = emailPayload.getCreatedAt().split(" ");
 
         context.put("assessment", emailPayload);
-        context.put("date",dateAndTime[0]);
-        context.put("time",dateAndTime[1]+dateAndTime[2]);
         context.put("url", profileConfig.getUrl());
         context.put("homePageUrl", profileConfig.getHomePageUrl());
-        context.put("microSiteUrl",profileConfig.getMicroSiteUrl());
-        context.put("supportUrl",profileConfig.getSupportUrl());
+        context.put("microSiteUrl", profileConfig.getMicroSiteUrl());
+        context.put("supportUrl", profileConfig.getSupportUrl());
 
         template.merge(context, writer);
 

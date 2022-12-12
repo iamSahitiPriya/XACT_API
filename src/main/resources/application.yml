@@ -29,6 +29,8 @@ profile:
   type: "local"
   url: "http://localhost:4200/assessment/"
   homePageUrl: "http://localhost:4200/"
+  supportUrl: "https://sites.google.com/thoughtworks.com/x-act"
+  microSiteUrl:  "https://sites.google.com/thoughtworks.com/x-act"
 
 datasources:
   default:

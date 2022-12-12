@@ -4,16 +4,15 @@
     <hr style="height: 4px;background: #4BA1AC; border: none;"/>
     <h1 style="color: #4BA1AC; font-size: 20px;">Thoughtworks X-Act</h1>
     <p style="padding-left: 5px;font-size: 15px;">Hello there,</p>
-    <p style="padding-left: 5px;font-size: 13px;font-style: italic;">You are receiving this email as you have created an assessment <b style="color:#4BA1AC ;">${assessment.assessmentName}</b> on X- Act.</p>
+    <p style="padding-left: 5px;font-size: 15px;font-style: italic;">You are receiving this email as you have created an assessment <b style="color:#4BA1AC ;font-size: 16px">${assessment.assessmentName}</b> on X- Act.</p>
     <br>
     <p style="padding-left: 5px">You can access X -Act Link <a style="text-decoration: none;color: #4BA1AC" href="${homePageUrl}"> here </a>.</p>
-    <p style="padding-left: 5px;">Please visit our microSite for information on X - Act <a style="text-decoration: none;color: #4BA1AC" href="${microSiteUrl}"> here</a>.</p>
-    <p style="padding-left: 5px;">If you have any questions reach out to Support mail id <a style="text-decoration: none;color: #4BA1AC" href="${supportUrl}"> here</a>.</p>
+    <p style="padding-left: 5px;">Please visit our microsite for information on Thoughtworks X-Act <a style="text-decoration: none;color: #4BA1AC" href="${microSiteUrl}"> here</a>.</p>
+    <p style="padding-left: 5px;">If you have any questions reach out to support mail id <a style="text-decoration: none;color: #4BA1AC" href="${supportUrl}"> here</a>.</p>
     <br>
     <div style="padding-left: 5px;">
-    <heading style="font-size: 13px;">Created On:</heading>
-    <p style="font-style: italic;font-size: 12px;">${date}</p>
-    <p style="font-style: italic;font-size: 12px;">${time}</p>
+    <heading style="font-size: 13px;"><strong>Created On:</strong></heading>
+    <<p style="font-style: italic;font-size: 12px;">${assessment.createdAt}</p>
     <br>
     <button style="color: white; background-color: #4BA1AC; border: none;height: 30px;"><a style="text-decoration: none;color: white" href="${url}${assessment.assessmentId}">View Assessment</a></button>
     </div>

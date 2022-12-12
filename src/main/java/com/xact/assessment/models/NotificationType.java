@@ -3,9 +3,9 @@ package com.xact.assessment.models;
 public enum NotificationType {
     COMPLETED_V1("v1_notification_for_complete_assessment.vm","Assessment completed"),
     CREATED_V1("v1_notification_for_create_assessment.vm", "Assessment created"),
-    ADD_USER_V1("v1_notification_for_add_user.vm", "User added to assessment"),
+    ADD_USER_V1("v1_notification_for_add_user.vm", "You have been added to assessment"),
     REOPENED_V1("v1_notification_for_reopen_assessment.vm", "Assessment reopened"),
-    DELETE_USER_V1("v1_notification_for_delete_user.vm","User removed from assessment");
+    DELETE_USER_V1("v1_notification_for_delete_user.vm","You have been removed from assessment");
 
     private final String templateResource;
     private final String emailSubject;

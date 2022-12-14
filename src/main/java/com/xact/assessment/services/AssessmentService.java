@@ -11,6 +11,7 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
+import org.apache.commons.compress.utils.Sets;
 import org.modelmapper.ModelMapper;
 
 import javax.transaction.Transactional;

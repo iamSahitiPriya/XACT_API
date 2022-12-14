@@ -490,4 +490,13 @@ class AssessmentMasterDataServiceTest {
 
         verify(assessmentTopicReferenceRepository).deleteById(1);
     }
+
+    @Test
+    void deleteParameterReference() {
+        doNothing().when(assessmentParameterReferenceRepository).deleteById(1);
+
+        assessmentMasterDataService.deleteParameterReference(1);
+
+        verify(assessmentParameterReferenceRepository).deleteById(1);
+    }
 }

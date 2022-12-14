@@ -505,4 +505,61 @@ class AdminControllerTest {
         categoryRepository.deleteById(assessmentCategory.getCategoryId());
         entityManager.getTransaction().commit();
     }
+
+    @Test
+    void shouldDeleteParameterReference() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryName("Category Name 1 Example");
+        assessmentCategory.setActive(true);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleName("Module Name 1 Example");
+        assessmentModule.setCategory(assessmentCategory);
+        assessmentModule.setActive(true);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicName("Topic Name 1 Example");
+        assessmentTopic.setModule(assessmentModule);
+        assessmentTopic.setActive(true);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterName("Parameter Name 1 Example");
+        assessmentParameter.setTopic(assessmentTopic);
+        assessmentParameter.setActive(true);
+
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter,Rating.FIVE,"New Reference");
+
+        assessmentCategory.setModules(Collections.singleton(assessmentModule));
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
+
+        categoryRepository.save(assessmentCategory);
+        moduleRepository.save(assessmentModule);
+        assessmentTopicRepository.save(assessmentTopic);
+        assessmentParameterRepository.save(assessmentParameter);
+
+        assessmentParameterReferenceRepository.save(assessmentParameterReference);
+        entityManager.getTransaction().commit();
+        entityManager.clear();
+        entityManager.close();
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/admin/parameterReferences/" + assessmentParameterReference.getReferenceId())
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+
+        Set<AssessmentParameterReference> assessmentParameterReferences = assessmentParameterRepository.findByParameterId(assessmentParameter.getParameterId()).getReferences();
+
+        assertEquals(0,assessmentParameterReferences.size());
+
+        entityManager.getTransaction().begin();
+
+        assessmentParameterRepository.deleteById(assessmentParameter.getParameterId());
+        assessmentTopicRepository.deleteById(assessmentTopic.getTopicId());
+        moduleRepository.deleteById(assessmentModule.getModuleId());
+        categoryRepository.deleteById(assessmentCategory.getCategoryId());
+
+        entityManager.getTransaction().commit();
+    }
 }

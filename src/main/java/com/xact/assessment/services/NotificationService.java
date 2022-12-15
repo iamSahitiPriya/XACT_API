@@ -87,7 +87,7 @@ public class NotificationService {
 
     @SneakyThrows
     public Notification setNotificationForDeleteUser(Assessment assessment, Set<String> assessmentUsers) {
-        if (assessmentUsers.size() > 0) {
+        if (!assessmentUsers.isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
             Notification notification = setNotification(assessmentUsers);
             notification.setTemplateName(NotificationType.DELETE_USER_V1);
@@ -102,7 +102,7 @@ public class NotificationService {
 
     @SneakyThrows
     public Notification setNotificationForAddUser(Assessment assessment, Set<String> assessmentUsers) {
-        if (assessmentUsers.size() > 0) {
+        if (!assessmentUsers.isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
             Notification notification = setNotification(assessmentUsers);
             notification.setTemplateName(NotificationType.ADD_USER_V1);

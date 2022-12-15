@@ -99,16 +99,16 @@ public class AssessmentService {
         return assessmentUsers;
     }
 
-    public Set<String> getNewlyAddedUser(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
-        Set<AssessmentUser> assessmentFacilitatorsSet = getAssessmentFacilitatorsSet(assessment);
-        Set<AssessmentUser> assessmentUsersSet = new HashSet<>(assessmentUsers);
-        return getUpdatedUsers(assessmentFacilitatorsSet, assessmentUsersSet);
+    public Set<String> getNewlyAddedUser(Assessment assessment, Set<AssessmentUser> newUsers) {
+        Set<AssessmentUser> existingUsers = getAssessmentFacilitatorsSet(assessment);
+        Set<AssessmentUser> newUsersSet = new HashSet<>(newUsers);
+        return getUpdatedUsers(existingUsers, newUsersSet);
     }
 
-    public Set<String> getDeletedUser(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
-        Set<AssessmentUser> assessmentFacilitatorsSet = getAssessmentFacilitatorsSet(assessment);
-        Set<AssessmentUser> assessmentUsersSet = new HashSet<>(assessmentUsers);
-        return getUpdatedUsers(assessmentUsersSet, assessmentFacilitatorsSet);
+    public Set<String> getDeletedUser(Assessment assessment, Set<AssessmentUser> deletedUsers) {
+        Set<AssessmentUser> existingUsers = getAssessmentFacilitatorsSet(assessment);
+        Set<AssessmentUser> deletedUserSet = new HashSet<>(deletedUsers);
+        return getUpdatedUsers(deletedUserSet, existingUsers);
     }
 
 

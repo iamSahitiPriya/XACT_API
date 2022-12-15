@@ -12,7 +12,7 @@
     <br>
     <div style="padding-left: 5px;">
     <heading style="font-size: 13px;"><strong>Created On:</strong></heading>
-    <<p style="font-style: italic;font-size: 12px;">${assessment.createdAt}</p>
+    <p style="font-style: italic;font-size: 12px;">${assessment.createdAt}</p>
     <br>
     <button style="color: white; background-color: #4BA1AC; border: none;height: 30px;"><a style="text-decoration: none;color: white" href="${url}${assessment.assessmentId}">View Assessment</a></button>
     </div>

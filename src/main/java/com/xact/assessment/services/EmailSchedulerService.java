@@ -62,7 +62,7 @@ public class EmailSchedulerService {
                 for (Notification notification : notificationList) {
                     String emailTo = setUserEmail(notification);
                     NotificationRequest notificationRequest = getEmailBody(notification, emailTo);
-                    sendEmail(accessToken, notification, emailTo, notificationRequest);
+                    sendEmail(accessToken, notification, notificationRequest);
                 }
             }
         }
@@ -114,7 +114,7 @@ public class EmailSchedulerService {
         return writer.toString();
     }
 
-    private void sendEmail(String accessToken, Notification notification, String emailTo, NotificationRequest notificationRequest) {
+    private void sendEmail(String accessToken, Notification notification, NotificationRequest notificationRequest) {
         LOGGER.info("Sending notification {} {}", notification.getNotificationId(),notification.getTemplateName());
         notification.setRetries(notification.getRetries() + 1);
         notificationService.update(notification);

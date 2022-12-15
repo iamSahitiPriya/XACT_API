@@ -115,7 +115,7 @@ public class EmailSchedulerService {
     }
 
     private void sendEmail(String accessToken, Notification notification, String emailTo, NotificationRequest notificationRequest) {
-        LOGGER.info("Sending notification to {}", emailTo);
+        LOGGER.info("Sending notification {} {}", notification.getNotificationId(),notification.getTemplateName());
         notification.setRetries(notification.getRetries() + 1);
         notificationService.update(notification);
 
@@ -127,8 +127,8 @@ public class EmailSchedulerService {
 
     private void setVelocityProperty() {
         Properties p = new Properties();
-        p.setProperty("resource.loader", "class");
-        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        p.setProperty("resource.loaders", "class");
+        p.setProperty("resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         Velocity.init(p);
     }
 

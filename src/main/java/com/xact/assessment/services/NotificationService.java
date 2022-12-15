@@ -55,7 +55,7 @@ public class NotificationService {
     }
 
     private void saveNotification(Notification notification) {
-        LOGGER.info("Saving notification for {} {}", notification.getTemplateName(), notification.getPayload());
+        LOGGER.info("Saving notification for {}", notification.getTemplateName());
         try {
             notificationRepository.save(notification);
         } catch (Exception exception) {

@@ -29,6 +29,8 @@ profile:
   type: "local"
   url: "http://localhost:4200/assessment/"
   homePageUrl: "http://localhost:4200/"
+  supportUrl: "https://sites.google.com/thoughtworks.com/x-act"
+  microSiteUrl:  "https://sites.google.com/thoughtworks.com/x-act"
 
 datasources:
   default:
@@ -43,6 +45,7 @@ account:
   scope: "account.read.internal"
   endpoint: "/api/accounts"
   delay: "4h"
+  initialDelay: "1m"
 
 token:
   username: '${AUTH_USERNAME:`dummy`}'
@@ -56,7 +59,7 @@ email:
   scope: "email.send"
   endpoint: "/notification/messages"
   delay: "30s"
-  notificationEnabled : true
+  notificationEnabled : false
   maskEmail : true
   defaultEmail : "shashank.mishra@thoughtworks.com"
   fromEmail : "project-xact@thoughtworks.net"

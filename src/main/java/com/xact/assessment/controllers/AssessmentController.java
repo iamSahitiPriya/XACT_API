@@ -114,16 +114,17 @@ public class AssessmentController {
             assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
             assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
             assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
-            Set<AssessmentUser> assessmentUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
+            Set<AssessmentUser> newUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
+            Set<AssessmentUser> existingUser = assessmentService.getAssessmentFacilitatorsSet(assessment);
 
-            Set<String> newUsers = assessmentService.getNewlyAddedUser(assessment, assessmentUsers);
-            Set<String> deletedUsers = assessmentService.getDeletedUser(assessment, assessmentUsers);
+            Set<String> newlyAddedUsers = assessmentService.getNewlyAddedUser(existingUser, newUsers);
+            Set<String> deletedUsers = assessmentService.getDeletedUser(existingUser, newUsers);
 
-            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(assessment, newUsers));
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(assessment, newlyAddedUsers));
             CompletableFuture.supplyAsync(() -> notificationService.setNotificationForDeleteUser(assessment, deletedUsers));
 
 
-            assessmentService.updateAssessment(assessment, assessmentUsers);
+            assessmentService.updateAssessment(assessment, newUsers);
         }
         return HttpResponse.ok();
     }

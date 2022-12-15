@@ -99,20 +99,18 @@ public class AssessmentService {
         return assessmentUsers;
     }
 
-    public Set<String> getNewlyAddedUser(Assessment assessment, Set<AssessmentUser> newUsers) {
-        Set<AssessmentUser> existingUsers = getAssessmentFacilitatorsSet(assessment);
+    public Set<String> getNewlyAddedUser(Set<AssessmentUser> existingUsers, Set<AssessmentUser> newUsers) {
         Set<AssessmentUser> newUsersSet = new HashSet<>(newUsers);
         return getUpdatedUsers(existingUsers, newUsersSet);
     }
 
-    public Set<String> getDeletedUser(Assessment assessment, Set<AssessmentUser> deletedUsers) {
-        Set<AssessmentUser> existingUsers = getAssessmentFacilitatorsSet(assessment);
-        Set<AssessmentUser> deletedUserSet = new HashSet<>(deletedUsers);
-        return getUpdatedUsers(deletedUserSet, existingUsers);
+    public Set<String> getDeletedUser(Set<AssessmentUser> existingUsers, Set<AssessmentUser> deletedUsers) {
+        Set<AssessmentUser> newUserSet = new HashSet<>(deletedUsers);
+        return getUpdatedUsers(newUserSet, existingUsers);
     }
 
 
-    private Set<AssessmentUser> getAssessmentFacilitatorsSet(Assessment assessment) {
+    public Set<AssessmentUser> getAssessmentFacilitatorsSet(Assessment assessment) {
         List<AssessmentUser> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
         return new HashSet<>(assessmentFacilitators);
     }

@@ -203,18 +203,21 @@ class AssessmentServiceTest {
 
         when(assessmentRepository.update(assessment)).thenReturn(assessment);
         Set<AssessmentUser> assessmentUserSet = new HashSet<>(Set.of());
+        Set<AssessmentUser> assessmentUserSet1 = new HashSet<>(Set.of());
         UserId userId1 = new UserId("hello@gmail.com", assessment);
         AssessmentUser assessmentUser1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
         assessmentUserSet.add(assessmentUser1);
 
         UserId userId2 = new UserId("new@gmail.com", assessment);
         AssessmentUser assessmentUser2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
-        assessmentUserSet.add(assessmentUser2);
+        assessmentUserSet.add(assessmentUser1);
+        assessmentUserSet1.add(assessmentUser2);
 
         doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUserSet, assessment.getAssessmentId());
         UserId addedUser = new UserId("newUser@gmail.com", assessment);
         AssessmentUser newUser = new AssessmentUser(addedUser, AssessmentRole.Facilitator);
         assessmentUserSet.add(newUser);
+        assessmentUserSet1.add(newUser);
 
         List<AssessmentUser> assessmentUsers = new ArrayList<>();
         assessmentUsers.add(assessmentUser2);
@@ -223,9 +226,9 @@ class AssessmentServiceTest {
         doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUserSet, assessment.getAssessmentId());
         when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUsers);
 
-        assessmentService.getNewlyAddedUser(assessment,assessmentUserSet);
+        assessmentService.getNewlyAddedUser(assessmentUserSet1,assessmentUserSet);
         assessmentUserSet.remove(assessmentUser1);
-        assessmentService.getDeletedUser(assessment,assessmentUserSet);
+        assessmentService.getDeletedUser(assessmentUserSet1,assessmentUserSet);
 
         assessmentService.updateAssessment(assessment, assessmentUserSet);
 

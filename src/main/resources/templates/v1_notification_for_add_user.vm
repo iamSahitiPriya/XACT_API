@@ -4,14 +4,16 @@
     <hr style="height: 4px;background: #4BA1AC; border: none;"/>
     <h1 style="color: #4BA1AC; font-size: 20px;">Thoughtworks X-Act</h1>
     <p style="padding-left: 5px;font-size: 15px;">Hello there,</p>
-    <p style="padding-left: 5px;font-size: 13px;font-style: italic;">You have been added to the Assessment <b style="color:#4BA1AC ;">${assessment.assessmentName}</b>. You can find the details of the assessment by clicking the below button.</p>
+    <p style="padding-left: 5px;font-size: 15px;font-style: italic;">You have been added to the Assessment <b style="color:#4BA1AC ;font-size: 16px">${assessment.assessmentName}</b>.</p>
     <br>
+    <p style="padding-left: 5px;">Please visit our microsite for information on Thoughtworks X-Act <a style="text-decoration: none;color: #4BA1AC" href="${microSiteUrl}"> here</a>.</p>
+    <p style="padding-left: 5px;">If you have any questions reach out to support mail id <a style="text-decoration: none;color: #4BA1AC" href="${supportUrl}"> here</a>.</p>
     <hr>
-    <div style="padding-top: 8px;">
-        <heading style="font-size: 13px;">Organisation Name:</heading>
+    <div style="padding-top: 8px;padding-left: 5px">
+        <heading style="font-size: 13px;"><strong>Organisation Name:</strong></heading>
         <p style="font-style: italic;font-size: 12px;">${assessment.organisationName}</p>
         <br>
-        <heading style="font-size: 13px;">Created Date:</heading>
+        <heading style="font-size: 13px;"><strong>Created On:</strong></heading>
         <p style="font-style: italic;font-size: 12px;">${assessment.createdAt}</p>
         <br>
         <button style="color: white; background-color: #4BA1AC; border: none;height: 30px;"><a style="text-decoration: none;color: white" href="${url}${assessment.assessmentId}">View Assessment</a></button>

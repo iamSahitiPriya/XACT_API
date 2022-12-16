@@ -62,7 +62,7 @@ public class EmailSchedulerService {
                 for (Notification notification : notificationList) {
                     String emailTo = setUserEmail(notification);
                     NotificationRequest notificationRequest = getEmailBody(notification, emailTo);
-                    sendEmail(accessToken, notification, emailTo, notificationRequest);
+                    sendEmail(accessToken, notification, notificationRequest);
                 }
             }
         }
@@ -108,14 +108,16 @@ public class EmailSchedulerService {
         context.put("assessment", emailPayload);
         context.put("url", profileConfig.getUrl());
         context.put("homePageUrl", profileConfig.getHomePageUrl());
+        context.put("microSiteUrl", profileConfig.getMicroSiteUrl());
+        context.put("supportUrl", profileConfig.getSupportUrl());
 
         template.merge(context, writer);
 
         return writer.toString();
     }
 
-    private void sendEmail(String accessToken, Notification notification, String emailTo, NotificationRequest notificationRequest) {
-        LOGGER.info("Sending notification to {}", emailTo);
+    private void sendEmail(String accessToken, Notification notification, NotificationRequest notificationRequest) {
+        LOGGER.info("Sending notification {} {}", notification.getNotificationId(),notification.getTemplateName());
         notification.setRetries(notification.getRetries() + 1);
         notificationService.update(notification);
 
@@ -127,8 +129,8 @@ public class EmailSchedulerService {
 
     private void setVelocityProperty() {
         Properties p = new Properties();
-        p.setProperty("resource.loader", "class");
-        p.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
+        p.setProperty("resource.loaders", "class");
+        p.setProperty("resource.loader.class.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
         Velocity.init(p);
     }
 

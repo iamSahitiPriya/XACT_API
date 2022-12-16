@@ -207,13 +207,14 @@ public class AssessmentMasterDataService {
         return assessmentParameter;
     }
 
-    public void updateQuestion(Integer questionId, QuestionRequest questionRequest) {
+    public Question updateQuestion(Integer questionId, QuestionRequest questionRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
         Question question = questionService.getQuestion(questionId).orElseThrow();
         question.setQuestionText(questionRequest.getQuestionText());
         question.setParameter(assessmentParameter);
 
         questionService.updateQuestion(question);
+        return question;
 
 
     }

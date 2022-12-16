@@ -22,6 +22,9 @@ micronaut:
         paths: classpath:META-INF/swagger
         mapping: /swagger/**
 
+account:
+  initialDelay: "2h"
+
 datasources:
   default:
     url: jdbc:postgresql://localhost:5432/postgres?sslmode=disable

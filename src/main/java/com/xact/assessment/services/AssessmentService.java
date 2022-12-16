@@ -98,9 +98,46 @@ public class AssessmentService {
         return assessmentUsers;
     }
 
+    public Set<String> getNewlyAddedUser(Set<AssessmentUser> existingUsers, Set<AssessmentUser> newUsers) {
+        Set<AssessmentUser> newUsersSet = new HashSet<>(newUsers);
+        return getUpdatedUsers(existingUsers, newUsersSet);
+    }
+
+    public Set<String> getDeletedUser(Set<AssessmentUser> existingUsers, Set<AssessmentUser> deletedUsers) {
+        Set<AssessmentUser> newUserSet = new HashSet<>(deletedUsers);
+        return getUpdatedUsers(newUserSet, existingUsers);
+    }
+
+
+    public Set<AssessmentUser> getAssessmentFacilitatorsSet(Assessment assessment) {
+        List<AssessmentUser> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
+        return new HashSet<>(assessmentFacilitators);
+    }
+
+    private Set<String> getUpdatedUsers(Set<AssessmentUser> assessmentUsers, Set<AssessmentUser> assessmentUsersSet) {
+        assessmentUsersSet.removeAll(assessmentUsers);
+        Set<String> users = new HashSet<>();
+        for (AssessmentUser user : assessmentUsersSet) {
+            if (user.getRole() == AssessmentRole.Facilitator) {
+                users.add(user.getUserId().getUserEmail());
+            }
+        }
+        return users;
+    }
+
+
     public Assessment getAssessment(Integer assessmentId, User user) {
         AssessmentUser assessmentUser = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);
         return assessmentUser.getUserId().getAssessment();
+    }
+
+    public List<String> getAssessmentFacilitators(Integer assessmentId) {
+        List<AssessmentUser> assessmentUsers = usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator);
+        List<String> assessmentUsers1 = new ArrayList<>();
+        for (AssessmentUser eachUser : assessmentUsers) {
+            assessmentUsers1.add(eachUser.getUserId().getUserEmail());
+        }
+        return assessmentUsers1;
     }
 
     public Assessment finishAssessment(Assessment assessment) {

@@ -40,6 +40,8 @@ account:
   url: "https://api.thoughtworks.net/account"
   scope: "account.read.internal"
   endpoint: "/api/accounts"
+  delay: "4h"
+  initialDelay: "1m"
 
 email:
   url: "https://api.thoughtworks.net"

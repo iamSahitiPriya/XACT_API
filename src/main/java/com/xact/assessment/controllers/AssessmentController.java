@@ -534,7 +534,7 @@ public class AssessmentController {
             parameterLevelRecommendation.setDeliveryHorizon(null);
         }
     }
-    @Post(value = "/{assessmentId}/{parameterId}/userQuestion", produces = MediaType.APPLICATION_JSON)
+    @Post(value = "/{assessmentId}/{parameterId}/question", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<UserQuestionResponse> saveUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body String userQuestion, Authentication authentication) {
         LOGGER.info("Save individual user added questions. assessment: {}, parameter:{}", assessmentId, parameterId);
@@ -549,7 +549,7 @@ public class AssessmentController {
         return HttpResponse.ok(userQuestionResponse);
     }
 
-    @Patch(value = "/{assessmentId}/userAnswer/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/{assessmentId}/answer/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<UserQuestion> updateUserAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body String additionalAnswer, Authentication authentication) {
         LOGGER.info("Update individual user added answer. assessment: {}, parameter:{}", assessmentId, questionId);
@@ -562,7 +562,7 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
-    @Patch(value = "/{assessmentId}/userQuestion/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/{assessmentId}/question/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<UserQuestion> updateUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body String updatedQuestion, Authentication authentication) {
         LOGGER.info("Update individual user added questions. assessment: {}, parameter:{}", assessmentId, questionId);
@@ -660,7 +660,7 @@ public class AssessmentController {
         assessmentService.updateAssessment(assessment);
     }
 
-    @Delete(value = "/{assessmentId}/userQuestion/{questionId}")
+    @Delete(value = "/{assessmentId}/question/{questionId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<UserQuestion> deleteUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);

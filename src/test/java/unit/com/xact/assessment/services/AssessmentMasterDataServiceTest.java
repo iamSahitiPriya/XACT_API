@@ -175,10 +175,10 @@ class AssessmentMasterDataServiceTest {
         AssessmentTopic topic = new AssessmentTopic();
         when(topicService.getTopic(1)).thenReturn(Optional.of(topic));
         assessmentMasterDataService.createAssessmentTopicReferences(topicReferencesRequest);
-        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(topic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
+        AssessmentTopicReference assessmentTopicReference1 = new AssessmentTopicReference(topic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
 
-        when(assessmentTopicReferenceRepository.save(assessmentTopicReference)).thenReturn(assessmentTopicReference);
-        verify(assessmentTopicReferenceRepository).save(assessmentTopicReference);
+        when(assessmentTopicReferenceRepository.save(assessmentTopicReference1)).thenReturn(assessmentTopicReference1);
+        verify(assessmentTopicReferenceRepository).save(assessmentTopicReference1);
 
     }
 
@@ -335,17 +335,16 @@ class AssessmentMasterDataServiceTest {
         topicRequest.setComments("");
         topicRequest.setActive(false);
 
-        AssessmentModule assessmentModule = new AssessmentModule();
-        AssessmentTopic assessmentTopic = new AssessmentTopic(topicRequest.getTopicName(), assessmentModule, topicRequest.isActive(), topicRequest.getComments());
+        AssessmentModule assessmentModule = new AssessmentModule("module",null,true,"");
+        AssessmentTopic assessmentTopic = new AssessmentTopic("new topic", assessmentModule, topicRequest.isActive(), topicRequest.getComments());
         List<AssessmentTopic> topics = new ArrayList<>();
-        when(topicService.getAllTopics()).thenReturn(topics);
-        when(moduleService.getModule(1)).thenReturn(assessmentModule);
-        assessmentMasterDataService.createAssessmentTopics(topicRequest);
+        List<String> topicName = new ArrayList<>();
+        topicName.add("new topic");
 
-        AssessmentTopicRequest assessmentTopicRequest = new AssessmentTopicRequest();
-        assessmentTopicRequest.setTopicName("This is an updated topic name");
+
         when(topicService.getTopic(1)).thenReturn(Optional.of(assessmentTopic));
-        assessmentMasterDataService.updateTopic(1, assessmentTopicRequest);
+        when(moduleService.getModule(topicRequest.getModule())).thenReturn(assessmentModule);
+        assessmentMasterDataService.updateTopic(1, topicRequest);
         verify(topicService).updateTopic(assessmentTopic);
     }
 
@@ -401,12 +400,12 @@ class AssessmentMasterDataServiceTest {
         AssessmentTopic topic = new AssessmentTopic();
         when(topicService.getTopic(1)).thenReturn(Optional.of(topic));
 
-        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
-        TopicReferencesRequest referencesRequest = new TopicReferencesRequest();
-        referencesRequest.setReference("This is an updated references");
-        referencesRequest.setTopic(1);
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(topic,Rating.TWO,"new reference");
+        topic.setReferences(Collections.singleton(assessmentTopicReference));
+
+
         when(assessmentTopicReferenceRepository.findById(1)).thenReturn(Optional.of(assessmentTopicReference));
-        assessmentMasterDataService.updateTopicReference(1, referencesRequest);
+        assessmentMasterDataService.updateTopicReference(1, topicReferencesRequest);
         verify(assessmentTopicReferenceRepository).update(assessmentTopicReference);
     }
 
@@ -418,6 +417,8 @@ class AssessmentMasterDataServiceTest {
         parameterReferencesRequest.setRating(Rating.valueOf("TWO"));
 
         AssessmentParameter parameter = new AssessmentParameter();
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter,Rating.TWO,"new reference");
+        parameter.setReferences(Collections.singleton(assessmentParameterReference));
         when(parameterService.getParameter(1)).thenReturn(Optional.of(parameter));
 
         AssessmentParameterReference parameterReference = new AssessmentParameterReference();
@@ -498,5 +499,159 @@ class AssessmentMasterDataServiceTest {
         assessmentMasterDataService.deleteParameterReference(1);
 
         verify(assessmentParameterReferenceRepository).deleteById(1);
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheTopicIsAlreadyPresent() {
+        AssessmentTopicRequest assessmentTopicRequest = new AssessmentTopicRequest();
+        assessmentTopicRequest.setTopicName("topic");
+        assessmentTopicRequest.setModule(1);
+        assessmentTopicRequest.setActive(true);
+        assessmentTopicRequest.setComments("comments");
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
+        when(topicService.getTopicName(assessmentModule.getModuleId())).thenReturn(Collections.singletonList("topic"));
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheParameterIsAlreadyPresent() {
+        AssessmentParameterRequest assessmentParameterRequest = new AssessmentParameterRequest();
+        assessmentParameterRequest.setParameterName("parameter");
+        assessmentParameterRequest.setTopic(1);
+        assessmentParameterRequest.setActive(true);
+        assessmentParameterRequest.setComments("comments");
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
+        when(parameterService.getParameterName(assessmentTopic.getTopicId())).thenReturn(Collections.singletonList("parameter"));
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentParameter(assessmentParameterRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheParameterReferenceIsAlreadyPresent() {
+        ParameterReferencesRequest parameterReferencesRequest = new ParameterReferencesRequest();
+        parameterReferencesRequest.setParameter(1);
+        parameterReferencesRequest.setReference("reference");
+        parameterReferencesRequest.setRating(Rating.ONE);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setReferences(Collections.singleton(new AssessmentParameterReference(assessmentParameter, Rating.ONE, "reference")));
+        assessmentParameter.setParameterId(1);
+        when(parameterService.getParameter(assessmentParameter.getParameterId())).thenReturn(Optional.of(assessmentParameter));
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentParameterReferences(parameterReferencesRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheTopicReferenceIsAlreadyPresent() {
+        TopicReferencesRequest topicReferencesRequest = new TopicReferencesRequest();
+        topicReferencesRequest.setTopic(1);
+        topicReferencesRequest.setReference("reference");
+        topicReferencesRequest.setRating(Rating.ONE);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setReferences(Collections.singleton(new AssessmentTopicReference(assessmentTopic, Rating.ONE, "reference")));
+        assessmentTopic.setTopicId(1);
+        when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentTopicReferences(topicReferencesRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheUpdatedTopicNameIsAlreadyPresent() {
+        AssessmentTopicRequest assessmentTopicRequest = new AssessmentTopicRequest();
+        assessmentTopicRequest.setTopicName("topic");
+        assessmentTopicRequest.setModule(1);
+        assessmentTopicRequest.setActive(true);
+        assessmentTopicRequest.setComments("comments");
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        AssessmentTopic assessmentTopic = new AssessmentTopic(1,"topic",assessmentModule,true,"");
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic(2,"topic2",assessmentModule,true,"");
+        when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
+        when(topicService.getTopic(assessmentTopic1.getTopicId())).thenReturn(Optional.of(assessmentTopic1));
+        List<String> topicNames = new ArrayList<>();
+        topicNames.add(assessmentTopic.getTopicName());
+        topicNames.add(assessmentTopic1.getTopicName());
+        when(topicService.getTopicName(assessmentModule.getModuleId())).thenReturn(topicNames);
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateTopic(2,assessmentTopicRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheUpdatedParameterNameIsAlreadyPresent() {
+        AssessmentParameterRequest assessmentParameterRequest = new AssessmentParameterRequest();
+        assessmentParameterRequest.setParameterName("parameter");
+        assessmentParameterRequest.setTopic(1);
+        assessmentParameterRequest.setActive(true);
+        assessmentParameterRequest.setComments("comments");
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        AssessmentParameter assessmentParameter = new AssessmentParameter(1,"parameter",null,null,null,true,new Date(),new Date(),"",1);
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter(2,"new parameter",null,null,null,true,new Date(),new Date(),"",1);
+
+        when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
+        when(parameterService.getParameter(assessmentParameter1.getParameterId())).thenReturn(Optional.of(assessmentParameter1));
+        List <String> parameterNames = new ArrayList<>();
+        parameterNames.add("parameter");
+        parameterNames.add("new parameter");
+        when(parameterService.getParameterName(assessmentTopic.getTopicId())).thenReturn(parameterNames);
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateParameter(2,assessmentParameterRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheUpdatedParameterReferenceIsAlreadyPresent() {
+        ParameterReferencesRequest parameterReferencesRequest = new ParameterReferencesRequest();
+        parameterReferencesRequest.setParameter(1);
+        parameterReferencesRequest.setReference("reference1");
+        parameterReferencesRequest.setRating(Rating.TWO);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, Rating.ONE, "reference");
+        assessmentParameterReference.setReferenceId(1);
+        AssessmentParameterReference assessmentParameterReference1 = new AssessmentParameterReference(assessmentParameter,Rating.TWO,"reference1");
+        assessmentParameterReference1.setReferenceId(2);
+        Set <AssessmentParameterReference> assessmentParameterReferences = new HashSet<>();
+        assessmentParameterReferences.add(assessmentParameterReference);
+        assessmentParameterReferences.add(assessmentParameterReference1);
+        assessmentParameter.setReferences(assessmentParameterReferences);
+        assessmentParameter.setParameterId(1);
+        when(parameterService.getParameter(assessmentParameter.getParameterId())).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentParameterReferenceRepository.findById(assessmentParameterReference.getReferenceId())).thenReturn(Optional.of(assessmentParameterReference));
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateParameterReferences(1,parameterReferencesRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheUpdatedTopicReferenceIsAlreadyPresent() {
+        TopicReferencesRequest topicReferencesRequest = new TopicReferencesRequest();
+        topicReferencesRequest.setTopic(1);
+        topicReferencesRequest.setReference("reference1");
+        topicReferencesRequest.setRating(Rating.TWO);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic,Rating.ONE,"reference");
+        assessmentTopicReference.setReferenceId(1);
+        AssessmentTopicReference assessmentTopicReference1 = new AssessmentTopicReference(assessmentTopic,Rating.TWO,"reference1");
+        assessmentTopicReference1.setReferenceId(2);
+        assessmentTopic.setTopicId(1);
+        Set<AssessmentTopicReference> assessmentTopicReferences = new HashSet<>();
+        assessmentTopicReferences.add(assessmentTopicReference);
+        assessmentTopicReferences.add(assessmentTopicReference1);
+        assessmentTopic.setReferences(assessmentTopicReferences);
+        when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentTopicReferenceRepository.findById(assessmentTopicReference.getReferenceId())).thenReturn(Optional.of(assessmentTopicReference));
+
+
+        assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateTopicReference(1,topicReferencesRequest));
     }
 }

@@ -38,4 +38,8 @@ public class ParameterService {
     public List<AssessmentParameter> getParameters() {
         return assessmentParameterRepository.listOrderByUpdatedAtDesc();
     }
+
+    public List<String> getParameterName(Integer topicId) {
+        return assessmentParameterRepository.getParameterNames(topicId);
+    }
 }

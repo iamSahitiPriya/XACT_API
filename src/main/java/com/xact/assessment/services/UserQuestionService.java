@@ -24,8 +24,6 @@ public class UserQuestionService {
         if (userQuestion.getQuestionId() != null) {
             if (userQuestion.hasQuestion()) {
                 userQuestionRepository.update(userQuestion);
-            } else {
-                userQuestionRepository.delete(userQuestion);
             }
         } else {
             if (userQuestion.hasQuestion()) {

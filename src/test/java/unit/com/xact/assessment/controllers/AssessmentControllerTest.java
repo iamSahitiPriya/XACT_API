@@ -510,54 +510,6 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testUpdateAssessmentAnswers() {
-        Integer assessmentId = 1;
-
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
-
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
-
-        UserId userId = new UserId();
-        userId.setUserEmail("hello@thoughtworks.com");
-
-        Date created = new Date(2022 - 4 - 13);
-        Date updated = new Date(2022 - 4 - 13);
-        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        userId.setAssessment(assessment);
-
-        AssessmentUser assessmentUser = new AssessmentUser();
-        assessmentUser.setUserId(userId);
-
-        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
-
-        Integer questionId = 1;
-        Question question = new Question();
-        question.setQuestionId(questionId);
-        question.setQuestionText("Question");
-
-        when(questionService.getQuestion(questionId)).thenReturn(Optional.of(question));
-
-        AnswerId answerId = new AnswerId(assessment, question);
-        Answer answer = new Answer();
-        answer.setAnswerId(answerId);
-        answer.setAnswerNote("Answer");
-
-        when(answerService.getAnswer(answerId)).thenReturn(Optional.of(answer));
-        when(answerService.saveAnswer(answer)).thenReturn(answer);
-
-
-        HttpResponse actualResponse = assessmentController.saveNotesAnswer(assessmentId, questionId, "Note", authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-    }
-
-    @Test
     void testUpdateAssessmentTopicRecommendationTextWithOutRecommendationId() {
         Integer assessmentId = 1;
 
@@ -1728,6 +1680,99 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
+    @Test
+    void testUpdateAnswerOfDefaultQuestion(){
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUser assessmentUser = new AssessmentUser();
+        assessmentUser.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        Integer questionId = 1;
+        Question question = new Question();
+        question.setQuestionId(questionId);
+        question.setQuestionText("Question");
+
+        when(questionService.getQuestion(questionId)).thenReturn(Optional.of(question));
+
+        AnswerId answerId = new AnswerId(assessment, question);
+        Answer answer = new Answer();
+        answer.setAnswerId(answerId);
+        answer.setAnswerNote("Answer");
+
+        when(answerService.getAnswer(answerId)).thenReturn(Optional.of(answer));
+        when(answerService.saveAnswer(answer)).thenReturn(answer);
+
+        UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest();
+        updateAnswerRequest.setQuestionId(1);
+        updateAnswerRequest.setAnswer("answer");
+        updateAnswerRequest.setType(AnswerType.DEFAULT);
+        HttpResponse actualResponse = assessmentController.updateAnswer(assessmentId,questionId,updateAnswerRequest, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testUpdateAnswerOfAdditionalQuestion() {
+        Integer assessmentId = 1;
+        Integer parameterId = 1;
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+        userQuestion.setQuestion("question");
+
+        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+
+        UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest();
+        updateAnswerRequest.setQuestionId(1);
+        updateAnswerRequest.setAnswer("answer");
+        updateAnswerRequest.setType(AnswerType.ADDITIONAL);
+        HttpResponse actualResponse = assessmentController.updateAnswer(assessmentId,1,updateAnswerRequest, authentication);
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+
+    }
+
 
     @Test
     void testDeleteUserQuestionWithQuestionId() {

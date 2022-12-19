@@ -6,6 +6,7 @@ import com.xact.assessment.models.AnswerId;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.repositories.AnswerRepository;
 import com.xact.assessment.services.AnswerService;
+import com.xact.assessment.services.QuestionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -17,13 +18,15 @@ class AnswerServiceTest {
 
     private AnswerRepository answerRepository;
     private AnswerService answerService;
+    private QuestionService questionService;
     private ModelMapper mapper = new ModelMapper();
 
 
     @BeforeEach
     public void beforeEach() {
         answerRepository = mock(AnswerRepository.class);
-        answerService = new AnswerService(answerRepository);
+        questionService = mock(QuestionService.class);
+        answerService = new AnswerService(answerRepository, questionService);
     }
 
     @Test

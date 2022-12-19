@@ -402,7 +402,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-string-value.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/answers/" + assessment.getAssessmentId() + "/" + question.getQuestionId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/"+"answers"+"/" + question.getQuestionId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

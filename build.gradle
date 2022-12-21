@@ -18,7 +18,7 @@ apply plugin: "java"
 apply plugin: "application"
 apply plugin: 'jacoco'
 
-version = "0.1"
+version = "1.1.0"
 group = "com.xact"
 compileJava.options.compilerArgs += '-parameters'
 

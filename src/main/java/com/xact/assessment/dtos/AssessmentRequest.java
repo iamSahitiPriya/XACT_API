@@ -31,23 +31,6 @@ public class AssessmentRequest {
     @NotBlank
     private String domain;
 
-    public void setAssessmentName(String assessmentName) {
-        this.assessmentName = assessmentName.toLowerCase();
-    }
-
-    public void setOrganisationName(String organisationName) {
-        this.organisationName = organisationName.toLowerCase();
-    }
-
-    public void setDomain(String domain) {
-        this.domain = domain.toLowerCase();
-    }
-
-    public void setIndustry(String industry) {
-        this.industry = industry.toLowerCase();
-    }
-
-
     @NotBlank
     private String industry;
     @Min(1)

@@ -275,7 +275,7 @@ public class AssessmentMasterDataService {
     public AssessmentTopicReference updateTopicReference(Integer referenceId, TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         AssessmentTopicReference assessmentTopicReference = assessmentTopicReferenceRepository.findById(referenceId).orElseThrow();
-        Set<AssessmentTopicReference> assessmentTopicReferences = new HashSet<>(assessmentTopic.getReferences().stream().filter(eachReference -> eachReference != assessmentTopicReference).toList());
+        Set<AssessmentTopicReference> assessmentTopicReferences = new HashSet<>(assessmentTopic.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentTopicReference.getReferenceId())).toList());
         if (isTopicRatingUnique(assessmentTopicReferences, topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopicReferences, topicReferencesRequest.getReference())) {
             assessmentTopicReference.setReference(topicReferencesRequest.getReference());
             assessmentTopicReference.setTopic(assessmentTopic);
@@ -288,7 +288,7 @@ public class AssessmentMasterDataService {
     public AssessmentParameterReference updateParameterReferences(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         AssessmentParameterReference assessmentParameterReference = assessmentParameterRRepository.findById(referenceId).orElseThrow();
-        Set<AssessmentParameterReference> assessmentParameterReferences = new HashSet<>(assessmentParameter.getReferences().stream().filter(eachReference -> eachReference != assessmentParameterReference).toList());
+        Set<AssessmentParameterReference> assessmentParameterReferences = new HashSet<>(assessmentParameter.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentParameterReference.getReferenceId())).toList());
         if (isParameterRatingUnique(assessmentParameterReferences, parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameterReferences, parameterReferencesRequest.getReference())) {
             assessmentParameterReference.setParameter(assessmentParameter);
             assessmentParameterReference.setReference(parameterReferencesRequest.getReference());

@@ -56,7 +56,7 @@ email:
   scope: "email.send"
   endpoint: "/notification/messages"
   delay: "30s"
-  notificationEnabled : false
+  notificationEnabled : true
   maskEmail : true
   defaultEmail: "shashank.mishra@thoughtworks.com,jathin.meduri@thoughtworks.com"
   fromEmail: "project-xact@thoughtworks.net"

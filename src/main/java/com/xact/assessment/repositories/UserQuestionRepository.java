@@ -15,4 +15,8 @@ public interface UserQuestionRepository extends CrudRepository<UserQuestion, Int
     @Executable
     @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentId=:assessmentId ORDER BY userQues.questionId")
     List<UserQuestion> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
+
+    @Executable
+    @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentId=:assessmentId  AND userQues.parameter.isActive=true AND userQues.parameter.topic.isActive=true AND userQues.parameter.topic.module.isActive = true ORDER BY userQues.questionId")
+    List<UserQuestion> findByActiveAssessment(@Parameter("assessmentId") Integer assessmentId);
 }

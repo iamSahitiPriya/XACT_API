@@ -34,7 +34,7 @@ public class UserQuestionService {
     }
 
     public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
-        return userQuestionRepository.findByAssessment(assessmentId);
+        return userQuestionRepository.findByActiveAssessment(assessmentId);
     }
 
     public Optional<UserQuestion> searchUserQuestion(Integer questionId) {

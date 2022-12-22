@@ -37,7 +37,4 @@ public class TopicService {
 
     public List<AssessmentTopic> getTopics() { return assessmentTopicRepository.listOrderByUpdatedAtDesc();}
 
-    public List<String> getTopicName(Integer moduleId) {
-        return assessmentTopicRepository.getTopicNames(moduleId);
-    }
 }

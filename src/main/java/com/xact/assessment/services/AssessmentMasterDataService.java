@@ -114,7 +114,7 @@ public class AssessmentMasterDataService {
     }
 
     private boolean isTopicUnique(String topicName, AssessmentModule assessmentModule) {
-        List<String> topics = topicService.getTopicName(assessmentModule.getModuleId());
+        List<String> topics = assessmentModule.getTopics().stream().map(AssessmentTopic::getTopicName).toList();
         return isUnique(topics, topicName);
     }
 
@@ -134,7 +134,7 @@ public class AssessmentMasterDataService {
     }
 
     private boolean isParameterUnique(String parameterName, AssessmentTopic assessmentTopic) {
-        List<String> parameters = parameterService.getParameterName(assessmentTopic.getTopicId());
+        List<String> parameters = assessmentTopic.getParameters().stream().map(AssessmentParameter::getParameterName).toList();
         return isUnique(parameters, parameterName);
     }
 
@@ -204,7 +204,7 @@ public class AssessmentMasterDataService {
     }
 
     private boolean isModuleUnique(String moduleName, AssessmentCategory assessmentCategory) {
-        List<String> modules = moduleService.getModuleNames(assessmentCategory.getCategoryId());
+        List<String> modules = assessmentCategory.getModules().stream().map(AssessmentModule::getModuleName).toList();
         return isUnique(modules, moduleName);
     }
 

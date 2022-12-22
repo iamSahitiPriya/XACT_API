@@ -39,7 +39,4 @@ public class ParameterService {
         return assessmentParameterRepository.listOrderByUpdatedAtDesc();
     }
 
-    public List<String> getParameterName(Integer topicId) {
-        return assessmentParameterRepository.getParameterNames(topicId);
-    }
 }

@@ -24,8 +24,4 @@ public interface AssessmentTopicRepository extends CrudRepository<AssessmentTopi
     AssessmentTopic findByTopicId(Integer topicId);
 
     List<AssessmentTopic> listOrderByUpdatedAtDesc();
-
-    @Executable
-    @Query("SELECT topic.topicName FROM AssessmentTopic topic WHERE topic.module.moduleId=:moduleId")
-    List<String> getTopicNames(Integer moduleId);
 }

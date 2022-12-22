@@ -93,15 +93,14 @@ class AssessmentMasterDataServiceTest {
         category.setCategoryName("Dummy");
         category.setCategoryId(1);
         category.setActive(true);
+        AssessmentModule assessmentModule1 = new AssessmentModule(1,"new nodule",category,true,"");
+        category.setModules(Collections.singleton(assessmentModule1));
 
         AssessmentModuleRequest assessmentModuleRequest = new AssessmentModuleRequest();
         assessmentModuleRequest.setModuleName("Dummy module");
         assessmentModuleRequest.setActive(false);
         assessmentModuleRequest.setCategory(1);
 
-        List<String> assessmentModules = new ArrayList<>();
-
-        when(moduleService.getModuleNames(category.getCategoryId())).thenReturn(assessmentModules);
         when(categoryRepository.findCategoryById(category.getCategoryId())).thenReturn(category);
 
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
@@ -120,8 +119,8 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentModule assessmentModule = new AssessmentModule();
         AssessmentTopic assessmentTopic = new AssessmentTopic(topicRequest.getTopicName(), assessmentModule, topicRequest.isActive(), topicRequest.getComments());
-        List<AssessmentTopic> topics = new ArrayList<>();
-        when(topicService.getAllTopics()).thenReturn(topics);
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic(2,"new topic",assessmentModule,true,"");
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic1));
         when(moduleService.getModule(1)).thenReturn(assessmentModule);
         assessmentMasterDataService.createAssessmentTopics(topicRequest);
         verify(topicService).createTopic(assessmentTopic);
@@ -138,9 +137,9 @@ class AssessmentMasterDataServiceTest {
         parameterRequest.setComments("");
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter(1,"new parameter",assessmentTopic,null,null,true,new Date(),new Date(),"",1);
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter1));
         AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterName(parameterRequest.getParameterName()).topic(assessmentTopic).isActive(parameterRequest.isActive()).comments(parameterRequest.getComments()).build();
-        List<AssessmentParameter> parameters = new ArrayList<>();
-        when(parameterService.getAllParameters()).thenReturn(parameters);
         when(topicService.getTopic(1)).thenReturn(Optional.of(assessmentTopic));
         assessmentMasterDataService.createAssessmentParameter(parameterRequest);
         verify(parameterService).createParameter(assessmentParameter);
@@ -248,13 +247,13 @@ class AssessmentMasterDataServiceTest {
         AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
         when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
-        List<AssessmentModule> assessmentModules = new ArrayList<>();
-        when(moduleService.getAllModules()).thenReturn(assessmentModules);
+        AssessmentModule assessmentModule1 = new AssessmentModule(2,"new module",category,true,"");
+        category.setModules(Collections.singleton(assessmentModule1));
         when(moduleRepository.update(assessmentModule)).thenReturn(assessmentModule);
         assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest);
 
-        AssessmentModuleRequest assessmentModule1 = new AssessmentModuleRequest();
-        assessmentModule1.setModuleName("This is an updated module");
+        AssessmentModuleRequest assessmentModule2 = new AssessmentModuleRequest();
+        assessmentModule2.setModuleName("This is an updated module");
         when(moduleService.getModule(1)).thenReturn(assessmentModule);
 
         assessmentMasterDataService.updateModule(1, assessmentModuleRequest);
@@ -280,17 +279,14 @@ class AssessmentMasterDataServiceTest {
         assessmentModuleRequest.setActive(false);
         assessmentModuleRequest.setCategory(1);
 
-        List<AssessmentModule> assessmentModules = new ArrayList<>();
+        Set<AssessmentModule> assessmentModules = new HashSet<>();
         assessmentModules.add(assessmentModule);
-        List<String> names = new ArrayList<>();
-        names.add(assessmentModule.getModuleName());
+        assessmentCategory.setModules(assessmentModules);
 
         when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(assessmentCategory);
-        when(moduleService.getAllModules()).thenReturn(assessmentModules);
         doNothing().when(moduleService).createModule(assessmentModule);
         when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
         when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
-        when(moduleService.getModuleNames(assessmentCategory.getCategoryId())).thenReturn(names);
 
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentModule(assessmentModuleRequest));
@@ -308,17 +304,15 @@ class AssessmentMasterDataServiceTest {
         assessmentModuleRequest.setActive(false);
         assessmentModuleRequest.setCategory(1);
 
-        List<AssessmentModule> assessmentModules = new ArrayList<>();
-        assessmentModules.add(assessmentModule);
-        assessmentModules.add(assessmentModule1);
-        List<String> names = new ArrayList<>();
-        names.add(assessmentModule.getModuleName());
-        names.add(assessmentModule1.getModuleName());
+        Set<AssessmentModule> modules = new HashSet<>();
+        modules.add(assessmentModule);
+        modules.add(assessmentModule1);
+        assessmentCategory.setModules(modules);
+
         Integer moduleId = assessmentModule1.getModuleId();
         when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
         when(moduleService.getModule(moduleId)).thenReturn(assessmentModule1);
         when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(assessmentCategory);
-        when(moduleService.getModuleNames(assessmentCategory.getCategoryId())).thenReturn(names);
         doNothing().when(moduleService).updateModule(assessmentModule);
         when(moduleRepository.update(assessmentModule)).thenReturn(assessmentModule);
 
@@ -337,10 +331,7 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentModule assessmentModule = new AssessmentModule("module",null,true,"");
         AssessmentTopic assessmentTopic = new AssessmentTopic("new topic", assessmentModule, topicRequest.isActive(), topicRequest.getComments());
-        List<AssessmentTopic> topics = new ArrayList<>();
-        List<String> topicName = new ArrayList<>();
-        topicName.add("new topic");
-
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
 
         when(topicService.getTopic(1)).thenReturn(Optional.of(assessmentTopic));
         when(moduleService.getModule(topicRequest.getModule())).thenReturn(assessmentModule);
@@ -359,6 +350,8 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterName(parameterRequest.getParameterName()).topic(assessmentTopic).isActive(parameterRequest.isActive()).comments(parameterRequest.getComments()).build();
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter(2,"new parameter",assessmentTopic,null,null,true,new Date(),new Date(),"",1);
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter1));
 
         AssessmentParameterRequest assessmentParameterRequest = new AssessmentParameterRequest();
         assessmentParameterRequest.setTopic(1);
@@ -511,8 +504,9 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentModule assessmentModule = new AssessmentModule();
         assessmentModule.setModuleId(1);
+        AssessmentTopic assessmentTopic = new AssessmentTopic(1,"topic",assessmentModule,true,"");
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
         when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
-        when(topicService.getTopicName(assessmentModule.getModuleId())).thenReturn(Collections.singletonList("topic"));
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest));
     }
@@ -527,8 +521,9 @@ class AssessmentMasterDataServiceTest {
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
+        AssessmentParameter assessmentParameter = new AssessmentParameter(1,"parameter",assessmentTopic,null,null,true,new Date(),new Date(),"",1);
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
         when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
-        when(parameterService.getParameterName(assessmentTopic.getTopicId())).thenReturn(Collections.singletonList("parameter"));
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentParameter(assessmentParameterRequest));
     }
@@ -577,10 +572,10 @@ class AssessmentMasterDataServiceTest {
         AssessmentTopic assessmentTopic1 = new AssessmentTopic(2,"topic2",assessmentModule,true,"");
         when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
         when(topicService.getTopic(assessmentTopic1.getTopicId())).thenReturn(Optional.of(assessmentTopic1));
-        List<String> topicNames = new ArrayList<>();
-        topicNames.add(assessmentTopic.getTopicName());
-        topicNames.add(assessmentTopic1.getTopicName());
-        when(topicService.getTopicName(assessmentModule.getModuleId())).thenReturn(topicNames);
+        Set<AssessmentTopic> assessmentTopics = new HashSet<>();
+        assessmentTopics.add(assessmentTopic);
+        assessmentTopics.add(assessmentTopic1);
+        assessmentModule.setTopics(assessmentTopics);
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateTopic(2,assessmentTopicRequest));
     }
@@ -600,10 +595,10 @@ class AssessmentMasterDataServiceTest {
 
         when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
         when(parameterService.getParameter(assessmentParameter1.getParameterId())).thenReturn(Optional.of(assessmentParameter1));
-        List <String> parameterNames = new ArrayList<>();
-        parameterNames.add("parameter");
-        parameterNames.add("new parameter");
-        when(parameterService.getParameterName(assessmentTopic.getTopicId())).thenReturn(parameterNames);
+        Set <AssessmentParameter> parameters = new HashSet<>();
+        parameters.add(assessmentParameter);
+        parameters.add(assessmentParameter1);
+        assessmentTopic.setParameters(parameters);
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateParameter(2,assessmentParameterRequest));
     }

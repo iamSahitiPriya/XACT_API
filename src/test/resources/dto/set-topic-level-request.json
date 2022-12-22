@@ -10,7 +10,8 @@
           "questionId": 2,
           "answer": "text2"
         }
-      ]
+      ],
+      "userQuestionRequestList": []
     }
   ],
   "topicRatingAndRecommendation": {

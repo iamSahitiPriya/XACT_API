@@ -68,7 +68,12 @@ class AssessmentControllerTest {
     AccessControlRepository accessControlRepository;
 
     @Inject
+    UserQuestionRepository userQuestionRepository;
+
+    @Inject
     EntityManager entityManager;
+
+
 
     @AfterEach
     public void afterEach() {
@@ -80,6 +85,8 @@ class AssessmentControllerTest {
         parameterLevelRecommendationRepository.deleteAll();
         topicLevelRecommendationRepository.deleteAll();
         assessmentRepository.deleteAll();
+        userQuestionRepository.deleteAll();
+
 
     }
 
@@ -137,7 +144,6 @@ class AssessmentControllerTest {
         assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         assessment.setOrganisation(org);
-
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
         assessmentUser.setRole(AssessmentRole.Owner);
@@ -153,6 +159,13 @@ class AssessmentControllerTest {
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
         answer.setAnswerNote("answer");
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setAssessment(assessment);
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion("question?");
+        userQuestion.setAnswer("answer");
 
         ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
@@ -194,7 +207,7 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"Mocked Assessment\"" + "," +
+        String expectedResponse ="{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
                 "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 10 + "," + "\"domain\"" + ":" + "\"Telecom\"" + "," + "\"industry\"" + ":" + "\"IT\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "," +
                 "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
                 "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
@@ -389,7 +402,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-string-value.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/answers/" + assessment.getAssessmentId() + "/" + question.getQuestionId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/"+"answers"+"/" + question.getQuestionId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

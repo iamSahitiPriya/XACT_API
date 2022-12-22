@@ -33,9 +33,13 @@ class AssessmentControllerTest {
     private final QuestionService questionService = Mockito.mock(QuestionService.class);
     private final ParameterService parameterService = Mockito.mock(ParameterService.class);
     private final TopicService topicService = Mockito.mock(TopicService.class);
+
+    private final UserQuestionService userQuestionService = Mockito.mock(UserQuestionService.class);
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
-    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService, questionService, notificationService);
+    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService, questionService,notificationService,userQuestionService);
+
+
 
     @Test
     void testGetAssessments() {
@@ -184,6 +188,19 @@ class AssessmentControllerTest {
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
         when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+        String questionText = "new question ?";
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion(questionText);
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+
+        when(userQuestionService.findAllUserQuestion(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
+
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         Integer recommendationTextId = parameterLevelRecommendationRequest.getRecommendationId() != null ? parameterLevelRecommendationRequest.getRecommendationId() : null;
@@ -252,6 +269,7 @@ class AssessmentControllerTest {
         assertEquals(expectedAssessment.getAssessmentStatus(), Objects.requireNonNull(actualAssessment.body()).getAssessmentStatus());
         assertEquals(expectedAssessment.getOrganisationName(), Objects.requireNonNull(actualAssessment.body()).getOrganisationName());
         assertEquals(expectedAssessment.getUpdatedAt(), Objects.requireNonNull(actualAssessment.body()).getUpdatedAt());
+        assertEquals("new question ?",Objects.requireNonNull(actualAssessment.body()).getUserQuestionResponseList().get(0).getQuestion());
         verify(assessmentService).getAssessment(assessmentId, user);
     }
 
@@ -356,6 +374,9 @@ class AssessmentControllerTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(topicId);
 
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+
         topicRatingAndRecommendation.setTopicLevelRecommendationRequest(topicLevelRecommendationRequest);
 
 
@@ -370,6 +391,12 @@ class AssessmentControllerTest {
 
         ParameterLevelAssessmentRequest parameterLevelAssessmentRequest = new ParameterLevelAssessmentRequest();
         parameterLevelAssessmentRequest.setAnswerRequest(answerRequestList);
+
+        List<UserQuestionRequest> userQuestionList = new ArrayList<>();
+        UserQuestionRequest userQuestionRequest = new UserQuestionRequest(1,1,"question","answer");
+        userQuestionList.add(userQuestionRequest);
+        parameterLevelAssessmentRequest.setUserQuestionRequestList(userQuestionList);
+
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
         Profile profile = new Profile();
@@ -392,6 +419,7 @@ class AssessmentControllerTest {
         when(assessmentService.getAssessment(any(), any())).thenReturn(assessmentUser.getUserId().getAssessment());
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(parameterService.getParameter(1)).thenReturn(Optional.of(assessmentParameter));
 
         topicLevelAssessmentRequest.setParameterLevelAssessmentRequestList(Collections.singletonList(parameterLevelAssessmentRequest));
         topicLevelAssessmentRequest.setTopicRatingAndRecommendation((topicRatingAndRecommendation));
@@ -399,7 +427,7 @@ class AssessmentControllerTest {
 
         HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveAnswer(assessmentId, topicLevelAssessmentRequest, authentication);
 
-        verify(topicAndParameterLevelAssessmentService).saveTopicLevelAssessment((TopicLevelAssessment) any(), any(), any());
+        verify(topicAndParameterLevelAssessmentService).saveTopicLevelAssessment(any(), any(), any(),any());
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -422,6 +450,12 @@ class AssessmentControllerTest {
 
         ParameterLevelAssessmentRequest parameterLevelAssessmentRequest = new ParameterLevelAssessmentRequest();
         parameterLevelAssessmentRequest.setAnswerRequest(answerRequestList);
+
+        List<UserQuestionRequest> userQuestionList = new ArrayList<>();
+        UserQuestionRequest userQuestionRequest = new UserQuestionRequest(1,2,"question","answer");
+        userQuestionList.add(userQuestionRequest);
+        parameterLevelAssessmentRequest.setUserQuestionRequestList(userQuestionList);
+
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
         Profile profile = new Profile();
@@ -464,60 +498,13 @@ class AssessmentControllerTest {
 
         topicLevelAssessmentRequest.setParameterLevelAssessmentRequestList(parameterLevelAssessmentRequestList);
 
+
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessmentUser.getUserId().getAssessment());
         when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         HttpResponse<TopicLevelAssessmentRequest> actualResponse = assessmentController.saveAnswer(assessmentId, topicLevelAssessmentRequest, authentication);
 
-        verify(topicAndParameterLevelAssessmentService).saveParameterLevelAssessment((List<ParameterLevelAssessment>) any(), any(), any());
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-    }
-
-    @Test
-    void testUpdateAssessmentAnswers() {
-        Integer assessmentId = 1;
-
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
-
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
-
-        UserId userId = new UserId();
-        userId.setUserEmail("hello@thoughtworks.com");
-
-        Date created = new Date(2022 - 4 - 13);
-        Date updated = new Date(2022 - 4 - 13);
-        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        userId.setAssessment(assessment);
-
-        AssessmentUser assessmentUser = new AssessmentUser();
-        assessmentUser.setUserId(userId);
-
-        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
-
-        Integer questionId = 1;
-        Question question = new Question();
-        question.setQuestionId(questionId);
-        question.setQuestionText("Question");
-
-        when(questionService.getQuestion(questionId)).thenReturn(Optional.of(question));
-
-        AnswerId answerId = new AnswerId(assessment, question);
-        Answer answer = new Answer();
-        answer.setAnswerId(answerId);
-        answer.setAnswerNote("Answer");
-
-        when(answerService.getAnswer(answerId)).thenReturn(Optional.of(answer));
-        when(answerService.saveAnswer(answer)).thenReturn(answer);
-
-
-        HttpResponse actualResponse = assessmentController.saveNotesAnswer(assessmentId, questionId, "Note", authentication);
+        verify(topicAndParameterLevelAssessmentService).saveParameterLevelAssessment(any(), any(),any(),any());
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
@@ -1597,6 +1584,235 @@ class AssessmentControllerTest {
         assertDoesNotThrow(() -> assessmentController.deleteAssessment(assessment.getAssessmentId(), authentication));
 
         verify(assessmentService, times(0)).softDeleteAssessment(assessment);
+    }
+
+    @Test
+    void testSaveUserQuestions() {
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+
+        when(parameterService.getParameter(1)).thenReturn(Optional.of(assessmentParameter));
+        String questionText = "new question ?";
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion(questionText);
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+
+
+        when(userQuestionService.saveUserQuestion(assessment, assessmentParameter.getParameterId(), questionText)).thenReturn(userQuestion);
+        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+
+        HttpResponse<UserQuestionResponse> actualResponse = assessmentController.saveUserQuestion(assessmentId, assessmentParameter.getParameterId(),questionText, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testUpdateUserQuestions() {
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+
+        String questionText = "new question ?";
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion(questionText);
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+
+        UserQuestion updatedUserQuestion = new UserQuestion();
+        updatedUserQuestion.setQuestionId(1);
+        updatedUserQuestion.setQuestion("new?");
+        updatedUserQuestion.setParameter(assessmentParameter);
+        updatedUserQuestion.setAssessment(assessment);
+
+        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+        when(userQuestionService.updateUserQuestion(1,"new?")).thenReturn(userQuestion);
+
+        HttpResponse<UserQuestion> actualResponse = assessmentController.updateUserQuestion(assessmentId, userQuestion.getQuestionId(), updatedUserQuestion.getQuestion(), authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testUpdateAnswerOfDefaultQuestion(){
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUser assessmentUser = new AssessmentUser();
+        assessmentUser.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        Integer questionId = 1;
+        Question question = new Question();
+        question.setQuestionId(questionId);
+        question.setQuestionText("Question");
+
+        when(questionService.getQuestion(questionId)).thenReturn(Optional.of(question));
+
+        AnswerId answerId = new AnswerId(assessment, question);
+        Answer answer = new Answer();
+        answer.setAnswerId(answerId);
+        answer.setAnswerNote("Answer");
+
+        when(answerService.getAnswer(answerId)).thenReturn(Optional.of(answer));
+        when(answerService.saveAnswer(answer)).thenReturn(answer);
+
+        UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest();
+        updateAnswerRequest.setQuestionId(1);
+        updateAnswerRequest.setAnswer("answer");
+        updateAnswerRequest.setType(AnswerType.DEFAULT);
+        HttpResponse actualResponse = assessmentController.updateAnswer(assessmentId,questionId,updateAnswerRequest, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void testUpdateAnswerOfAdditionalQuestion() {
+        Integer assessmentId = 1;
+        Integer parameterId = 1;
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+        userQuestion.setQuestion("question");
+
+        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+
+        UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest();
+        updateAnswerRequest.setQuestionId(1);
+        updateAnswerRequest.setAnswer("answer");
+        updateAnswerRequest.setType(AnswerType.ADDITIONAL);
+        HttpResponse actualResponse = assessmentController.updateAnswer(assessmentId,1,updateAnswerRequest, authentication);
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+
+    }
+
+
+    @Test
+    void testDeleteUserQuestionWithQuestionId() {
+        Integer assessmentId = 1;
+        Integer parameterId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        Profile profile = new Profile();
+        profile.setEmail(userEmail);
+        user.setProfile(profile);
+
+        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(parameterId);
+        assessmentParameter.setParameterName("Parameter Name");
+
+        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+        userQuestion.setQuestion("question");
+
+        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+
+        HttpResponse actualResponse = assessmentController.deleteUserQuestion(assessmentId,1, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+        verify(userQuestionService).deleteUserQuestion(1);
     }
 }
 

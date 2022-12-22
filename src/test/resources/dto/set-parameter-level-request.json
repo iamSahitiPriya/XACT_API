@@ -11,6 +11,7 @@
           "questionText": "text2"
         }
       ],
+      "userQuestionRequestList": [],
       "parameterRatingAndRecommendation": {
         "parameterId": 1,
         "rating": 1,

@@ -21,6 +21,7 @@ import java.util.List;
 public class ParameterLevelAssessmentRequest {
 
     private List<AnswerRequest> answerRequest;
+    private List<UserQuestionRequest> userQuestionRequestList;
     private ParameterRatingAndRecommendation parameterRatingAndRecommendation;
 
 }

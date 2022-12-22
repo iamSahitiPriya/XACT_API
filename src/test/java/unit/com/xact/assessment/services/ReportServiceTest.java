@@ -7,6 +7,7 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
+import com.xact.assessment.repositories.UserQuestionRepository;
 import com.xact.assessment.services.*;
 import com.xact.assessment.utils.ChartsUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,12 +31,13 @@ class ReportServiceTest {
     AnswerService answerService = mock(AnswerService.class);
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
+    UserQuestionService userQuestionService = mock(UserQuestionService.class);
 
 
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
 
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, assessmentMasterDataService);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, assessmentMasterDataService,userQuestionService);
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() {
@@ -83,6 +85,15 @@ class ReportServiceTest {
         Answer answer = new Answer(answerId, "my answer", new Date(), new Date());
         answers.add(answer);
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setAssessment(assessment);
+        userQuestion.setParameter(parameter);
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion("question?");
+        userQuestion.setAnswer("answer");
+        when(userQuestionService.findAllUserQuestion(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
+
         List<ParameterLevelAssessment> parameterAssessments = new ArrayList<>();
         List<TopicLevelAssessment> topicAssessments = new ArrayList<>();
         ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment();

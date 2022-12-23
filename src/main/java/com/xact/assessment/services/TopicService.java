@@ -36,4 +36,5 @@ public class TopicService {
     }
 
     public List<AssessmentTopic> getTopics() { return assessmentTopicRepository.listOrderByUpdatedAtDesc();}
+
 }

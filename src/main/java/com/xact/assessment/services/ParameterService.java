@@ -38,4 +38,5 @@ public class ParameterService {
     public List<AssessmentParameter> getParameters() {
         return assessmentParameterRepository.listOrderByUpdatedAtDesc();
     }
+
 }

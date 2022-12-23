@@ -25,4 +25,5 @@ public interface AssessmentParameterRepository extends CrudRepository<Assessment
     AssessmentParameter findByParameterId(Integer parameterId);
 
     List<AssessmentParameter> listOrderByUpdatedAtDesc();
+
 }

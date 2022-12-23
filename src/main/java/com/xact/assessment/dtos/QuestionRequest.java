@@ -5,6 +5,7 @@
 package com.xact.assessment.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.Introspected;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Introspected
 public class QuestionRequest {
     @JsonProperty
     private Integer questionId;

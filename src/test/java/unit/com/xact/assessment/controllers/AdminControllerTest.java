@@ -92,9 +92,16 @@ class AdminControllerTest {
     void createAssessmentQuestions() {
         QuestionRequest questionRequest = new QuestionRequest();
         questionRequest.setQuestionText("Test");
-        List<QuestionRequest> questionRequests = Collections.singletonList(questionRequest);
+        questionRequest.setParameter(1);
 
-        HttpResponse<Question> actualResponse = adminController.createQuestions(questionRequests, authentication);
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = new Question("Text", parameter);
+
+        when(assessmentMasterDataService.createAssessmentQuestions(questionRequest)).thenReturn(question);
+        HttpResponse<QuestionResponse> actualResponse = adminController.createQuestions(questionRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -197,10 +204,16 @@ class AdminControllerTest {
         QuestionRequest questionRequest = new QuestionRequest();
         questionRequest.setQuestionText("question");
         Integer questionId = 1;
-        Question question = new Question();
-        question.setQuestionText("this is a question");
 
-        HttpResponse actualResponse = adminController.updateQuestion(questionId, questionRequest, authentication);
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = new Question("Text", parameter);
+
+        when(assessmentMasterDataService.updateQuestion(questionId,questionRequest)).thenReturn(question);
+
+        HttpResponse<QuestionResponse> actualResponse = adminController.updateQuestion(questionId, questionRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }

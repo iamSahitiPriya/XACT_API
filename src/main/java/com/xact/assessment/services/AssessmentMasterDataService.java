@@ -138,10 +138,11 @@ public class AssessmentMasterDataService {
         return isUnique(parameters, parameterName);
     }
 
-    public void createAssessmentQuestions(QuestionRequest questionRequest) {
+    public Question createAssessmentQuestions(QuestionRequest questionRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
         Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
         questionService.createQuestion(question);
+        return question;
     }
 
     public AssessmentTopicReference createAssessmentTopicReferences(TopicReferencesRequest topicReferencesRequest) {

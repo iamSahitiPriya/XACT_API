@@ -126,12 +126,19 @@ public class AdminController {
 
     @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Question> createQuestions(@Body @Valid List<QuestionRequest> questionRequests, Authentication authentication) {
+    public HttpResponse<QuestionResponse> createQuestions(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
         LOGGER.info("Admin: Create questions");
-        for (QuestionRequest questionRequest : questionRequests) {
-            assessmentMasterDataService.createAssessmentQuestions(questionRequest);
-        }
-        return HttpResponse.ok();
+        Question question = assessmentMasterDataService.createAssessmentQuestions(questionRequest);
+        return getQuestionResponseHttpResponse(question);
+    }
+
+    private HttpResponse<QuestionResponse> getQuestionResponseHttpResponse(Question question) {
+        QuestionResponse  questionResponse = mapper.map(question, QuestionResponse.class);
+        questionResponse.setCategory(question.getParameter().getTopic().getModule().getCategory().getCategoryId());
+        questionResponse.setModule(question.getParameter().getTopic().getModule().getModuleId());
+        questionResponse.setTopic(question.getParameter().getTopic().getTopicId());
+        questionResponse.setParameterId(question.getParameter().getParameterId());
+        return HttpResponse.ok(questionResponse);
     }
 
     @Post(value = "/topicReferences", produces = MediaType.APPLICATION_JSON)
@@ -198,10 +205,10 @@ public class AdminController {
 
     @Put(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Question> updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest, Authentication authentication) {
+    public HttpResponse<QuestionResponse> updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest, Authentication authentication) {
         LOGGER.info("Admin: Update question: {}", questionId);
-        assessmentMasterDataService.updateQuestion(questionId, questionRequest);
-        return HttpResponse.ok();
+        Question question = assessmentMasterDataService.updateQuestion(questionId, questionRequest);
+        return getQuestionResponseHttpResponse(question);
     }
 
     @Put(value = "/topicReferences/{referenceId}", produces = MediaType.APPLICATION_JSON)

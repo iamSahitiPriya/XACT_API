@@ -30,14 +30,13 @@ class AssessmentControllerTest {
     private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     private final AnswerService answerService = Mockito.mock(AnswerService.class);
-    private final QuestionService questionService = Mockito.mock(QuestionService.class);
     private final ParameterService parameterService = Mockito.mock(ParameterService.class);
     private final TopicService topicService = Mockito.mock(TopicService.class);
 
     private final UserQuestionService userQuestionService = Mockito.mock(UserQuestionService.class);
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
-    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService, questionService,notificationService,userQuestionService);
+    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService,notificationService,userQuestionService);
 
 
 
@@ -1712,8 +1711,6 @@ class AssessmentControllerTest {
         Question question = new Question();
         question.setQuestionId(questionId);
         question.setQuestionText("Question");
-
-        when(questionService.getQuestion(questionId)).thenReturn(Optional.of(question));
 
         AnswerId answerId = new AnswerId(assessment, question);
         Answer answer = new Answer();

@@ -19,7 +19,6 @@ import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.modelmapper.ModelMapper;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
@@ -32,8 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @MicronautTest
 class AssessmentControllerTest {
-
-    private ModelMapper mapper = new ModelMapper();
 
     @Inject
     @Client("/")

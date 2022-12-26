@@ -41,7 +41,6 @@ public class AssessmentController {
     private final UserAuthService userAuthService;
     private final ParameterService parameterService;
     private final TopicService topicService;
-    private final QuestionService questionService;
     private final UserQuestionService userQuestionService;
     private final NotificationService notificationService;
 

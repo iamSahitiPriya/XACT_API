@@ -55,7 +55,7 @@ public class AssessmentController {
     private static final ModelMapper modelMapper = new ModelMapper();
 
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, QuestionService questionService, NotificationService notificationService, UserQuestionService userQuestionService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, NotificationService notificationService, UserQuestionService userQuestionService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
@@ -63,7 +63,6 @@ public class AssessmentController {
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.parameterService = parameterService;
         this.topicService = topicService;
-        this.questionService = questionService;
         this.userQuestionService = userQuestionService;
         this.notificationService = notificationService;
 

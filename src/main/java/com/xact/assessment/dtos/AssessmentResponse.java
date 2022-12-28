@@ -44,14 +44,6 @@ public class AssessmentResponse {
 
     private List<UserQuestionResponse> userQuestionResponseList;
 
-    public String getAssessmentName() {
-        return assessmentName.toLowerCase();
-    }
-
-    public String getOrganisationName() {
-        return organisationName.toLowerCase();
-    }
-
     private boolean isOwner = false;
 
 }

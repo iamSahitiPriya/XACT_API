@@ -55,7 +55,7 @@ email:
 
 datasources:
   default:
-    url: jdbc:postgresql://xact-db-np.cs3hcgchak2w.ap-south-1.rds.amazonaws.com:5432/xactqa?sslmode=require
+    url: jdbc:postgresql://xact-db-np.xact.thoughtworks.net:5432/xactqa?sslmode=require
     driverClassName: org.postgresql.Driver
     username: ${DB_USER}
     password: ${DB_PWD}

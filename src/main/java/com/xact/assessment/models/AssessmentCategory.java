@@ -57,7 +57,6 @@ public class AssessmentCategory implements Serializable {
     private String comments;
 
 
-
     public boolean getIsActive() {
         return isActive;
     }
@@ -66,30 +65,30 @@ public class AssessmentCategory implements Serializable {
         isActive = active;
     }
 
-    public double getCategoryAverage(){
+    public double getCategoryAverage() {
         double moduleSum = 0;
         int moduleCount = 0;
-        for(AssessmentModule assessmentModule: this.modules){
+        for (AssessmentModule assessmentModule : this.modules) {
             double averageModule = assessmentModule.getModuleAverage();
-            if(averageModule != 0){
+            if (averageModule != 0) {
                 moduleSum += averageModule;
-                moduleCount +=1 ;
+                moduleCount += 1;
             }
         }
-        if(moduleCount == 0){
+        if (moduleCount == 0) {
             return 0;
         }
-        return moduleSum/moduleCount;
+        return Math.round((moduleSum / moduleCount) * 10.0) / 10.0;
     }
 
-    public AssessmentCategory( String categoryName, boolean isActive, String comments) {
+    public AssessmentCategory(String categoryName, boolean isActive, String comments) {
         this.categoryName = categoryName;
         this.isActive = isActive;
         this.comments = comments;
     }
 
-    public AssessmentCategory( Integer categoryId,String categoryName, boolean isActive, String comments) {
-        this.categoryId=categoryId;
+    public AssessmentCategory(Integer categoryId, String categoryName, boolean isActive, String comments) {
+        this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.isActive = isActive;
         this.comments = comments;

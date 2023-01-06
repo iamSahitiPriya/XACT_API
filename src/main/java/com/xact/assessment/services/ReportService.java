@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
 import jakarta.inject.Singleton;
@@ -36,8 +37,10 @@ public class ReportService {
     private Set<Integer> selectedModulesSet;
     private  final UserQuestionService userQuestionService;
 
+    private final ModuleService moduleService;
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService,UserQuestionService userQuestionService) {
+
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, ModuleService moduleService) {
 
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
@@ -45,6 +48,7 @@ public class ReportService {
         this.categoryRepository = categoryRepository;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.userQuestionService=userQuestionService;
+        this.moduleService = moduleService;
     }
 
     public Workbook generateReport(Integer assessmentId) {
@@ -519,4 +523,19 @@ public class ReportService {
     }
 
 
+    public SummaryResponse getSummary(Integer assessmentId) {
+        Integer totalNoOfQuestions = answerService.getAnswers(assessmentId).size() + userQuestionService.findAllUserQuestion(assessmentId).size();
+        Long totalParameters = topicAndParameterLevelAssessmentService.getTotalParameters(assessmentId);
+        Long totalTopics = topicAndParameterLevelAssessmentService.getTotalTopics(assessmentId);
+        Long totalModule = moduleService.getAssessedModule(assessmentId);
+        Long totalCategory = assessmentMasterDataService.getAssessedCategory(assessmentId);
+        SummaryResponse summaryResponse = new SummaryResponse();
+        summaryResponse.setCategoryAssessed(totalCategory);
+        summaryResponse.setModuleAssessed(totalModule);
+        summaryResponse.setTopicAssessed(totalTopics);
+        summaryResponse.setParameterAssessed(totalParameters);
+        summaryResponse.setQuestionAssessed(totalNoOfQuestions);
+        return summaryResponse;
+
+    }
 }

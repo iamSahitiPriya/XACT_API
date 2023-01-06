@@ -316,5 +316,8 @@ public class AssessmentMasterDataService {
     public void deleteParameterReference(Integer referenceId) {
         assessmentParameterRRepository.deleteById(referenceId);
     }
+    public Long getAssessedCategory(Integer assessmentId){
+        return categoryRepository.getAssessedCategoryByTopic(assessmentId) + categoryRepository.getAssessedCategoryByParameter(assessmentId);
+    }
 }
 

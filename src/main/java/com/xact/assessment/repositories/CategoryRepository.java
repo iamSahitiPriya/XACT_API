@@ -6,6 +6,7 @@ package com.xact.assessment.repositories;
 
 import com.xact.assessment.models.AssessmentCategory;
 import io.micronaut.context.annotation.Executable;
+import io.micronaut.context.annotation.Parameter;
 import io.micronaut.data.annotation.Query;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
@@ -30,4 +31,13 @@ public interface CategoryRepository extends CrudRepository<AssessmentCategory, I
     @Executable
     @Query("SELECT category.categoryName FROM AssessmentCategory category")
     List<String> getAllCategories();
+
+    @Executable
+    @Query(nativeQuery = true, value = "select sum(category_count) from (select count(distinct category) as category_count from (select distinct module as module_id from (select distinct tap.topic as topic_id from tbl_assessment_parameter t join tbm_assessment_parameter tap on t.parameter_id = tap.parameter_id where t.assessment_id=:assessmentId group by tap.topic) as t join tbm_assessment_topic tq on t.topic_id = tq.topic_id group by module) as tm join tbm_assessment_module tbm on tm.module_id=tbm.module_id  group by category) as category_count;")
+    Long getAssessedCategoryByParameter(@Parameter("assessmentId") Integer assessmentId);
+
+    @Executable
+    @Query(nativeQuery = true, value = "select sum(category_count) from (select count(distinct category) as category_count from (select distinct module as module_id from tbl_assessment_topic tbl join tbm_assessment_topic tat on tat.topic_id = tbl.topic_id where tbl.assessment_id=:assessmentId group by module) as tm join tbm_assessment_module tbm on tm.module_id=tbm.module_id group by category) as category_count;")
+    Long getAssessedCategoryByTopic(@Parameter("assessmentId") Integer assessmentId);
+
 }

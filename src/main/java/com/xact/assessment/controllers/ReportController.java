@@ -7,6 +7,7 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.ReportCategoryResponse;
 import com.xact.assessment.dtos.ReportDataResponse;
+import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.mappers.ReportDataMapper;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentCategory;
@@ -87,6 +88,12 @@ public class ReportController {
 
         return HttpResponse.ok(reportDataResponse);
 
+    }
+    @Get(value = "/summary/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<SummaryResponse> getSummary(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication){
+        SummaryResponse summaryResponse = reportService.getSummary(assessmentId);
+        return HttpResponse.ok(summaryResponse);
     }
 
     @Get(value = "/template", produces = MediaType.APPLICATION_OCTET_STREAM)

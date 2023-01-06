@@ -190,4 +190,10 @@ public class TopicAndParameterLevelAssessmentService {
     public void deleteParameterRecommendation(Integer recommendationId) {
         parameterLevelRecommendationRepository.deleteById(recommendationId);
     }
+    public Long getTotalParameters(Integer assessmentId){
+        return parameterLevelAssessmentRepository.getAssessedParameters(assessmentId);
+    }
+    public Long getTotalTopics(Integer assessmentId){
+        return topicLevelAssessmentRepository.getAssessedTopics(assessmentId) + topicLevelAssessmentRepository.getAssessedTopicsByParameter(assessmentId);
+    }
 }

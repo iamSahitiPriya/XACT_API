@@ -7,7 +7,6 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
-import com.xact.assessment.repositories.UserQuestionRepository;
 import com.xact.assessment.services.*;
 import com.xact.assessment.utils.ChartsUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,7 +36,7 @@ class ReportServiceTest {
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
 
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, assessmentMasterDataService,userQuestionService);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, assessmentMasterDataService,userQuestionService, moduleService);
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() {

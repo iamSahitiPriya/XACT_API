@@ -32,5 +32,9 @@ public class ModuleService {
         return (List<AssessmentModule>) moduleRepository.findAll();
     }
 
+    public Long getAssessedModule(Integer assessmentId){
+        return moduleRepository.getAssessedModuleByParameter(assessmentId) + moduleRepository.getAssessedModuleByTopic(assessmentId);
+    }
+
 }
 

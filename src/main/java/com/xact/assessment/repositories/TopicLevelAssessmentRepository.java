@@ -22,7 +22,7 @@ public interface TopicLevelAssessmentRepository extends CrudRepository<TopicLeve
     List<TopicLevelAssessment> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
 
     @Executable
-    @Query("select count(tla.topicLevelId.topic.topicId) from TopicLevelAssessment tla where tla.topicLevelId.assessment.assessmentId=:assessmentId  group by tla.topicLevelId.topic.topicId")
+    @Query("select count(tla.topicLevelId.topic.topicId) from TopicLevelAssessment tla where tla.topicLevelId.assessment.assessmentId=:assessmentId")
     Long getAssessedTopics(@Parameter("assessmentId") Integer assessmentId);
 
     @Executable

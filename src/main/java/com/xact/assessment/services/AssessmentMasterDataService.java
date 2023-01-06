@@ -317,7 +317,13 @@ public class AssessmentMasterDataService {
         assessmentParameterRRepository.deleteById(referenceId);
     }
     public Long getAssessedCategory(Integer assessmentId){
-        return categoryRepository.getAssessedCategoryByTopic(assessmentId) + categoryRepository.getAssessedCategoryByParameter(assessmentId);
+        List<Long> assessedCategories = new ArrayList<>();
+        for (Long category : categoryRepository.getAssessedCategoryByTopic(assessmentId)) {
+            if (!categoryRepository.getAssessedCategoryByParameter(assessmentId).contains(category)) {
+                assessedCategories.add(category);
+            }
+        }
+        return (long) assessedCategories.size();
     }
 }
 

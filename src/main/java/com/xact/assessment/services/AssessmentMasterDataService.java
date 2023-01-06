@@ -319,10 +319,16 @@ public class AssessmentMasterDataService {
     public Long getAssessedCategory(Integer assessmentId){
         List<Long> assessedCategories = new ArrayList<>();
         for (Long category : categoryRepository.getAssessedCategoryByTopic(assessmentId)) {
-            if (!categoryRepository.getAssessedCategoryByParameter(assessmentId).contains(category)) {
+            if (!assessedCategories.contains(category)) {
                 assessedCategories.add(category);
             }
         }
+        for (Long category : categoryRepository.getAssessedCategoryByParameter(assessmentId)) {
+            if (!assessedCategories.contains(category)) {
+                assessedCategories.add(category);
+            }
+        }
+        System.out.println(assessedCategories);
         return (long) assessedCategories.size();
     }
 }

@@ -86,7 +86,7 @@ pipeline {
         }
         stage('Archive & Cleanup') {
                 steps {
-                    archiveArtifacts artifacts: 'build/classes/**/**/META-INF/swagger/swagger.yml', fingerprint: true
+                    archiveArtifacts artifacts: 'build/classes/**/**/META-INF/swagger/assessment-api-1.1.0', fingerprint: true
                     archiveArtifacts artifacts: 'build/dependencyUpdates/report.txt', fingerprint: true
                     publishHTML (target : [allowMissing: false,
                                            alwaysLinkToLastBuild: true,

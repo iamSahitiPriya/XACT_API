@@ -95,13 +95,13 @@ pipeline {
                                            reportFiles: 'index.html',
                                            reportName: 'Unit Test Reports',
                                            reportTitles: 'Unit Test Report'])
-                    publishHTML (target : [allowMissing: false,
+                    /* publishHTML (target : [allowMissing: false,
                                            alwaysLinkToLastBuild: true,
                                            keepAll: true,
                                            reportDir: './build/reports/',
                                            reportFiles: 'dependency-check-report.html',
                                            reportName: 'Dependency Check Reports',
-                                           reportTitles: 'Dependency Check Report'])
+                                           reportTitles: 'Dependency Check Report']) */
                     publishHTML (target : [allowMissing: false,
                                                        alwaysLinkToLastBuild: true,
                                                        keepAll: true,

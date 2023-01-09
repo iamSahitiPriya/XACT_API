@@ -28,10 +28,6 @@ public class ModuleService {
         moduleRepository.update(assessmentModule);
     }
 
-    public List<AssessmentModule> getAllModules() {
-        return (List<AssessmentModule>) moduleRepository.findAll();
-    }
-
     public Long getAssessedModule(Integer assessmentId){
         return moduleRepository.getAssessedModuleByParameter(assessmentId) + moduleRepository.getAssessedModuleByTopic(assessmentId);
     }

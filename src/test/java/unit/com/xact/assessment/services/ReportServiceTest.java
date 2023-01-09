@@ -5,6 +5,7 @@
 package unit.com.xact.assessment.services;
 
 
+import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.services.*;
@@ -31,6 +32,7 @@ class ReportServiceTest {
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
     UserQuestionService userQuestionService = mock(UserQuestionService.class);
+    ModuleService moduleService = mock(ModuleService.class);
 
 
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
@@ -560,5 +562,33 @@ class ReportServiceTest {
 
         assertEquals(expectedDataAverageRating, actualDataAverageRating);
 
+    }
+
+    @Test
+    void shouldGetAssessmentSummary() {
+        Integer assessmentId = 1;
+        Answer answer = new Answer();
+        List<Answer> answers = new ArrayList<>();
+        answers.add(answer);
+        UserQuestion userQuestion = new UserQuestion();
+        List<UserQuestion> questions = new ArrayList<>();
+        questions.add(userQuestion);
+
+        when(answerService.getAnswers(1)).thenReturn(answers);
+        when(userQuestionService.findAllUserQuestion(1)).thenReturn(questions);
+        when(topicAndParameterLevelAssessmentService.getTotalParameters(assessmentId)).thenReturn(1L);
+        when(topicAndParameterLevelAssessmentService.getTotalTopics(assessmentId)).thenReturn(1L);
+        when(moduleService.getAssessedModule(assessmentId)).thenReturn(1L);
+        when(assessmentMasterDataService.getAssessedCategory(assessmentId)).thenReturn(1L);
+
+        SummaryResponse actualResponse = new SummaryResponse();
+        actualResponse.setQuestionAssessed(2);
+        actualResponse.setTopicAssessed(1L);
+        actualResponse.setParameterAssessed(1L);
+        actualResponse.setModuleAssessed(1L);
+        actualResponse.setCategoryAssessed(1L);
+        SummaryResponse expectedResponse = reportService.getSummary(1);
+
+        assertEquals(expectedResponse.getCategoryAssessed(), actualResponse.getCategoryAssessed());
     }
 }

@@ -20,16 +20,16 @@ import static org.mockito.Mockito.*;
 class AssessmentMasterDataServiceTest {
 
     private final CategoryRepository categoryRepository = mock(CategoryRepository.class);
-    private final ModuleService moduleService = mock(ModuleService.class);
     private final TopicService topicService = mock(TopicService.class);
+    private final ModuleService moduleService = mock(ModuleService.class);
     private final ParameterService parameterService = mock(ParameterService.class);
     private final QuestionService questionService = mock(QuestionService.class);
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
     private final UserAssessmentModuleRepository userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
     private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository = mock(AssessmentTopicReferenceRepository.class);
     private final AssessmentParameterReferenceRepository assessmentParameterReferenceRepository = mock(AssessmentParameterReferenceRepository.class);
+    private final ModuleService moduleService1 = new ModuleService(moduleRepository);
     private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService, assessmentTopicReferenceRepository, parameterService, topicService, userAssessmentModuleRepository, assessmentParameterReferenceRepository);
-
     @Test
     void getAllCategories() {
         AssessmentCategory category = new AssessmentCategory();
@@ -648,5 +648,34 @@ class AssessmentMasterDataServiceTest {
 
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateTopicReference(1,topicReferencesRequest));
+    }
+
+    @Test
+    void shouldGetAssessedModules() {
+        Integer assessmentId = 1;
+
+        when(moduleRepository.getAssessedModuleByParameter(assessmentId)).thenReturn(1L);
+        when(moduleRepository.getAssessedModuleByTopic(assessmentId)).thenReturn(1L);
+
+        Long expectedValue = moduleService1.getAssessedModule(assessmentId);
+
+        Long actualResponse = 1L+1L;
+
+        verify(moduleRepository).getAssessedModuleByTopic(assessmentId);
+        verify(moduleRepository).getAssessedModuleByParameter(assessmentId);
+        assertEquals(expectedValue,actualResponse);
+    }
+
+    @Test
+    void shouldGetAssessedCategory() {
+        Integer assessmentId = 1;
+        List<Long> assessedCategory = Collections.singletonList(1L);
+        when(categoryRepository.getAssessedCategoryByTopic(assessmentId)).thenReturn(assessedCategory);
+        when(categoryRepository.getAssessedCategoryByParameter(assessmentId)).thenReturn(assessedCategory);
+
+        Long expectedResponse = assessmentMasterDataService.getAssessedCategory(assessmentId);
+        Long actualResponse = 1L;
+
+        assertEquals(expectedResponse,actualResponse);
     }
 }

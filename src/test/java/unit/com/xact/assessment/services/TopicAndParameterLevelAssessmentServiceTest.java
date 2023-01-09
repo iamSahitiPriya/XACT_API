@@ -496,5 +496,27 @@ class TopicAndParameterLevelAssessmentServiceTest {
 
     }
 
+    @Test
+    void shouldGetTotalAssessedTopics() {
+        Integer assessmentId = 1;
+        when(topicLevelAssessmentRepository.getAssessedTopics(assessmentId)).thenReturn(1L);
+        when(topicLevelAssessmentRepository.getAssessedTopicsByParameter(assessmentId)).thenReturn(1L);
+
+        Long expectedResponse = topicAndParameterLevelAssessmentService.getTotalTopics(assessmentId);
+        Long actualResponse = 1L + 1L;
+
+        assertEquals(expectedResponse,actualResponse);
+    }
+
+    @Test
+    void shouldGetTotalAssessedParameters() {
+        Integer assessmentId = 1;
+        when(parameterLevelAssessmentRepository.getAssessedParameters(assessmentId)).thenReturn(1L);
+
+        Long expectedResponse = topicAndParameterLevelAssessmentService.getTotalParameters(assessmentId);
+        Long actualResponse = 1L;
+
+        assertEquals(expectedResponse,actualResponse);
+    }
 }
 

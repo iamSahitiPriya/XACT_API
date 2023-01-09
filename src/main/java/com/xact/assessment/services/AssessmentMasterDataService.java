@@ -328,7 +328,6 @@ public class AssessmentMasterDataService {
                 assessedCategories.add(category);
             }
         }
-        System.out.println(assessedCategories);
         return (long) assessedCategories.size();
     }
 }

@@ -52,7 +52,7 @@ public class ReportController {
         this.userAuthService = userAuthService;
     }
 
-    @Get(value = "/assessments/{assessmentId}", produces = MediaType.APPLICATION_OCTET_STREAM)
+    @Get(value = "/{assessmentId}", produces = MediaType.APPLICATION_OCTET_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<byte[]> getReport(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Get report for assessment: {}", assessmentId);

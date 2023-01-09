@@ -141,7 +141,7 @@ public class AdminController {
         return HttpResponse.ok(questionResponse);
     }
 
-    @Post(value = "/topicReferences", produces = MediaType.APPLICATION_JSON)
+    @Post(value = "/topic-references", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopicReferenceDto> createTopicReference(@Body TopicReferencesRequest topicReferencesRequest, Authentication authentication) {
         LOGGER.info("Admin: Create topic reference");
@@ -150,7 +150,7 @@ public class AdminController {
         return HttpResponse.ok(assessmentTopicReferenceDto);
     }
 
-    @Post(value = "/parameterReferences", produces = MediaType.APPLICATION_JSON)
+    @Post(value = "/parameter-references", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameterReferenceDto> createParameterReferences(@Body ParameterReferencesRequest parameterReferencesRequests, Authentication authentication) {
         LOGGER.info("Admin: Create parameter reference");
@@ -211,7 +211,7 @@ public class AdminController {
         return getQuestionResponseHttpResponse(question);
     }
 
-    @Put(value = "/topicReferences/{referenceId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/topic-references/{referenceId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopicReferenceDto> updateTopicReference(@PathVariable("referenceId") Integer referenceId, TopicReferencesRequest topicReferencesRequest, Authentication authentication) {
         AssessmentTopicReference assessmentTopicReference = assessmentMasterDataService.updateTopicReference(referenceId, topicReferencesRequest);
@@ -219,7 +219,7 @@ public class AdminController {
         return HttpResponse.ok(assessmentTopicReferenceDto);
     }
 
-    @Put(value = "/parameterReferences/{referenceId}", produces = MediaType.APPLICATION_JSON)
+    @Put(value = "/parameter-references/{referenceId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameterReferenceDto> updateParameterReference(@PathVariable("referenceId") Integer referenceId, ParameterReferencesRequest parameterReferencesRequest, Authentication authentication) {
         AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.updateParameterReferences(referenceId, parameterReferencesRequest);
@@ -228,7 +228,7 @@ public class AdminController {
 
     }
 
-    @Delete(value="topicReferences/{referenceId}")
+    @Delete(value="topic-references/{referenceId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicReferencesRequest> deleteTopicReference(@PathVariable("referenceId") Integer referenceId, Authentication authentication) {
         LOGGER.info("Admin: Delete topic reference. referenceId: {}" , referenceId);
@@ -236,7 +236,7 @@ public class AdminController {
         return  HttpResponse.ok();
     }
 
-    @Delete(value="parameterReferences/{referenceId}")
+    @Delete(value="parameter-references/{referenceId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterReferencesRequest> deleteParameterReference(@PathVariable("referenceId") Integer referenceId, Authentication authentication) {
         LOGGER.info("Admin: Delete parameter reference. referenceId: {}" , referenceId);

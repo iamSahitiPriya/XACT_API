@@ -32,7 +32,7 @@ class AssessmentMasterDataControllerTest {
 
     @Test
     void testGetMasterDataCategoryResponse()  {
-        var actualResult = client.toBlocking().exchange(HttpRequest.GET("/v1/assessment-master-data/1/categories/all")
+        var actualResult = client.toBlocking().exchange(HttpRequest.GET("/v1/assessments/1/categories/all")
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), actualResult.getStatus());
@@ -40,7 +40,7 @@ class AssessmentMasterDataControllerTest {
 
     @Test
     void testGetSelectedCategoryResponse() {
-        String categoryDto = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessment-master-data/1/categories")
+        String categoryDto = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/1/categories")
                 .bearerAuth("anything"), String.class);
 
         assertEquals("{}", categoryDto);

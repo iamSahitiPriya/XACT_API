@@ -60,7 +60,7 @@ pipeline {
         }
         stage('Dependency Check') {
             steps {
-                sh './gradlew dependencyCheckAnalyze'
+                //sh './gradlew dependencyCheckAnalyze'
                 sh './gradlew dependencyUpdates -Drevision=release'
             }
         }

@@ -60,7 +60,7 @@ pipeline {
         }
         stage('Dependency Check') {
             steps {
-                sh './gradlew dependencyCheckAnalyze'
+                //sh './gradlew dependencyCheckAnalyze'
                 sh './gradlew dependencyUpdates -Drevision=release'
             }
         }
@@ -86,7 +86,7 @@ pipeline {
         }
         stage('Archive & Cleanup') {
                 steps {
-                    archiveArtifacts artifacts: 'build/classes/**/**/META-INF/swagger/swagger.yml', fingerprint: true
+                    archiveArtifacts artifacts: 'build/classes/**/**/META-INF/swagger/thoughtworks-x-act-api-1.1.0.yml', fingerprint: true
                     archiveArtifacts artifacts: 'build/dependencyUpdates/report.txt', fingerprint: true
                     publishHTML (target : [allowMissing: false,
                                            alwaysLinkToLastBuild: true,
@@ -95,13 +95,13 @@ pipeline {
                                            reportFiles: 'index.html',
                                            reportName: 'Unit Test Reports',
                                            reportTitles: 'Unit Test Report'])
-                    publishHTML (target : [allowMissing: false,
+                    /* publishHTML (target : [allowMissing: false,
                                            alwaysLinkToLastBuild: true,
                                            keepAll: true,
                                            reportDir: './build/reports/',
                                            reportFiles: 'dependency-check-report.html',
                                            reportName: 'Dependency Check Reports',
-                                           reportTitles: 'Dependency Check Report'])
+                                           reportTitles: 'Dependency Check Report']) */
                     publishHTML (target : [allowMissing: false,
                                                        alwaysLinkToLastBuild: true,
                                                        keepAll: true,

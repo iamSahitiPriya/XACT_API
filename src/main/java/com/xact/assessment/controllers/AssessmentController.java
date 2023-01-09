@@ -6,6 +6,7 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.mappers.AssessmentMapper;
+import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
 import io.micronaut.context.annotation.Value;
@@ -43,8 +44,11 @@ public class AssessmentController {
     private final TopicService topicService;
     private final UserQuestionService userQuestionService;
     private final NotificationService notificationService;
+    private final AssessmentMasterDataService assessmentMasterDataService;
 
     private AssessmentMapper assessmentMapper = new AssessmentMapper();
+    private MasterDataMapper masterDataMapper = new MasterDataMapper();
+
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
@@ -55,7 +59,7 @@ public class AssessmentController {
     private static final ModelMapper modelMapper = new ModelMapper();
 
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, NotificationService notificationService, UserQuestionService userQuestionService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, NotificationService notificationService, UserQuestionService userQuestionService, AssessmentMasterDataService assessmentMasterDataService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
@@ -65,6 +69,7 @@ public class AssessmentController {
         this.topicService = topicService;
         this.userQuestionService = userQuestionService;
         this.notificationService = notificationService;
+        this.assessmentMasterDataService = assessmentMasterDataService;
 
     }
 
@@ -391,6 +396,41 @@ public class AssessmentController {
             assessmentService.softDeleteAssessment(assessment);
     }
 
+    @Get(value = "{assessmentId}/categories/all", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<UserAssessmentResponse> getCategories(@PathVariable("assessmentId") Integer assessmentId) {
+        LOGGER.info("Get all category & assessment master data");
+        List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+        List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(userAssessmentCategories)) {
+            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
+
+        }
+        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
+        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(assessmentCategories)) {
+            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
+        }
+        UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
+        userAssessmentResponse.setAssessmentCategories(assessmentCategoriesResponse);
+        userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
+        return HttpResponse.ok(userAssessmentResponse);
+    }
+
+    @Get(value = "{assessmentId}/categories", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<UserAssessmentResponse> getSelectedCategories(@PathVariable("assessmentId") Integer assessmentId) {
+        LOGGER.info("Get selected categories only");
+        List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+        List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(userAssessmentCategories)) {
+            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapAssessmentCategory(assessmentCategory)));
+        }
+        UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
+        userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
+        return HttpResponse.ok(userAssessmentResponse);
+    }
+
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
@@ -545,11 +585,10 @@ public class AssessmentController {
         LOGGER.info("Update individual user added answer. assessment: {}, question:{}", assessmentId, questionId);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable() && answerRequest!=null) {
-            if(answerRequest.getType() == AnswerType.DEFAULT){
-                answerService.saveAnswer(answerRequest,assessment);
-            }
-            else {
+        if (assessment.isEditable() && answerRequest != null) {
+            if (answerRequest.getType() == AnswerType.DEFAULT) {
+                answerService.saveAnswer(answerRequest, assessment);
+            } else {
                 userQuestionService.saveUserAnswer(questionId, answerRequest.getAnswer());
             }
             updateAssessment(assessment);

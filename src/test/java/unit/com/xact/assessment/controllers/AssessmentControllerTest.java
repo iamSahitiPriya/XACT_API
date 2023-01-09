@@ -32,11 +32,12 @@ class AssessmentControllerTest {
     private final AnswerService answerService = Mockito.mock(AnswerService.class);
     private final ParameterService parameterService = Mockito.mock(ParameterService.class);
     private final TopicService topicService = Mockito.mock(TopicService.class);
+    private final AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
 
     private final UserQuestionService userQuestionService = Mockito.mock(UserQuestionService.class);
     private final NotificationService notificationService = Mockito.mock(NotificationService.class);
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
-    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService,notificationService,userQuestionService);
+    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, parameterService, topicService,notificationService,userQuestionService,assessmentMasterDataService);
 
 
 
@@ -1810,6 +1811,24 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         verify(userQuestionService).deleteUserQuestion(1);
+    }
+
+    @Test
+    void getAssessmentMasterData() {
+        Assessment assessment=new Assessment();
+        assessment.setAssessmentId(1);
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryId(3);
+        category.setCategoryName("My category");
+        List<AssessmentCategory> allCategories = Collections.singletonList(category);
+        when(assessmentMasterDataService.getAllCategories()).thenReturn(allCategories);
+
+        HttpResponse<UserAssessmentResponse> userAssessmentResponseHttpResponse = assessmentController.getCategories(assessment.getAssessmentId());
+
+        List<AssessmentCategoryDto> assessmentCategoryDto=userAssessmentResponseHttpResponse.body().getAssessmentCategories();
+        AssessmentCategoryDto firstAssessmentCategory = assessmentCategoryDto.get(0);
+        assertEquals(firstAssessmentCategory.getCategoryId(), category.getCategoryId());
+        assertEquals(firstAssessmentCategory.getCategoryName(), category.getCategoryName());
     }
 }
 

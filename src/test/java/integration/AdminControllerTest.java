@@ -255,7 +255,7 @@ class AdminControllerTest {
 
     @Test
     void getAllCategories() {
-        var actualResult = client.toBlocking().exchange(HttpRequest.GET("/v1/assessment-master-data/categories")
+        var actualResult = client.toBlocking().exchange(HttpRequest.GET("/v1/categories")
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), actualResult.getStatus());

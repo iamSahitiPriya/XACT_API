@@ -5,7 +5,9 @@
 package com.xact.assessment.mappers;
 
 import com.xact.assessment.dtos.*;
-import com.xact.assessment.models.*;
+import com.xact.assessment.models.Answer;
+import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.UserQuestion;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 

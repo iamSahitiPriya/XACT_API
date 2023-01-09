@@ -31,24 +31,6 @@ class AssessmentMasterDataControllerTest {
     private final Authentication authentication = Mockito.mock(Authentication.class);
     AssessmentMasterDataController assessmentMasterDataController = new AssessmentMasterDataController(assessmentMasterDataService);
 
-    @Test
-    void getAssessmentMasterData() {
-        Assessment assessment=new Assessment();
-        assessment.setAssessmentId(1);
-        AssessmentCategory category = new AssessmentCategory();
-        category.setCategoryId(3);
-        category.setCategoryName("My category");
-        List<AssessmentCategory> allCategories = Collections.singletonList(category);
-        when(assessmentMasterDataService.getAllCategories()).thenReturn(allCategories);
-
-        HttpResponse<UserAssessmentResponse> userAssessmentResponseHttpResponse = assessmentMasterDataController.getCategories(assessment.getAssessmentId());
-
-        List<AssessmentCategoryDto> assessmentCategoryDto=userAssessmentResponseHttpResponse.body().getAssessmentCategories();
-        AssessmentCategoryDto firstAssessmentCategory = assessmentCategoryDto.get(0);
-        assertEquals(firstAssessmentCategory.getCategoryId(), category.getCategoryId());
-        assertEquals(firstAssessmentCategory.getCategoryName(), category.getCategoryName());
-    }
-
 
     @Test
     void shouldGetCategories() {

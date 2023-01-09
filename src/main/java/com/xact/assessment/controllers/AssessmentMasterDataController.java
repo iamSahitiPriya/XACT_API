@@ -4,9 +4,7 @@
 
 package com.xact.assessment.controllers;
 
-import com.xact.assessment.dtos.AssessmentCategoryDto;
 import com.xact.assessment.dtos.CategoryDto;
-import com.xact.assessment.dtos.UserAssessmentResponse;
 import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.AssessmentCategory;
 import com.xact.assessment.services.AssessmentMasterDataService;
@@ -15,7 +13,6 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -27,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Introspected
-@Controller("/v1/assessment-master-data")
+@Controller("/v1")
 public class AssessmentMasterDataController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataController.class);
 
@@ -38,41 +35,6 @@ public class AssessmentMasterDataController {
     public AssessmentMasterDataController(AssessmentMasterDataService assessmentMasterDataService) {
         this.assessmentMasterDataService = assessmentMasterDataService;
 
-    }
-
-    @Get(value = "{assessmentId}/categories/all", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<UserAssessmentResponse> getCategories(@PathVariable("assessmentId") Integer assessmentId) {
-        LOGGER.info("Get all category & assessment master data");
-        List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
-        List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(userAssessmentCategories)) {
-            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
-
-        }
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
-        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(assessmentCategories)) {
-            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
-        }
-        UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
-        userAssessmentResponse.setAssessmentCategories(assessmentCategoriesResponse);
-        userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
-        return HttpResponse.ok(userAssessmentResponse);
-    }
-
-    @Get(value = "{assessmentId}/categories", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<UserAssessmentResponse> getSelectedCategories(@PathVariable("assessmentId") Integer assessmentId) {
-        LOGGER.info("Get selected categories only");
-        List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
-        List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(userAssessmentCategories)) {
-            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapAssessmentCategory(assessmentCategory)));
-        }
-        UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
-        userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
-        return HttpResponse.ok(userAssessmentResponse);
     }
 
     @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)

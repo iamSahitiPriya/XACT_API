@@ -75,7 +75,7 @@ public class ReportController {
         return HttpResponse.serverError();
     }
 
-    @Get(value = "/sunburst/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Get(value = "/{assessmentId}/summary/charts/sunburst", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<ReportDataResponse> getAssessmentReportData(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);

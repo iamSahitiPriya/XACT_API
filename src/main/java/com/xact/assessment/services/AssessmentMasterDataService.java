@@ -23,6 +23,7 @@ public class AssessmentMasterDataService {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
+    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
 
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
     private final AssessmentParameterReferenceRepository assessmentParameterRRepository;
@@ -30,13 +31,14 @@ public class AssessmentMasterDataService {
     private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
 
 
-    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
+    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService,TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
         this.categoryRepository = categoryRepository;
         this.moduleService = moduleService;
         this.questionService = questionService;
         this.assessmentTopicReferenceRepository = assessmentTopicReferenceRepository;
         this.parameterService = parameterService;
         this.topicService = topicService;
+        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
         this.assessmentParameterRRepository = assessmentParameterRRepository;
 
@@ -317,16 +319,16 @@ public class AssessmentMasterDataService {
         assessmentParameterRRepository.deleteById(referenceId);
     }
     public Long getAssessedCategory(Integer assessmentId){
-        List<Long> assessedCategories = new ArrayList<>();
-        for (Long category : categoryRepository.getAssessedCategoryByTopic(assessmentId)) {
-            if (!assessedCategories.contains(category)) {
-                assessedCategories.add(category);
-            }
+        Set<Integer> assessedCategories = new TreeSet<>();
+        List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
+            assessedCategories.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getModule().getCategory().getCategoryId());
         }
-        for (Long category : categoryRepository.getAssessedCategoryByParameter(assessmentId)) {
-            if (!assessedCategories.contains(category)) {
-                assessedCategories.add(category);
-            }
+
+        List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+        for (TopicLevelAssessment topicLevelAssessment:topicLevelAssessmentList) {
+            assessedCategories.add(topicLevelAssessment.getTopicLevelId().getTopic().getModule().getCategory().getCategoryId());
+
         }
         return (long) assessedCategories.size();
     }

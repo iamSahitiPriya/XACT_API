@@ -14,6 +14,8 @@ import jakarta.inject.Singleton;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Singleton
 public class TopicAndParameterLevelAssessmentService {
@@ -195,14 +197,19 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
     public Long getTotalTopics(Integer assessmentId) {
+        Set<Integer> assessedTopicByParameter = new TreeSet<>();
+        List<ParameterLevelAssessment> parameterLevelAssessmentList = getParameterAssessmentData(assessmentId);
+        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
+            assessedTopicByParameter.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getTopicId());
+        }
         try {
-            return topicLevelAssessmentRepository.getAssessedTopics(assessmentId) + topicLevelAssessmentRepository.getAssessedTopicsByParameter(assessmentId);
+            return topicLevelAssessmentRepository.getAssessedTopics(assessmentId) + assessedTopicByParameter.size();
         } catch (EmptyResultException e) {
             try {
                 return topicLevelAssessmentRepository.getAssessedTopics(assessmentId);
             } catch (EmptyResultException e1) {
                 try {
-                    return topicLevelAssessmentRepository.getAssessedTopicsByParameter(assessmentId);
+                    return (long) assessedTopicByParameter.size();
                 }catch (EmptyResultException e2){
                     return 0L;
                 }

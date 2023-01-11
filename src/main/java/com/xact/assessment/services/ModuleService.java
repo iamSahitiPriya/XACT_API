@@ -5,18 +5,24 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.models.AssessmentModule;
+import com.xact.assessment.models.ParameterLevelAssessment;
+import com.xact.assessment.models.TopicLevelAssessment;
 import com.xact.assessment.repositories.ModuleRepository;
 import jakarta.inject.Singleton;
 
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Singleton
 
 public class ModuleService {
     public final ModuleRepository moduleRepository;
+    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
 
-    public ModuleService(ModuleRepository moduleRepository) {
+    public ModuleService(ModuleRepository moduleRepository, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
         this.moduleRepository = moduleRepository;
+        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
     }
     public AssessmentModule getModule(Integer moduleId){
         return moduleRepository.findByModuleId(moduleId);
@@ -29,7 +35,18 @@ public class ModuleService {
     }
 
     public Long getAssessedModule(Integer assessmentId){
-        return moduleRepository.getAssessedModuleByParameter(assessmentId) + moduleRepository.getAssessedModuleByTopic(assessmentId);
+        Set<Integer> assessedModule = new TreeSet<>();
+        List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
+            assessedModule.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getModule().getModuleId());
+        }
+
+        List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+        for (TopicLevelAssessment topicLevelAssessment:topicLevelAssessmentList) {
+            assessedModule.add(topicLevelAssessment.getTopicLevelId().getTopic().getModule().getModuleId());
+        }
+
+        return (long) assessedModule.size();
     }
 
 }

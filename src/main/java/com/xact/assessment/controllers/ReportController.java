@@ -89,10 +89,12 @@ public class ReportController {
         return HttpResponse.ok(reportDataResponse);
 
     }
-    @Get(value = "/summary/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+
+    @Get(value = "/{assessmentId}/summary", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<SummaryResponse> getSummary(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication){
-        SummaryResponse summaryResponse = reportService.getSummary(assessmentId);
+    public HttpResponse<SummaryResponse> getSummary(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        SummaryResponse summaryResponse = reportService.getSummary(assessment.getAssessmentId());
         return HttpResponse.ok(summaryResponse);
     }
 

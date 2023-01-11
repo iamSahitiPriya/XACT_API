@@ -193,7 +193,7 @@ public class AssessmentController {
     }
 
 
-    @Post(value = "/notes/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Post(value = "/{assessmentId}/notes", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelAssessmentRequest> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body TopicLevelAssessmentRequest topicLevelAssessmentRequests, Authentication authentication) {
         LOGGER.info("Save assessment data : {}", assessmentId);
@@ -217,7 +217,7 @@ public class AssessmentController {
     }
 
 
-    @Patch(value = "/parameter-recommendations/{assessmentId}/{parameterId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/{assessmentId}/parameters/{parameterId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterLevelRecommendationResponse> saveParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
@@ -253,7 +253,7 @@ public class AssessmentController {
     }
 
 
-    @Patch(value = "/topic-recommendations-text/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/{assessmentId}/topics/{topicId}/recommendations-text", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelRecommendationResponse> saveTopicRecommendationText(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest, Authentication authentication) {
         LOGGER.info("Update individual topic recommendation text. assessment: {}, topic: {}", assessmentId, topicId);
@@ -278,7 +278,7 @@ public class AssessmentController {
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }
 
-    @Patch(value = "/topic-recommendations-fields/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/{assessmentId}/topics/{topicId}/recommendations-fields", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelRecommendationRequest> saveTopicRecommendationFields(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
         LOGGER.info("Update individual topic maturity recommendation. assessment: {}, parameter: {}", assessmentId, topicId);
@@ -299,7 +299,7 @@ public class AssessmentController {
     }
 
 
-    @Delete(value = "/topic-recommendations/{assessmentId}/{topicId}/{recommendationId}")
+    @Delete(value = "/{assessmentId}/topics/{topicId}/recommendations/{recommendationId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelRecommendationRequest> deleteRecommendation
             (@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer
@@ -313,7 +313,7 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
-    @Delete(value = "/parameter-recommendations/{assessmentId}/{parameterId}/{recommendationId}")
+    @Delete(value = "/{assessmentId}/parameters/{parameterId}/recommendations/{recommendationId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterLevelRecommendationRequest> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
@@ -325,7 +325,7 @@ public class AssessmentController {
     }
 
 
-    @Patch(value = "/topic-ratings/{assessmentId}/{topicId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/{assessmentId}/topics/{topicId}/ratings", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicLevelAssessment> saveTopicRating(@PathVariable("assessmentId") Integer
                                                                       assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String rating, Authentication
@@ -345,7 +345,7 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
-    @Patch(value = "/parameter-ratings/{assessmentId}/{parameterId}")
+    @Patch(value ="/{assessmentId}/parameters/{parameterId}/ratings")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterLevelAssessment> saveParameterRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String rating, Authentication authentication) {
         LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, parameterId);

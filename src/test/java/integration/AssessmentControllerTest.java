@@ -71,7 +71,6 @@ class AssessmentControllerTest {
     EntityManager entityManager;
 
 
-
     @AfterEach
     public void afterEach() {
         usersAssessmentsRepository.deleteAll();
@@ -204,7 +203,7 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
-        String expectedResponse ="{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"Mocked Assessment\"" + "," +
+        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"Mocked Assessment\"" + "," +
                 "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 10 + "," + "\"domain\"" + ":" + "\"Telecom\"" + "," + "\"industry\"" + ":" + "\"IT\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "," +
                 "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
                 "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
@@ -319,7 +318,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/set-topic-level-request.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessments/notes/" + assessment.getAssessmentId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessments/" + assessment.getAssessmentId() + "/notes", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -354,7 +353,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/set-parameter-level-request.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessments/notes/" + assessment.getAssessmentId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/assessments/" + assessment.getAssessmentId() + "/notes", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -399,7 +398,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-string-value.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/"+"answers"+"/" + question.getQuestionId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/" + "answers" + "/" + question.getQuestionId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -448,7 +447,7 @@ class AssessmentControllerTest {
 
         String dataRequest = "{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topic-recommendations-text/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/"+assessment.getAssessmentId()+"/topics/"+assessmentTopic.getTopicId()+"/recommendations-text" , dataRequest)
                 .bearerAuth("anything"));
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
@@ -494,7 +493,7 @@ class AssessmentControllerTest {
         entityManager.close();
 
         String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}";
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameter-recommendations/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -540,7 +539,7 @@ class AssessmentControllerTest {
 
         String dataRequest = "{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"impact\"" + ":" + "\"\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topic-recommendations-fields/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/recommendations-fields", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -587,7 +586,7 @@ class AssessmentControllerTest {
 
         String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameter-recommendations/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -633,7 +632,7 @@ class AssessmentControllerTest {
 
         String dataRequest = "{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"impact\"" + ":" + "\"\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topic-recommendations-fields/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/recommendations-fields", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -677,7 +676,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/parameter-ratings/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/ratings", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -720,7 +719,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/topic-ratings/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/ratings", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -764,7 +763,7 @@ class AssessmentControllerTest {
         entityManager.getTransaction().commit();
 
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/parameter-recommendations/" + assessment.getAssessmentId() + "/" + assessmentParameter.getParameterId() + "/" + parameterLevelRecommendation.getRecommendationId())
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations/" + parameterLevelRecommendation.getRecommendationId())
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -805,7 +804,7 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/topic-recommendations/" + assessment.getAssessmentId() + "/" + assessmentTopic.getTopicId() + "/" + topicLevelRecommendation.getRecommendationId())
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/recommendations/" + topicLevelRecommendation.getRecommendationId())
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

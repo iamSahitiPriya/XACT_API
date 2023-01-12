@@ -208,4 +208,7 @@ public class AssessmentService {
         assessment.setUpdatedAt(new Date());
         updateAssessment(assessment);
     }
+    public Assessment getAssessmentById(Integer assessmentId) {
+        return assessmentRepository.findByAssessmentId(assessmentId);
+    }
 }

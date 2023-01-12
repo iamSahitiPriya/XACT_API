@@ -318,14 +318,12 @@ public class AssessmentMasterDataService {
     public void deleteParameterReference(Integer referenceId) {
         assessmentParameterRRepository.deleteById(referenceId);
     }
-    public Long getAssessedCategory(Integer assessmentId){
+    public Long getAssessedCategory(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
         Set<Integer> assessedCategories = new TreeSet<>();
-        List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
             assessedCategories.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getModule().getCategory().getCategoryId());
         }
 
-        List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
         for (TopicLevelAssessment topicLevelAssessment:topicLevelAssessmentList) {
             assessedCategories.add(topicLevelAssessment.getTopicLevelId().getTopic().getModule().getCategory().getCategoryId());
 

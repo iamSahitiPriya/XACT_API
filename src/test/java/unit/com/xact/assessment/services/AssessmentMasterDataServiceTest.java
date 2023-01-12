@@ -697,7 +697,7 @@ class AssessmentMasterDataServiceTest {
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(Collections.singletonList(topicLevelAssessment));
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelAssessment));
 
-        Long expectedValue = moduleService1.getAssessedModule(assessmentId);
+        Long expectedValue = moduleService1.getAssessedModule(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment));
 
         Long actualResponse = 1L;
 
@@ -750,7 +750,7 @@ class AssessmentMasterDataServiceTest {
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelAssessment));
 
 
-        Long expectedResponse = assessmentMasterDataService.getAssessedCategory(assessmentId);
+        Long expectedResponse = assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment));
         Long actualResponse = 1L;
 
         assertEquals(expectedResponse,actualResponse);

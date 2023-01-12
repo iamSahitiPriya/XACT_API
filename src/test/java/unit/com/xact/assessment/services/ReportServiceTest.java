@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
+import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -574,19 +575,57 @@ class ReportServiceTest {
         List<UserQuestion> questions = new ArrayList<>();
         questions.add(userQuestion);
 
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", organisation, Active, created1, updated1);
+
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setCategory(assessmentCategory);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        assessmentTopic1.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setTopic(assessmentTopic1);
+
+        ParameterLevelId parameterLevelId = new ParameterLevelId();
+        parameterLevelId.setAssessment(assessment1);
+        parameterLevelId.setParameter(assessmentParameter);
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRating(1);
+
+        TopicLevelId topicLevelId = new TopicLevelId();
+        topicLevelId.setAssessment(assessment1);
+        topicLevelId.setTopic(assessmentTopic);
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(2);
+
         when(answerService.getAnswers(1)).thenReturn(answers);
         when(userQuestionService.findAllUserQuestion(1)).thenReturn(questions);
-        when(topicAndParameterLevelAssessmentService.getTotalParameters(assessmentId)).thenReturn(1L);
-        when(topicAndParameterLevelAssessmentService.getTotalTopics(assessmentId)).thenReturn(1L);
-        when(moduleService.getAssessedModule(assessmentId)).thenReturn(1L);
-        when(assessmentMasterDataService.getAssessedCategory(assessmentId)).thenReturn(1L);
+        when(moduleService.getAssessedModule(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1L);
+        when(assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1L);
 
         SummaryResponse actualResponse = new SummaryResponse();
         actualResponse.setQuestionAssessed(2);
         actualResponse.setTopicAssessed(1L);
         actualResponse.setParameterAssessed(1L);
         actualResponse.setModuleAssessed(1L);
-        actualResponse.setCategoryAssessed(1L);
+        actualResponse.setCategoryAssessed(0L);
         SummaryResponse expectedResponse = reportService.getSummary(1);
 
         assertEquals(expectedResponse.getCategoryAssessed(), actualResponse.getCategoryAssessed());

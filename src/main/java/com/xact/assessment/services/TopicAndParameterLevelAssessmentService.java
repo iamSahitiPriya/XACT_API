@@ -191,29 +191,4 @@ public class TopicAndParameterLevelAssessmentService {
     public void deleteParameterRecommendation(Integer recommendationId) {
         parameterLevelRecommendationRepository.deleteById(recommendationId);
     }
-
-    public Long getTotalParameters(Integer assessmentId) {
-        return parameterLevelAssessmentRepository.getAssessedParameters(assessmentId);
-    }
-
-    public Long getTotalTopics(Integer assessmentId) {
-        Set<Integer> assessedTopicByParameter = new TreeSet<>();
-        List<ParameterLevelAssessment> parameterLevelAssessmentList = getParameterAssessmentData(assessmentId);
-        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
-            assessedTopicByParameter.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getTopicId());
-        }
-        try {
-            return topicLevelAssessmentRepository.getAssessedTopics(assessmentId) + assessedTopicByParameter.size();
-        } catch (EmptyResultException e) {
-            try {
-                return topicLevelAssessmentRepository.getAssessedTopics(assessmentId);
-            } catch (EmptyResultException e1) {
-                try {
-                    return (long) assessedTopicByParameter.size();
-                }catch (EmptyResultException e2){
-                    return 0L;
-                }
-            }
-        }
-    }
 }

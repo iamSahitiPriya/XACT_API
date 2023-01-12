@@ -23,22 +23,19 @@ public class AssessmentMasterDataService {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
-    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
-
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
     private final AssessmentParameterReferenceRepository assessmentParameterRRepository;
     private final ModuleService moduleService;
     private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
 
 
-    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService,TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
+    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
         this.categoryRepository = categoryRepository;
         this.moduleService = moduleService;
         this.questionService = questionService;
         this.assessmentTopicReferenceRepository = assessmentTopicReferenceRepository;
         this.parameterService = parameterService;
         this.topicService = topicService;
-        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
         this.assessmentParameterRRepository = assessmentParameterRRepository;
 

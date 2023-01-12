@@ -18,10 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
-import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;

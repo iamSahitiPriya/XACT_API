@@ -9,13 +9,10 @@ import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.ParameterLevelRecommendationRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
-import io.micronaut.data.exceptions.EmptyResultException;
 import jakarta.inject.Singleton;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Singleton
 public class TopicAndParameterLevelAssessmentService {

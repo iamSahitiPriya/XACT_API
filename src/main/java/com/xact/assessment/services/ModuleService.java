@@ -18,11 +18,9 @@ import java.util.TreeSet;
 
 public class ModuleService {
     public final ModuleRepository moduleRepository;
-    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
 
-    public ModuleService(ModuleRepository moduleRepository, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
+    public ModuleService(ModuleRepository moduleRepository) {
         this.moduleRepository = moduleRepository;
-        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
     }
     public AssessmentModule getModule(Integer moduleId){
         return moduleRepository.findByModuleId(moduleId);

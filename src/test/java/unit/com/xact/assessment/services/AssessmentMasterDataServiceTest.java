@@ -30,8 +30,8 @@ class AssessmentMasterDataServiceTest {
     private final UserAssessmentModuleRepository userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
     private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository = mock(AssessmentTopicReferenceRepository.class);
     private final AssessmentParameterReferenceRepository assessmentParameterReferenceRepository = mock(AssessmentParameterReferenceRepository.class);
-    private final ModuleService moduleService1 = new ModuleService(moduleRepository, topicAndParameterLevelAssessmentService);
-    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService, assessmentTopicReferenceRepository, parameterService, topicService, topicAndParameterLevelAssessmentService, userAssessmentModuleRepository, assessmentParameterReferenceRepository);
+    private final ModuleService moduleService1 = new ModuleService(moduleRepository);
+    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService, assessmentTopicReferenceRepository, parameterService, topicService, userAssessmentModuleRepository, assessmentParameterReferenceRepository);
     @Test
     void getAllCategories() {
         AssessmentCategory category = new AssessmentCategory();

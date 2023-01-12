@@ -20,5 +20,4 @@ public interface TopicLevelAssessmentRepository extends CrudRepository<TopicLeve
     @Executable
     @Query("SELECT tla FROM TopicLevelAssessment tla WHERE tla.topicLevelId.assessment.assessmentId=:assessmentId")
     List<TopicLevelAssessment> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
-
 }

@@ -7,6 +7,7 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.ReportCategoryResponse;
 import com.xact.assessment.dtos.ReportDataResponse;
+import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.mappers.ReportDataMapper;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentCategory;
@@ -74,7 +75,7 @@ public class ReportController {
         return HttpResponse.serverError();
     }
 
-    @Get(value = "/sunburst/{assessmentId}", produces = MediaType.APPLICATION_JSON)
+    @Get(value = "/{assessmentId}/charts/sunburst", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<ReportDataResponse> getAssessmentReportData(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
@@ -87,6 +88,14 @@ public class ReportController {
 
         return HttpResponse.ok(reportDataResponse);
 
+    }
+
+    @Get(value = "/{assessmentId}/summary", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<SummaryResponse> getSummary(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        SummaryResponse summaryResponse = reportService.getSummary(assessment.getAssessmentId());
+        return HttpResponse.ok(summaryResponse);
     }
 
     @Get(value = "/template", produces = MediaType.APPLICATION_OCTET_STREAM)

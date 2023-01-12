@@ -102,7 +102,7 @@ public class AssessmentTopic implements Serializable {
         if (parameterSum == 0 && parameterCount == 0) {
             return 0;
         }
-        return parameterSum / parameterCount;
+        return (parameterSum / parameterCount) ;
     }
 
     public boolean hasReferences() {
@@ -116,8 +116,8 @@ public class AssessmentTopic implements Serializable {
         this.comments = comments;
     }
 
-    public AssessmentTopic(Integer topicId,String topicName, AssessmentModule module, boolean isActive, String comments) {
-        this.topicId=topicId;
+    public AssessmentTopic(Integer topicId, String topicName, AssessmentModule module, boolean isActive, String comments) {
+        this.topicId = topicId;
         this.topicName = topicName;
         this.module = module;
         this.isActive = isActive;

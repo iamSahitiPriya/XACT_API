@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
 import jakarta.inject.Singleton;
@@ -34,22 +35,25 @@ public class ReportService {
 
     private List<AssessmentCategory> assessmentCategoryList;
     private Set<Integer> selectedModulesSet;
-    private  final UserQuestionService userQuestionService;
+    private final UserQuestionService userQuestionService;
+
+    private final ModuleService moduleService;
 
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService,UserQuestionService userQuestionService) {
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, ModuleService moduleService) {
 
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.answerService = answerService;
         this.chartService = chartService;
         this.categoryRepository = categoryRepository;
         this.assessmentMasterDataService = assessmentMasterDataService;
-        this.userQuestionService=userQuestionService;
+        this.userQuestionService = userQuestionService;
+        this.moduleService = moduleService;
     }
 
     public Workbook generateReport(Integer assessmentId) {
         List<Answer> answers = answerService.getAnswers(assessmentId);
-        List<UserQuestion>  userQuestions = userQuestionService.findAllUserQuestion(assessmentId);
+        List<UserQuestion> userQuestions = userQuestionService.findAllUserQuestion(assessmentId);
         assessmentCategoryList = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         selectedModulesSet = mapSelectedModulesInSet(assessmentCategoryList);
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
@@ -58,7 +62,7 @@ public class ReportService {
         List<ParameterLevelRecommendation> parameterLevelRecommendationData = topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId);
         Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendationMap = getTopicWiseRecommendations(topicLevelRecommendationData);
         Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = getParameterWiseRecommendations(parameterLevelRecommendationData);
-        return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap, parameterLevelRecommendationMap, assessmentId,userQuestions);
+        return createReport(answers, parameterAssessmentData, topicAssessmentData, topicLevelRecommendationMap, parameterLevelRecommendationMap, assessmentId, userQuestions);
     }
 
     private Set<Integer> mapSelectedModulesInSet(List<AssessmentCategory> assessmentCategoryList) {
@@ -111,10 +115,10 @@ public class ReportService {
         return topicLevelRecommendationMap;
     }
 
-    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId,List<UserQuestion> userQuestions) {
+    private Workbook createReport(List<Answer> answers, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Integer assessmentId, List<UserQuestion> userQuestions) {
         Workbook workbook = new XSSFWorkbook();
 
-        writeReport(answers,userQuestions, parameterLevelAssessments, topicLevelAssessments, topicLevelRecommendations, parameterLevelRecommendations, workbook);
+        writeReport(answers, userQuestions, parameterLevelAssessments, topicLevelAssessments, topicLevelRecommendations, parameterLevelRecommendations, workbook);
 
         createDataAndGenerateChart(workbook, assessmentId, parameterLevelAssessments, topicLevelAssessments);
 
@@ -122,12 +126,12 @@ public class ReportService {
     }
 
 
-    private void writeReport(List<Answer> answers,List<UserQuestion> userQuestions, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook) {
+    private void writeReport(List<Answer> answers, List<UserQuestion> userQuestions, List<ParameterLevelAssessment> parameterLevelAssessments, List<TopicLevelAssessment> topicLevelAssessments, Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendations, Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendations, Workbook workbook) {
         for (Answer answer : answers) {
             writeAnswerRow(workbook, answer);
         }
-        for(UserQuestion userQuestion: userQuestions){
-            if(userQuestion.getAnswer()!=null) {
+        for (UserQuestion userQuestion : userQuestions) {
+            if (userQuestion.getAnswer() != null) {
                 writeUserQuestionRow(workbook, userQuestion);
             }
         }
@@ -293,13 +297,14 @@ public class ReportService {
                     answer.getAnswerNote());
         }
     }
-    private void writeUserQuestionRow(Workbook workbook,UserQuestion userQuestion){
+
+    private void writeUserQuestionRow(Workbook workbook, UserQuestion userQuestion) {
         AssessmentParameter assessmentParameter = userQuestion.getParameter();
         AssessmentTopic assessmentTopic = assessmentParameter.getTopic();
         AssessmentModule assessmentModule = assessmentTopic.getModule();
-        if(checkIfModuleSelected(assessmentModule.getModuleId())){
+        if (checkIfModuleSelected(assessmentModule.getModuleId())) {
             AssessmentCategory assessmentCategory = assessmentModule.getCategory();
-            Sheet sheet = getMatchingSheet(workbook,assessmentCategory);
+            Sheet sheet = getMatchingSheet(workbook, assessmentCategory);
             generateHeaderIfNotExist(sheet, workbook);
             writeDataOnSheet(workbook, sheet,
                     assessmentModule,
@@ -519,4 +524,19 @@ public class ReportService {
     }
 
 
+    public SummaryResponse getSummary(Integer assessmentId) {
+        Integer totalNoOfQuestions = answerService.getAnswers(assessmentId).size() + userQuestionService.findAllUserQuestion(assessmentId).size();
+        List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+        List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+        Integer totalModule = moduleService.getAssessedModule(topicLevelAssessmentList,parameterLevelAssessmentList);
+        Integer totalCategory = assessmentMasterDataService.getAssessedCategory(topicLevelAssessmentList,parameterLevelAssessmentList);
+        SummaryResponse summaryResponse = new SummaryResponse();
+        summaryResponse.setCategoryAssessed(totalCategory);
+        summaryResponse.setModuleAssessed(totalModule);
+        summaryResponse.setTopicAssessed(topicLevelAssessmentList.size());
+        summaryResponse.setParameterAssessed(parameterLevelAssessmentList.size());
+        summaryResponse.setQuestionAssessed(totalNoOfQuestions);
+        return summaryResponse;
+
+    }
 }

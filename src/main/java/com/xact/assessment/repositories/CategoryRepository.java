@@ -30,4 +30,6 @@ public interface CategoryRepository extends CrudRepository<AssessmentCategory, I
     @Executable
     @Query("SELECT category.categoryName FROM AssessmentCategory category")
     List<String> getAllCategories();
+
+
 }

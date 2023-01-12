@@ -5,9 +5,9 @@
 package unit.com.xact.assessment.services;
 
 
+import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.CategoryRepository;
-import com.xact.assessment.repositories.UserQuestionRepository;
 import com.xact.assessment.services.*;
 import com.xact.assessment.utils.ChartsUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
+import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,12 +33,13 @@ class ReportServiceTest {
     SpiderChartService chartService = mock(SpiderChartService.class);
     CategoryRepository categoryRepository = mock(CategoryRepository.class);
     UserQuestionService userQuestionService = mock(UserQuestionService.class);
+    ModuleService moduleService = mock(ModuleService.class);
 
 
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
 
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, assessmentMasterDataService,userQuestionService);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, assessmentMasterDataService,userQuestionService, moduleService);
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() {
@@ -561,5 +563,71 @@ class ReportServiceTest {
 
         assertEquals(expectedDataAverageRating, actualDataAverageRating);
 
+    }
+
+    @Test
+    void shouldGetAssessmentSummary() {
+        Integer assessmentId = 1;
+        Answer answer = new Answer();
+        List<Answer> answers = new ArrayList<>();
+        answers.add(answer);
+        UserQuestion userQuestion = new UserQuestion();
+        List<UserQuestion> questions = new ArrayList<>();
+        questions.add(userQuestion);
+
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", organisation, Active, created1, updated1);
+
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setCategory(assessmentCategory);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        assessmentTopic1.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setTopic(assessmentTopic1);
+
+        ParameterLevelId parameterLevelId = new ParameterLevelId();
+        parameterLevelId.setAssessment(assessment1);
+        parameterLevelId.setParameter(assessmentParameter);
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRating(1);
+
+        TopicLevelId topicLevelId = new TopicLevelId();
+        topicLevelId.setAssessment(assessment1);
+        topicLevelId.setTopic(assessmentTopic);
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(2);
+
+        when(answerService.getAnswers(1)).thenReturn(answers);
+        when(userQuestionService.findAllUserQuestion(1)).thenReturn(questions);
+        when(moduleService.getAssessedModule(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1);
+        when(assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1);
+
+        SummaryResponse actualResponse = new SummaryResponse();
+        actualResponse.setQuestionAssessed(2);
+        actualResponse.setTopicAssessed(1);
+        actualResponse.setParameterAssessed(1);
+        actualResponse.setModuleAssessed(1);
+        actualResponse.setCategoryAssessed(0);
+        SummaryResponse expectedResponse = reportService.getSummary(1);
+
+        assertEquals(expectedResponse.getCategoryAssessed(), actualResponse.getCategoryAssessed());
     }
 }

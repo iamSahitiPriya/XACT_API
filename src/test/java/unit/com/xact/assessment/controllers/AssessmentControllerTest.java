@@ -388,16 +388,16 @@ class AssessmentControllerTest {
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
 
-        TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest = new TopicLevelRecommendationTextRequest();
-        topicLevelRecommendationTextRequest.setRecommendation("some text");
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendation("some text");
 
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
-        topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
+        topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
 
-        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendationText(assessmentId, topicId, topicLevelRecommendationTextRequest, authentication);
+        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
@@ -438,23 +438,23 @@ class AssessmentControllerTest {
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
-        TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest = new TopicLevelRecommendationTextRequest();
-        topicLevelRecommendationTextRequest.setRecommendation("some text");
-        topicLevelRecommendationTextRequest.setRecommendationId(1);
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendation("some text");
+        topicLevelRecommendationRequest.setRecommendationId(1);
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
         when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
-        topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
+        topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
 
 
         when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
-        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendationText(assessmentId, topicId, topicLevelRecommendationTextRequest, authentication);
+        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
@@ -495,22 +495,22 @@ class AssessmentControllerTest {
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
-        TopicLevelRecommendationTextRequest topicLevelRecommendationTextRequest = new TopicLevelRecommendationTextRequest();
-        topicLevelRecommendationTextRequest.setRecommendation("");
-        topicLevelRecommendationTextRequest.setRecommendationId(1);
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
+        topicLevelRecommendationRequest.setRecommendation("");
+        topicLevelRecommendationRequest.setRecommendationId(1);
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationTextRequest.getRecommendationId());
+        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
         when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
-        topicLevelRecommendation.setRecommendation(topicLevelRecommendationTextRequest.getRecommendation());
+        topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
 
         when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
-        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendationText(assessmentId, topicId, topicLevelRecommendationTextRequest, authentication);
+        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
@@ -567,7 +567,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
         topicLevelRecommendation.setRecommendationImpact(LOW);
 
-        HttpResponse<TopicLevelRecommendationRequest> actualResponse = assessmentController.saveTopicRecommendationFields(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
+        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
@@ -624,7 +624,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
         topicLevelRecommendation.setRecommendationEffort(MEDIUM);
 
-        HttpResponse<TopicLevelRecommendationRequest> actualResponse = assessmentController.saveTopicRecommendationFields(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
+        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
@@ -684,7 +684,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setDeliveryHorizon("");
 
 
-        HttpResponse<TopicLevelRecommendationRequest> actualResponse = assessmentController.saveTopicRecommendationFields(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
+        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 

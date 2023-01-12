@@ -84,7 +84,7 @@ public class AssessmentModule implements Serializable {
         if (topicCount == 0) {
             return 0;
         }
-        return Math.round((topicSum / topicCount) * 10.0) / 10.0;
+        return (topicSum / topicCount);
     }
 
 

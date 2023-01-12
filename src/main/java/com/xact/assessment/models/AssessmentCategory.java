@@ -78,7 +78,7 @@ public class AssessmentCategory implements Serializable {
         if (moduleCount == 0) {
             return 0;
         }
-        return Math.round((moduleSum / moduleCount) * 10.0) / 10.0;
+        return (moduleSum / moduleCount);
     }
 
     public AssessmentCategory(String categoryName, boolean isActive, String comments) {

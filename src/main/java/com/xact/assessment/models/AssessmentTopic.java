@@ -102,7 +102,7 @@ public class AssessmentTopic implements Serializable {
         if (parameterSum == 0 && parameterCount == 0) {
             return 0;
         }
-        return Math.round((parameterSum / parameterCount) * 10.0) / 10.0;
+        return (parameterSum / parameterCount) ;
     }
 
     public boolean hasReferences() {

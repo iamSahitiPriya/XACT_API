@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.ActivityResponse;
@@ -5,7 +9,6 @@ import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.services.ActivityLogService;
 import com.xact.assessment.services.TopicService;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;

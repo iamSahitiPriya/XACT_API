@@ -1,11 +1,12 @@
-package com.xact.assessment.models;
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
 
-import javax.persistence.Table;
+package com.xact.assessment.models;
 
 import com.xact.assessment.dtos.ActivityType;
 import io.micronaut.core.annotation.Introspected;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;

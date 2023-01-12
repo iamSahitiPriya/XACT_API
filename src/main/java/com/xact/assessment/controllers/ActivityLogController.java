@@ -27,14 +27,14 @@ import java.time.Duration;
 import java.util.List;
 
 @AllArgsConstructor
-@Controller("/v1/activity")
+@Controller("/v1")
 @Singleton
 public class ActivityLogController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivityLogController.class);
     private final ActivityLogService activityLogService;
     private final TopicService topicService;
 
-    @Get(value = "/{assessmentId}/{topicId}", produces = MediaType.TEXT_EVENT_STREAM)
+    @Get(value = "/assessment/{assessmentId}/topic/{topicId}/activity", produces = MediaType.TEXT_EVENT_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public Flux<Event<List<ActivityResponse>>> getActivityLogs(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, Authentication authentication){
         Assessment assessment = activityLogService.getAssessment(assessmentId);

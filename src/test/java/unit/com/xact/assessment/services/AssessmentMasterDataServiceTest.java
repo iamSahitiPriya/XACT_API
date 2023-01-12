@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -20,16 +21,17 @@ import static org.mockito.Mockito.*;
 class AssessmentMasterDataServiceTest {
 
     private final CategoryRepository categoryRepository = mock(CategoryRepository.class);
-    private final ModuleService moduleService = mock(ModuleService.class);
     private final TopicService topicService = mock(TopicService.class);
+    private final ModuleService moduleService = mock(ModuleService.class);
     private final ParameterService parameterService = mock(ParameterService.class);
     private final QuestionService questionService = mock(QuestionService.class);
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
+    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
     private final UserAssessmentModuleRepository userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
     private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository = mock(AssessmentTopicReferenceRepository.class);
     private final AssessmentParameterReferenceRepository assessmentParameterReferenceRepository = mock(AssessmentParameterReferenceRepository.class);
+    private final ModuleService moduleService1 = new ModuleService(moduleRepository);
     private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService, assessmentTopicReferenceRepository, parameterService, topicService, userAssessmentModuleRepository, assessmentParameterReferenceRepository);
-
     @Test
     void getAllCategories() {
         AssessmentCategory category = new AssessmentCategory();
@@ -648,5 +650,109 @@ class AssessmentMasterDataServiceTest {
 
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateTopicReference(1,topicReferencesRequest));
+    }
+
+    @Test
+    void shouldGetAssessedModules() {
+        Integer assessmentId = 1;
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", organisation, Active, created1, updated1);
+
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setCategory(assessmentCategory);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        assessmentTopic1.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setTopic(assessmentTopic1);
+
+        ParameterLevelId parameterLevelId = new ParameterLevelId();
+        parameterLevelId.setAssessment(assessment1);
+        parameterLevelId.setParameter(assessmentParameter);
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRating(1);
+
+        TopicLevelId topicLevelId = new TopicLevelId();
+        topicLevelId.setAssessment(assessment1);
+        topicLevelId.setTopic(assessmentTopic);
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(2);
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(Collections.singletonList(topicLevelAssessment));
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelAssessment));
+
+        Integer expectedValue = moduleService1.getAssessedModule(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment));
+
+        Integer actualResponse = 1;
+
+        assertEquals(expectedValue,actualResponse);
+    }
+
+    @Test
+    void shouldGetAssessedCategory() {
+        Integer assessmentId = 1;
+        Date created1 = new Date(2022 - 7 - 13);
+        Date updated1 = new Date(2022 - 9 - 24);
+
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", organisation, Active, created1, updated1);
+
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setCategory(assessmentCategory);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        assessmentTopic1.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setTopic(assessmentTopic1);
+
+        ParameterLevelId parameterLevelId = new ParameterLevelId();
+        parameterLevelId.setAssessment(assessment1);
+        parameterLevelId.setParameter(assessmentParameter);
+        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+        parameterLevelAssessment.setRating(1);
+
+        TopicLevelId topicLevelId = new TopicLevelId();
+        topicLevelId.setAssessment(assessment1);
+        topicLevelId.setTopic(assessmentTopic);
+        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        topicLevelAssessment.setRating(2);
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(Collections.singletonList(topicLevelAssessment));
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelAssessment));
+
+
+        Integer expectedResponse = assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment));
+        Integer actualResponse = 1;
+
+        assertEquals(expectedResponse,actualResponse);
     }
 }

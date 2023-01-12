@@ -5,10 +5,7 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AssessmentMasterDataController;
-import com.xact.assessment.dtos.AssessmentCategoryDto;
 import com.xact.assessment.dtos.CategoryDto;
-import com.xact.assessment.dtos.UserAssessmentResponse;
-import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentCategory;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import io.micronaut.http.HttpResponse;
@@ -17,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 

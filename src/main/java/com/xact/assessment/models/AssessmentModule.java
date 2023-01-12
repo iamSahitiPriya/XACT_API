@@ -65,6 +65,7 @@ public class AssessmentModule implements Serializable {
     public boolean getIsActive() {
         return isActive;
     }
+
     public Set<AssessmentTopic> getActiveTopics() {
         return topics == null ? null : topics.stream().filter(AssessmentTopic::getIsActive).collect(Collectors.toSet());
     }
@@ -72,18 +73,18 @@ public class AssessmentModule implements Serializable {
     public double getModuleAverage() {
         double topicSum = 0;
         int topicCount = 0;
-        for(AssessmentTopic assessmentTopic : this.topics){
+        for (AssessmentTopic assessmentTopic : this.topics) {
             double averageTopic = assessmentTopic.getTopicAverage();
-            if(averageTopic != 0){
+            if (averageTopic != 0) {
                 topicSum += averageTopic;
                 topicCount += 1;
             }
         }
 
-        if(topicCount ==0){
+        if (topicCount == 0) {
             return 0;
         }
-        return topicSum/topicCount;
+        return (topicSum / topicCount);
     }
 
 
@@ -93,8 +94,9 @@ public class AssessmentModule implements Serializable {
         this.isActive = isActive;
         this.comments = comments;
     }
-    public AssessmentModule(Integer moduleId,String moduleName, AssessmentCategory category, boolean isActive, String comments) {
-        this.moduleId=moduleId;
+
+    public AssessmentModule(Integer moduleId, String moduleName, AssessmentCategory category, boolean isActive, String comments) {
+        this.moduleId = moduleId;
         this.moduleName = moduleName;
         this.category = category;
         this.isActive = isActive;

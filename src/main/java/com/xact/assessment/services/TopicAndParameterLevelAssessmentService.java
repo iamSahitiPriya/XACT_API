@@ -69,26 +69,25 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterLevelAssessment;
     }
 
-    public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment,List<TopicLevelRecommendation> topicLevelRecommendationList, List<Answer> answerList, List<UserQuestion> userQuestionList) {
+    public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment, List<TopicLevelRecommendation> topicLevelRecommendationList, List<Answer> answerList, List<UserQuestion> userQuestionList) {
         saveRatingAndRecommendation(topicLevelAssessment);
-        for(TopicLevelRecommendation topicLevelRecommendation :topicLevelRecommendationList) {
+        for (TopicLevelRecommendation topicLevelRecommendation : topicLevelRecommendationList) {
             saveTopicLevelRecommendation(topicLevelRecommendation);
         }
         for (Answer answer : answerList) {
             answerService.saveAnswer(answer);
         }
-        for (UserQuestion userQuestion:userQuestionList){
+        for (UserQuestion userQuestion : userQuestionList) {
             userQuestionService.saveUserQuestion(userQuestion);
         }
 
     }
 
     public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
-        if (topicLevelRecommendation.getRecommendationId()!=null) {
+        if (topicLevelRecommendation.getRecommendationId() != null) {
             if (topicLevelRecommendation.hasRecommendation()) {
                 topicLevelRecommendationRepository.update(topicLevelRecommendation);
-            }
-            else{
+            } else {
                 topicLevelRecommendationRepository.delete(topicLevelRecommendation);
             }
         } else {
@@ -96,10 +95,10 @@ public class TopicAndParameterLevelAssessmentService {
                 topicLevelRecommendationRepository.save(topicLevelRecommendation);
             }
         }
-       return topicLevelRecommendation;
+        return topicLevelRecommendation;
     }
 
-    public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<ParameterLevelRecommendation> parameterLevelRecommendationList,List<Answer> answerList,List<UserQuestion> userQuestionList) {
+    public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<ParameterLevelRecommendation> parameterLevelRecommendationList, List<Answer> answerList, List<UserQuestion> userQuestionList) {
         for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
             saveRatingAndRecommendation(parameterLevelAssessment);
         }
@@ -109,21 +108,20 @@ public class TopicAndParameterLevelAssessmentService {
         for (Answer answer : answerList) {
             answerService.saveAnswer(answer);
         }
-        for(UserQuestion userQuestion:userQuestionList){
+        for (UserQuestion userQuestion : userQuestionList) {
             userQuestionService.saveUserQuestion(userQuestion);
         }
     }
 
     public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
-        if (parameterLevelRecommendation.getRecommendationId()!=null) {
-            if(parameterLevelRecommendation.hasRecommendation()){
+        if (parameterLevelRecommendation.getRecommendationId() != null) {
+            if (parameterLevelRecommendation.hasRecommendation()) {
                 parameterLevelRecommendationRepository.update(parameterLevelRecommendation);
-            }
-            else{
+            } else {
                 parameterLevelRecommendationRepository.delete(parameterLevelRecommendation);
             }
-        }else{
-            if(parameterLevelRecommendation.hasRecommendation()){
+        } else {
+            if (parameterLevelRecommendation.hasRecommendation()) {
                 parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
             }
         }
@@ -138,8 +136,8 @@ public class TopicAndParameterLevelAssessmentService {
         return topicLevelAssessmentRepository.findByAssessment(assessmentId);
     }
 
-    public List<TopicLevelRecommendation> getTopicAssessmentRecommendationData(Integer assessmentId,Integer topicId) {
-        return  topicLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId,topicId);
+    public List<TopicLevelRecommendation> getTopicAssessmentRecommendationData(Integer assessmentId, Integer topicId) {
+        return topicLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId, topicId);
     }
 
     public Optional<ParameterLevelAssessment> searchParameter(ParameterLevelId parameterLevelId) {
@@ -157,7 +155,7 @@ public class TopicAndParameterLevelAssessmentService {
 
 
     public void deleteRecommendation(Integer recommendationId) {
-      topicLevelRecommendationRepository.deleteById(recommendationId);
+        topicLevelRecommendationRepository.deleteById(recommendationId);
     }
 
 
@@ -167,7 +165,7 @@ public class TopicAndParameterLevelAssessmentService {
 
 
     public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
-        return  topicLevelRecommendationRepository.findByAssessment(assessmentId);
+        return topicLevelRecommendationRepository.findByAssessment(assessmentId);
     }
 
 
@@ -175,8 +173,8 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterLevelRecommendationRepository.findByAssessment(assessmentId);
     }
 
-    public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId,Integer parameterId) {
-        return  parameterLevelRecommendationRepository.findByAssessmentAndParameter(assessmentId,parameterId);
+    public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId, Integer parameterId) {
+        return parameterLevelRecommendationRepository.findByAssessmentAndParameter(assessmentId, parameterId);
     }
 
     public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {

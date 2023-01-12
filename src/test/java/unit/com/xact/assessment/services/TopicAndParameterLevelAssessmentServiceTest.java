@@ -495,6 +495,5 @@ class TopicAndParameterLevelAssessmentServiceTest {
         assertEquals(parameterLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
 
     }
-
 }
 

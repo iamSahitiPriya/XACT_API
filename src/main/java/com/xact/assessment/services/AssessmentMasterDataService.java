@@ -23,7 +23,6 @@ public class AssessmentMasterDataService {
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
-
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
     private final AssessmentParameterReferenceRepository assessmentParameterRRepository;
     private final ModuleService moduleService;
@@ -315,6 +314,18 @@ public class AssessmentMasterDataService {
 
     public void deleteParameterReference(Integer referenceId) {
         assessmentParameterRRepository.deleteById(referenceId);
+    }
+    public Integer getAssessedCategory(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
+        Set<Integer> assessedCategories = new TreeSet<>();
+        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
+            assessedCategories.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getModule().getCategory().getCategoryId());
+        }
+
+        for (TopicLevelAssessment topicLevelAssessment:topicLevelAssessmentList) {
+            assessedCategories.add(topicLevelAssessment.getTopicLevelId().getTopic().getModule().getCategory().getCategoryId());
+
+        }
+        return assessedCategories.size();
     }
 }
 

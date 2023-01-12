@@ -528,13 +528,13 @@ public class ReportService {
         Integer totalNoOfQuestions = answerService.getAnswers(assessmentId).size() + userQuestionService.findAllUserQuestion(assessmentId).size();
         List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
-        Long totalModule = moduleService.getAssessedModule(topicLevelAssessmentList,parameterLevelAssessmentList);
-        Long totalCategory = assessmentMasterDataService.getAssessedCategory(topicLevelAssessmentList,parameterLevelAssessmentList);
+        Integer totalModule = moduleService.getAssessedModule(topicLevelAssessmentList,parameterLevelAssessmentList);
+        Integer totalCategory = assessmentMasterDataService.getAssessedCategory(topicLevelAssessmentList,parameterLevelAssessmentList);
         SummaryResponse summaryResponse = new SummaryResponse();
         summaryResponse.setCategoryAssessed(totalCategory);
         summaryResponse.setModuleAssessed(totalModule);
-        summaryResponse.setTopicAssessed((long) topicLevelAssessmentList.size());
-        summaryResponse.setParameterAssessed((long) parameterLevelAssessmentList.size());
+        summaryResponse.setTopicAssessed(topicLevelAssessmentList.size());
+        summaryResponse.setParameterAssessed(parameterLevelAssessmentList.size());
         summaryResponse.setQuestionAssessed(totalNoOfQuestions);
         return summaryResponse;
 

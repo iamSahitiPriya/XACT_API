@@ -8,9 +8,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SummaryResponse {
-    private Long categoryAssessed;
-    private Long moduleAssessed;
-    private Long topicAssessed;
-    private Long parameterAssessed;
+    private Integer categoryAssessed;
+    private Integer moduleAssessed;
+    private Integer topicAssessed;
+    private Integer parameterAssessed;
     private Integer questionAssessed;
 }

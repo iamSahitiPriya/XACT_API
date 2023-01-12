@@ -32,7 +32,7 @@ public class ModuleService {
         moduleRepository.update(assessmentModule);
     }
 
-    public Long getAssessedModule(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
+    public Integer getAssessedModule(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
         Set<Integer> assessedModule = new TreeSet<>();
         for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
             assessedModule.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getModule().getModuleId());
@@ -42,7 +42,7 @@ public class ModuleService {
             assessedModule.add(topicLevelAssessment.getTopicLevelId().getTopic().getModule().getModuleId());
         }
 
-        return (long) assessedModule.size();
+        return assessedModule.size();
     }
 
 }

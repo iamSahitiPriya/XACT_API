@@ -617,15 +617,15 @@ class ReportServiceTest {
 
         when(answerService.getAnswers(1)).thenReturn(answers);
         when(userQuestionService.findAllUserQuestion(1)).thenReturn(questions);
-        when(moduleService.getAssessedModule(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1L);
-        when(assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1L);
+        when(moduleService.getAssessedModule(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1);
+        when(assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1);
 
         SummaryResponse actualResponse = new SummaryResponse();
         actualResponse.setQuestionAssessed(2);
-        actualResponse.setTopicAssessed(1L);
-        actualResponse.setParameterAssessed(1L);
-        actualResponse.setModuleAssessed(1L);
-        actualResponse.setCategoryAssessed(0L);
+        actualResponse.setTopicAssessed(1);
+        actualResponse.setParameterAssessed(1);
+        actualResponse.setModuleAssessed(1);
+        actualResponse.setCategoryAssessed(0);
         SummaryResponse expectedResponse = reportService.getSummary(1);
 
         assertEquals(expectedResponse.getCategoryAssessed(), actualResponse.getCategoryAssessed());

@@ -192,31 +192,6 @@ public class AssessmentController {
         return HttpResponse.ok(assessmentResponse);
     }
 
-
-    @Post(value = "/{assessmentId}/notes", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelAssessmentRequest> saveAnswer(@PathVariable("assessmentId") Integer assessmentId, @Body TopicLevelAssessmentRequest topicLevelAssessmentRequests, Authentication authentication) {
-        LOGGER.info("Save assessment data : {}", assessmentId);
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-
-        if (assessment.isEditable()) {
-            List<Answer> answerList = setAnswerListToSave(topicLevelAssessmentRequests, assessment);
-            List<UserQuestion> userQuestionList = setUserQuestionListToSave(topicLevelAssessmentRequests, assessment);
-            if (topicLevelAssessmentRequests.isRatedAtTopicLevel()) {
-                TopicLevelAssessment topicLevelRatingAndRecommendation = setTopicLevelRatingAndRecommendation(topicLevelAssessmentRequests, assessment);
-                List<TopicLevelRecommendation> topicLevelRecommendationList = setTopicLevelRecommendation(topicLevelAssessmentRequests, assessment);
-                topicAndParameterLevelAssessmentService.saveTopicLevelAssessment(topicLevelRatingAndRecommendation, topicLevelRecommendationList, answerList, userQuestionList);
-            } else {
-                List<ParameterLevelAssessment> parameterLevelAssessmentList = setParameterLevelRatingAndResommendationList(topicLevelAssessmentRequests, assessment);
-                List<ParameterLevelRecommendation> parameterLevelRecommendationList = setParameterLevelRecommendation(assessment, topicLevelAssessmentRequests.getParameterLevelAssessmentRequestList());
-                topicAndParameterLevelAssessmentService.saveParameterLevelAssessment(parameterLevelAssessmentList, parameterLevelRecommendationList, answerList, userQuestionList);
-            }
-            updateAssessment(assessment);
-        }
-        return HttpResponse.ok();
-    }
-
-
     @Patch(value = "/{assessmentId}/parameters/{parameterId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterLevelRecommendationResponse> saveParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Authentication authentication) {

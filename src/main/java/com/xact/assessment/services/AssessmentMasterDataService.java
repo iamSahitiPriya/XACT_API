@@ -250,7 +250,7 @@ public class AssessmentMasterDataService {
     public AssessmentParameter updateParameter(Integer parameterId, AssessmentParameterRequest assessmentParameterRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameterRequest.getTopic()).orElseThrow();
-        if (removeWhiteSpaces(assessmentParameter.getParameterName()).equals(removeWhiteSpaces(assessmentParameterRequest.getParameterName())) || isParameterUnique(assessmentParameter.getParameterName(), assessmentTopic)) {
+        if (removeWhiteSpaces(assessmentParameter.getParameterName()).equals(removeWhiteSpaces(assessmentParameterRequest.getParameterName())) || isParameterUnique(assessmentParameterRequest.getParameterName(), assessmentTopic)) {
             assessmentParameter.setParameterName(assessmentParameterRequest.getParameterName());
             assessmentParameter.setTopic(assessmentTopic);
             assessmentParameter.setActive(assessmentParameterRequest.isActive());

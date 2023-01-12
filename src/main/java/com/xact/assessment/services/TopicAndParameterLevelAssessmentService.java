@@ -22,16 +22,12 @@ public class TopicAndParameterLevelAssessmentService {
     private final TopicLevelRecommendationRepository topicLevelRecommendationRepository;
 
     private final ParameterLevelRecommendationRepository parameterLevelRecommendationRepository;
-    private final AnswerService answerService;
-    private final UserQuestionService userQuestionService;
 
-    public TopicAndParameterLevelAssessmentService(TopicLevelAssessmentRepository topicLevelAssessmentRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository, TopicLevelRecommendationRepository topicLevelRecommendationRepository, ParameterLevelRecommendationRepository parameterLevelRecommendationRepository, AnswerService answerService, UserQuestionService userQuestionService) {
+    public TopicAndParameterLevelAssessmentService(TopicLevelAssessmentRepository topicLevelAssessmentRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository, TopicLevelRecommendationRepository topicLevelRecommendationRepository, ParameterLevelRecommendationRepository parameterLevelRecommendationRepository) {
         this.topicLevelAssessmentRepository = topicLevelAssessmentRepository;
         this.parameterLevelAssessmentRepository = parameterLevelAssessmentRepository;
         this.topicLevelRecommendationRepository = topicLevelRecommendationRepository;
         this.parameterLevelRecommendationRepository = parameterLevelRecommendationRepository;
-        this.answerService = answerService;
-        this.userQuestionService = userQuestionService;
     }
 
     public TopicLevelAssessment saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
@@ -69,20 +65,6 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterLevelAssessment;
     }
 
-    public void saveTopicLevelAssessment(TopicLevelAssessment topicLevelAssessment, List<TopicLevelRecommendation> topicLevelRecommendationList, List<Answer> answerList, List<UserQuestion> userQuestionList) {
-        saveRatingAndRecommendation(topicLevelAssessment);
-        for (TopicLevelRecommendation topicLevelRecommendation : topicLevelRecommendationList) {
-            saveTopicLevelRecommendation(topicLevelRecommendation);
-        }
-        for (Answer answer : answerList) {
-            answerService.saveAnswer(answer);
-        }
-        for (UserQuestion userQuestion : userQuestionList) {
-            userQuestionService.saveUserQuestion(userQuestion);
-        }
-
-    }
-
     public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
         if (topicLevelRecommendation.getRecommendationId() != null) {
             if (topicLevelRecommendation.hasRecommendation()) {
@@ -98,20 +80,6 @@ public class TopicAndParameterLevelAssessmentService {
         return topicLevelRecommendation;
     }
 
-    public void saveParameterLevelAssessment(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<ParameterLevelRecommendation> parameterLevelRecommendationList, List<Answer> answerList, List<UserQuestion> userQuestionList) {
-        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
-            saveRatingAndRecommendation(parameterLevelAssessment);
-        }
-        for (ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendationList) {
-            saveParameterLevelRecommendation(parameterLevelRecommendation);
-        }
-        for (Answer answer : answerList) {
-            answerService.saveAnswer(answer);
-        }
-        for (UserQuestion userQuestion : userQuestionList) {
-            userQuestionService.saveUserQuestion(userQuestion);
-        }
-    }
 
     public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
         if (parameterLevelRecommendation.getRecommendationId() != null) {

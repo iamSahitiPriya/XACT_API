@@ -10,9 +10,7 @@ import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.ParameterLevelRecommendationRepository;
 import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
-import com.xact.assessment.services.AnswerService;
 import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
-import com.xact.assessment.services.UserQuestionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -30,9 +28,6 @@ class TopicAndParameterLevelAssessmentServiceTest {
     private TopicLevelAssessmentRepository topicLevelAssessmentRepository;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
-    private AnswerService answerService;
-
-    private UserQuestionService userQuestionService;
     private TopicLevelRecommendationRepository topicLevelRecommendationRepository;
 
     private ParameterLevelRecommendationRepository parameterLevelRecommendationRepository;
@@ -40,11 +35,9 @@ class TopicAndParameterLevelAssessmentServiceTest {
     public void beforeEach() {
         topicLevelAssessmentRepository = mock(TopicLevelAssessmentRepository.class);
         parameterLevelAssessmentRepository = mock(ParameterLevelAssessmentRepository.class);
-        answerService = mock(AnswerService.class);
-        userQuestionService = mock(UserQuestionService.class);
         topicLevelRecommendationRepository = mock(TopicLevelRecommendationRepository.class);
         parameterLevelRecommendationRepository=mock(ParameterLevelRecommendationRepository.class);
-        topicAndParameterLevelAssessmentService = new TopicAndParameterLevelAssessmentService(topicLevelAssessmentRepository, parameterLevelAssessmentRepository, topicLevelRecommendationRepository, parameterLevelRecommendationRepository, answerService, userQuestionService);
+        topicAndParameterLevelAssessmentService = new TopicAndParameterLevelAssessmentService(topicLevelAssessmentRepository, parameterLevelAssessmentRepository, topicLevelRecommendationRepository, parameterLevelRecommendationRepository);
     }
 
     @Test

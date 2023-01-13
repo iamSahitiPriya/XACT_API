@@ -1,5 +1,6 @@
 package com.xact.assessment.repositories;
 
+import com.xact.assessment.models.ActivityId;
 import com.xact.assessment.models.ActivityLog;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentTopic;
@@ -12,8 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface ActivityLogRepository extends CrudRepository<ActivityLog, String> {
+public interface ActivityLogRepository extends CrudRepository<ActivityLog, ActivityId> {
     @Executable
-    @Query("SELECT al from ActivityLog al where al.topic=:topic and al.assessment=:assessment and al.updatedAt between :pastDate  and  :currentDate")
+    @Query("SELECT al from ActivityLog al where al.topic=:topic and al.activityId.assessment=:assessment and al.updatedAt between :pastDate  and  :currentDate")
     List<ActivityLog> getLatestRecords(Date pastDate, Date currentDate, Assessment assessment, AssessmentTopic topic);
 }

@@ -21,14 +21,11 @@ import java.util.Date;
 @Entity
 @Table(name = "tbl_activity_log")
 public class ActivityLog {
-    @Id
-    @Column(name = "user_name", unique = true)
-    private String userName;
+    @EmbeddedId
+    @AttributeOverride(name = "user_name", column = @Column(name = "user_name"))
+    @AttributeOverride(name = "assessment", column = @Column(name = "assessment_id"))
+    private ActivityId activityId;
 
-    @NotNull
-    @ManyToOne()
-    @JoinColumn(name = "assessment", referencedColumnName="assessment_id")
-    private Assessment assessment;
 
     @NotNull
     @ManyToOne()

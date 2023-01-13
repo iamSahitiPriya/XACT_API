@@ -224,6 +224,9 @@ public class AssessmentController {
             } else {
                 parameterLevelRecommendationResponse.setRecommendationId(null);
             }
+            ParameterLevelRecommendation finalParameterLevelRecommendation = parameterLevelRecommendation;
+            ParameterLevelRecommendation finalParameterLevelRecommendation1 = parameterLevelRecommendation;
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation1.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
 
         }
         return HttpResponse.ok(parameterLevelRecommendationResponse);
@@ -257,6 +260,9 @@ public class AssessmentController {
             } else {
                 topicLevelRecommendationResponse.setRecommendationId(null);
             }
+            TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
+
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }

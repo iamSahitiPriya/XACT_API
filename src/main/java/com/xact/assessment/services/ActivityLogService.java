@@ -6,6 +6,7 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ActivityResponse;
 import com.xact.assessment.dtos.ActivityType;
+import com.xact.assessment.models.ActivityId;
 import com.xact.assessment.models.ActivityLog;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentTopic;
@@ -22,6 +23,7 @@ import java.util.List;
 @AllArgsConstructor
 @Singleton
 public class ActivityLogService {
+    public static final int EXPIRY_TIME = 30000;
     private AssessmentService assessmentService;
     private ActivityLogRepository activityLogRepository;
     private AnswerService answerService;
@@ -42,10 +44,11 @@ public class ActivityLogService {
     public List<ActivityResponse> getLatestActivityRecords(Assessment assessment, AssessmentTopic assessmentTopic) {
         List<ActivityResponse> activityResponses = new ArrayList<>();
         Date currentDate = new Date();
-        currentDate.setTime(currentDate.getTime() - 30000);
+        currentDate.setTime(currentDate.getTime() - EXPIRY_TIME);
         List<ActivityLog> activityLogs = activityLogRepository.getLatestRecords(currentDate,new Date(), assessment,assessmentTopic);
         for (ActivityLog activityLog: activityLogs) {
             ActivityResponse activityResponse = mapper.map(activityLog, ActivityResponse.class);
+            activityResponse.setUserName(activityLog.getActivityId().getUserName());
             activityResponse.setInputText(setInputText(activityLog));
             activityResponses.add(activityResponse);
         }
@@ -55,9 +58,9 @@ public class ActivityLogService {
     private String setInputText(ActivityLog activityLog) {
         return switch (activityLog.getActivityType()) {
             case DEFAULT ->
-                    answerService.getAnswerByQuestionId(activityLog.getAssessment().getAssessmentId(), activityLog.getIdentifier());
+                    answerService.getAnswerByQuestionId(activityLog.getActivityId().getAssessment().getAssessmentId(), activityLog.getIdentifier());
             case ADDITIONAL ->
-                    userQuestionService.getAnswerByQuestionId(activityLog.getAssessment().getAssessmentId(), activityLog.getIdentifier());
+                    userQuestionService.getAnswerByQuestionId(activityLog.getActivityId().getAssessment().getAssessmentId(), activityLog.getIdentifier());
             case TOPIC_RECOMMENDATION, PARAMETER_RECOMMENDATION ->
                     topicAndParameterLevelAssessmentService.getRecommendationById(activityLog.getIdentifier(), activityLog.getActivityType());
         };
@@ -65,13 +68,13 @@ public class ActivityLogService {
 
     public ActivityLog saveActivityLog(Assessment assessment, Authentication authentication, Integer identifier, AssessmentTopic assessmentTopic, ActivityType type) {
         String loggedInUser = userAuthService.getLoggedInUser(authentication).getUserEmail();
+        ActivityId activityId  = new ActivityId(assessment,loggedInUser);
         ActivityLog activityLog = new ActivityLog();
         activityLog.setActivityType(type);
-        activityLog.setAssessment(assessment);
+        activityLog.setActivityId(activityId);
         activityLog.setTopic(assessmentTopic);
         activityLog.setIdentifier(identifier);
-        activityLog.setUserName(loggedInUser);
-        if(activityLogRepository.existsById(loggedInUser)){
+        if(activityLogRepository.existsById(activityId)){
             return updateActivityLog(activityLog);
         }
         return saveActivityLog(activityLog);

@@ -6,7 +6,10 @@ package com.xact.assessment.models;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import java.io.Serializable;
 
 
@@ -18,12 +21,12 @@ import java.io.Serializable;
 @Embeddable
 public class AnswerId implements Serializable {
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @MapsId
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @MapsId
     @JoinColumn(name = "question_id")
     private Question question;

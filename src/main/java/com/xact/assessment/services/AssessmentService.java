@@ -46,7 +46,6 @@ public class AssessmentService {
         this.moduleRepository = moduleRepository;
     }
 
-    @Transactional
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
         Assessment assessment = mapper.map(assessmentRequest, Assessment.class);
         assessment.setAssessmentStatus(AssessmentStatus.Active);
@@ -154,7 +153,6 @@ public class AssessmentService {
     }
 
 
-    @Transactional
     public void updateAssessment(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
         assessment.setAssessmentUsers(assessmentUsers);

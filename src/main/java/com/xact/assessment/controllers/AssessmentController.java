@@ -22,6 +22,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -30,6 +31,7 @@ import static java.util.stream.Collectors.toSet;
 
 
 @Controller("/v1/assessments")
+@Transactional
 public class AssessmentController {
 
 

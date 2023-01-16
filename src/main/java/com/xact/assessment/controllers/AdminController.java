@@ -21,6 +21,7 @@ import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 @Introspected
 @AdminAuth
 @Controller("/v1/admin")
+@Transactional
 public class AdminController {
     private static final ModelMapper mapper = new ModelMapper();
 

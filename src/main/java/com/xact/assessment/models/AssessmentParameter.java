@@ -42,11 +42,11 @@ public class AssessmentParameter implements Serializable {
     @JoinColumn(name = "topic", referencedColumnName = "topic_id")
     private AssessmentTopic topic;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parameter")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parameter")
     @ElementCollection()
     private Set<Question> questions;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "parameter")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parameter")
     @ElementCollection()
     private Set<AssessmentParameterReference> references;
 

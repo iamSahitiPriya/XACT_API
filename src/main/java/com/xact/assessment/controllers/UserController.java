@@ -18,7 +18,6 @@ import io.micronaut.security.rules.SecurityRule;
 import java.util.Optional;
 
 @Controller("/v1/users")
-
 public class UserController {
     private final AssessmentService assessmentService;
     private final UserAuthService userAuthService;

@@ -31,7 +31,6 @@ import static java.util.stream.Collectors.toSet;
 
 
 @Controller("/v1/assessments")
-@Transactional
 public class AssessmentController {
 
 
@@ -78,6 +77,7 @@ public class AssessmentController {
 
     @Get(produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
     public HttpResponse<List<AssessmentResponse>> getAssessments(Authentication authentication) {
         LOGGER.info("Get all assessments");
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
@@ -95,23 +95,20 @@ public class AssessmentController {
 
     @Post(produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentResponse> createAssessment(@Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
+    public HttpResponse<AssessmentResponse>  createAssessment(@Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
         LOGGER.info("Create new assessment");
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         assessmentRequest.validate(emailPattern);
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
-
-        AssessmentResponse assessmentResponse = assessmentMapper.map(assessment);
-
         CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCreateAssessment(assessment));
 
-        return HttpResponse.created(assessmentResponse);
+        return HttpResponse.ok();
     }
 
     @Put(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Assessment> updateAssessment(@PathVariable("assessmentId") Integer assessmentId, @Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
+    public HttpResponse<AssessmentResponse> updateAssessment(@PathVariable("assessmentId") Integer assessmentId, @Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
         LOGGER.info("Update assessment : {}", assessmentId);
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
         assessmentRequest.validate(emailPattern);
@@ -141,6 +138,7 @@ public class AssessmentController {
 
     @Put(value = "/{assessmentId}/open", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
     public HttpResponse<AssessmentResponse> reopenAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
 
         LOGGER.info("Reopen assessment : {}", assessmentId);
@@ -156,6 +154,7 @@ public class AssessmentController {
 
     @Put(value = "/{assessmentId}/finish", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
     public HttpResponse<AssessmentResponse> finishAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Finish assessment : {}", assessmentId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
@@ -170,6 +169,7 @@ public class AssessmentController {
 
     @Get(value = "/{assessmentId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
     public HttpResponse<AssessmentResponse> getAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Get assessment : {}", assessmentId);
         User loggedInUser = userAuthService.getLoggedInUser(authentication);
@@ -196,6 +196,7 @@ public class AssessmentController {
 
     @Patch(value = "/{assessmentId}/parameters/{parameterId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
     public HttpResponse<ParameterLevelRecommendationResponse> saveParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         LOGGER.info("Update individual parameter maturity recommendation. assessment: {}, parameter: {}", assessmentId, parameterId);
@@ -229,6 +230,7 @@ public class AssessmentController {
 
     @Patch(value = "/{assessmentId}/topics/{topicId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
     public HttpResponse<TopicLevelRecommendationResponse> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
         LOGGER.info("Update individual topic recommendation. assessment: {}, topic: {}", assessmentId, topicId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
@@ -357,6 +359,7 @@ public class AssessmentController {
 
     @Get(value = "{assessmentId}/categories/all", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
     public HttpResponse<UserAssessmentResponse> getCategories(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get all category & assessment master data");
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
@@ -378,6 +381,7 @@ public class AssessmentController {
 
     @Get(value = "{assessmentId}/categories", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
     public HttpResponse<UserAssessmentResponse> getSelectedCategories(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get selected categories only");
         List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
@@ -389,6 +393,62 @@ public class AssessmentController {
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
         userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
         return HttpResponse.ok(userAssessmentResponse);
+    }
+
+    @Post(value = "/{assessmentId}/{parameterId}/questions", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    @Transactional
+    public HttpResponse<UserQuestionResponse> saveUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body String userQuestion, Authentication authentication) {
+        LOGGER.info("Save individual user added questions. assessment: {}, parameter:{}", assessmentId, parameterId);
+
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        UserQuestion savedQuestion = new UserQuestion();
+        if (assessment.isEditable()) {
+            savedQuestion = userQuestionService.saveUserQuestion(assessment, parameterId, userQuestion);
+            updateAssessment(assessment);
+        }
+        UserQuestionResponse userQuestionResponse = modelMapper.map(savedQuestion, UserQuestionResponse.class);
+        return HttpResponse.ok(userQuestionResponse);
+    }
+
+    @Patch(value = "/{assessmentId}/answers/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AnswerResponse> updateAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable UpdateAnswerRequest answerRequest, Authentication authentication) {
+        LOGGER.info("Update individual user added answer. assessment: {}, question:{}", assessmentId, questionId);
+
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if (assessment.isEditable() && answerRequest != null) {
+            if (answerRequest.getType() == AnswerType.DEFAULT) {
+                answerService.saveAnswer(answerRequest, assessment);
+            } else {
+                userQuestionService.saveUserAnswer(questionId, answerRequest.getAnswer());
+            }
+            updateAssessment(assessment);
+        }
+        return HttpResponse.ok();
+    }
+
+    @Patch(value = "/{assessmentId}/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<UserQuestion> updateUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body String updatedQuestion, Authentication authentication) {
+        LOGGER.info("Update individual user added questions. assessment: {}, parameter:{}", assessmentId, questionId);
+
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if (assessment.isEditable()) {
+            userQuestionService.updateUserQuestion(questionId, updatedQuestion);
+        }
+        return HttpResponse.ok();
+    }
+
+    @Delete(value = "/{assessmentId}/questions/{questionId}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<UserQuestion> deleteUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        LOGGER.info("Delete user question. assessment: {}", assessmentId);
+        if (assessment.isEditable() && userQuestionService.searchUserQuestion(questionId).isPresent()) {
+            userQuestionService.deleteUserQuestion(questionId);
+        }
+        return HttpResponse.ok();
     }
 
 
@@ -444,50 +504,6 @@ public class AssessmentController {
         }
     }
 
-    @Post(value = "/{assessmentId}/{parameterId}/questions", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<UserQuestionResponse> saveUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body String userQuestion, Authentication authentication) {
-        LOGGER.info("Save individual user added questions. assessment: {}, parameter:{}", assessmentId, parameterId);
-
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        UserQuestion savedQuestion = new UserQuestion();
-        if (assessment.isEditable()) {
-            savedQuestion = userQuestionService.saveUserQuestion(assessment, parameterId, userQuestion);
-            updateAssessment(assessment);
-        }
-        UserQuestionResponse userQuestionResponse = modelMapper.map(savedQuestion, UserQuestionResponse.class);
-        return HttpResponse.ok(userQuestionResponse);
-    }
-
-
-    @Patch(value = "/{assessmentId}/answers/{questionId}", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse updateAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable UpdateAnswerRequest answerRequest, Authentication authentication) {
-        LOGGER.info("Update individual user added answer. assessment: {}, question:{}", assessmentId, questionId);
-
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable() && answerRequest != null) {
-            if (answerRequest.getType() == AnswerType.DEFAULT) {
-                answerService.saveAnswer(answerRequest, assessment);
-            } else {
-                userQuestionService.saveUserAnswer(questionId, answerRequest.getAnswer());
-            }
-            updateAssessment(assessment);
-        }
-        return HttpResponse.ok();
-    }
-
-    @Patch(value = "/{assessmentId}/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<UserQuestion> updateUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body String updatedQuestion, Authentication authentication) {
-        LOGGER.info("Update individual user added questions. assessment: {}, parameter:{}", assessmentId, questionId);
-
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable()) {
-            userQuestionService.updateUserQuestion(questionId, updatedQuestion);
-        }
-        return HttpResponse.ok();
-    }
 
     private List<ParameterRatingAndRecommendation> mergeParamRatingAndRecommendation(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<ParameterLevelRecommendation> parameterLevelRecommendationList) {
         List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponse = new ArrayList<>();
@@ -574,16 +590,4 @@ public class AssessmentController {
         LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessmentService.updateAssessment(assessment);
     }
-
-    @Delete(value = "/{assessmentId}/questions/{questionId}")
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<UserQuestion> deleteUserQuestion(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, Authentication authentication) {
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        LOGGER.info("Delete user question. assessment: {}", assessmentId);
-        if (assessment.isEditable() && userQuestionService.searchUserQuestion(questionId).isPresent()) {
-            userQuestionService.deleteUserQuestion(questionId);
-        }
-        return HttpResponse.ok();
-    }
-
 }

@@ -2,7 +2,10 @@ package com.xact.assessment.models;
 
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import java.io.Serializable;
 
 @Getter
@@ -12,12 +15,12 @@ import java.io.Serializable;
 @AllArgsConstructor
 @EqualsAndHashCode
 public class AssessmentModuleId implements Serializable {
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @MapsId
     @JoinColumn(name = "assessment")
     private Assessment assessment;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @MapsId
     @JoinColumn(name = "module")
     private AssessmentModule module;

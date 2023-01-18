@@ -335,8 +335,9 @@ public class AssessmentMasterDataService {
         return assessedCategories.size();
     }
 
-    public boolean isModuleSelectedByUser(Integer assessmentId, Integer moduleId) {
-        return userAssessmentModuleRepository.findAssessmentModuleById(assessmentId,moduleId).isPresent();
+    public boolean isModuleSelectedByUser(Assessment assessment, AssessmentModule assessmentModule) {
+        AssessmentModuleId assessmentModuleId=new AssessmentModuleId(assessment,assessmentModule);
+        return userAssessmentModuleRepository.existsById(assessmentModuleId);
     }
 }
 

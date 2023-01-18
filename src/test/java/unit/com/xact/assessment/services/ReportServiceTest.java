@@ -556,9 +556,9 @@ class ReportServiceTest {
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelAssessment));
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelAssessment));
         when(categoryRepository.findAll()).thenReturn(assessmentCategories);
-        when(assessmentMasterDataService.isModuleSelectedByUser(assessment.getAssessmentId(),assessmentModule.getModuleId())).thenReturn(true);
+        when(assessmentMasterDataService.isModuleSelectedByUser(assessment,assessmentModule)).thenReturn(true);
 
-        List<AssessmentCategory> actualAssessmentCategoryList = reportService.generateSunburstData(assessment.getAssessmentId());
+        List<AssessmentCategory> actualAssessmentCategoryList = reportService.generateSunburstData(assessment);
         double expectedDataAverageRating = 5;
         double actualDataAverageRating = actualAssessmentCategoryList.get(0).getCategoryAverage();
 

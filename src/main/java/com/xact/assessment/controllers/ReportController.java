@@ -81,7 +81,7 @@ public class ReportController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public MutableHttpResponse<ReportDataResponse> getAssessmentReportData(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        List<AssessmentCategory> assessmentCategories = reportService.generateSunburstData(assessment.getAssessmentId());
+        List<AssessmentCategory> assessmentCategories = reportService.generateSunburstData(assessment);
         ReportDataResponse reportDataResponse = new ReportDataResponse();
         reportDataResponse.setName(assessment.getAssessmentName());
         List<ReportCategoryResponse> reportCategoryResponseList = new ArrayList<>();

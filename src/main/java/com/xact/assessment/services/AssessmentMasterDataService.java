@@ -329,5 +329,9 @@ public class AssessmentMasterDataService {
         }
         return assessedCategories.size();
     }
+
+    public boolean isModuleSelectedByUser(Integer assessmentId, Integer moduleId) {
+        return userAssessmentModuleRepository.findAssessmentModuleById(assessmentId,moduleId).isPresent();
+    }
 }
 

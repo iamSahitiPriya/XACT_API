@@ -22,7 +22,4 @@ public interface UserAssessmentModuleRepository extends CrudRepository<UserAsses
     @Query("DELETE FROM UserAssessmentModule userAssessment where userAssessment.assessment.assessmentId=:assessmentId")
     void deleteByModule(Integer assessmentId);
 
-    @Executable
-    @Query("Select userAssessment.module FROM UserAssessmentModule userAssessment where userAssessment.assessment.assessmentId=:assessmentId and userAssessment.module.moduleId=:moduleId")
-    Optional<AssessmentModule> findAssessmentModuleById(Integer assessmentId , Integer moduleId);
 }

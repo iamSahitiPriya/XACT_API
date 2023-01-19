@@ -391,6 +391,7 @@ public class AssessmentController {
             userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapAssessmentCategory(assessmentCategory)));
         }
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
+        userAssessmentCategoriesResponse.sort(null);
         userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
         return HttpResponse.ok(userAssessmentResponse);
     }

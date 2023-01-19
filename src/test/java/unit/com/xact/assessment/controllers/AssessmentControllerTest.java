@@ -21,7 +21,6 @@ import static com.xact.assessment.models.RecommendationEffort.MEDIUM;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class AssessmentControllerTest {

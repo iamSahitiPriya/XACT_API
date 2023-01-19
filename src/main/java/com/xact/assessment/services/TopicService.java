@@ -8,7 +8,6 @@ import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
 import jakarta.inject.Singleton;
 
-import java.util.List;
 import java.util.Optional;
 
 @Singleton

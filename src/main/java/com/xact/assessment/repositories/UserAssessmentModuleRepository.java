@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface UserAssessmentModuleRepository extends CrudRepository<UserAssessmentModule, AssessmentModuleId> {
     @Executable
-    @Query("SELECT userAssessment.module from UserAssessmentModule userAssessment WHERE userAssessment.assessment.assessmentId=:assessmentId")
+    @Query("SELECT userAssessment.module from UserAssessmentModule userAssessment WHERE userAssessment.assessment.assessmentId=:assessmentId and userAssessment.module.isActive=true")
     List<AssessmentModule> findModuleByAssessment(@Parameter("assessmentId") Integer assessmentId);
 
     @Executable

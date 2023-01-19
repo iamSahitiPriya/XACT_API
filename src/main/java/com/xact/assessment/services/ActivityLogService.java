@@ -97,10 +97,12 @@ public class ActivityLogService {
     }
 
     private ActivityLog updateActivityLog(ActivityLog activityLog) {
+        LOGGER.info("Update Activity log for assessment:{}",activityLog.getActivityId().getAssessment().getAssessmentId());
         return activityLogRepository.update(activityLog);
     }
 
     private ActivityLog saveActivityLog(ActivityLog activityLog) {
+        LOGGER.info("Save Activity log for assessment: {}", activityLog.getActivityId().getAssessment().getAssessmentId());
         return activityLogRepository.save(activityLog);
     }
 }

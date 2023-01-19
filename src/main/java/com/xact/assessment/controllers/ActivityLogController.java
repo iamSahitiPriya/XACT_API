@@ -30,14 +30,17 @@ import java.util.List;
 @Singleton
 public class ActivityLogController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivityLogController.class);
+    public static final int PERIOD = 5    ;
+    public static final int DELAY = 1;
     private final ActivityLogService activityLogService;
 
     @Get(value = "/assessment/{assessmentId}/topic/{topicId}/activity", produces = MediaType.TEXT_EVENT_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public Flux<Event<List<ActivityResponse>>> getActivityLogs(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, Authentication authentication){
+        LOGGER.info("Fetching Activity for assessment:{} and topic{}",assessmentId, topicId);
         Assessment assessment = activityLogService.getAssessment(assessmentId);
         AssessmentTopic assessmentTopic = activityLogService.getTopic(topicId);
-        return Flux.interval(Duration.ofSeconds(1), Duration.ofSeconds(5)).map(sequence -> Event.of(activityLogService.getLatestActivityRecords(assessment,assessmentTopic,authentication)));
+        return Flux.interval(Duration.ofSeconds(DELAY), Duration.ofSeconds(PERIOD)).map(sequence -> Event.of(activityLogService.getLatestActivityRecords(assessment,assessmentTopic,authentication)));
     }
 
 

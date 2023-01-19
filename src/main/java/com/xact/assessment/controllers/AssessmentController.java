@@ -359,16 +359,16 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<UserAssessmentResponse> getCategories(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get all category & assessment master data");
+        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
+        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(assessmentCategories)) {
+            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
+        }
         List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(userAssessmentCategories)) {
             userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
 
-        }
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
-        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(assessmentCategories)) {
-            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
         }
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
         userAssessmentResponse.setAssessmentCategories(assessmentCategoriesResponse);

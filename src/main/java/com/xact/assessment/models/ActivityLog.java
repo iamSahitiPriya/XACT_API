@@ -6,23 +6,29 @@ package com.xact.assessment.models;
 
 import com.xact.assessment.dtos.ActivityType;
 import io.micronaut.core.annotation.Introspected;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Introspected
-@EqualsAndHashCode
 @Entity
 @Table(name = "tbl_activity_log")
-public class ActivityLog {
+public class ActivityLog implements Serializable {
     @EmbeddedId
-    @AttributeOverride(name = "user_name", column = @Column(name = "user_name"))
+    @AttributeOverride(name = "userName", column = @Column(name = "user_name"))
     @AttributeOverride(name = "assessment", column = @Column(name = "assessment_id"))
     private ActivityId activityId;
 
@@ -45,4 +51,17 @@ public class ActivityLog {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        ActivityLog that = (ActivityLog) o;
+        return activityId != null && Objects.equals(activityId, that.activityId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(activityId);
+    }
 }

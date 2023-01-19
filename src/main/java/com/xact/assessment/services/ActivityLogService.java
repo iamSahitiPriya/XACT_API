@@ -11,10 +11,13 @@ import com.xact.assessment.models.ActivityLog;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.repositories.ActivityLogRepository;
+import io.micronaut.data.exceptions.EmptyResultException;
 import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,9 +33,11 @@ public class ActivityLogService {
     private UserQuestionService userQuestionService;
     private UserAuthService userAuthService;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
-    private static final ModelMapper mapper = new ModelMapper();
-
     private TopicService topicService;
+    private static final ModelMapper mapper = new ModelMapper();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ActivityLogService.class);
+
+
     public Assessment getAssessment(Integer assessmentId) {
         return assessmentService.getAssessmentById(assessmentId);
     }
@@ -41,11 +46,22 @@ public class ActivityLogService {
         return topicService.getTopicById(topicId);
     }
 
-    public List<ActivityResponse> getLatestActivityRecords(Assessment assessment, AssessmentTopic assessmentTopic) {
+    public List<ActivityResponse> getLatestActivityRecords(Assessment assessment, AssessmentTopic assessmentTopic, Authentication authentication) {
+        String loggedInUser = userAuthService.getLoggedInUser(authentication).getUserEmail();
+        List<ActivityLog> activityLogs = new ArrayList<>();
+        Date timeStart = new Date();
+        timeStart.setTime(timeStart.getTime() - EXPIRY_TIME);
+        Date timeEnd = new Date();
+        try {
+             activityLogs = activityLogRepository.getLatestRecords(timeStart, timeEnd, assessment, assessmentTopic, loggedInUser);
+        }catch (EmptyResultException e) {
+            LOGGER.error("No activity found for this assessment {}",assessment.getAssessmentId());
+        }
+        return getActivityResponses(activityLogs);
+    }
+
+    private List<ActivityResponse> getActivityResponses(List<ActivityLog> activityLogs) {
         List<ActivityResponse> activityResponses = new ArrayList<>();
-        Date currentDate = new Date();
-        currentDate.setTime(currentDate.getTime() - EXPIRY_TIME);
-        List<ActivityLog> activityLogs = activityLogRepository.getLatestRecords(currentDate,new Date(), assessment,assessmentTopic);
         for (ActivityLog activityLog: activityLogs) {
             ActivityResponse activityResponse = mapper.map(activityLog, ActivityResponse.class);
             activityResponse.setUserName(activityLog.getActivityId().getUserName());
@@ -57,9 +73,9 @@ public class ActivityLogService {
 
     private String setInputText(ActivityLog activityLog) {
         return switch (activityLog.getActivityType()) {
-            case DEFAULT ->
+            case DEFAULT_QUESTION->
                     answerService.getAnswerByQuestionId(activityLog.getActivityId().getAssessment().getAssessmentId(), activityLog.getIdentifier());
-            case ADDITIONAL ->
+            case ADDITIONAL_QUESTION->
                     userQuestionService.getAnswerByQuestionId(activityLog.getActivityId().getAssessment().getAssessmentId(), activityLog.getIdentifier());
             case TOPIC_RECOMMENDATION, PARAMETER_RECOMMENDATION ->
                     topicAndParameterLevelAssessmentService.getRecommendationById(activityLog.getIdentifier(), activityLog.getActivityType());

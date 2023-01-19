@@ -431,7 +431,7 @@ public class AssessmentController {
                 assessmentTopic = userQuestionService.getTopicByQuestionId(questionId);
             }
             AssessmentTopic finalAssessmentTopic = assessmentTopic;
-            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication,questionId, finalAssessmentTopic, ActivityType.values()[answerRequest.getType().ordinal()]));
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication,questionId, finalAssessmentTopic, ActivityType.valueOf(answerRequest.getType() + "_QUESTION")));
             updateAssessment(assessment);
         }
         return HttpResponse.ok();

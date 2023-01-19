@@ -1,8 +1,8 @@
 package com.xact.assessment.dtos;
 
 public enum ActivityType {
-    DEFAULT,
-    ADDITIONAL,
+    DEFAULT_QUESTION,
+    ADDITIONAL_QUESTION,
     PARAMETER_RECOMMENDATION,
     TOPIC_RECOMMENDATION
 }

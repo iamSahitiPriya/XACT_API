@@ -8,7 +8,6 @@ import com.xact.assessment.dtos.ActivityResponse;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.services.ActivityLogService;
-import com.xact.assessment.services.TopicService;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -32,16 +31,14 @@ import java.util.List;
 public class ActivityLogController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivityLogController.class);
     private final ActivityLogService activityLogService;
-    private final TopicService topicService;
 
     @Get(value = "/assessment/{assessmentId}/topic/{topicId}/activity", produces = MediaType.TEXT_EVENT_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public Flux<Event<List<ActivityResponse>>> getActivityLogs(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, Authentication authentication){
+        System.out.println("hello");
         Assessment assessment = activityLogService.getAssessment(assessmentId);
         AssessmentTopic assessmentTopic = activityLogService.getTopic(topicId);
-        return Flux.interval(Duration.ofSeconds(1), Duration.ofSeconds(10)).map(sequence ->{
-            List<ActivityResponse> activityLogResponse=activityLogService.getLatestActivityRecords(assessment,assessmentTopic);
-            return  Event.of(activityLogResponse);});
+        return Flux.interval(Duration.ofSeconds(1), Duration.ofSeconds(5)).map(sequence -> Event.of(activityLogService.getLatestActivityRecords(assessment,assessmentTopic,authentication)));
     }
 
 

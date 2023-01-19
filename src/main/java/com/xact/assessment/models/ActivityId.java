@@ -21,7 +21,6 @@ public class ActivityId implements Serializable {
     @JoinColumn(name = "assessment")
     private Assessment assessment;
 
-    @Column(name = "user_name")
     private String userName;
 
 

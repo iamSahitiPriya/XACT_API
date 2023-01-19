@@ -6,7 +6,6 @@ import com.xact.assessment.models.UserQuestion;
 import com.xact.assessment.repositories.UserQuestionRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

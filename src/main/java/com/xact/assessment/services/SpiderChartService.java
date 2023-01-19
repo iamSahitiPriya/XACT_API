@@ -11,7 +11,6 @@ import lombok.SneakyThrows;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 

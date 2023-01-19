@@ -11,8 +11,6 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.transaction.Transactional;
-
 import static com.xact.assessment.constants.AppConstants.EMAIL;
 import static com.xact.assessment.constants.AppConstants.USER_ID;
 

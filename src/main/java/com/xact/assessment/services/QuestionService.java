@@ -8,7 +8,6 @@ import com.xact.assessment.models.Question;
 import com.xact.assessment.repositories.QuestionRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

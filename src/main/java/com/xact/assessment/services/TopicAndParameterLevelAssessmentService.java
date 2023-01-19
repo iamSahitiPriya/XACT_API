@@ -11,7 +11,6 @@ import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 

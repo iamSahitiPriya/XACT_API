@@ -13,7 +13,6 @@ import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
-import javax.transaction.Transactional;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

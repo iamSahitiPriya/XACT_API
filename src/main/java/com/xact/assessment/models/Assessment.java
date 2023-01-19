@@ -65,7 +65,7 @@ public class Assessment implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "userId.assessment")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userId.assessment")
     @ElementCollection()
     private Set<AssessmentUser> assessmentUsers;
 

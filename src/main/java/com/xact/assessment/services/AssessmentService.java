@@ -13,7 +13,6 @@ import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
-import javax.transaction.Transactional;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,7 +23,6 @@ import static com.xact.assessment.models.AssessmentStatus.Completed;
 
 
 @Singleton
-@Transactional
 public class AssessmentService {
 
     private final UsersAssessmentsService usersAssessmentsService;

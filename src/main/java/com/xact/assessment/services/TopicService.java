@@ -8,12 +8,10 @@ import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class TopicService {
     private final AssessmentTopicRepository assessmentTopicRepository;
 

@@ -11,13 +11,10 @@ import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.transaction.Transactional;
-
 import static com.xact.assessment.constants.AppConstants.EMAIL;
 import static com.xact.assessment.constants.AppConstants.USER_ID;
 
 @Singleton
-@Transactional
 public class UserAuthService {
     private static final Logger LOG = LoggerFactory.getLogger(UserAuthService.class);
 

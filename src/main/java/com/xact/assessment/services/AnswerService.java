@@ -12,12 +12,10 @@ import com.xact.assessment.models.Question;
 import com.xact.assessment.repositories.AnswerRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class AnswerService {
     private final AnswerRepository answerRepository;
     private final QuestionService questionService;

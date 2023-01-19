@@ -33,7 +33,7 @@ datasources:
     password: ${USER}
     dialect: POSTGRES
     #    schema-generate: CREATE_DROP
-    schema: test_schema_v1
+    schema: test_schema_v2
     auto-commit: true
 
 email:

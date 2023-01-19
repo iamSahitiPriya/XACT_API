@@ -13,6 +13,7 @@ import com.xact.assessment.repositories.AnswerRepository;
 import jakarta.inject.Singleton;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,7 +54,21 @@ public class AnswerService {
     }
 
     public List<Answer> getAnswers(Integer assessmentId) {
-        return answerRepository.findByAssessment(assessmentId);
+        List<Answer> answers=answerRepository.findByAssessment(assessmentId);
+        List<Answer> activeAnswers=new ArrayList<>();
+        for(Answer answer:answers){
+            if(checkActiveStatusOnAllLevels(answer)){
+                activeAnswers.add(answer);
+            }
+        }
+        return activeAnswers;
+    }
+
+    private boolean checkActiveStatusOnAllLevels(Answer answer) {
+        return answer.getAnswerId().getQuestion().getParameter().getTopic().getModule().getCategory().getIsActive()
+                && answer.getAnswerId().getQuestion().getParameter().getTopic().getModule().getIsActive()
+                && answer.getAnswerId().getQuestion().getParameter().getTopic().getIsActive()
+                && answer.getAnswerId().getQuestion().getParameter().getIsActive();
     }
 
     public Optional<Answer> getAnswer(AnswerId answerId) {

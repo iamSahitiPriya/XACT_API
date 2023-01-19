@@ -10,12 +10,13 @@ import com.xact.assessment.models.TopicLevelAssessment;
 import com.xact.assessment.repositories.ModuleRepository;
 import jakarta.inject.Singleton;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
 @Singleton
-
+@Transactional
 public class ModuleService {
     public final ModuleRepository moduleRepository;
 

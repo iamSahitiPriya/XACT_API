@@ -10,7 +10,6 @@ import com.xact.assessment.models.AssessmentUser;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -35,13 +34,11 @@ public class UsersAssessmentsService {
 
     }
 
-    @Transactional
     public void createUsersInAssessment(Set<AssessmentUser> assessmentUsers) {
         usersAssessmentsRepository.saveAll(assessmentUsers);
     }
 
 
-    @Transactional
     public void updateUsersInAssessment(Set<AssessmentUser> assessmentUsers, Integer assessmentId) {
         usersAssessmentsRepository.deleteUsersByAssessmentId(assessmentId);
         usersAssessmentsRepository.saveAll(assessmentUsers);

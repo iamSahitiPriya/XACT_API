@@ -41,7 +41,7 @@ public class AssessmentModule implements Serializable {
     @JoinColumn(name = "category", referencedColumnName = "category_id")
     private AssessmentCategory category;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "module")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "module")
     @ElementCollection()
     private Set<AssessmentTopic> topics;
 

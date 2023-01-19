@@ -21,10 +21,12 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
 import java.io.ByteArrayOutputStream;
 
 @Controller("/v1/reports")
 @AdminAuth
+@Transactional
 public class AdminReportController {
 
     private static  final Logger LOGGER = LoggerFactory.getLogger(AdminReportController.class);

@@ -19,12 +19,14 @@ import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Introspected
 @Controller("/v1")
+@Transactional
 public class AssessmentMasterDataController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataController.class);
 

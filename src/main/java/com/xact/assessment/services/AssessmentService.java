@@ -24,7 +24,6 @@ import static com.xact.assessment.models.AssessmentStatus.Completed;
 
 
 @Singleton
-@Transactional
 public class AssessmentService {
 
     private final UsersAssessmentsService usersAssessmentsService;

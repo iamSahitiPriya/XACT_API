@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class ParameterService {
     private final AssessmentParameterRepository assessmentParameterRepository;
 

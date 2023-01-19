@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class UserQuestionService {
     UserQuestionRepository userQuestionRepository;
     ParameterService parameterService;

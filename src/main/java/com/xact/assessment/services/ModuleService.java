@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 @Singleton
-@Transactional
 public class ModuleService {
     public final ModuleRepository moduleRepository;
 

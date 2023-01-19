@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class TopicAndParameterLevelAssessmentService {
 
     private final TopicLevelAssessmentRepository topicLevelAssessmentRepository;

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-@Transactional
 public class SpiderChartService implements ChartService {
     @SneakyThrows
     @Override

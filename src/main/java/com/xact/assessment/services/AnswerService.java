@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class AnswerService {
     private final AnswerRepository answerRepository;
     private final QuestionService questionService;

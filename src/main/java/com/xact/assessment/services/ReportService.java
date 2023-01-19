@@ -19,7 +19,6 @@ import static java.util.stream.Collectors.toSet;
 
 
 @Singleton
-@Transactional
 public class ReportService {
 
     private static final String BLANK_STRING = "";

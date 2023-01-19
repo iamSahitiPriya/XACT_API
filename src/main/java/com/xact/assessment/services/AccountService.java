@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
-@Transactional
 public class AccountService {
     private final AccountRepository accountRepository;
     private final ResourceFileUtil resourceFileUtil = new ResourceFileUtil();

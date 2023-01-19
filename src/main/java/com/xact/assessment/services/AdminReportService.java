@@ -14,7 +14,6 @@ import java.text.ParseException;
 import java.util.List;
 
 @Singleton
-@Transactional
 public class AdminReportService {
 
     public static final String FORMULA_STRING = "=-+@";

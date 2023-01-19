@@ -17,7 +17,6 @@ import static com.xact.assessment.constants.AppConstants.EMAIL;
 import static com.xact.assessment.constants.AppConstants.USER_ID;
 
 @Singleton
-@Transactional
 public class UserAuthService {
     private static final Logger LOG = LoggerFactory.getLogger(UserAuthService.class);
 

@@ -375,7 +375,9 @@ public class AssessmentController {
 
         }
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
+        userAssessmentCategoriesResponse.sort(null);
         userAssessmentResponse.setAssessmentCategories(assessmentCategoriesResponse);
+        userAssessmentCategoriesResponse.sort(null);
         userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
         return HttpResponse.ok(userAssessmentResponse);
     }

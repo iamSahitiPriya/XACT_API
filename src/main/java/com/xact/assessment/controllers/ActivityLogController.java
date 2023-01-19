@@ -35,7 +35,6 @@ public class ActivityLogController {
     @Get(value = "/assessment/{assessmentId}/topic/{topicId}/activity", produces = MediaType.TEXT_EVENT_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public Flux<Event<List<ActivityResponse>>> getActivityLogs(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, Authentication authentication){
-        System.out.println("hello");
         Assessment assessment = activityLogService.getAssessment(assessmentId);
         AssessmentTopic assessmentTopic = activityLogService.getTopic(topicId);
         return Flux.interval(Duration.ofSeconds(1), Duration.ofSeconds(5)).map(sequence -> Event.of(activityLogService.getLatestActivityRecords(assessment,assessmentTopic,authentication)));

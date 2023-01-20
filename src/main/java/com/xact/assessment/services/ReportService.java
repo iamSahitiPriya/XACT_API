@@ -83,7 +83,7 @@ public class ReportService {
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
         List<AssessmentCategory> assessmentCategories = categoryRepository.findAll();
         for (AssessmentCategory assessmentCategory : assessmentCategories) {
-            fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData,assessment);
+            fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData, assessment);
         }
         return assessmentCategories;
 
@@ -504,25 +504,32 @@ public class ReportService {
 
     private void fillInMaturityScore(AssessmentCategory assessmentCategory, List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments, Assessment assessment) {
         for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
-            if (assessmentModule.getIsActive() && assessmentMasterDataService.isModuleSelectedByUser(assessment,assessmentModule)) {
+            if (assessmentModule.getIsActive() && assessmentMasterDataService.isModuleSelectedByUser(assessment, assessmentModule)) {
                 for (AssessmentTopic assessmentTopic : assessmentModule.getActiveTopics()) {
                     if (assessmentTopic.hasReferences()) {
-                        for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
-                            if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(assessmentTopic.getTopicId())) {
-                                assessmentTopic.setRating(topicLevelAssessment.getRating());
-                            }
-                        }
+                        setTopicRating(topicLevelAssessments, assessmentTopic);
                     } else {
                         for (AssessmentParameter assessmentParameter : assessmentTopic.getActiveParameters()) {
-                            for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {
-                                if (parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(assessmentParameter.getParameterId())) {
-                                    assessmentParameter.setRating(parameterLevelAssessment.getRating());
-                                }
-                            }
-
+                            setParameterRating(parameterLevelAssessments, assessmentParameter);
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private void setParameterRating(List<ParameterLevelAssessment> parameterLevelAssessments, AssessmentParameter assessmentParameter) {
+        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {
+            if (parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(assessmentParameter.getParameterId())) {
+                assessmentParameter.setRating(parameterLevelAssessment.getRating());
+            }
+        }
+    }
+
+    private void setTopicRating(List<TopicLevelAssessment> topicLevelAssessments, AssessmentTopic assessmentTopic) {
+        for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
+            if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(assessmentTopic.getTopicId())) {
+                assessmentTopic.setRating(topicLevelAssessment.getRating());
             }
         }
     }
@@ -534,8 +541,8 @@ public class ReportService {
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
 
 
-        Integer totalModule = moduleService.getAssessedModule(topicLevelAssessmentList,parameterLevelAssessmentList);
-        Integer totalCategory = assessmentMasterDataService.getAssessedCategory(topicLevelAssessmentList,parameterLevelAssessmentList);
+        Integer totalModule = moduleService.getAssessedModule(topicLevelAssessmentList, parameterLevelAssessmentList);
+        Integer totalCategory = assessmentMasterDataService.getAssessedCategory(topicLevelAssessmentList, parameterLevelAssessmentList);
         SummaryResponse summaryResponse = new SummaryResponse();
         summaryResponse.setCategoryAssessed(totalCategory);
         summaryResponse.setModuleAssessed(totalModule);

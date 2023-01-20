@@ -62,6 +62,13 @@ email:
   fromEmail: "project-xact@thoughtworks.net"
   name: "X-ACT Support"
 
+cleanup:
+  initialDelay: "1m"
+  notification:
+    fixedDelay: "60d"
+  activityLog:
+    fixedDelay: "1d"
+
 flyway:
   datasources:
     default:

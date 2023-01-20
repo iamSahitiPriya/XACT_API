@@ -13,11 +13,9 @@ import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 @Singleton
-@Transactional
 public class AssessmentMasterDataService {
 
     private final CategoryRepository categoryRepository;

@@ -54,22 +54,9 @@ public class AnswerService {
     }
 
     public List<Answer> getAnswers(Integer assessmentId) {
-        List<Answer> answers=answerRepository.findByAssessment(assessmentId);
-        List<Answer> activeAnswers=new ArrayList<>();
-        for(Answer answer:answers){
-            if(checkActiveStatusOnAllLevels(answer)){
-                activeAnswers.add(answer);
-            }
-        }
-        return activeAnswers;
+        return answerRepository.findByAssessment(assessmentId);
     }
 
-    private boolean checkActiveStatusOnAllLevels(Answer answer) {
-        return answer.getAnswerId().getQuestion().getParameter().getTopic().getModule().getCategory().getIsActive()
-                && answer.getAnswerId().getQuestion().getParameter().getTopic().getModule().getIsActive()
-                && answer.getAnswerId().getQuestion().getParameter().getTopic().getIsActive()
-                && answer.getAnswerId().getQuestion().getParameter().getIsActive();
-    }
 
     public Optional<Answer> getAnswer(AnswerId answerId) {
         return answerRepository.findById(answerId);

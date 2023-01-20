@@ -128,7 +128,7 @@ class UserQuestionServiceTest {
         userQuestion.setAssessment(assessment);
         userQuestion.setAnswer("answer");
 
-        when(userQuestionRepository.findByAssessmentActiveFields(1)).thenReturn(Collections.singletonList(userQuestion));
+        when(userQuestionRepository.findByAssessmentId(1)).thenReturn(Collections.singletonList(userQuestion));
 
         List<UserQuestion> userQuestionList= userQuestionService.findAllUserQuestion(assessment.getAssessmentId());
 

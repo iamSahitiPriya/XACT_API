@@ -431,6 +431,7 @@ class AssessmentMasterDataServiceTest {
         AssessmentCategory category = new AssessmentCategory();
         category.setCategoryId(1);
         category.setCategoryName("category1");
+        category.setActive(true);
         List<AssessmentModule> assessmentModules = new ArrayList<>();
         AssessmentModule module = new AssessmentModule();
         module.setActive(true);
@@ -440,6 +441,17 @@ class AssessmentMasterDataServiceTest {
         Set<AssessmentModule> validModules = Collections.singleton(module);
         category.setModules(validModules);
         assessmentModules.add(module);
+        AssessmentTopic assessmentTopic=new AssessmentTopic(1,"topicName",module,true,"");
+        Set<AssessmentTopic> validTopics = Collections.singleton(assessmentTopic);
+        AssessmentParameter assessmentParameter=new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("parameterName");
+        assessmentParameter.setActive(true);
+        assessmentParameter.setTopic(assessmentTopic);
+        Set<AssessmentParameter> validParameters = Collections.singleton(assessmentParameter);
+        module.setTopics(validTopics);
+        assessmentTopic.setParameters(validParameters);
+
         when(userAssessmentModuleRepository.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules);
 
         List<AssessmentCategory> actualAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
@@ -467,6 +479,16 @@ class AssessmentMasterDataServiceTest {
         assessmentModuleSet.add(assessmentModule1);
         assessmentCategory.setModules(assessmentModuleSet);
         assessmentModules1.add(assessmentModule1);
+        AssessmentTopic assessmentTopic=new AssessmentTopic(1,"topicName",assessmentModule1,true,"");
+        Set<AssessmentTopic> validTopics = Collections.singleton(assessmentTopic);
+        AssessmentParameter assessmentParameter=new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("parameterName");
+        assessmentParameter.setActive(true);
+        assessmentParameter.setTopic(assessmentTopic);
+        Set<AssessmentParameter> validParameters = Collections.singleton(assessmentParameter);
+        assessmentModule1.setTopics(validTopics);
+        assessmentTopic.setParameters(validParameters);
 
 
         when(userAssessmentModuleRepository.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules1);

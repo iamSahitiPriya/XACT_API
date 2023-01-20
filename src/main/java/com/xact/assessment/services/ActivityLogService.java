@@ -49,11 +49,11 @@ public class ActivityLogService {
     public List<ActivityResponse> getLatestActivityRecords(Assessment assessment, AssessmentTopic assessmentTopic, Authentication authentication) {
         String loggedInUser = userAuthService.getLoggedInUser(authentication).getUserEmail();
         List<ActivityLog> activityLogs = new ArrayList<>();
-        Date timeStart = new Date();
-        timeStart.setTime(timeStart.getTime() - EXPIRY_TIME);
-        Date timeEnd = new Date();
+        Date startTime = new Date();
+        startTime.setTime(startTime.getTime() - EXPIRY_TIME);
+        Date endTime = new Date();
         try {
-             activityLogs = activityLogRepository.getLatestRecords(timeStart, timeEnd, assessment, assessmentTopic, loggedInUser);
+             activityLogs = activityLogRepository.getLatestRecords(startTime, endTime, assessment, assessmentTopic, loggedInUser);
         }catch (EmptyResultException e) {
             LOGGER.error("No activity found for this assessment {}",assessment.getAssessmentId());
         }

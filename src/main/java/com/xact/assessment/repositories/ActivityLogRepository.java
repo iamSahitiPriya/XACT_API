@@ -16,6 +16,6 @@ import java.util.List;
 public interface ActivityLogRepository extends CrudRepository<ActivityLog, ActivityId> {
 
     @Executable
-    @Query("SELECT al from ActivityLog al where al.topic=:topic and al.activityId.assessment=:assessment and al.updatedAt between :pastDate  and  :currentDate and al.activityId.userName not like :loggedInUser")
-    List<ActivityLog> getLatestRecords(Date pastDate, Date currentDate, Assessment assessment, AssessmentTopic topic, String loggedInUser);
+    @Query("SELECT al from ActivityLog al where al.topic=:topic and al.activityId.assessment=:assessment and al.updatedAt between :startTime  and  :endTime and al.activityId.userName not like :loggedInUser")
+    List<ActivityLog> getLatestRecords(Date startTime, Date endTime, Assessment assessment, AssessmentTopic topic, String loggedInUser);
 }

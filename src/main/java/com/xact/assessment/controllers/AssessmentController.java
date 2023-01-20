@@ -228,8 +228,7 @@ public class AssessmentController {
                 parameterLevelRecommendationResponse.setRecommendationId(null);
             }
             ParameterLevelRecommendation finalParameterLevelRecommendation = parameterLevelRecommendation;
-            ParameterLevelRecommendation finalParameterLevelRecommendation1 = parameterLevelRecommendation;
-            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation1.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
 
         }
         return HttpResponse.ok(parameterLevelRecommendationResponse);

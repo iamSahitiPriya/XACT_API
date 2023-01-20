@@ -1,20 +1,15 @@
 package integration;
 
-import com.xact.assessment.dtos.ActivityType;
-import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ActivityLogRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
-import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
-import java.util.Date;
 
 @MicronautTest
 public class ActivityLogControllerTest {

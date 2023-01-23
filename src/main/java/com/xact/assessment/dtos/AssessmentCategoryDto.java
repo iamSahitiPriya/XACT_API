@@ -25,8 +25,8 @@ public class AssessmentCategoryDto implements Comparable<AssessmentCategoryDto> 
 
 
     @Override
-    public int compareTo(AssessmentCategoryDto o) {
-        return categoryId - o.categoryId;
+    public int compareTo(AssessmentCategoryDto assessmentCategoryDto) {
+        return categoryId - assessmentCategoryDto.categoryId;
     }
 }
 

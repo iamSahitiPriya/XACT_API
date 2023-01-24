@@ -6,10 +6,7 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ActivityResponse;
 import com.xact.assessment.dtos.ActivityType;
-import com.xact.assessment.models.ActivityId;
-import com.xact.assessment.models.ActivityLog;
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentTopic;
+import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ActivityLogRepository;
 import io.micronaut.data.exceptions.EmptyResultException;
 import io.micronaut.security.authentication.Authentication;
@@ -46,8 +43,8 @@ public class ActivityLogService {
         return topicService.getTopicById(topicId);
     }
 
-    public List<ActivityResponse> getLatestActivityRecords(Assessment assessment, AssessmentTopic assessmentTopic, Authentication authentication) {
-        String loggedInUser = userAuthService.getLoggedInUser(authentication).getUserEmail();
+    public List<ActivityResponse> getLatestActivityRecords(Assessment assessment, AssessmentTopic assessmentTopic, User user) {
+        String loggedInUser = user.getUserEmail();
         List<ActivityLog> activityLogs = new ArrayList<>();
         Date startTime = new Date();
         startTime.setTime(startTime.getTime() - EXPIRY_TIME);
@@ -55,7 +52,7 @@ public class ActivityLogService {
         try {
              activityLogs = activityLogRepository.getLatestRecords(startTime, endTime, assessment, assessmentTopic, loggedInUser);
         }catch (EmptyResultException e) {
-            LOGGER.error("No activity found for this assessment {}",assessment.getAssessmentId());
+            LOGGER.error("No activity found for this assessment {} and topic {}",assessment.getAssessmentId(), assessmentTopic.getTopicId());
         }
         return getActivityResponses(activityLogs);
     }
@@ -65,13 +62,13 @@ public class ActivityLogService {
         for (ActivityLog activityLog: activityLogs) {
             ActivityResponse activityResponse = mapper.map(activityLog, ActivityResponse.class);
             activityResponse.setUserName(activityLog.getActivityId().getUserName());
-            activityResponse.setInputText(setInputText(activityLog));
+            activityResponse.setInputText(getInputText(activityLog));
             activityResponses.add(activityResponse);
         }
         return activityResponses;
     }
 
-    private String setInputText(ActivityLog activityLog) {
+    private String getInputText(ActivityLog activityLog) {
         return switch (activityLog.getActivityType()) {
             case DEFAULT_QUESTION->
                     answerService.getAnswerByQuestionId(activityLog.getActivityId().getAssessment().getAssessmentId(), activityLog.getIdentifier());
@@ -82,8 +79,8 @@ public class ActivityLogService {
         };
     }
 
-    public ActivityLog saveActivityLog(Assessment assessment, Authentication authentication, Integer identifier, AssessmentTopic assessmentTopic, ActivityType type) {
-        String loggedInUser = userAuthService.getLoggedInUser(authentication).getUserEmail();
+    public ActivityLog saveActivityLog(Assessment assessment, User user, Integer identifier, AssessmentTopic assessmentTopic, ActivityType type) {
+        String loggedInUser = user.getUserEmail();
         ActivityId activityId  = new ActivityId(assessment,loggedInUser);
         ActivityLog activityLog = new ActivityLog();
         activityLog.setActivityType(type);

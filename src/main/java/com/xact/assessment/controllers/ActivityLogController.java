@@ -7,7 +7,9 @@ package com.xact.assessment.controllers;
 import com.xact.assessment.dtos.ActivityResponse;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentTopic;
+import com.xact.assessment.models.User;
 import com.xact.assessment.services.ActivityLogService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
@@ -33,14 +35,16 @@ public class ActivityLogController {
     public static final int PERIOD = 5    ;
     public static final int DELAY = 1;
     private final ActivityLogService activityLogService;
+    private final UserAuthService userAuthService;
 
-    @Get(value = "/assessment/{assessmentId}/topic/{topicId}/activity", produces = MediaType.TEXT_EVENT_STREAM)
+    @Get(value = "/assessments/{assessmentId}/topics/{topicId}/activity", produces = MediaType.TEXT_EVENT_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public Flux<Event<List<ActivityResponse>>> getActivityLogs(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, Authentication authentication){
         LOGGER.info("Fetching Activity for assessment:{} and topic{}",assessmentId, topicId);
+        User user = userAuthService.getLoggedInUser(authentication);
         Assessment assessment = activityLogService.getAssessment(assessmentId);
         AssessmentTopic assessmentTopic = activityLogService.getTopic(topicId);
-        return Flux.interval(Duration.ofSeconds(DELAY), Duration.ofSeconds(PERIOD)).map(sequence -> Event.of(activityLogService.getLatestActivityRecords(assessment,assessmentTopic,authentication)));
+        return Flux.interval(Duration.ofSeconds(DELAY), Duration.ofSeconds(PERIOD)).map(sequence -> Event.of(activityLogService.getLatestActivityRecords(assessment,assessmentTopic,user)));
     }
 
 

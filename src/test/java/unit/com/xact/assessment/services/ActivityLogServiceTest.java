@@ -51,7 +51,7 @@ class ActivityLogServiceTest {
         activityLog.setActivityId(activityId);
 
 
-        activityLogService.saveActivityLog(assessment,authentication,1,assessmentTopic, ActivityType.ADDITIONAL_QUESTION);
+        activityLogService.saveActivityLog(assessment,user,1,assessmentTopic, ActivityType.ADDITIONAL_QUESTION);
 
         verify(activityLogRepository).update(activityLog);
     }
@@ -94,7 +94,7 @@ class ActivityLogServiceTest {
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         when(activityLogRepository.getLatestRecords(any(Date.class),any(Date.class),eq(assessment),eq(assessmentTopic),eq(loggedInUser))).thenReturn(activityLogs);
 
-        List<ActivityResponse> activityResponseList = activityLogService.getLatestActivityRecords(assessment,assessmentTopic,authentication);
+        List<ActivityResponse> activityResponseList = activityLogService.getLatestActivityRecords(assessment,assessmentTopic,user);
 
         assertEquals(3,activityResponseList.size());
     }
@@ -120,7 +120,7 @@ class ActivityLogServiceTest {
         activityLog.setActivityId(activityId);
 
 
-        activityLogService.saveActivityLog(assessment,authentication,1,assessmentTopic, ActivityType.ADDITIONAL_QUESTION);
+        activityLogService.saveActivityLog(assessment,user,1,assessmentTopic, ActivityType.ADDITIONAL_QUESTION);
 
         verify(activityLogRepository).save(activityLog);
     }
@@ -138,7 +138,7 @@ class ActivityLogServiceTest {
         when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
         when(activityLogRepository.getLatestRecords(any(Date.class),any(Date.class),eq(assessment),eq(assessmentTopic),eq(loggedInUser))).thenThrow(EmptyResultException.class);
 
-        List<ActivityResponse> activityResponseList = activityLogService.getLatestActivityRecords(assessment,assessmentTopic,authentication);
+        List<ActivityResponse> activityResponseList = activityLogService.getLatestActivityRecords(assessment,assessmentTopic,user);
 
         assertEquals(0,activityResponseList.size());
     }

@@ -209,6 +209,7 @@ public class AssessmentController {
         ParameterLevelRecommendationResponse parameterLevelRecommendationResponse = new ParameterLevelRecommendationResponse();
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
         parameterLevelRecommendation.setAssessment(assessment);
+        User user = userAuthService.getLoggedInUser(authentication);
         parameterLevelRecommendation.setParameter(assessmentParameter);
         if (assessment.isEditable()) {
             if (parameterLevelRecommendationRequest.getRecommendationId() != null) {
@@ -228,7 +229,7 @@ public class AssessmentController {
                 parameterLevelRecommendationResponse.setRecommendationId(null);
             }
             ParameterLevelRecommendation finalParameterLevelRecommendation = parameterLevelRecommendation;
-            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
 
         }
         return HttpResponse.ok(parameterLevelRecommendationResponse);
@@ -244,6 +245,7 @@ public class AssessmentController {
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
+        User user = userAuthService.getLoggedInUser(authentication);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         if (assessment.isEditable()) {
@@ -264,7 +266,7 @@ public class AssessmentController {
                 topicLevelRecommendationResponse.setRecommendationId(null);
             }
             TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
-            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
 
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
@@ -430,6 +432,7 @@ public class AssessmentController {
         LOGGER.info("Update individual user added answer. assessment: {}, question:{}", assessmentId, questionId);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        User user = userAuthService.getLoggedInUser(authentication);
         AssessmentTopic assessmentTopic = null;
         if (assessment.isEditable() && answerRequest != null) {
             if (answerRequest.getType() == AnswerType.DEFAULT) {
@@ -440,8 +443,8 @@ public class AssessmentController {
                 userQuestionService.saveUserAnswer(questionId, answerRequest.getAnswer());
                 assessmentTopic = userQuestionService.getTopicByQuestionId(questionId);
             }
-            AssessmentTopic finalAssessmentTopic = assessmentTopic;
-            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,authentication,questionId, finalAssessmentTopic, ActivityType.valueOf(answerRequest.getType() + "_QUESTION")));
+            final AssessmentTopic finalAssessmentTopic = assessmentTopic;
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user,questionId, finalAssessmentTopic, ActivityType.valueOf(answerRequest.getType() + "_QUESTION")));
             updateAssessment(assessment);
         }
         return HttpResponse.ok();

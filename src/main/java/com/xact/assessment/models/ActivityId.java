@@ -16,7 +16,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Embeddable
 public class ActivityId implements Serializable {
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @MapsId
     @JoinColumn(name = "assessment")
     private Assessment assessment;

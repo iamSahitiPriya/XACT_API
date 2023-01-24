@@ -176,7 +176,7 @@ class ReportControllerTest {
         assessmentParameter.setReferences(Set.of(assessmentParameterReference));
         assessmentParameter.setRating(5);
 
-        when(reportService.generateSunburstData(assessment.getAssessmentId())).thenReturn(assessmentCategories);
+        when(reportService.generateSunburstData(assessment)).thenReturn(assessmentCategories);
 
         MutableHttpResponse<ReportDataResponse>  actualResponse = reportController.getAssessmentReportData(assessmentId,authentication);
         MutableHttpResponse<ReportDataResponse> expectedResponse = HttpResponse.ok();

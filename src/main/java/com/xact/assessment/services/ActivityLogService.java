@@ -73,7 +73,7 @@ public class ActivityLogService {
             case DEFAULT_QUESTION->
                     answerService.getAnswerByQuestionId(activityLog.getActivityId().getAssessment().getAssessmentId(), activityLog.getIdentifier());
             case ADDITIONAL_QUESTION->
-                    userQuestionService.getAnswerByQuestionId(activityLog.getActivityId().getAssessment().getAssessmentId(), activityLog.getIdentifier());
+                    userQuestionService.getAnswerByQuestionId(activityLog.getIdentifier());
             case TOPIC_RECOMMENDATION, PARAMETER_RECOMMENDATION ->
                     topicAndParameterLevelAssessmentService.getRecommendationById(activityLog.getIdentifier(), activityLog.getActivityType());
         };

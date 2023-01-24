@@ -71,7 +71,7 @@ public class UserQuestionService {
         return userQuestion;
     }
 
-    public String getAnswerByQuestionId(Integer assessmentId, Integer questionId) {
+    public String getAnswerByQuestionId(Integer questionId) {
         return userQuestionRepository.findById(questionId).orElseThrow().getAnswer();
     }
 

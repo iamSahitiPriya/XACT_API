@@ -11,12 +11,10 @@ import lombok.SneakyThrows;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 
 @Singleton
-@Transactional
 public class SpiderChartService implements ChartService {
     @SneakyThrows
     @Override

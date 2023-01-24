@@ -8,12 +8,10 @@ import com.xact.assessment.models.AssessmentParameter;
 import com.xact.assessment.repositories.AssessmentParameterRepository;
 import jakarta.inject.Singleton;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Singleton
-@Transactional
 public class ParameterService {
     private final AssessmentParameterRepository assessmentParameterRepository;
 

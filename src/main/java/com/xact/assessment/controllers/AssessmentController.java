@@ -357,24 +357,27 @@ public class AssessmentController {
             assessmentService.softDeleteAssessment(assessment);
     }
 
+    @Transactional
     @Get(value = "{assessmentId}/categories/all", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    @Transactional
     public HttpResponse<UserAssessmentResponse> getCategories(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get all category & assessment master data");
+        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
+        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(assessmentCategories)) {
+            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
+        }
+
         List<AssessmentCategory> userAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(userAssessmentCategories)) {
             userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
 
         }
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
-        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(assessmentCategories)) {
-            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
-        }
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
+        userAssessmentCategoriesResponse.sort(null);
         userAssessmentResponse.setAssessmentCategories(assessmentCategoriesResponse);
+        userAssessmentCategoriesResponse.sort(null);
         userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
         return HttpResponse.ok(userAssessmentResponse);
     }
@@ -390,6 +393,7 @@ public class AssessmentController {
             userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapAssessmentCategory(assessmentCategory)));
         }
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
+        userAssessmentCategoriesResponse.sort(null);
         userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
         return HttpResponse.ok(userAssessmentResponse);
     }

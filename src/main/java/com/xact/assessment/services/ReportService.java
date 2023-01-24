@@ -76,12 +76,12 @@ public class ReportService {
         return selectedModules;
     }
 
-    public List<AssessmentCategory> generateSunburstData(Integer assessmentId) {
-        List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
-        List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+    public List<AssessmentCategory> generateSunburstData(Assessment assessment) {
+        List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId());
+        List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
         List<AssessmentCategory> assessmentCategories = categoryRepository.findAll();
         for (AssessmentCategory assessmentCategory : assessmentCategories) {
-            fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData);
+            fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData, assessment);
         }
         return assessmentCategories;
 
@@ -203,7 +203,7 @@ public class ReportService {
         Map<String, List<CategoryMaturity>> dataSet = new HashMap<>();
         List<CategoryMaturity> listOfCurrentScores = new ArrayList<>();
         for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
-            fillInMaturityScore(assessmentCategory, topicLevelAssessments, parameterLevelAssessments);
+            fillInMaturityScore(assessmentCategory, topicLevelAssessments, parameterLevelAssessments, assessment);
             CategoryMaturity categoryMaturity = new CategoryMaturity();
             double avgCategoryScore = assessmentCategory.getCategoryAverage();
             categoryMaturity.setCategory(assessmentCategory.getCategoryName());
@@ -500,25 +500,34 @@ public class ReportService {
     }
 
 
-    private void fillInMaturityScore(AssessmentCategory assessmentCategory, List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments) {
+    private void fillInMaturityScore(AssessmentCategory assessmentCategory, List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments, Assessment assessment) {
         for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
-            for (AssessmentTopic assessmentTopic : assessmentModule.getActiveTopics()) {
-                if (assessmentTopic.hasReferences()) {
-                    for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
-                        if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(assessmentTopic.getTopicId())) {
-                            assessmentTopic.setRating(topicLevelAssessment.getRating());
+            if (assessmentModule.getIsActive() && assessmentMasterDataService.isModuleSelectedByUser(assessment, assessmentModule)) {
+                for (AssessmentTopic assessmentTopic : assessmentModule.getActiveTopics()) {
+                    if (assessmentTopic.hasReferences()) {
+                        setTopicRating(topicLevelAssessments, assessmentTopic);
+                    } else {
+                        for (AssessmentParameter assessmentParameter : assessmentTopic.getActiveParameters()) {
+                            setParameterRating(parameterLevelAssessments, assessmentParameter);
                         }
-                    }
-                } else {
-                    for (AssessmentParameter assessmentParameter : assessmentTopic.getActiveParameters()) {
-                        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {
-                            if (parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(assessmentParameter.getParameterId())) {
-                                assessmentParameter.setRating(parameterLevelAssessment.getRating());
-                            }
-                        }
-
                     }
                 }
+            }
+        }
+    }
+
+    private void setParameterRating(List<ParameterLevelAssessment> parameterLevelAssessments, AssessmentParameter assessmentParameter) {
+        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessments) {
+            if (parameterLevelAssessment.getParameterLevelId().getParameter().getParameterId().equals(assessmentParameter.getParameterId())) {
+                assessmentParameter.setRating(parameterLevelAssessment.getRating());
+            }
+        }
+    }
+
+    private void setTopicRating(List<TopicLevelAssessment> topicLevelAssessments, AssessmentTopic assessmentTopic) {
+        for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessments) {
+            if (topicLevelAssessment.getTopicLevelId().getTopic().getTopicId().equals(assessmentTopic.getTopicId())) {
+                assessmentTopic.setRating(topicLevelAssessment.getRating());
             }
         }
     }
@@ -530,8 +539,8 @@ public class ReportService {
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
 
 
-        Integer totalModule = moduleService.getAssessedModule(topicLevelAssessmentList,parameterLevelAssessmentList);
-        Integer totalCategory = assessmentMasterDataService.getAssessedCategory(topicLevelAssessmentList,parameterLevelAssessmentList);
+        Integer totalModule = moduleService.getAssessedModule(topicLevelAssessmentList, parameterLevelAssessmentList);
+        Integer totalCategory = assessmentMasterDataService.getAssessedCategory(topicLevelAssessmentList, parameterLevelAssessmentList);
         SummaryResponse summaryResponse = new SummaryResponse();
         summaryResponse.setCategoryAssessed(totalCategory);
         summaryResponse.setModuleAssessed(totalModule);

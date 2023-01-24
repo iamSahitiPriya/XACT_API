@@ -37,7 +37,7 @@ public class ActivityLogController {
     private final ActivityLogService activityLogService;
     private final UserAuthService userAuthService;
 
-    @Get(value = "/assessments/{assessmentId}/topics/{topicId}/activity", produces = MediaType.TEXT_EVENT_STREAM)
+    @Get(value = "/assessments/{assessmentId}/topics/{topicId}/activities", produces = MediaType.TEXT_EVENT_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public Flux<Event<List<ActivityResponse>>> getActivityLogs(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, Authentication authentication){
         LOGGER.info("Fetching Activity for assessment:{} and topic{}",assessmentId, topicId);

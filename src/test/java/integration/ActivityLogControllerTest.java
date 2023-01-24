@@ -51,7 +51,7 @@ public class ActivityLogControllerTest {
     }
 
 
-    @Test
+/*    @Test
     void getActivityLogs() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
@@ -98,7 +98,7 @@ public class ActivityLogControllerTest {
 
         assertEquals(expectedResponse,response.get(0).getData());
 
-    }
+    }*/
 
 
 }

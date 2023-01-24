@@ -34,7 +34,6 @@ datasources:
     dialect: POSTGRES
     #    schema-generate: CREATE_DROP
     schema: test_schema_v1
-    auto-commit: true
 
 email:
   notificationEnabled : false

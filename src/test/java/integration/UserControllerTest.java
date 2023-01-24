@@ -80,6 +80,7 @@ class UserControllerTest {
         usersAssessmentsRepository.save(assessmentUser);
         entityManager.getTransaction().commit();
         entityManager.clear();
+        entityManager.close();
 
 
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-user-role-response.json");

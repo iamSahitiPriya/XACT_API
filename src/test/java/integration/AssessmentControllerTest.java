@@ -81,11 +81,14 @@ class AssessmentControllerTest {
         answerRepository.deleteAll();
         parameterLevelAssessmentRepository.deleteAll();
         topicLevelAssessmentRepository.deleteAll();
+        activityLogRepository.deleteAll();
         parameterLevelRecommendationRepository.deleteAll();
         topicLevelRecommendationRepository.deleteAll();
         userQuestionRepository.deleteAll();
         usersAssessmentsRepository.deleteAll();
         assessmentRepository.deleteAll();
+        activityLogRepository.deleteAll();
+
     }
 
     @Test

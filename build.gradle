@@ -71,12 +71,6 @@ dependencies {
 
 test {
     useJUnitPlatform()
-    maxParallelForks = 1
-}
-subprojects {
-    tasks.withType(Test) {
-        maxParallelForks = 1
-    }
 }
 
 

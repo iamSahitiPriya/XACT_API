@@ -8,7 +8,6 @@ import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
 import jakarta.inject.Singleton;
 
-import java.util.List;
 import java.util.Optional;
 
 @Singleton
@@ -30,11 +29,9 @@ public class TopicService {
         assessmentTopicRepository.update(topic);
     }
 
-    public List<AssessmentTopic> getAllTopics() {
-        return (List<AssessmentTopic>) assessmentTopicRepository.findAll();
+    public AssessmentTopic getTopicById(Integer topicId){
+        return assessmentTopicRepository.findByTopicId(topicId);
     }
-
-    public List<AssessmentTopic> getTopics() { return assessmentTopicRepository.listOrderByUpdatedAtDesc();}
 
 
 

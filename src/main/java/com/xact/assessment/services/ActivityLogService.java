@@ -9,7 +9,6 @@ import com.xact.assessment.dtos.ActivityType;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ActivityLogRepository;
 import io.micronaut.data.exceptions.EmptyResultException;
-import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;

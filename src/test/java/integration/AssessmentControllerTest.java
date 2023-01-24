@@ -75,19 +75,18 @@ class AssessmentControllerTest {
 
 
     @AfterEach
-    public void afterEach() {
-        activityLogRepository.deleteAll();
+    public void afterEach() throws InterruptedException {
+        Thread.sleep(1000);
         accessControlRepository.deleteAll();
         answerRepository.deleteAll();
         parameterLevelAssessmentRepository.deleteAll();
         topicLevelAssessmentRepository.deleteAll();
-        activityLogRepository.deleteAll();
         parameterLevelRecommendationRepository.deleteAll();
         topicLevelRecommendationRepository.deleteAll();
         userQuestionRepository.deleteAll();
         usersAssessmentsRepository.deleteAll();
-        assessmentRepository.deleteAll();
         activityLogRepository.deleteAll();
+        assessmentRepository.deleteAll();
 
     }
 

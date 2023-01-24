@@ -73,6 +73,7 @@ class AdminControllerTest {
     @AfterEach
     public void afterEach() {
         accessControlRepository.deleteAll();
+        entityManager.flush();
     }
 
 

@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.models.Question;
 import com.xact.assessment.repositories.QuestionRepository;
 import jakarta.inject.Singleton;
@@ -33,4 +34,7 @@ public class QuestionService {
         return (List<Question>) questionRepository.findAll();
     }
 
+    public AssessmentTopic getTopicByQuestionId(Integer questionId) {
+        return getQuestion(questionId).orElseThrow().getParameter().getTopic();
+    }
 }

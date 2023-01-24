@@ -68,11 +68,15 @@ class AssessmentControllerTest {
     UserQuestionRepository userQuestionRepository;
 
     @Inject
+    ActivityLogRepository activityLogRepository;
+
+    @Inject
     EntityManager entityManager;
 
 
     @AfterEach
     public void afterEach() {
+        activityLogRepository.deleteAll();
         usersAssessmentsRepository.deleteAll();
         accessControlRepository.deleteAll();
         answerRepository.deleteAll();
@@ -80,10 +84,9 @@ class AssessmentControllerTest {
         topicLevelAssessmentRepository.deleteAll();
         parameterLevelRecommendationRepository.deleteAll();
         topicLevelRecommendationRepository.deleteAll();
+        activityLogRepository.deleteAll();
         assessmentRepository.deleteAll();
         userQuestionRepository.deleteAll();
-
-
     }
 
     @Test

@@ -4,8 +4,6 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
-import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.UsersAssessmentsService;
 import com.xact.assessment.utils.ResourceFileUtil;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
@@ -37,12 +35,6 @@ class UserControllerTest {
     AccessControlRepository accessControlRepository;
 
     @Inject
-    UsersAssessmentsService usersAssessmentsService;
-
-    @Inject
-    AssessmentService assessmentService;
-
-    @Inject
     EntityManager entityManager;
 
 
@@ -50,9 +42,9 @@ class UserControllerTest {
 
     @AfterEach
     public void afterEach() {
+        accessControlRepository.deleteAll();
         usersAssessmentsRepository.deleteAll();
         assessmentRepository.deleteAll();
-        accessControlRepository.deleteAll();
     }
 
     @Test

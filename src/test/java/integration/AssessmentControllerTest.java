@@ -76,17 +76,16 @@ class AssessmentControllerTest {
 
     @AfterEach
     public void afterEach() {
-        activityLogRepository.deleteAll();
-        usersAssessmentsRepository.deleteAll();
         accessControlRepository.deleteAll();
         answerRepository.deleteAll();
         parameterLevelAssessmentRepository.deleteAll();
         topicLevelAssessmentRepository.deleteAll();
         parameterLevelRecommendationRepository.deleteAll();
         topicLevelRecommendationRepository.deleteAll();
-        activityLogRepository.deleteAll();
-        assessmentRepository.deleteAll();
         userQuestionRepository.deleteAll();
+        activityLogRepository.deleteAll();
+        usersAssessmentsRepository.deleteAll();
+        assessmentRepository.deleteAll();
     }
 
     @Test

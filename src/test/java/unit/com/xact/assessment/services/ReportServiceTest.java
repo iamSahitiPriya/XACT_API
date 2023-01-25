@@ -94,7 +94,7 @@ class ReportServiceTest {
         userQuestion.setQuestionId(1);
         userQuestion.setQuestion("question?");
         userQuestion.setAnswer("answer");
-        when(userQuestionService.findAllUserQuestion(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
+        when(userQuestionService.findByAssessmentAndAnswer(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
 
         List<ParameterLevelAssessment> parameterAssessments = new ArrayList<>();
         List<TopicLevelAssessment> topicAssessments = new ArrayList<>();

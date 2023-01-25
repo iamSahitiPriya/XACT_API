@@ -32,7 +32,7 @@ import java.util.List;
 @Singleton
 public class ActivityLogController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivityLogController.class);
-    public static final int PERIOD = 5    ;
+    public static final int PERIOD = 5;
     public static final int DELAY = 1;
     private final ActivityLogService activityLogService;
     private final UserAuthService userAuthService;

@@ -21,16 +21,13 @@ import javax.validation.constraints.NotNull;
 @Table(name = "tbl_users")
 public class UserInfo {
 
-    @NotNull
     @Column(name = "email", nullable = false, unique = true)
     @Id
     private String email;
 
-    @NotNull
     @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @NotNull
     @Column(name = "last_name", nullable = false)
     private String lastName;
 

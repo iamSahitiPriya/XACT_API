@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @Controller("/v1/users")
 public class UserController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccountController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     private final AssessmentService assessmentService;
     private final UserAuthService userAuthService;

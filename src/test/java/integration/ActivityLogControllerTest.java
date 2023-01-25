@@ -43,6 +43,9 @@ class ActivityLogControllerTest {
     @Inject
     UserQuestionRepository userQuestionRepository;
 
+    @Inject
+    UserRepository userRepository;
+
     @AfterEach
     void afterEach() {
         userQuestionRepository.deleteAll();
@@ -79,7 +82,9 @@ class ActivityLogControllerTest {
         activityLog.setActivityId(new ActivityId(assessment, "123" + userEmail));
         activityLog.setActivityType(ActivityType.ADDITIONAL_QUESTION);
         activityLog.setTopic(assessmentTopic);
+        UserInfo userInfo= new UserInfo("123" + userEmail,"firstName","lastname","en_US");
 
+        userRepository.save(userInfo);
         assessmentRepository.save(assessment);
         userQuestionRepository.save(userQuestion);
 
@@ -91,7 +96,7 @@ class ActivityLogControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String expectedResponse = "[{\"identifier\":" + userQuestion.getQuestionId() + ",\"activityType\":\"ADDITIONAL_QUESTION\",\"firstName\":\"123dummy@test.com\",\"email\":\"123dummy@test.com\",\"inputText\":\"Hello\"}]";
+        String expectedResponse = "[{\"identifier\":" + userQuestion.getQuestionId() + ",\"activityType\":\"ADDITIONAL_QUESTION\",\"firstName\":\"firstName\",\"email\":\"123dummy@test.com\",\"inputText\":\"Hello\"}]";
 
         List<Event<String>> response = Flowable.fromPublisher(client.eventStream(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId() + "/topics/1/activities").bearerAuth("anything"), String.class)
         ).take(1).toList().blockingGet();

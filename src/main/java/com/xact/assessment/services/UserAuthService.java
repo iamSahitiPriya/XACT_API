@@ -52,6 +52,6 @@ public class UserAuthService {
     }
 
     public UserInfo getUserInfo(String email) {
-        return userRepository.findById(email).orElse(new UserInfo(email, email, null, null));
+        return userRepository.findById(email).orElseThrow();
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ActivityLogControllerTest {
+class ActivityLogControllerTest {
 
     private final ActivityLogService activityLogService = mock(ActivityLogService.class);
     private final UserAuthService userAuthService = mock(UserAuthService.class);

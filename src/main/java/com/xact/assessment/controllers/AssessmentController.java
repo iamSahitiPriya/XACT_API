@@ -225,12 +225,12 @@ public class AssessmentController {
             if (topicAndParameterLevelAssessmentService.checkParameterRecommendationId(parameterLevelRecommendation.getRecommendationId())) {
                 parameterLevelRecommendationResponse.setRecommendationId(parameterLevelRecommendation.getRecommendationId());
                 parameterLevelRecommendationResponse.setRecommendation(parameterLevelRecommendation.getRecommendation());
+                ParameterLevelRecommendation finalParameterLevelRecommendation = parameterLevelRecommendation;
+                CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
+
             } else {
                 parameterLevelRecommendationResponse.setRecommendationId(null);
             }
-            ParameterLevelRecommendation finalParameterLevelRecommendation = parameterLevelRecommendation;
-            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
-
         }
         return HttpResponse.ok(parameterLevelRecommendationResponse);
     }
@@ -262,12 +262,12 @@ public class AssessmentController {
             if (topicAndParameterLevelAssessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())) {
                 topicLevelRecommendationResponse.setRecommendationId(topicLevelRecommendation.getRecommendationId());
                 topicLevelRecommendationResponse.setRecommendation(topicLevelRecommendation.getRecommendation());
+                TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
+                CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
+
             } else {
                 topicLevelRecommendationResponse.setRecommendationId(null);
             }
-            TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
-            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
-
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }

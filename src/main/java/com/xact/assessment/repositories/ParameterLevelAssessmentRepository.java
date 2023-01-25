@@ -18,6 +18,6 @@ import java.util.List;
 public interface ParameterLevelAssessmentRepository extends CrudRepository<ParameterLevelAssessment, ParameterLevelId> {
 
     @Executable
-    @Query("SELECT pla FROM ParameterLevelAssessment pla WHERE pla.parameterLevelId.assessment.assessmentId=:assessmentId")
+    @Query("SELECT pla FROM ParameterLevelAssessment pla WHERE pla.parameterLevelId.assessment.assessmentId=:assessmentId and pla.parameterLevelId.parameter.topic.module.category.isActive=true and pla.parameterLevelId.parameter.topic.module.isActive=true and pla.parameterLevelId.parameter.topic.isActive=true and pla.parameterLevelId.parameter.isActive=true and pla.parameterLevelId.parameter.topic.module.moduleId IN (SELECT userModule.module.moduleId  from  UserAssessmentModule userModule where userModule.assessment.assessmentId=:assessmentId)")
     List<ParameterLevelAssessment> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
 }

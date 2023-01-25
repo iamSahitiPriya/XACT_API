@@ -62,6 +62,17 @@ email:
   fromEmail: "project-xact@thoughtworks.net"
   name: "X-ACT Support"
 
+cleanup:
+  initialDelay: "1m"
+  notification:
+    fixedDelay: "60d"
+  activityLog:
+    fixedDelay: "1d"
+
+identityProvider:
+  iss: https://thoughtworks.okta.com/oauth2/default
+  userInfo: /v1/userinfo
+
 flyway:
   datasources:
     default:

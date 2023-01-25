@@ -13,16 +13,9 @@ import java.util.List;
 public interface UserQuestionRepository extends CrudRepository<UserQuestion, Integer> {
 
     @Executable
-    @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentId=:assessmentId ORDER BY userQues.questionId")
-
-    List<UserQuestion> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
-
-    @Executable
     @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentId=:assessmentId AND userQues.answer IS NOT NULL ORDER BY userQues.questionId")
-
     List<UserQuestion> findByAssessmentAndAnswer(@Parameter("assessmentId") Integer assessmentId);
 
-    @Executable
-    @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentId=:assessmentId AND userQues.parameter.isActive=true AND userQues.parameter.topic.isActive=true AND userQues.parameter.topic.module.isActive = true  ORDER BY userQues.questionId")
-    List<UserQuestion> findByAssessmentActiveFields(@Parameter("assessmentId") Integer assessmentId);
+    @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentId=:assessmentId AND userQues.parameter.isActive=true AND userQues.parameter.topic.isActive=true AND userQues.parameter.topic.module.isActive = true AND userQues.parameter.topic.module.category.isActive = true AND userQues.parameter.topic.module.moduleId IN (SELECT userModule.module.moduleId  from  UserAssessmentModule userModule where userModule.assessment.assessmentId=:assessmentId) ORDER BY userQues.questionId")
+    List<UserQuestion> findByAssessmentId(@Parameter("assessmentId") Integer assessmentId);
 }

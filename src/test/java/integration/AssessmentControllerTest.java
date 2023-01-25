@@ -73,6 +73,9 @@ class AssessmentControllerTest {
     @Inject
     EntityManager entityManager;
 
+    @Inject
+    UserAssessmentModuleRepository userAssessmentModuleRepository;
+
 
     @AfterEach
     public void afterEach() throws InterruptedException {
@@ -83,11 +86,11 @@ class AssessmentControllerTest {
         topicLevelAssessmentRepository.deleteAll();
         parameterLevelRecommendationRepository.deleteAll();
         topicLevelRecommendationRepository.deleteAll();
+        userAssessmentModuleRepository.deleteAll();
         userQuestionRepository.deleteAll();
         usersAssessmentsRepository.deleteAll();
         activityLogRepository.deleteAll();
         assessmentRepository.deleteAll();
-
     }
 
     @Test
@@ -198,6 +201,9 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
+        AssessmentModuleId assessmentModuleId=new AssessmentModuleId(assessment,assessmentParameter.getTopic().getModule());
+        UserAssessmentModule userAssessmentModule=new UserAssessmentModule(assessmentModuleId,assessment,assessmentParameter.getTopic().getModule());
+
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
         answerRepository.save(answer);
@@ -205,10 +211,11 @@ class AssessmentControllerTest {
         topicLevelAssessmentRepository.save(topicLevelAssessment);
         parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
+        userAssessmentModuleRepository.save(userAssessmentModule);
         entityManager.getTransaction().commit();
 
         String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"Mocked Assessment\"" + "," +
-                "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 10 + "," + "\"domain\"" + ":" + "\"Telecom\"" + "," + "\"industry\"" + ":" + "\"IT\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\"" + "," +
+                "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 10 + "," + "\"domain\"" + ":" + "\"Telecom\"" + "," + "\"industry\"" + ":" + "\"IT\"" + "," + "\"assessmentState\"" + ":" + "\"inProgress\"" + "," +
                 "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
                 "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
                 "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," +

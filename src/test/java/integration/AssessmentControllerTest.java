@@ -68,21 +68,25 @@ class AssessmentControllerTest {
     UserQuestionRepository userQuestionRepository;
 
     @Inject
+    ActivityLogRepository activityLogRepository;
+
+    @Inject
     EntityManager entityManager;
 
 
     @AfterEach
-    public void afterEach() {
-        usersAssessmentsRepository.deleteAll();
+    public void afterEach() throws InterruptedException {
+        Thread.sleep(1000);
         accessControlRepository.deleteAll();
         answerRepository.deleteAll();
         parameterLevelAssessmentRepository.deleteAll();
         topicLevelAssessmentRepository.deleteAll();
         parameterLevelRecommendationRepository.deleteAll();
         topicLevelRecommendationRepository.deleteAll();
-        assessmentRepository.deleteAll();
         userQuestionRepository.deleteAll();
-
+        usersAssessmentsRepository.deleteAll();
+        activityLogRepository.deleteAll();
+        assessmentRepository.deleteAll();
 
     }
 

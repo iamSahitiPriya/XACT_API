@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.ActivityType;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
 import com.xact.assessment.repositories.ParameterLevelRecommendationRepository;
@@ -155,5 +156,13 @@ public class TopicAndParameterLevelAssessmentService {
 
     public void deleteParameterRecommendation(Integer recommendationId) {
         parameterLevelRecommendationRepository.deleteById(recommendationId);
+    }
+
+    public String getRecommendationById(Integer identifier, ActivityType activityType) {
+        if(activityType.equals(ActivityType.TOPIC_RECOMMENDATION)){
+            return topicLevelRecommendationRepository.findById(identifier).orElseThrow().getRecommendation();
+        }else{
+            return parameterLevelRecommendationRepository.findById(identifier).orElseThrow().getRecommendation();
+        }
     }
 }

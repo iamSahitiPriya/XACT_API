@@ -4,7 +4,6 @@
 
 package integration;
 
-import com.xact.assessment.repositories.AccessControlRepository;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.client.HttpClient;
@@ -12,8 +11,6 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
-
-import javax.persistence.EntityManager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -23,15 +20,8 @@ class AssessmentMasterDataControllerTest {
     @Client("/")
     HttpClient client; //
 
-    @Inject
-    AccessControlRepository accessControlRepository;
-
-    @Inject
-    EntityManager entityManager;
-
-
     @Test
-    void testGetMasterDataCategoryResponse()  {
+    void testGetMasterDataCategoryResponse() {
         var actualResult = client.toBlocking().exchange(HttpRequest.GET("/v1/assessments/1/categories/all")
                 .bearerAuth("anything"));
 

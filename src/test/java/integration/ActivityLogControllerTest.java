@@ -51,6 +51,7 @@ class ActivityLogControllerTest {
         userQuestionRepository.deleteAll();
         activityLogRepository.deleteAll();
         assessmentRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
 

@@ -55,9 +55,14 @@ public class AssessmentMasterDataService {
         List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
         if (!assessmentModules.isEmpty()) {
             for (AssessmentModule assessmentModule : assessmentModules) {
-                AssessmentCategory category = assessmentModule.getCategory();
-                assessmentModule.setTopics(assessmentModule.getActiveTopics());
-                categorySet.add(category);
+                if(assessmentModule.getCategory().getIsActive()) {
+                    AssessmentCategory category = assessmentModule.getCategory();
+                    assessmentModule.setTopics(assessmentModule.getActiveTopics());
+                    for(AssessmentTopic assessmentTopic : assessmentModule.getTopics()){
+                        assessmentTopic.setParameters(assessmentTopic.getActiveParameters());
+                    }
+                    categorySet.add(category);
+                }
 
             }
             for (AssessmentCategory category : categorySet) {

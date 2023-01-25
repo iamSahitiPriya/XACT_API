@@ -18,6 +18,6 @@ import java.util.List;
 public interface TopicLevelAssessmentRepository extends CrudRepository<TopicLevelAssessment, TopicLevelId> {
 
     @Executable
-    @Query("SELECT tla FROM TopicLevelAssessment tla WHERE tla.topicLevelId.assessment.assessmentId=:assessmentId")
+    @Query("SELECT tla FROM TopicLevelAssessment tla WHERE tla.topicLevelId.assessment.assessmentId=:assessmentId and tla.topicLevelId.topic.module.category.isActive=true and tla.topicLevelId.topic.module.isActive=true and tla.topicLevelId.topic.isActive=true and  tla.topicLevelId.topic.module.moduleId IN (SELECT userModule.module.moduleId  from  UserAssessmentModule userModule where userModule.assessment.assessmentId=:assessmentId)")
     List<TopicLevelAssessment> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
 }

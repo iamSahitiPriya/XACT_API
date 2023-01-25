@@ -17,7 +17,7 @@ public interface NotificationRepository extends CrudRepository<Notification, Int
     List<Notification> findTop50ByStatusAndRetriesLessThan(NotificationStatus status, Integer retries);
 
     @Executable
-    @Query("delete from Notification notification where notification.status = 'Y' and notification.updatedAt between :startDate and :endDate")
-    void deleteSentNotifications(@Parameter("startDate") Date startDate, @Parameter("endDate") Date endDate);
+    @Query("delete from Notification notification where notification.status = 'Y' and notification.updatedAt < :expiryDate")
+    void deleteSentNotifications(@Parameter("expiryDate")Date expiryDate);
 
 }

@@ -21,6 +21,6 @@ public interface ActivityLogRepository extends CrudRepository<ActivityLog, Activ
     List<ActivityLog> getLatestRecords(@Parameter("startTime")Date startTime,@Parameter("endTime") Date endTime,@Parameter("assessment") Assessment assessment,@Parameter("topic") AssessmentTopic topic,@Parameter("loggedInUser") String loggedInUser);
 
     @Executable
-    @Query("DELETE FROM ActivityLog al where al.updatedAt between :startDate and :endDate")
-    void deleteActivityLogs(@Parameter("startDate") Date startDate,@Parameter("endDate") Date endDate);
+    @Query("DELETE FROM ActivityLog al where al.updatedAt < :expiryDate")
+    void deleteActivityLogs(@Parameter("expiryDate") Date expiryDate);
 }

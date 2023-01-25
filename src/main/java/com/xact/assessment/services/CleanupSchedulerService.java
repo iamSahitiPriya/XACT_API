@@ -28,20 +28,18 @@ public class CleanupSchedulerService {
     @Scheduled(fixedDelay = "${cleanup.notification.fixedDelay}", initialDelay = "${cleanup.initialDelay}")
     public void cleanSentNotifications() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, - NOTIFICATION_DELAY);
-        Date startDate = calendar.getTime();
-        Date endDate = new Date();
+        calendar.add(Calendar.DAY_OF_YEAR, -NOTIFICATION_DELAY);
+        Date expiryDate = calendar.getTime();
         LOGGER.info("Cleaning up the sent notifications");
-        notificationRepository.deleteSentNotifications(startDate, endDate);
+        notificationRepository.deleteSentNotifications(expiryDate);
     }
 
-    @Scheduled(fixedDelay = "${cleanup.activityLog.fixedDelay}")
+    @Scheduled(fixedDelay = "${cleanup.activityLog.fixedDelay}", initialDelay = "${cleanup.initialDelay}")
     public void cleanExpiredActivityLogs() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, - ACTIVITY_LOG_DELAY);
-        Date startDate = calendar.getTime();
-        Date endDate = new Date();
+        calendar.add(Calendar.DAY_OF_YEAR, -ACTIVITY_LOG_DELAY);
+        Date expiryDate = calendar.getTime();
         LOGGER.info("Cleaning up the expired activity logs");
-        activityLogRepository.deleteActivityLogs(startDate,endDate);
+        activityLogRepository.deleteActivityLogs(expiryDate);
     }
 }

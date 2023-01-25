@@ -25,13 +25,13 @@ class CleanupSchedulerServiceTest {
     void shouldDeleteSentNotifications() {
         cleanupSchedulerService.cleanSentNotifications();
 
-        verify(notificationRepository).deleteSentNotifications(any(Date.class),any(Date.class));
+        verify(notificationRepository).deleteSentNotifications(any(Date.class));
     }
 
     @Test
     void shouldDeleteExpiredActivityLogs() {
         cleanupSchedulerService.cleanExpiredActivityLogs();
 
-        verify(activityLogRepository).deleteActivityLogs(any(Date.class),any(Date.class));
+        verify(activityLogRepository).deleteActivityLogs(any(Date.class));
     }
 }

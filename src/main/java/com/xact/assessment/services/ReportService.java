@@ -54,7 +54,7 @@ public class ReportService {
 
     public Workbook generateReport(Integer assessmentId) {
         List<Answer> answers = answerService.getAnswers(assessmentId);
-        List<UserQuestion> userQuestions = userQuestionService.findByAssessmentAndAnswerIsNotNull(assessmentId);
+        List<UserQuestion> userQuestions = userQuestionService.findByAssessmentAndAnswer(assessmentId);
         assessmentCategoryList = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         selectedModulesSet = mapSelectedModulesInSet(assessmentCategoryList);
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
@@ -531,7 +531,7 @@ public class ReportService {
 
 
     public SummaryResponse getSummary(Integer assessmentId) {
-        Integer totalNoOfQuestions = answerService.getAnswers(assessmentId).size() + userQuestionService.findByAssessmentAndAnswerIsNotNull(assessmentId).size();
+        Integer totalNoOfQuestions = answerService.getAnswers(assessmentId).size() + userQuestionService.findByAssessmentAndAnswer(assessmentId).size();
         List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
 

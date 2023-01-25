@@ -41,6 +41,7 @@ public class AnswerService {
 
         return answer;
     }
+
     public void saveAnswer(UpdateAnswerRequest answerRequest, Assessment assessment) {
         Question question = questionService.getQuestion(answerRequest.getQuestionId()).orElseThrow();
         AnswerId answerId = new AnswerId(assessment, question);
@@ -57,5 +58,9 @@ public class AnswerService {
 
     public Optional<Answer> getAnswer(AnswerId answerId) {
         return answerRepository.findById(answerId);
+    }
+
+    public String getAnswerByQuestionId(Integer assessmentId, Integer identifier) {
+        return answerRepository.findByQuestionId(assessmentId, identifier);
     }
 }

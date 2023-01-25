@@ -36,6 +36,7 @@ datasources:
     schema: test_schema_v1
     auto-commit: true
 
+
 email:
   notificationEnabled : false
 
@@ -51,7 +52,7 @@ jpa:
       packages: 'com.xact.assessment.models'
     properties:
       hibernate:
-        default-schema : test_schema
+        default-schema : test_schema_v1
         hbm2ddl:
           auto: validate
         show_sql: true

@@ -41,14 +41,17 @@ public class AssessmentController {
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentService assessmentService;
     private final UserAuthService userAuthService;
+    private final ActivityLogService activityLogService;
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final UserQuestionService userQuestionService;
     private final NotificationService notificationService;
     private final AssessmentMasterDataService assessmentMasterDataService;
 
-    private AssessmentMapper assessmentMapper = new AssessmentMapper();
-    private MasterDataMapper masterDataMapper = new MasterDataMapper();
+    private final QuestionService questionService;
+
+    private final AssessmentMapper assessmentMapper = new AssessmentMapper();
+    private final MasterDataMapper masterDataMapper = new MasterDataMapper();
 
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
@@ -60,18 +63,20 @@ public class AssessmentController {
     private static final ModelMapper modelMapper = new ModelMapper();
 
 
-    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ParameterService parameterService, TopicService topicService, NotificationService notificationService, UserQuestionService userQuestionService, AssessmentMasterDataService assessmentMasterDataService) {
+    public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ActivityLogService activityLogService, ParameterService parameterService, TopicService topicService, NotificationService notificationService, UserQuestionService userQuestionService, AssessmentMasterDataService assessmentMasterDataService, QuestionService questionService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
         this.answerService = answerService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
+        this.activityLogService = activityLogService;
         this.parameterService = parameterService;
         this.topicService = topicService;
         this.userQuestionService = userQuestionService;
         this.notificationService = notificationService;
         this.assessmentMasterDataService = assessmentMasterDataService;
 
+        this.questionService = questionService;
     }
 
 
@@ -204,6 +209,7 @@ public class AssessmentController {
         ParameterLevelRecommendationResponse parameterLevelRecommendationResponse = new ParameterLevelRecommendationResponse();
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
         parameterLevelRecommendation.setAssessment(assessment);
+        User user = userAuthService.getLoggedInUser(authentication);
         parameterLevelRecommendation.setParameter(assessmentParameter);
         if (assessment.isEditable()) {
             if (parameterLevelRecommendationRequest.getRecommendationId() != null) {
@@ -222,6 +228,8 @@ public class AssessmentController {
             } else {
                 parameterLevelRecommendationResponse.setRecommendationId(null);
             }
+            ParameterLevelRecommendation finalParameterLevelRecommendation = parameterLevelRecommendation;
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
 
         }
         return HttpResponse.ok(parameterLevelRecommendationResponse);
@@ -237,6 +245,7 @@ public class AssessmentController {
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
+        User user = userAuthService.getLoggedInUser(authentication);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         if (assessment.isEditable()) {
@@ -256,6 +265,9 @@ public class AssessmentController {
             } else {
                 topicLevelRecommendationResponse.setRecommendationId(null);
             }
+            TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
+
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }
@@ -416,16 +428,23 @@ public class AssessmentController {
 
     @Patch(value = "/{assessmentId}/answers/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AnswerResponse> updateAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable UpdateAnswerRequest answerRequest, Authentication authentication) {
+    public HttpResponse updateAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable UpdateAnswerRequest answerRequest, Authentication authentication) {
         LOGGER.info("Update individual user added answer. assessment: {}, question:{}", assessmentId, questionId);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        User user = userAuthService.getLoggedInUser(authentication);
+        AssessmentTopic assessmentTopic = null;
         if (assessment.isEditable() && answerRequest != null) {
             if (answerRequest.getType() == AnswerType.DEFAULT) {
                 answerService.saveAnswer(answerRequest, assessment);
+                assessmentTopic = questionService.getTopicByQuestionId(questionId);
+
             } else {
                 userQuestionService.saveUserAnswer(questionId, answerRequest.getAnswer());
+                assessmentTopic = userQuestionService.getTopicByQuestionId(questionId);
             }
+            final AssessmentTopic finalAssessmentTopic = assessmentTopic;
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment,user,questionId, finalAssessmentTopic, ActivityType.valueOf(answerRequest.getType() + "_QUESTION")));
             updateAssessment(assessment);
         }
         return HttpResponse.ok();

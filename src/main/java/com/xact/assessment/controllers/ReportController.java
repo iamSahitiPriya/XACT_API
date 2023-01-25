@@ -119,7 +119,7 @@ public class ReportController {
     }
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
         return assessmentService.getAssessment(assessmentId, loggedInUser);
     }
 

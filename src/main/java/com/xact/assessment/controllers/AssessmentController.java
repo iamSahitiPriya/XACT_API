@@ -85,7 +85,7 @@ public class AssessmentController {
     @Transactional
     public HttpResponse<List<AssessmentResponse>> getAssessments(Authentication authentication) {
         LOGGER.info("Get all assessments");
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
         List<Assessment> assessments = usersAssessmentsService.findAssessments(loggedInUser.getUserEmail());
         List<AssessmentResponse> assessmentResponses = new ArrayList<>();
         if (Objects.nonNull(assessments))
@@ -102,7 +102,7 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse>  createAssessment(@Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
         LOGGER.info("Create new assessment");
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
         assessmentRequest.validate(emailPattern);
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
@@ -115,7 +115,7 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentResponse> updateAssessment(@PathVariable("assessmentId") Integer assessmentId, @Valid @Body AssessmentRequest assessmentRequest, Authentication authentication) {
         LOGGER.info("Update assessment : {}", assessmentId);
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
         assessmentRequest.validate(emailPattern);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
@@ -177,7 +177,7 @@ public class AssessmentController {
     @Transactional
     public HttpResponse<AssessmentResponse> getAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Get assessment : {}", assessmentId);
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
 
         List<Answer> answerResponse = answerService.getAnswers(assessment.getAssessmentId());
@@ -209,7 +209,7 @@ public class AssessmentController {
         ParameterLevelRecommendationResponse parameterLevelRecommendationResponse = new ParameterLevelRecommendationResponse();
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
         parameterLevelRecommendation.setAssessment(assessment);
-        User user = userAuthService.getLoggedInUser(authentication);
+        User user = userAuthService.getCurrentUser(authentication);
         parameterLevelRecommendation.setParameter(assessmentParameter);
         if (assessment.isEditable()) {
             if (parameterLevelRecommendationRequest.getRecommendationId() != null) {
@@ -245,7 +245,7 @@ public class AssessmentController {
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
-        User user = userAuthService.getLoggedInUser(authentication);
+        User user = userAuthService.getCurrentUser(authentication);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         if (assessment.isEditable()) {
@@ -362,7 +362,7 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public void deleteAssessment(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
         LOGGER.info("Delete assessment : {}", assessmentId);
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable() && (assessment.getOwnerEmail().equals(loggedInUser.getUserEmail())))
@@ -432,7 +432,7 @@ public class AssessmentController {
         LOGGER.info("Update individual user added answer. assessment: {}, question:{}", assessmentId, questionId);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        User user = userAuthService.getLoggedInUser(authentication);
+        User user = userAuthService.getCurrentUser(authentication);
         AssessmentTopic assessmentTopic = null;
         if (assessment.isEditable() && answerRequest != null) {
             if (answerRequest.getType() == AnswerType.DEFAULT) {
@@ -475,7 +475,7 @@ public class AssessmentController {
 
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
-        User loggedInUser = userAuthService.getLoggedInUser(authentication);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
         return assessmentService.getAssessment(assessmentId, loggedInUser);
     }
 

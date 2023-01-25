@@ -4,7 +4,7 @@
 
 package unit.com.xact.assessment.models;
 
-import com.xact.assessment.models.Profile;
+import com.xact.assessment.models.UserInfo;
 import com.xact.assessment.models.User;
 import org.junit.jupiter.api.Test;
 
@@ -14,11 +14,11 @@ class UserTest {
 
     @Test
     void getUserEmail() {
-        Profile profile = new Profile();
-        profile.setEmail("test@test.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("test@test.com");
 
 
-        User user = new User("assxsww", profile, "Active");
+        User user = new User("assxsww", userInfo, "Active");
 
 
         assertEquals("test@test.com", user.getUserEmail());

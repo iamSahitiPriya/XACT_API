@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@ConfigurationProperties(value = "profile", cliPrefix = "profile")
+@ConfigurationProperties(value = "userInfo", cliPrefix = "userInfo")
 public class ProfileConfig {
     private String type;
     private String url;

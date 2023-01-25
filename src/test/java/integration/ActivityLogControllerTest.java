@@ -51,7 +51,7 @@ public class ActivityLogControllerTest {
     }
 
 
-/*    @Test
+    @Test
     void getActivityLogs() {
         String userEmail = "dummy@test.com";
         Assessment assessment = new Assessment();
@@ -91,14 +91,14 @@ public class ActivityLogControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String expectedResponse = "[{\"identifier\":" + userQuestion.getQuestionId() + ",\"activityType\":\"ADDITIONAL_QUESTION\",\"userName\":\"123dummy@test.com\",\"inputText\":\"Hello\"}]";
+        String expectedResponse = "[{\"identifier\":" + userQuestion.getQuestionId() + ",\"activityType\":\"ADDITIONAL_QUESTION\",\"firstName\":\"123dummy@test.com\",\"email\":\"123dummy@test.com\",\"inputText\":\"Hello\"}]";
 
         List<Event<String>> response = Flowable.fromPublisher(client.eventStream(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId() + "/topics/1/activities").bearerAuth("anything"), String.class)
         ).take(1).toList().blockingGet();
 
         assertEquals(expectedResponse,response.get(0).getData());
 
-    }*/
+    }
 
 
 }

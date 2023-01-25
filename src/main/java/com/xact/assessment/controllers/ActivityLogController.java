@@ -32,19 +32,23 @@ import java.util.List;
 @Singleton
 public class ActivityLogController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ActivityLogController.class);
-    public static final int PERIOD = 5    ;
+    public static final int PERIOD = 5;
     public static final int DELAY = 1;
     private final ActivityLogService activityLogService;
     private final UserAuthService userAuthService;
 
     @Get(value = "/assessments/{assessmentId}/topics/{topicId}/activities", produces = MediaType.TEXT_EVENT_STREAM)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public Flux<Event<List<ActivityResponse>>> getActivityLogs(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, Authentication authentication){
-        LOGGER.info("Fetching Activity for assessment:{} and topic{}",assessmentId, topicId);
-        User user = userAuthService.getLoggedInUser(authentication);
+    public Flux<Event<List<ActivityResponse>>> getActivityLogs(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, Authentication authentication) {
+        LOGGER.info("Fetching Activity for assessment:{} and topic{}", assessmentId, topicId);
+        User user = userAuthService.getCurrentUser(authentication);
         Assessment assessment = activityLogService.getAssessment(assessmentId);
         AssessmentTopic assessmentTopic = activityLogService.getTopic(topicId);
-        return Flux.interval(Duration.ofSeconds(DELAY), Duration.ofSeconds(PERIOD)).map(sequence -> Event.of(activityLogService.getLatestActivityRecords(assessment,assessmentTopic,user)));
+        return Flux.interval(Duration.ofSeconds(DELAY), Duration.ofSeconds(PERIOD)).map(sequence -> {
+            List<ActivityResponse> activities = activityLogService.getLatestActivityRecords(assessment, assessmentTopic, user);
+            LOGGER.info("Assessment - {}  Activities - {}", assessmentId, activities.size());
+            return Event.of(activities);
+        });
     }
 
 

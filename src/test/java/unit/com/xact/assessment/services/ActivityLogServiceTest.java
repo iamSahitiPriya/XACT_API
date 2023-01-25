@@ -32,9 +32,9 @@ class ActivityLogServiceTest {
 
     @Test
     void shouldUpdateActivityLog() {
-        Profile profile = new Profile();
-        profile.setEmail("abc");
-        User user = new User("1",profile,"true");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("abc");
+        User user = new User("1", userInfo,"true");
         String loggedInUser = "abc";
 
         Date created = new Date(22 - 10 - 2022);
@@ -45,7 +45,7 @@ class ActivityLogServiceTest {
         ActivityId activityId = new ActivityId(assessment,loggedInUser);
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         when(activityLogRepository.existsById(activityId)).thenReturn(true);
         ActivityLog activityLog = new ActivityLog();
         activityLog.setActivityId(activityId);
@@ -78,9 +78,9 @@ class ActivityLogServiceTest {
 
     @Test
     void shouldReturnListOfActivityRecords() {
-        Profile profile = new Profile();
-        profile.setEmail("abc");
-        User user = new User("1",profile,"true");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("abc");
+        User user = new User("1", userInfo,"true");
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
         Assessment assessment = new Assessment();
@@ -91,7 +91,8 @@ class ActivityLogServiceTest {
         activityLogs.add(new ActivityLog(activityId,assessmentTopic,1, ActivityType.ADDITIONAL_QUESTION,new Date()));
         activityLogs.add(new ActivityLog(activityId,assessmentTopic,1, ActivityType.DEFAULT_QUESTION,new Date()));
         activityLogs.add(new ActivityLog(activityId,assessmentTopic,1, ActivityType.TOPIC_RECOMMENDATION,new Date()));
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
+        when(userAuthService.getUserInfo("abc")).thenReturn(userInfo);
         when(activityLogRepository.getLatestRecords(any(Date.class),any(Date.class),eq(assessment),eq(assessmentTopic),eq(loggedInUser))).thenReturn(activityLogs);
 
         List<ActivityResponse> activityResponseList = activityLogService.getLatestActivityRecords(assessment,assessmentTopic,user);
@@ -101,9 +102,9 @@ class ActivityLogServiceTest {
 
     @Test
     void shouldSaveActivityLog() {
-        Profile profile = new Profile();
-        profile.setEmail("abc");
-        User user = new User("1",profile,"true");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("abc");
+        User user = new User("1", userInfo,"true");
         String loggedInUser = "abc";
 
         Date created = new Date(22 - 10 - 2022);
@@ -114,7 +115,7 @@ class ActivityLogServiceTest {
         ActivityId activityId = new ActivityId(assessment,loggedInUser);
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         when(activityLogRepository.existsById(activityId)).thenReturn(false);
         ActivityLog activityLog = new ActivityLog();
         activityLog.setActivityId(activityId);
@@ -127,15 +128,15 @@ class ActivityLogServiceTest {
 
     @Test
     void shouldHandleTheExceptionWhenThereIsNoActivityRecord() {
-        Profile profile = new Profile();
-        profile.setEmail("abc");
-        User user = new User("1",profile,"true");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("abc");
+        User user = new User("1", userInfo,"true");
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
         String loggedInUser = "abc";
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         when(activityLogRepository.getLatestRecords(any(Date.class),any(Date.class),eq(assessment),eq(assessmentTopic),eq(loggedInUser))).thenThrow(EmptyResultException.class);
 
         List<ActivityResponse> activityResponseList = activityLogService.getLatestActivityRecords(assessment,assessmentTopic,user);

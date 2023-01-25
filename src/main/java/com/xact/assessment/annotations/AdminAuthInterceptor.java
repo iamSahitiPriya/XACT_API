@@ -34,7 +34,7 @@ public class AdminAuthInterceptor implements MethodInterceptor<Authentication, O
         context.getParameterValueMap().forEach((name, value) -> {
             if (name.equals("authentication")) {
                 Authentication authentication = (Authentication) value;
-                User loggedInUser = userAuthService.getLoggedInUser(authentication);
+                User loggedInUser = userAuthService.getCurrentUser(authentication);
                 Optional<AccessControlRoles> accessControlRoles = assessmentService.getUserRole(loggedInUser.getUserEmail());
                 if (!(accessControlRoles.isPresent() && accessControlRoles.get() == AccessControlRoles.Admin)) {
                     throw new UnauthorisedUserException("User not Authorised");

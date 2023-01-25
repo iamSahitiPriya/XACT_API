@@ -27,8 +27,8 @@ public class ActivityLogControllerTest {
 
     @Test
     void getActivityLogs() {
-        ActivityResponse activityResponse = new ActivityResponse(1, ActivityType.ADDITIONAL_QUESTION, "ABC", "text");
-        ActivityResponse activityResponse1 = new ActivityResponse(2, ActivityType.TOPIC_RECOMMENDATION, "DEF", "additional text");
+        ActivityResponse activityResponse = new ActivityResponse(1, ActivityType.ADDITIONAL_QUESTION, "ABC","abc@thoughtworks.com", "text");
+        ActivityResponse activityResponse1 = new ActivityResponse(2, ActivityType.TOPIC_RECOMMENDATION, "DEF","def@thoughtworks.com", "additional text");
         List<ActivityResponse> activityResponseList = new ArrayList<>();
         activityResponseList.add(activityResponse);
         activityResponseList.add(activityResponse1);

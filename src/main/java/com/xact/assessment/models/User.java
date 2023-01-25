@@ -16,10 +16,10 @@ import lombok.Setter;
 public class User {
 
     private String userId;
-    private Profile profile;
+    private UserInfo userInfo;
     private String status;
 
     public String getUserEmail() {
-        return profile.getEmail();
+        return userInfo.getEmail();
     }
 }

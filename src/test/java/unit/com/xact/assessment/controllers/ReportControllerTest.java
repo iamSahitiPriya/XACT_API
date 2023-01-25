@@ -44,11 +44,11 @@ class ReportControllerTest {
         Integer assessmentId = 123;
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -92,11 +92,11 @@ class ReportControllerTest {
         Integer assessmentId = 123;
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");

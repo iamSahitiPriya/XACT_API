@@ -64,9 +64,9 @@ class AssessmentServiceTest {
         assessmentRequest.setUsers(users);
 
         User loggedinUser = new User();
-        Profile profile = new Profile();
-        profile.setEmail("test@email.com");
-        loggedinUser.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("test@email.com");
+        loggedinUser.setUserInfo(userInfo);
 
 
         Set<AssessmentUser> assessmentUsers = new HashSet<>();
@@ -99,9 +99,9 @@ class AssessmentServiceTest {
     void getAssessment() {
         Integer assessmentId = 123;
         User loggedinUser = new User();
-        Profile profile = new Profile();
-        profile.setEmail("test@email.com");
-        loggedinUser.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("test@email.com");
+        loggedinUser.setUserInfo(userInfo);
         Assessment mockAssessment = new Assessment();
         mockAssessment.setAssessmentId(assessmentId);
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -119,9 +119,9 @@ class AssessmentServiceTest {
     void finishAssessment() {
         Integer assessmentId = 123;
         User loggedinUser = new User();
-        Profile profile = new Profile();
-        profile.setEmail("test@email.com");
-        loggedinUser.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("test@email.com");
+        loggedinUser.setUserInfo(userInfo);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
         assessment.setAssessmentName("assessmentName");
@@ -142,9 +142,9 @@ class AssessmentServiceTest {
     void reopenAssessment() {
         Integer assessmentId = 123;
         User loggedinUser = new User();
-        Profile profile = new Profile();
-        profile.setEmail("test@email.com");
-        loggedinUser.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("test@email.com");
+        loggedinUser.setUserInfo(userInfo);
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
         assessment.setAssessmentName("assessment");
@@ -233,9 +233,9 @@ class AssessmentServiceTest {
         assessmentService.updateAssessment(assessment, assessmentUserSet);
 
         User user = new User();
-        Profile profile = new Profile();
-        profile.setEmail("hello@email.com");
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("hello@email.com");
+        user.setUserInfo(userInfo);
         when(usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), 1)).thenReturn(assessmentUser1);
 
         Assessment expectedAssessment = assessmentService.getAssessment(1, user);

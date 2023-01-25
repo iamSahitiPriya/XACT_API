@@ -51,9 +51,9 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
         Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
@@ -61,7 +61,7 @@ class AssessmentControllerTest {
         AssessmentUser assessmentUser = new AssessmentUser(new UserId("test@thoughtworks.com", assessment), AssessmentRole.Owner);
         assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
         when(usersAssessmentsService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         AssessmentResponse expectedAssessment = new AssessmentResponse();
         expectedAssessment.setAssessmentId(1);
         expectedAssessment.setAssessmentName("xact");
@@ -94,9 +94,9 @@ class AssessmentControllerTest {
         assessmentRequest.setUsers(users);
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
@@ -109,7 +109,7 @@ class AssessmentControllerTest {
         assessmentUsers.add(assessmentUser);
         assessment.setAssessmentUsers(assessmentUsers);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         when(assessmentService.createAssessment(assessmentRequest, user)).thenReturn(assessment);
 
         HttpResponse<AssessmentResponse> actualAssessments = assessmentController.createAssessment(assessmentRequest, authentication);
@@ -124,9 +124,9 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
         Assessment assessment = new Assessment(123, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
 
@@ -140,7 +140,7 @@ class AssessmentControllerTest {
         authMap.put("sub", userEmail);
         Integer assessmentId = 123;
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         List<Answer> answers = new ArrayList<>();
         List<TopicLevelAssessment> topicAssessments = new ArrayList<>();
         List<ParameterLevelAssessment> parameterAssessments = new ArrayList<>();
@@ -280,9 +280,9 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
         Assessment assessment = new Assessment(123, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         Map<String, Object> authMap = new HashMap<>();
@@ -303,7 +303,7 @@ class AssessmentControllerTest {
         expectedAssessment.setAssessmentUsers(assessmentUsers);
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(assessmentService.finishAssessment(assessment)).thenReturn(expectedAssessment);
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         HttpResponse<AssessmentResponse> actualAssessment = assessmentController.finishAssessment(assessmentId, authentication);
 
@@ -320,9 +320,9 @@ class AssessmentControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
         Assessment assessment = new Assessment(123, "xact", "Client Assessment", organisation, AssessmentStatus.Completed, created, updated);
         Map<String, Object> authMap = new HashMap<>();
@@ -343,7 +343,7 @@ class AssessmentControllerTest {
         expectedAssessment.setAssessmentUsers(assessmentUsers);
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(assessmentService.reopenAssessment(assessment)).thenReturn(expectedAssessment);
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         HttpResponse<AssessmentResponse> actualAssessment = assessmentController.reopenAssessment(assessmentId, authentication);
 
@@ -359,11 +359,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -410,11 +410,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -467,11 +467,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -523,11 +523,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -580,11 +580,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -638,11 +638,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -698,11 +698,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -752,11 +752,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -803,11 +803,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -862,11 +862,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -924,11 +924,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -984,11 +984,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -1044,11 +1044,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -1104,11 +1104,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -1165,11 +1165,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -1217,11 +1217,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -1278,15 +1278,15 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(1, "Name", "Industry", "Domain", 1);
         Assessment assessment = new Assessment(1, "Assessment", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
 
         Set<AssessmentUser> assessmentUserSet = new HashSet<>(Set.of());
@@ -1319,11 +1319,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
 
@@ -1352,11 +1352,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
 
@@ -1386,16 +1386,16 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
         Set<AssessmentUser> assessmentUsers = new HashSet<>();
         AssessmentUser assessmentUser = new AssessmentUser(new UserId(userEmail, assessment), AssessmentRole.Owner);
         assessmentUsers.add(assessmentUser);
         assessment.setAssessmentUsers(assessmentUsers);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
 
@@ -1415,11 +1415,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
 
@@ -1436,11 +1436,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -1481,11 +1481,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -1531,11 +1531,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         UserId userId = new UserId();
         userId.setUserEmail("hello@thoughtworks.com");
@@ -1580,11 +1580,11 @@ class AssessmentControllerTest {
         Integer parameterId = 1;
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
@@ -1623,11 +1623,11 @@ class AssessmentControllerTest {
 
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
-        Profile profile = new Profile();
-        profile.setEmail(userEmail);
-        user.setProfile(profile);
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
-        when(userAuthService.getLoggedInUser(authentication)).thenReturn(user);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
 
         Date created = new Date(2022 - 4 - 13);

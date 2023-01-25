@@ -60,7 +60,9 @@ public class ActivityLogService {
         List<ActivityResponse> activityResponses = new ArrayList<>();
         for (ActivityLog activityLog: activityLogs) {
             ActivityResponse activityResponse = mapper.map(activityLog, ActivityResponse.class);
-            activityResponse.setUserName(activityLog.getActivityId().getUserName());
+            UserInfo userInfo = userAuthService.getUserInfo(activityLog.getActivityId().getUserName());
+            activityResponse.setEmail(userInfo.getEmail());
+            activityResponse.setFirstName(userInfo.getFirstName());
             activityResponse.setInputText(getInputText(activityLog));
             activityResponses.add(activityResponse);
         }

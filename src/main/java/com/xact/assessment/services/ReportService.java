@@ -538,15 +538,31 @@ public class ReportService {
 
         Integer totalModule = moduleService.getAssessedModule(topicLevelAssessmentList, parameterLevelAssessmentList);
         Integer totalCategory = assessmentMasterDataService.getAssessedCategory(topicLevelAssessmentList, parameterLevelAssessmentList);
-        int topicAssessed = topicLevelAssessmentList.size() + parameterLevelAssessmentList.size();
+        int topicAssessed = getTotalAssessedTopicsCount(topicLevelAssessmentList, parameterLevelAssessmentList);
+        int parameterAssessed = getTotalAssessedParamsCount(topicLevelAssessmentList, parameterLevelAssessmentList);
 
         SummaryResponse summaryResponse = new SummaryResponse();
         summaryResponse.setCategoryAssessed(totalCategory);
         summaryResponse.setModuleAssessed(totalModule);
         summaryResponse.setTopicAssessed(topicAssessed);
-        summaryResponse.setParameterAssessed(parameterLevelAssessmentList.size());
+        summaryResponse.setParameterAssessed(parameterAssessed);
         summaryResponse.setQuestionAssessed(totalNoOfQuestions);
         return summaryResponse;
 
     }
+
+    private int getTotalAssessedParamsCount(List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments) {
+        int uniqueParamsAssessed = topicLevelAssessments.stream().mapToInt(topicLevelAssessment -> topicLevelAssessment.getTopicLevelId().getTopic().getActiveParameters().size()).sum();
+        return uniqueParamsAssessed + parameterLevelAssessments.size();
+    }
+
+    private int getTotalAssessedTopicsCount(List<TopicLevelAssessment> topicLevelAssessments, List<ParameterLevelAssessment> parameterLevelAssessments) {
+        Set<AssessmentTopic> uniqueTopics = new HashSet<>();
+        topicLevelAssessments.forEach(topicLevelAssessment -> uniqueTopics.add(topicLevelAssessment.getTopicLevelId().getTopic()));
+        parameterLevelAssessments.forEach(parameterLevelAssessment -> uniqueTopics.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic()));
+        return uniqueTopics.size();
+
+    }
+
+
 }

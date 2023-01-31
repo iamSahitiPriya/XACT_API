@@ -26,20 +26,26 @@ import static org.mockito.Mockito.*;
 
 class AssessmentServiceTest {
     private UsersAssessmentsService usersAssessmentsService;
-    private AssessmentService assessmentService;
     private AssessmentRepository assessmentRepository;
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
-    private NotificationService notificationService;
-    private ActivityLogService activityLogService;
+    private UserAssessmentModuleRepository userAssessmentModuleRepository;
 
+    private AssessmentMasterDataService assessmentMasterDataService;
+
+    private UserQuestionService userQuestionService;
+
+    private QuestionService questionService;
+    private ModuleRepository moduleRepository;
     private ParameterService parameterService;
 
     private AnswerService answerService;
-    private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
+    private AssessmentService assessmentService;
 
-    private UserAssessmentModuleRepository userAssessmentModuleRepository;
-    private ModuleRepository moduleRepository;
+    private NotificationService notificationService;
+
+    private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
+    private TopicService topicService;
 
     @BeforeEach
     public void beforeEach() {
@@ -48,13 +54,16 @@ class AssessmentServiceTest {
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
         accessControlRepository = mock(AccessControlRepository.class);
         moduleRepository = mock(ModuleRepository.class);
+        userQuestionService = mock(UserQuestionService.class);
         notificationService = mock(NotificationService.class);
+        topicService = mock(TopicService.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository, parameterService, answerService, topicAndParameterLevelAssessmentService);
         parameterService = mock(ParameterService.class);
+        questionService = mock(QuestionService.class);
+        assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         answerService = mock(AnswerService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository, parameterService, answerService, topicAndParameterLevelAssessmentService);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, assessmentMasterDataService, userQuestionService, questionService, moduleRepository, parameterService, answerService, topicAndParameterLevelAssessmentService, notificationService, topicService);
     }
 
     @Test
@@ -234,9 +243,9 @@ class AssessmentServiceTest {
         doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUserSet, assessment.getAssessmentId());
         when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUsers);
 
-        assessmentService.getNewlyAddedUser(assessmentUserSet1,assessmentUserSet);
+        assessmentService.getNewlyAddedUser(assessmentUserSet1, assessmentUserSet);
         assessmentUserSet.remove(assessmentUser1);
-        assessmentService.getDeletedUser(assessmentUserSet1,assessmentUserSet);
+        assessmentService.getDeletedUser(assessmentUserSet1, assessmentUserSet);
 
         assessmentService.updateAssessment(assessment, assessmentUserSet);
 

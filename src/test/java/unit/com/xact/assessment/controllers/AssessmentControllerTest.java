@@ -27,20 +27,16 @@ class AssessmentControllerTest {
 
 
     private final Authentication authentication = Mockito.mock(Authentication.class);
-    private final UsersAssessmentsService usersAssessmentsService = Mockito.mock(UsersAssessmentsService.class);
     private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     private final AnswerService answerService = Mockito.mock(AnswerService.class);
-    private final ParameterService parameterService = Mockito.mock(ParameterService.class);
     private final TopicService topicService = Mockito.mock(TopicService.class);
     private final AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
 
     private final UserQuestionService userQuestionService = Mockito.mock(UserQuestionService.class);
-    private final NotificationService notificationService = Mockito.mock(NotificationService.class);
-    private final QuestionService questionService = Mockito.mock(QuestionService.class);
     private final ActivityLogService activityLogService = Mockito.mock(ActivityLogService.class);
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
-    private final AssessmentController assessmentController = new AssessmentController( userAuthService, assessmentService, topicService,notificationService,userQuestionService,assessmentMasterDataService, activityLogService, questionService);
+    private final AssessmentController assessmentController = new AssessmentController( userAuthService, assessmentService, activityLogService);
 
 
 
@@ -199,7 +195,7 @@ class AssessmentControllerTest {
         userQuestion.setAssessment(assessment);
         userQuestion.setAnswer("answer");
 
-        when(userQuestionService.findAllUserQuestion(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
+        when(assessmentService.findAllUserQuestion(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
 
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
@@ -385,7 +381,7 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
@@ -436,7 +432,7 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendation("some text");
@@ -493,7 +489,7 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendation("");
@@ -549,7 +545,7 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
@@ -606,7 +602,7 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
@@ -664,7 +660,7 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
@@ -724,7 +720,7 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
@@ -1191,7 +1187,7 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
         TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
@@ -1200,7 +1196,7 @@ class AssessmentControllerTest {
 
         when(assessmentService.searchTopic(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
 
-        when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
+        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         HttpResponse actualResponse = assessmentController.saveTopicRating(assessmentId, topicId, "1", authentication);
 
@@ -1467,8 +1463,8 @@ class AssessmentControllerTest {
         userQuestion.setAssessment(assessment);
 
 
-        when(userQuestionService.saveUserQuestion(assessment, assessmentParameter.getParameterId(), questionText)).thenReturn(userQuestion);
-        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+        when(assessmentService.saveUserQuestion(assessment, assessmentParameter.getParameterId(), questionText)).thenReturn(userQuestion);
+        when(assessmentService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
 
         HttpResponse<UserQuestionResponse> actualResponse = assessmentController.saveUserQuestion(assessmentId, assessmentParameter.getParameterId(),questionText, authentication);
 
@@ -1517,8 +1513,7 @@ class AssessmentControllerTest {
         updatedUserQuestion.setParameter(assessmentParameter);
         updatedUserQuestion.setAssessment(assessment);
 
-        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
-        when(userQuestionService.updateUserQuestion(1,"new?")).thenReturn(userQuestion);
+        when(assessmentService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
 
         HttpResponse<UserQuestion> actualResponse = assessmentController.updateUserQuestion(assessmentId, userQuestion.getQuestionId(), updatedUserQuestion.getQuestion(), authentication);
 
@@ -1604,7 +1599,7 @@ class AssessmentControllerTest {
         userQuestion.setAnswer("answer");
         userQuestion.setQuestion("question");
 
-        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+        when(assessmentService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
 
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest();
         updateAnswerRequest.setQuestionId(1);
@@ -1649,12 +1644,12 @@ class AssessmentControllerTest {
         userQuestion.setAnswer("answer");
         userQuestion.setQuestion("question");
 
-        when(userQuestionService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+        when(assessmentService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
 
         HttpResponse actualResponse = assessmentController.deleteUserQuestion(assessmentId,1, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        verify(userQuestionService).deleteUserQuestion(1);
+        verify(assessmentService).deleteUserQuestion(1);
     }
 
     @Test
@@ -1665,7 +1660,7 @@ class AssessmentControllerTest {
         category.setCategoryId(3);
         category.setCategoryName("My category");
         List<AssessmentCategory> allCategories = Collections.singletonList(category);
-        when(assessmentMasterDataService.getAllCategories()).thenReturn(allCategories);
+        when(assessmentService.getAllCategories()).thenReturn(allCategories);
 
         HttpResponse<UserAssessmentResponse> userAssessmentResponseHttpResponse = assessmentController.getCategories(assessment.getAssessmentId());
 

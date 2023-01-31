@@ -40,7 +40,6 @@ public class AssessmentService {
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
 
 
-
     private final NotificationService notificationService;
 
     private final TopicService topicService;
@@ -318,29 +317,28 @@ public class AssessmentService {
     }
 
 
-
     public AssessmentTopic getTopicByQuestionId(Integer questionId) {
-       return questionService.getTopicByQuestionId(questionId);
+        return questionService.getTopicByQuestionId(questionId);
     }
 
     public List<AssessmentCategory> getAllCategories() {
-      return   assessmentMasterDataService.getAllCategories();
+        return assessmentMasterDataService.getAllCategories();
     }
 
     public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
-       return  assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+        return assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
     }
 
     public Notification setNotificationForCreateAssessment(Assessment assessment) {
-      return   notificationService.setNotificationForCreateAssessment(assessment);
+        return notificationService.setNotificationForCreateAssessment(assessment);
     }
 
     public Notification setNotificationForAddUser(Assessment assessment, Set<String> newlyAddedUsers) {
-        return notificationService.setNotificationForAddUser(assessment,newlyAddedUsers);
+        return notificationService.setNotificationForAddUser(assessment, newlyAddedUsers);
     }
 
     public Notification setNotificationForDeleteUser(Assessment assessment, Set<String> deletedUsers) {
-        return notificationService.setNotificationForDeleteUser(assessment,deletedUsers);
+        return notificationService.setNotificationForDeleteUser(assessment, deletedUsers);
     }
 
     public Notification setNotificationForReopenAssessment(Assessment assessment) {
@@ -356,15 +354,15 @@ public class AssessmentService {
     }
 
     public UserQuestion saveUserQuestion(Assessment assessment, Integer parameterId, String userQuestion) {
-        return userQuestionService.saveUserQuestion(assessment,parameterId,userQuestion);
+        return userQuestionService.saveUserQuestion(assessment, parameterId, userQuestion);
     }
 
     public void saveUserAnswer(Integer questionId, String answer) {
-        userQuestionService.saveUserAnswer(questionId,answer);
+        userQuestionService.saveUserAnswer(questionId, answer);
     }
 
     public void updateUserQuestion(Integer questionId, String updatedQuestion) {
-        userQuestionService.updateUserQuestion(questionId,updatedQuestion);
+        userQuestionService.updateUserQuestion(questionId, updatedQuestion);
     }
 
     public Optional<UserQuestion> searchUserQuestion(Integer questionId) {

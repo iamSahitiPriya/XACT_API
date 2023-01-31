@@ -15,7 +15,7 @@ import lombok.Setter;
 public class ActivityResponse {
     private Integer identifier;
     private ActivityType activityType;
-    private String firstName;
+    private String fullName;
     private String email;
     private String inputText;
 }

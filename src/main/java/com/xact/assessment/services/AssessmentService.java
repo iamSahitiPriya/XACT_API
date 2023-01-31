@@ -208,4 +208,8 @@ public class AssessmentService {
     public Assessment getAssessmentById(Integer assessmentId) {
         return assessmentRepository.findByAssessmentId(assessmentId);
     }
+
+    public List<Assessment> findAssessments(String userEmail) {
+        return usersAssessmentsService.findAssessments(userEmail);
+    }
 }

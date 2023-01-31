@@ -66,11 +66,11 @@ public class AssessmentController {
     public AssessmentController(UsersAssessmentsService usersAssessmentsService, UserAuthService userAuthService, AssessmentService assessmentService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ActivityLogService activityLogService, ParameterService parameterService, TopicService topicService, NotificationService notificationService, UserQuestionService userQuestionService, AssessmentMasterDataService assessmentMasterDataService, QuestionService questionService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.userAuthService = userAuthService;
-        this.assessmentService = assessmentService;
         this.answerService = answerService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.activityLogService = activityLogService;
         this.parameterService = parameterService;
+        this.assessmentService = assessmentService;
         this.topicService = topicService;
         this.userQuestionService = userQuestionService;
         this.notificationService = notificationService;
@@ -86,7 +86,7 @@ public class AssessmentController {
     public HttpResponse<List<AssessmentResponse>> getAssessments(Authentication authentication) {
         LOGGER.info("Get all assessments");
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        List<Assessment> assessments = usersAssessmentsService.findAssessments(loggedInUser.getUserEmail());
+        List<Assessment> assessments = assessmentService.findAssessments(loggedInUser.getUserEmail());
         List<AssessmentResponse> assessmentResponses = new ArrayList<>();
         if (Objects.nonNull(assessments))
             assessments.forEach(assessment ->

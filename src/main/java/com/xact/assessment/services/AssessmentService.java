@@ -30,18 +30,33 @@ public class AssessmentService {
     private final UsersAssessmentsRepository usersAssessmentsRepository;
     private final AccessControlRepository accessControlRepository;
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
+
+    private final AssessmentMasterDataService assessmentMasterDataService;
+
+    private final UserQuestionService userQuestionService;
+
+    private final QuestionService questionService;
     private final ModuleRepository moduleRepository;
+
+    private final NotificationService notificationService;
+
+    private final TopicService topicService;
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, QuestionService questionService, ModuleRepository moduleRepository, NotificationService notificationService, TopicService topicService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
         this.accessControlRepository = accessControlRepository;
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
+        this.assessmentMasterDataService = assessmentMasterDataService;
+        this.userQuestionService = userQuestionService;
+        this.questionService = questionService;
         this.moduleRepository = moduleRepository;
+        this.notificationService = notificationService;
+        this.topicService = topicService;
     }
 
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
@@ -211,5 +226,65 @@ public class AssessmentService {
 
     public List<Assessment> findAssessments(String userEmail) {
         return usersAssessmentsService.findAssessments(userEmail);
+    }
+
+    public AssessmentTopic getTopicByQuestionId(Integer questionId) {
+       return questionService.getTopicByQuestionId(questionId);
+    }
+
+    public List<AssessmentCategory> getAllCategories() {
+      return   assessmentMasterDataService.getAllCategories();
+    }
+
+    public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
+       return  assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+    }
+
+    public Notification setNotificationForCreateAssessment(Assessment assessment) {
+      return   notificationService.setNotificationForCreateAssessment(assessment);
+    }
+
+    public Notification setNotificationForAddUser(Assessment assessment, Set<String> newlyAddedUsers) {
+        return notificationService.setNotificationForAddUser(assessment,newlyAddedUsers);
+    }
+
+    public Notification setNotificationForDeleteUser(Assessment assessment, Set<String> deletedUsers) {
+        return notificationService.setNotificationForDeleteUser(assessment,deletedUsers);
+    }
+
+    public Notification setNotificationForReopenAssessment(Assessment assessment) {
+        return notificationService.setNotificationForReopenAssessment(assessment);
+    }
+
+    public Notification setNotificationForCompleteAssessment(Assessment assessment) {
+        return notificationService.setNotificationForCompleteAssessment(assessment);
+    }
+
+    public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
+        return userQuestionService.findAllUserQuestion(assessmentId);
+    }
+
+    public UserQuestion saveUserQuestion(Assessment assessment, Integer parameterId, String userQuestion) {
+        return userQuestionService.saveUserQuestion(assessment,parameterId,userQuestion);
+    }
+
+    public void saveUserAnswer(Integer questionId, String answer) {
+        userQuestionService.saveUserAnswer(questionId,answer);
+    }
+
+    public void updateUserQuestion(Integer questionId, String updatedQuestion) {
+        userQuestionService.updateUserQuestion(questionId,updatedQuestion);
+    }
+
+    public Optional<UserQuestion> searchUserQuestion(Integer questionId) {
+        return userQuestionService.searchUserQuestion(questionId);
+    }
+
+    public void deleteUserQuestion(Integer questionId) {
+        userQuestionService.deleteUserQuestion(questionId);
+    }
+
+    public Optional<AssessmentTopic> getTopic(Integer topicId) {
+        return topicService.getTopic(topicId);
     }
 }

@@ -40,7 +40,7 @@ class AssessmentControllerTest {
     private final QuestionService questionService = Mockito.mock(QuestionService.class);
     private final ActivityLogService activityLogService = Mockito.mock(ActivityLogService.class);
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
-    private final AssessmentController assessmentController = new AssessmentController(usersAssessmentsService, userAuthService, assessmentService, answerService, topicAndParameterLevelAssessmentService, activityLogService, parameterService, topicService,notificationService,userQuestionService,assessmentMasterDataService, questionService);
+    private final AssessmentController assessmentController = new AssessmentController( userAuthService, assessmentService, topicService,notificationService,userQuestionService,assessmentMasterDataService, activityLogService, questionService);
 
 
 
@@ -60,7 +60,7 @@ class AssessmentControllerTest {
         authMap.put("sub", userEmail);
         AssessmentUser assessmentUser = new AssessmentUser(new UserId("test@thoughtworks.com", assessment), AssessmentRole.Owner);
         assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
-        when(usersAssessmentsService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
+        when(assessmentService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         AssessmentResponse expectedAssessment = new AssessmentResponse();
         expectedAssessment.setAssessmentId(1);
@@ -76,7 +76,7 @@ class AssessmentControllerTest {
         assertEquals(expectedAssessment.getAssessmentStatus(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentStatus());
         assertEquals(expectedAssessment.getOrganisationName(), Objects.requireNonNull(actualAssessments.body()).get(0).getOrganisationName());
         assertEquals(expectedAssessment.getUpdatedAt(), Objects.requireNonNull(actualAssessments.body()).get(0).getUpdatedAt());
-        verify(usersAssessmentsService).findAssessments(userEmail);
+        verify(assessmentService).findAssessments(userEmail);
     }
 
     @Test
@@ -164,7 +164,7 @@ class AssessmentControllerTest {
         AnswerId answerId = new AnswerId(assessment, question);
         Answer answer = new Answer(answerId, "my answer", new Date(), new Date());
         answers.add(answer);
-        when(answerService.getAnswers(assessmentId)).thenReturn(answers);
+        when(assessmentService.getAnswers(assessmentId)).thenReturn(answers);
 
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, parameter);
         ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment(parameterLevelId, 4, new Date(), new Date());
@@ -184,9 +184,9 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setRecommendationImpact(LOW);
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
         parameterLevelRecommendation.setDeliveryHorizon("some text");
-        when(parameterService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
+        when(assessmentService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
-        when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
+        when(assessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();
         assessmentParameter.setParameterId(1);
@@ -235,7 +235,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setDeliveryHorizon("some text");
         when(topicService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(Collections.singletonList(topicLevelRecommendation));
-        when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
+        when(assessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         Integer recommendationTextId1 = topicLevelRecommendationRequest.getRecommendationId() != null ? topicLevelRecommendationRequest.getRecommendationId() : null;
@@ -250,9 +250,9 @@ class AssessmentControllerTest {
         topicRatingAndRecommendationList.add(topicRatingAndRecommendation);
 
 
-        when(answerService.getAnswers(assessmentId)).thenReturn(answers);
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
+        when(assessmentService.getAnswers(assessmentId)).thenReturn(answers);
+        when(assessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
+        when(assessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
         AssessmentResponse expectedAssessment = new AssessmentResponse();
         expectedAssessment.setAssessmentId(123);
         expectedAssessment.setAssessmentName("xact");
@@ -401,7 +401,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
     @Test
@@ -447,18 +447,18 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
-        when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
 
 
-        when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
     @Test
@@ -504,17 +504,17 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
-        when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
 
-        when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
     @Test
@@ -555,7 +555,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setRecommendation("some recommendation");
 
-        when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
@@ -571,7 +571,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
     @Test
@@ -612,7 +612,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setRecommendation("some recommendation");
 
-        when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
@@ -629,7 +629,7 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
         assertEquals("HIGH", topicLevelRecommendation.getRecommendationEffort().toString());
-        verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
     @Test
@@ -670,7 +670,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setRecommendation("some recommendation");
 
-        when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
@@ -689,7 +689,7 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
         assertEquals("some text", topicLevelRecommendation.getDeliveryHorizon());
-        verify(topicAndParameterLevelAssessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
     @Test
@@ -730,7 +730,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setRecommendation("some recommendation");
 
-        when(topicAndParameterLevelAssessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         Integer recommendationId = 1;
 
@@ -743,7 +743,7 @@ class AssessmentControllerTest {
         HttpResponse<TopicLevelRecommendationRequest> actualResponse = assessmentController.deleteRecommendation(assessmentId, topicId, recommendationId, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        verify(topicAndParameterLevelAssessmentService).deleteRecommendation(recommendationId);
+        verify(assessmentService).deleteRecommendation(recommendationId);
     }
 
     @Test
@@ -778,7 +778,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Topic Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
@@ -793,7 +793,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+        verify(assessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
     }
 
     @Test
@@ -828,7 +828,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
@@ -842,17 +842,17 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
-        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+        when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
 
-        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+        when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         HttpResponse<ParameterLevelRecommendationResponse> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, parameterLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+        verify(assessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
     }
 
     @Test
@@ -887,7 +887,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("");
@@ -901,19 +901,19 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
-        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+        when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
 
-        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+        when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
-        when(topicAndParameterLevelAssessmentService.checkParameterRecommendationId(parameterLevelRecommendation.getRecommendationId())).thenReturn(true);
+        when(assessmentService.checkParameterRecommendationId(parameterLevelRecommendation.getRecommendationId())).thenReturn(true);
 
         HttpResponse<ParameterLevelRecommendationResponse> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, parameterLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+        verify(assessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
     }
 
 
@@ -950,7 +950,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
@@ -965,7 +965,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
 
-        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+        when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
         parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(parameterLevelRecommendationRequest.getImpact()));
@@ -974,7 +974,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+        verify(assessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
     }
 
     @Test
@@ -1010,7 +1010,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
@@ -1025,7 +1025,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
 
-        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+        when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
         parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(parameterLevelRecommendationRequest.getEffort()));
@@ -1034,7 +1034,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+        verify(assessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
     }
 
     @Test
@@ -1070,7 +1070,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
@@ -1085,7 +1085,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
 
-        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+        when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
         parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
@@ -1094,7 +1094,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
+        verify(assessmentService).saveParameterLevelRecommendation(parameterLevelRecommendation);
     }
 
     @Test
@@ -1128,7 +1128,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         Integer recommendationId = 1;
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
@@ -1145,7 +1145,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
 
-        when(topicAndParameterLevelAssessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
+        when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
         parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
@@ -1155,7 +1155,7 @@ class AssessmentControllerTest {
         HttpResponse<ParameterLevelRecommendationRequest> actualResponse = assessmentController.deleteParameterRecommendation(assessmentId, parameterId, recommendationId, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        verify(topicAndParameterLevelAssessmentService).deleteParameterRecommendation(recommendationId);
+        verify(assessmentService).deleteParameterRecommendation(recommendationId);
     }
 
 
@@ -1198,7 +1198,7 @@ class AssessmentControllerTest {
         topicLevelAssessment.setTopicLevelId(topicLevelId);
         topicLevelAssessment.setRating(1);
 
-        when(topicAndParameterLevelAssessmentService.searchTopic(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
+        when(assessmentService.searchTopic(topicLevelId)).thenReturn(Optional.of(topicLevelAssessment));
 
         when(topicService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
@@ -1206,7 +1206,7 @@ class AssessmentControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation(topicLevelAssessment);
+        verify(assessmentService).saveRatingAndRecommendation(topicLevelAssessment);
 
     }
 
@@ -1243,20 +1243,20 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
         ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
         parameterLevelAssessment.setParameterLevelId(parameterLevelId);
         parameterLevelAssessment.setRating(1);
 
-        when(topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
+        when(assessmentService.searchParameter(parameterLevelId)).thenReturn(Optional.of(parameterLevelAssessment));
 
         HttpResponse actualResponse = assessmentController.saveParameterRating(assessmentId, parameterId, "2", authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(topicAndParameterLevelAssessmentService).saveRatingAndRecommendation(parameterLevelAssessment);
+        verify(assessmentService).saveRatingAndRecommendation(parameterLevelAssessment);
 
     }
 
@@ -1458,7 +1458,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(1);
         assessmentParameter.setParameterName("name");
 
-        when(parameterService.getParameter(1)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(1)).thenReturn(Optional.of(assessmentParameter));
         String questionText = "new question ?";
         UserQuestion userQuestion = new UserQuestion();
         userQuestion.setQuestionId(1);
@@ -1597,7 +1597,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
         UserQuestion userQuestion = new UserQuestion();
         userQuestion.setQuestionId(1);
         userQuestion.setAssessment(assessment);
@@ -1641,7 +1641,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
+        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         UserQuestion userQuestion = new UserQuestion();
         userQuestion.setQuestionId(1);

@@ -10,9 +10,7 @@ import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
-import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.NotificationService;
-import com.xact.assessment.services.UsersAssessmentsService;
+import com.xact.assessment.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -33,6 +31,12 @@ class AssessmentServiceTest {
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
     private NotificationService notificationService;
+    private ActivityLogService activityLogService;
+
+    private ParameterService parameterService;
+
+    private AnswerService answerService;
+    private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
 
     private UserAssessmentModuleRepository userAssessmentModuleRepository;
     private ModuleRepository moduleRepository;
@@ -46,6 +50,10 @@ class AssessmentServiceTest {
         moduleRepository = mock(ModuleRepository.class);
         notificationService = mock(NotificationService.class);
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository, parameterService, answerService, topicAndParameterLevelAssessmentService);
+        parameterService = mock(ParameterService.class);
+        answerService = mock(AnswerService.class);
+        topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
         assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, moduleRepository, parameterService, answerService, topicAndParameterLevelAssessmentService);
     }
 

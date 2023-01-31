@@ -4,10 +4,7 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentRequest;
-import com.xact.assessment.dtos.ModuleRequest;
-import com.xact.assessment.dtos.UserDto;
-import com.xact.assessment.dtos.UserRole;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import jakarta.inject.Singleton;
@@ -37,6 +34,12 @@ public class AssessmentService {
 
     private final QuestionService questionService;
     private final ModuleRepository moduleRepository;
+    private final ParameterService parameterService;
+
+    private final AnswerService answerService;
+    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
+
+
 
     private final NotificationService notificationService;
 
@@ -45,7 +48,7 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, QuestionService questionService, ModuleRepository moduleRepository, NotificationService notificationService, TopicService topicService) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, QuestionService questionService, ModuleRepository moduleRepository, ParameterService parameterService, AnswerService answerService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, NotificationService notificationService, TopicService topicService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.usersAssessmentsRepository = usersAssessmentsRepository;
@@ -55,6 +58,9 @@ public class AssessmentService {
         this.userQuestionService = userQuestionService;
         this.questionService = questionService;
         this.moduleRepository = moduleRepository;
+        this.parameterService = parameterService;
+        this.answerService = answerService;
+        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.notificationService = notificationService;
         this.topicService = topicService;
     }
@@ -220,6 +226,7 @@ public class AssessmentService {
         assessment.setUpdatedAt(new Date());
         updateAssessment(assessment);
     }
+
     public Assessment getAssessmentById(Integer assessmentId) {
         return assessmentRepository.findByAssessmentId(assessmentId);
     }
@@ -227,6 +234,90 @@ public class AssessmentService {
     public List<Assessment> findAssessments(String userEmail) {
         return usersAssessmentsService.findAssessments(userEmail);
     }
+
+    public List<Answer> getAnswers(Integer assessmentId) {
+        return answerService.getAnswers(assessmentId);
+    }
+
+    public void saveAnswer(UpdateAnswerRequest answerRequest, Assessment assessment) {
+        answerService.saveAnswer(answerRequest, assessment);
+    }
+
+    public Optional<AssessmentParameter> getParameter(Integer parameterId) {
+        return parameterService.getParameter(parameterId);
+    }
+
+    public List<TopicLevelAssessment> getTopicAssessmentData(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+    }
+
+    public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId);
+    }
+
+    public List<ParameterLevelAssessment> getParameterAssessmentData(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+
+    }
+
+    public List<ParameterLevelRecommendation> getAssessmentParameterRecommendationData(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId);
+    }
+
+    public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
+        return topicAndParameterLevelAssessmentService.searchParameterRecommendation(recommendationId);
+
+    }
+
+    public void saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
+        topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
+
+    }
+
+    public boolean checkParameterRecommendationId(Integer recommendationId) {
+        return topicAndParameterLevelAssessmentService.checkParameterRecommendationId(recommendationId);
+    }
+
+    public Optional<TopicLevelRecommendation> searchTopicRecommendation(Integer recommendationId) {
+        return topicAndParameterLevelAssessmentService.searchTopicRecommendation(recommendationId);
+
+    }
+
+    public void saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+        topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
+    }
+
+    public boolean checkTopicRecommendationId(Integer recommendationId) {
+        return topicAndParameterLevelAssessmentService.checkTopicRecommendationId(recommendationId);
+
+    }
+
+    public void deleteRecommendation(Integer recommendationId) {
+        topicAndParameterLevelAssessmentService.deleteRecommendation(recommendationId);
+    }
+
+    public void deleteParameterRecommendation(Integer recommendationId) {
+        topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
+    }
+
+    public Optional<TopicLevelAssessment> searchTopic(TopicLevelId topicLevelId) {
+        return topicAndParameterLevelAssessmentService.searchTopic(topicLevelId);
+    }
+
+    public void saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+    }
+
+    public Optional<ParameterLevelAssessment> searchParameter(ParameterLevelId parameterLevelId) {
+        return topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId);
+
+    }
+
+    public void saveRatingAndRecommendation(ParameterLevelAssessment parameterLevelAssessment) {
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+    }
+
+
 
     public AssessmentTopic getTopicByQuestionId(Integer questionId) {
        return questionService.getTopicByQuestionId(questionId);

@@ -11,6 +11,7 @@ import com.xact.assessment.repositories.ActivityLogRepository;
 import io.micronaut.data.exceptions.EmptyResultException;
 import jakarta.inject.Singleton;
 import lombok.AllArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ import java.util.List;
 @Singleton
 public class ActivityLogService {
     public static final int EXPIRY_TIME = 30000;
+    public static final String SPACE_DELIMITER = " ";
     private AssessmentService assessmentService;
     private ActivityLogRepository activityLogRepository;
     private AnswerService answerService;
@@ -62,7 +64,7 @@ public class ActivityLogService {
             ActivityResponse activityResponse = mapper.map(activityLog, ActivityResponse.class);
             UserInfo userInfo = userAuthService.getUserInfo(activityLog.getActivityId().getUserName());
             activityResponse.setEmail(userInfo.getEmail());
-            activityResponse.setFirstName(userInfo.getFirstName());
+            activityResponse.setFullName(String.join(SPACE_DELIMITER,userInfo.getFirstName(),userInfo.getLastName()));
             activityResponse.setInputText(getInputText(activityLog));
             activityResponses.add(activityResponse);
         }

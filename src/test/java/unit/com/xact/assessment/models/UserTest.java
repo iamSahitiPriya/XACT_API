@@ -4,8 +4,8 @@
 
 package unit.com.xact.assessment.models;
 
-import com.xact.assessment.models.UserInfo;
 import com.xact.assessment.models.User;
+import com.xact.assessment.models.UserInfo;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

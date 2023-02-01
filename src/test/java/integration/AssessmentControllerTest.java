@@ -18,6 +18,7 @@ import io.micronaut.http.client.annotation.Client;
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
@@ -76,6 +77,25 @@ class AssessmentControllerTest {
     @Inject
     UserAssessmentModuleRepository userAssessmentModuleRepository;
 
+    Assessment assessment = new Assessment();
+
+    Organisation organisation = new Organisation();
+
+    String userEmail = "dummy@test.com";
+
+    @BeforeEach
+    public void beforeEach() {
+        assessment.setAssessmentName("mocked assessment");
+        assessment.setAssessmentPurpose("Client Assessment");
+        assessment.setAssessmentDescription("description");
+        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+        organisation.setSize(5);
+        organisation.setIndustry("new");
+        organisation.setDomain("new");
+        organisation.setOrganisationName("testorg");
+        assessment.setOrganisation(organisation);
+    }
+
 
     @AfterEach
     public void afterEach() throws InterruptedException {
@@ -96,18 +116,7 @@ class AssessmentControllerTest {
     @Test
     void testGetAssessmentsResponse() {
 
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
-        Organisation organisation = new Organisation();
-        organisation.setSize(5);
-        organisation.setIndustry("new");
-        organisation.setDomain("new");
-        organisation.setOrganisationName("testorg");
-        assessment.setAssessmentName("mocked assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-        assessment.setOrganisation(organisation);
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
         assessmentUser.setRole(AssessmentRole.Owner);
@@ -118,12 +127,10 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments")
-                .bearerAuth("anything"), String.class);
+        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments").bearerAuth("anything"), String.class);
 
 
-        String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," +
-                "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + organisation.getSize() + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\",\"owner\":true}]";
+        String expectedResponse = "[{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," + "\"assessmentDescription\"" + ":" + "\"description\"" + "," + "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + organisation.getSize() + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"Draft\",\"owner\":true}]";
 
         assertEquals(expectedResponse, assessmentResponse);
 
@@ -132,21 +139,7 @@ class AssessmentControllerTest {
     @Test
     void testGetAssessmentResponse() {
 
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
-
-        Organisation org = new Organisation();
-        org.setOrganisationName("testorg");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-        assessment.setOrganisation(org);
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
         assessmentUser.setRole(AssessmentRole.Owner);
@@ -201,8 +194,8 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
-        AssessmentModuleId assessmentModuleId=new AssessmentModuleId(assessment,assessmentParameter.getTopic().getModule());
-        UserAssessmentModule userAssessmentModule=new UserAssessmentModule(assessmentModuleId,assessment,assessmentParameter.getTopic().getModule());
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment, assessmentParameter.getTopic().getModule());
+        UserAssessmentModule userAssessmentModule = new UserAssessmentModule(assessmentModuleId, assessment, assessmentParameter.getTopic().getModule());
 
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
@@ -214,15 +207,9 @@ class AssessmentControllerTest {
         userAssessmentModuleRepository.save(userAssessmentModule);
         entityManager.getTransaction().commit();
 
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"Mocked Assessment\"" + "," +
-                "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 10 + "," + "\"domain\"" + ":" + "\"Telecom\"" + "," + "\"industry\"" + ":" + "\"IT\"" + "," + "\"assessmentState\"" + ":" + "\"inProgress\"" + "," +
-                "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," +
-                "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," +
-                "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," +
-                "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"}]}],\"owner\":true}";
+        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," + "\"assessmentDescription\"" + ":" + "\"description\"" + "," + "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 5 + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"inProgress\"" + "," + "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," + "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," + "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"}]}],\"owner\":true}";
 
-        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId())
-                .bearerAuth("anything"), String.class);
+        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId()).bearerAuth("anything"), String.class);
 
         assertEquals(expectedResponse, assessmentResponse);
 
@@ -231,21 +218,8 @@ class AssessmentControllerTest {
     @Test
     void finishAssessment() {
 
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
-
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -257,8 +231,7 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/" + assessment.getAssessmentId() + "/finish").contentLength(0)
-                .bearerAuth("anything");
+        MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/" + assessment.getAssessmentId() + "/finish").contentLength(0).bearerAuth("anything");
         HttpResponse<AssessmentResponse> assessmentResponse = client.toBlocking().exchange(request, AssessmentResponse.class);
 
         assertEquals(AssessmentStatusDto.Completed, assessmentResponse.body().getAssessmentStatus());
@@ -267,21 +240,8 @@ class AssessmentControllerTest {
 
     @Test
     void reopenAssessment() {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
-
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -293,8 +253,7 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/" + assessment.getAssessmentId() + "/open").contentLength(0)
-                .bearerAuth("anything");
+        MutableHttpRequest request = HttpRequest.create(HttpMethod.PUT, "/v1/assessments/" + assessment.getAssessmentId() + "/open").contentLength(0).bearerAuth("anything");
         HttpResponse<AssessmentResponse> assessmentResponse = client.toBlocking().exchange(request, AssessmentResponse.class);
 
         assertEquals(AssessmentStatusDto.Active, assessmentResponse.body().getAssessmentStatus());
@@ -302,21 +261,8 @@ class AssessmentControllerTest {
 
     @Test
     void testUpdateAssessmentAnswer() throws IOException {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
-
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(Active);
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -338,8 +284,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-string-value.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/" + "answers" + "/" + question.getQuestionId(), dataRequest)
-                .bearerAuth("anything"));
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/" + "answers" + "/" + question.getQuestionId(), dataRequest).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
@@ -348,21 +293,8 @@ class AssessmentControllerTest {
     @Test
     void testUpdateTopicRecommendation() {
 
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
-
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -387,29 +319,16 @@ class AssessmentControllerTest {
 
         String dataRequest = "{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/"+assessment.getAssessmentId()+"/topics/"+assessmentTopic.getTopicId()+"/recommendations" , dataRequest)
-                .bearerAuth("anything"));
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/recommendations", dataRequest).bearerAuth("anything"));
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
 
 
     @Test
     void testUpdateParameterRecommendationText() {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
-
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setOrganisation(org);
+
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -433,29 +352,16 @@ class AssessmentControllerTest {
         entityManager.close();
 
         String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}";
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations", dataRequest)
-                .bearerAuth("anything"));
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations", dataRequest).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
 
     @Test
     void testUpdateParameterRecommendationImpact() {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
 
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -479,31 +385,18 @@ class AssessmentControllerTest {
 
         String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations", dataRequest)
-                .bearerAuth("anything"));
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations", dataRequest).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
 
 
-
     @Test
     void testUpdateParameterRating() throws IOException {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
 
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setOrganisation(org);
+
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -524,8 +417,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/ratings", dataRequest)
-                .bearerAuth("anything"));
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/ratings", dataRequest).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
@@ -533,21 +425,9 @@ class AssessmentControllerTest {
 
     @Test
     void testUpdateTopicRating() throws IOException {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
-
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setOrganisation(org);
+
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -567,8 +447,7 @@ class AssessmentControllerTest {
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/ratings", dataRequest)
-                .bearerAuth("anything"));
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/ratings", dataRequest).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
@@ -577,21 +456,9 @@ class AssessmentControllerTest {
 
     @Test
     void testDeleteParameterRecommendation() {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
 
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -611,29 +478,16 @@ class AssessmentControllerTest {
         entityManager.getTransaction().commit();
 
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations/" + parameterLevelRecommendation.getRecommendationId())
-                .bearerAuth("anything"));
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations/" + parameterLevelRecommendation.getRecommendationId()).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
 
     @Test
     void testDeleteTopicRecommendation() {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
         AssessmentUser assessmentUser = new AssessmentUser();
 
-        Organisation org = new Organisation();
-        org.setOrganisationName("org");
-        org.setIndustry("IT");
-        org.setDomain("Telecom");
-        org.setSize(10);
-
-        assessment.setOrganisation(org);
-        assessment.setAssessmentName("Mocked Assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
         assessment.setAssessmentStatus(AssessmentStatus.Active);
-        assessment.setOrganisation(org);
 
         UserId userId = new UserId(userEmail, assessment);
         assessmentUser.setUserId(userId);
@@ -652,25 +506,13 @@ class AssessmentControllerTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         entityManager.getTransaction().commit();
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/recommendations/" + topicLevelRecommendation.getRecommendationId())
-                .bearerAuth("anything"));
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/assessments/" + assessment.getAssessmentId() + "/topics/" + assessmentTopic.getTopicId() + "/recommendations/" + topicLevelRecommendation.getRecommendationId()).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
     }
 
     @Test
     void testGetAdminAssessmentsResponse() throws IOException {
-        String userEmail = "dummy@test.com";
-        Assessment assessment = new Assessment();
-        assessment.setAssessmentName("new");
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-        Organisation organisation = new Organisation();
-        organisation.setSize(5);
-        organisation.setIndustry("new");
-        organisation.setDomain("new");
-        organisation.setOrganisationName("new");
-        assessment.setOrganisation(organisation);
         AssessmentUser assessmentUser = new AssessmentUser();
         UserId userId = new UserId(userEmail, assessment);
 
@@ -687,8 +529,7 @@ class AssessmentControllerTest {
 
         String expectedResponse = resourceFileUtil.getJsonString("dto/get-admin-assessments-response.json");
 
-        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/admin/assessments/2022-01-13/2022-05-13")
-                .bearerAuth("anything"), String.class);
+        String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/admin/assessments/2022-01-13/2022-05-13").bearerAuth("anything"), String.class);
 
         assertEquals(expectedResponse, assessmentResponse);
 

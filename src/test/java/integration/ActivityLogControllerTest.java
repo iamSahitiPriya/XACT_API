@@ -73,6 +73,7 @@ class ActivityLogControllerTest {
         organisation.setOrganisationName("testorg");
         assessment.setAssessmentName("mocked assessment");
         assessment.setAssessmentPurpose("Client Assessment");
+        assessment.setAssessmentDescription("description");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         assessment.setOrganisation(organisation);
         UserId userId = new UserId(userEmail, assessment);

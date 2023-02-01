@@ -125,6 +125,7 @@ public class AssessmentController {
             assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
             assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
             assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
+            assessment.setAssessmentDescription(assessmentRequest.getAssessmentDescription());
             Set<AssessmentUser> newUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
             Set<AssessmentUser> existingUser = assessmentService.getAssessmentFacilitatorsSet(assessment);
 

@@ -42,6 +42,10 @@ public class Assessment implements Serializable {
     private String assessmentPurpose;
 
     @NotNull
+    @Column(name = "assessment_description", nullable = false)
+    private String assessmentDescription;
+
+    @NotNull
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "organisation")
     private Organisation organisation;

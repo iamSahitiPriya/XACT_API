@@ -53,6 +53,7 @@ class UserControllerTest {
         Assessment assessment = new Assessment();
         assessment.setAssessmentName("new");
         assessment.setAssessmentPurpose("Client Assessment");
+        assessment.setAssessmentDescription("description");
         assessment.setAssessmentStatus(AssessmentStatus.Completed);
         Organisation organisation = new Organisation();
         organisation.setSize(5);

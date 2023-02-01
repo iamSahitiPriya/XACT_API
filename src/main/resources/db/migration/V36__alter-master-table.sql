@@ -1,0 +1,1 @@
+ALTER TABLE tbl_assessment ADD COLUMN assessment_description varchar(200) NOT NULL DEFAULT ''

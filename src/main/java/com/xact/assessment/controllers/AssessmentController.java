@@ -10,6 +10,7 @@ import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.ActivityLogService;
 import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Nullable;
@@ -41,6 +42,8 @@ public class AssessmentController {
     private final AssessmentService assessmentService;
     private final UserAuthService userAuthService;
     private final ActivityLogService activityLogService;
+    private final NotificationService notificationService;
+
 
 
     private final AssessmentMapper assessmentMapper = new AssessmentMapper();
@@ -56,10 +59,11 @@ public class AssessmentController {
     private static final ModelMapper modelMapper = new ModelMapper();
 
 
-    public AssessmentController(UserAuthService userAuthService, AssessmentService assessmentService, ActivityLogService activityLogService) {
+    public AssessmentController(UserAuthService userAuthService, AssessmentService assessmentService, ActivityLogService activityLogService, NotificationService notificationService) {
         this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
         this.activityLogService = activityLogService;
+        this.notificationService = notificationService;
     }
 
 
@@ -89,7 +93,7 @@ public class AssessmentController {
         assessmentRequest.validate(emailPattern);
 
         Assessment assessment = assessmentService.createAssessment(assessmentRequest, loggedInUser);
-        CompletableFuture.supplyAsync(() -> assessmentService.setNotificationForCreateAssessment(assessment));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCreateAssessment(assessment));
 
         return HttpResponse.ok();
     }
@@ -115,8 +119,8 @@ public class AssessmentController {
             Set<String> newlyAddedUsers = assessmentService.getNewlyAddedUser(existingUser, newUsers);
             Set<String> deletedUsers = assessmentService.getDeletedUser(existingUser, newUsers);
 
-            CompletableFuture.supplyAsync(() -> assessmentService.setNotificationForAddUser(assessment, newlyAddedUsers));
-            CompletableFuture.supplyAsync(() -> assessmentService.setNotificationForDeleteUser(assessment, deletedUsers));
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(assessment, newlyAddedUsers));
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForDeleteUser(assessment, deletedUsers));
 
 
             assessmentService.updateAssessment(assessment, newUsers);
@@ -135,7 +139,7 @@ public class AssessmentController {
         Assessment openedAssessment = assessmentService.reopenAssessment(assessment);
         AssessmentResponse assessmentResponse = assessmentMapper.map(openedAssessment);
 
-        CompletableFuture.supplyAsync(() -> assessmentService.setNotificationForReopenAssessment(assessment));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForReopenAssessment(assessment));
 
         return HttpResponse.ok(assessmentResponse);
     }
@@ -150,7 +154,7 @@ public class AssessmentController {
         Assessment finishedAssessment = assessmentService.finishAssessment(assessment);
         AssessmentResponse assessmentResponse = assessmentMapper.map(finishedAssessment);
 
-        CompletableFuture.supplyAsync(() -> assessmentService.setNotificationForCompleteAssessment(assessment));
+        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForCompleteAssessment(assessment));
 
         return HttpResponse.ok(assessmentResponse);
     }

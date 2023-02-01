@@ -22,8 +22,8 @@ import static com.xact.assessment.constants.AppConstants.USER_ID;
 public class UserAuthService {
     private static final Logger LOG = LoggerFactory.getLogger(UserAuthService.class);
 
-    private UserInfoClient userInfoClient;
-    private UserRepository userRepository;
+    private final UserInfoClient userInfoClient;
+    private final UserRepository userRepository;
     public static final String ACTIVE = "Active";
 
 

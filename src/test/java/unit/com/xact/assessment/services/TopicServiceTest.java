@@ -19,7 +19,7 @@ class TopicServiceTest {
     @BeforeEach
     public void beforeEach() {
         assessmentTopicRepository = mock(AssessmentTopicRepository.class);
-        topicService = new TopicService(assessmentTopicRepository);
+        topicService = new TopicService(assessmentTopicRepository, assessmentTopicReferenceRepository, topicLevelAssessmentRepository, topicLevelRecommendationRepository);
     }
 
     @Test

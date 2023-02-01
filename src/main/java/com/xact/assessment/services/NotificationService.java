@@ -162,5 +162,9 @@ public class NotificationService {
         payload.put(CREATED_AT, createdAt);
         return payload;
     }
+
+    public List<Notification> getTop50ByStatusAndRetriesLessThan(Integer maximumRetries) {
+        return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
+    }
 }
 

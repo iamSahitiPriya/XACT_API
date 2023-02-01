@@ -24,7 +24,7 @@ class UsersAssessmentsServiceTest {
     @BeforeEach
     public void beforeEach() {
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
-        usersAssessmentsService = new UsersAssessmentsService(usersAssessmentsRepository);
+        usersAssessmentsService = new UsersAssessmentsService(usersAssessmentsRepository, userAssessmentModuleRepository, userQuestionService, moduleService);
     }
 
     @Test

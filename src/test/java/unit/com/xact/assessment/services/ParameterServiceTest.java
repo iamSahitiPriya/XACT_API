@@ -18,7 +18,7 @@ class ParameterServiceTest {
     @BeforeEach
     public void beforeEach() {
         assessmentParameterRepository = mock(AssessmentParameterRepository.class);
-        parameterService = new ParameterService(assessmentParameterRepository);
+        parameterService = new ParameterService(assessmentParameterRepository, parameterLevelAssessmentRepository, parameterLevelRecommendationRepository, assessmentParameterRRepository);
     }
 
     @Test

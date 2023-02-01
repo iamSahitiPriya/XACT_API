@@ -19,25 +19,21 @@ import java.util.*;
 public class AssessmentMasterDataService {
 
     private final CategoryRepository categoryRepository;
-    private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
     private final UserAssessmentModuleRepository userAssessmentModuleRepository;
-    private final AssessmentParameterReferenceRepository assessmentParameterRRepository;
     private final ModuleService moduleService;
     private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
 
 
-    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
+    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository) {
         this.categoryRepository = categoryRepository;
         this.moduleService = moduleService;
         this.questionService = questionService;
-        this.assessmentTopicReferenceRepository = assessmentTopicReferenceRepository;
         this.parameterService = parameterService;
         this.topicService = topicService;
         this.userAssessmentModuleRepository = userAssessmentModuleRepository;
-        this.assessmentParameterRRepository = assessmentParameterRRepository;
 
     }
 
@@ -153,7 +149,7 @@ public class AssessmentMasterDataService {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         if (isTopicRatingUnique(assessmentTopic.getReferences(), topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopic.getReferences(), topicReferencesRequest.getReference())) {
             AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
-            assessmentTopicReferenceRepository.save(assessmentTopicReference);
+            topicService.saveTopicReference(assessmentTopicReference);
             return assessmentTopicReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
@@ -177,12 +173,11 @@ public class AssessmentMasterDataService {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         if (isParameterRatingUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getReference())) {
             AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference());
-            assessmentParameterRRepository.save(assessmentParameterReference);
+            parameterService.saveParameterReference(assessmentParameterReference);
             return assessmentParameterReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
-
     private boolean isParameterReferenceUnique(Set<AssessmentParameterReference> references, String reference) {
         if (references != null) {
             List<String> parameterReferences = references.stream().map(AssessmentParameterReference::getReference).toList();
@@ -279,27 +274,27 @@ public class AssessmentMasterDataService {
 
     public AssessmentTopicReference updateTopicReference(Integer referenceId, TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
-        AssessmentTopicReference assessmentTopicReference = assessmentTopicReferenceRepository.findById(referenceId).orElseThrow();
+        AssessmentTopicReference assessmentTopicReference = topicService.getAssessmentTopicReference(referenceId);
         Set<AssessmentTopicReference> assessmentTopicReferences = new HashSet<>(assessmentTopic.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentTopicReference.getReferenceId())).toList());
         if (isTopicRatingUnique(assessmentTopicReferences, topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopicReferences, topicReferencesRequest.getReference())) {
             assessmentTopicReference.setReference(topicReferencesRequest.getReference());
             assessmentTopicReference.setTopic(assessmentTopic);
             assessmentTopicReference.setRating(topicReferencesRequest.getRating());
-            return assessmentTopicReferenceRepository.update(assessmentTopicReference);
+            return topicService.updateTopicReference(assessmentTopicReference);
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
     public AssessmentParameterReference updateParameterReferences(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
-        AssessmentParameterReference assessmentParameterReference = assessmentParameterRRepository.findById(referenceId).orElseThrow();
+        AssessmentParameterReference assessmentParameterReference = parameterService.getAssessmentParameterReference(referenceId);
         Set<AssessmentParameterReference> assessmentParameterReferences = new HashSet<>(assessmentParameter.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentParameterReference.getReferenceId())).toList());
         if (isParameterRatingUnique(assessmentParameterReferences, parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameterReferences, parameterReferencesRequest.getReference())) {
             assessmentParameterReference.setParameter(assessmentParameter);
             assessmentParameterReference.setReference(parameterReferencesRequest.getReference());
             assessmentParameterReference.setRating(parameterReferencesRequest.getRating());
 
-            assessmentParameterRRepository.update(assessmentParameterReference);
+            parameterService.updateParameterReference(assessmentParameterReference);
             return assessmentParameterReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
@@ -314,11 +309,11 @@ public class AssessmentMasterDataService {
     }
 
     public void deleteTopicReference(Integer referenceId) {
-        assessmentTopicReferenceRepository.deleteById(referenceId);
+        topicService.deleteTopicReference(referenceId);
     }
 
     public void deleteParameterReference(Integer referenceId) {
-        assessmentParameterRRepository.deleteById(referenceId);
+        parameterService.deleteParameterReference(referenceId);
     }
     public Integer getAssessedCategory(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
         Set<Integer> assessedCategories = new TreeSet<>();

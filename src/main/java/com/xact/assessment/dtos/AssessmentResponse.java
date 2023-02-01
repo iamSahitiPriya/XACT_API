@@ -19,7 +19,7 @@ public class AssessmentResponse {
     private Integer assessmentId;
     private String assessmentPurpose;
     private String assessmentName;
-
+    private String assessmentDescription;
     private String organisationName;
 
     private AssessmentStatusDto assessmentStatus;

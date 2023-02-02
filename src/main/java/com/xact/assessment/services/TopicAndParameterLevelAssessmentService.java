@@ -7,10 +7,6 @@ package com.xact.assessment.services;
 import com.xact.assessment.dtos.ActivityType;
 import com.xact.assessment.dtos.UpdateAnswerRequest;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
-import com.xact.assessment.repositories.ParameterLevelRecommendationRepository;
-import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
-import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import jakarta.inject.Singleton;
 
 import java.util.List;

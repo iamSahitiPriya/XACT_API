@@ -15,7 +15,6 @@ import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
 import com.xact.assessment.models.NotificationType;
-import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.TokenService;

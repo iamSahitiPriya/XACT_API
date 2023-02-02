@@ -15,7 +15,6 @@ import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
-import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.utils.NamingConventionUtil;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;

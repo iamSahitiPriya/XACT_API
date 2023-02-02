@@ -29,9 +29,8 @@ public class ReportService {
     private static final String FORMULA_STRING = "=-+@";
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
 
-    private final AnswerService answerService;
     private final ChartService chartService;
-    private final CategoryRepository categoryRepository;
+
     private final AssessmentMasterDataService assessmentMasterDataService;
 
     private List<AssessmentCategory> assessmentCategoryList;
@@ -41,19 +40,17 @@ public class ReportService {
     private final ModuleService moduleService;
 
 
-    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, AnswerService answerService, ChartService chartService, CategoryRepository categoryRepository, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, ModuleService moduleService) {
+    public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ChartService chartService, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, ModuleService moduleService) {
 
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
-        this.answerService = answerService;
         this.chartService = chartService;
-        this.categoryRepository = categoryRepository;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.userQuestionService = userQuestionService;
         this.moduleService = moduleService;
     }
 
     public Workbook generateReport(Integer assessmentId) {
-        List<Answer> answers = answerService.getAnswers(assessmentId);
+        List<Answer> answers = topicAndParameterLevelAssessmentService.getAnswers(assessmentId);
         List<UserQuestion> userQuestions = userQuestionService.findByAssessmentAndAnswer(assessmentId);
         assessmentCategoryList = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         selectedModulesSet = mapSelectedModulesInSet(assessmentCategoryList);
@@ -104,7 +101,7 @@ public class ReportService {
     public List<AssessmentCategory> generateSunburstData(Assessment assessment) {
         List<ParameterLevelAssessment> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId());
         List<TopicLevelAssessment> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId());
-        List<AssessmentCategory> assessmentCategories = categoryRepository.findAll();
+        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
         for (AssessmentCategory assessmentCategory : assessmentCategories) {
             fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData, assessment);
         }
@@ -112,6 +109,7 @@ public class ReportService {
 
 
     }
+
 
     public Map<Integer, List<ParameterLevelRecommendation>> getParameterWiseRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations) {
         Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = new HashMap<>();
@@ -531,7 +529,7 @@ public class ReportService {
 
 
     public SummaryResponse getSummary(Integer assessmentId) {
-        Integer totalNoOfQuestions = answerService.getAnswers(assessmentId).size() + userQuestionService.findByAssessmentAndAnswer(assessmentId).size();
+        Integer totalNoOfQuestions = topicAndParameterLevelAssessmentService.getAnswers(assessmentId).size() + userQuestionService.findByAssessmentAndAnswer(assessmentId).size();
         List<ParameterLevelAssessment> parameterLevelAssessmentList = topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
         List<TopicLevelAssessment> topicLevelAssessmentList = topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
 

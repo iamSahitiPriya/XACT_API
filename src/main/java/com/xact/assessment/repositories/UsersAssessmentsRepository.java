@@ -19,11 +19,11 @@ import java.util.List;
 public interface UsersAssessmentsRepository extends CrudRepository<AssessmentUser, UserId> {
 
     @Executable
-    @Query("SELECT au FROM AssessmentUser au WHERE au.userId.userEmail=:userEmail and au.userId.assessment.isDeleted=false")
+    @Query("SELECT au FROM AssessmentUser au WHERE lower(au.userId.userEmail)=lower(:userEmail) and au.userId.assessment.isDeleted=false")
     List<AssessmentUser> findByUserEmail(@Parameter("userEmail") String userEmail);
 
     @Executable
-    @Query("SELECT au FROM AssessmentUser au WHERE au.userId.userEmail=:userEmail AND au.userId.assessment.assessmentId=:assessmentId and au.userId.assessment.isDeleted=false")
+    @Query("SELECT au FROM AssessmentUser au WHERE lower(au.userId.userEmail)=lower(:userEmail) AND au.userId.assessment.assessmentId=:assessmentId and au.userId.assessment.isDeleted=false")
     AssessmentUser findByUserEmail(@Parameter("userEmail") String userEmail, @Parameter("assessmentId") Integer assessmentId);
 
     @Executable

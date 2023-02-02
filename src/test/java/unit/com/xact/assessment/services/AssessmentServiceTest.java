@@ -493,5 +493,40 @@ class AssessmentServiceTest {
 
     }
 
+    @Test
+    void shouldGetFacilitators() {
+        Date created = new Date(22 - 10 - 2022);
+        Date updated = new Date(22 - 10 - 2022);
+
+        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        UserId userId = new UserId("hello@thoughtworks.com", assessment);
+
+        List<String> assessmentUser1 = Collections.singletonList(new String("Answer"));
+
+        when(usersAssessmentsService.getAssessmentFacilitators(assessment.getAssessmentId())).thenReturn(assessmentUser1);
+        assessmentService.getAssessmentFacilitators(assessment.getAssessmentId());
+
+        verify(usersAssessmentsService).getAssessmentFacilitators(assessment.getAssessmentId());
+    }
+    @Test
+    void shouldGetFacilitatorsSet() {
+        Date created = new Date(22 - 10 - 2022);
+        Date updated = new Date(22 - 10 - 2022);
+
+        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        UserId userId = new UserId("hello@thoughtworks.com", assessment);
+        AssessmentUser assessmentUser = new AssessmentUser(userId, AssessmentRole.Owner);
+
+        Set<AssessmentUser> assessmentUser1 = new HashSet<>();
+        assessmentUser1.add(assessmentUser);
+
+        when(usersAssessmentsService.getAssessmentFacilitatorsSet(assessment)).thenReturn(assessmentUser1);
+        assessmentService.getAssessmentFacilitatorsSet(assessment);
+
+        verify(usersAssessmentsService).getAssessmentFacilitatorsSet(assessment);
+    }
+
 
 }

@@ -31,7 +31,7 @@ class ReportServiceTest {
     TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
     AnswerService answerService = mock(AnswerService.class);
     SpiderChartService chartService = mock(SpiderChartService.class);
-    CategoryRepository categoryRepository = mock(CategoryRepository.class);
+
     UserQuestionService userQuestionService = mock(UserQuestionService.class);
     ModuleService moduleService = mock(ModuleService.class);
 
@@ -39,7 +39,7 @@ class ReportServiceTest {
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
 
 
-    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, answerService, chartService, categoryRepository, assessmentMasterDataService,userQuestionService, moduleService);
+    private final ReportService reportService = new ReportService(topicAndParameterLevelAssessmentService, chartService,  assessmentMasterDataService,  userQuestionService, moduleService);
 
     @Test
     void getWorkbookAssessmentDataSheetWithRating() {
@@ -483,7 +483,7 @@ class ReportServiceTest {
 
         when(assessmentMasterDataService.getUserAssessmentCategories(assessment.getAssessmentId())).thenReturn(Collections.singletonList(assessmentCategory1));
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(topicLevelAssessments);
-        when(categoryRepository.findAll()).thenReturn(assessmentCategories);
+        when(assessmentMasterDataService.getAllCategories()).thenReturn(assessmentCategories);
 
         String series1 = "Current Maturity";
         String series2 = "Desired Maturity";
@@ -555,7 +555,7 @@ class ReportServiceTest {
 
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelAssessment));
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelAssessment));
-        when(categoryRepository.findAll()).thenReturn(assessmentCategories);
+        when(assessmentMasterDataService.getAllCategories()).thenReturn(assessmentCategories);
         when(assessmentMasterDataService.isModuleSelectedByUser(assessment,assessmentModule)).thenReturn(true);
 
         List<AssessmentCategory> actualAssessmentCategoryList = reportService.generateSunburstData(assessment);

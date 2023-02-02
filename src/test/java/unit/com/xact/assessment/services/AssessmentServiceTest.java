@@ -27,43 +27,24 @@ import static org.mockito.Mockito.*;
 class AssessmentServiceTest {
     private UsersAssessmentsService usersAssessmentsService;
     private AssessmentRepository assessmentRepository;
-    private UsersAssessmentsRepository usersAssessmentsRepository;
     private AccessControlRepository accessControlRepository;
-    private UserAssessmentModuleRepository userAssessmentModuleRepository;
-
     private AssessmentMasterDataService assessmentMasterDataService;
 
-    private UserQuestionService userQuestionService;
 
-    private QuestionService questionService;
-    private ModuleRepository moduleRepository;
-    private ParameterService parameterService;
-
-    private AnswerService answerService;
     private AssessmentService assessmentService;
 
-    private NotificationService notificationService;
 
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
-    private TopicService topicService;
+
 
     @BeforeEach
     public void beforeEach() {
         usersAssessmentsService = mock(UsersAssessmentsService.class);
         assessmentRepository = mock(AssessmentRepository.class);
-        usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
         accessControlRepository = mock(AccessControlRepository.class);
-        moduleRepository = mock(ModuleRepository.class);
-        userQuestionService = mock(UserQuestionService.class);
-        notificationService = mock(NotificationService.class);
-        topicService = mock(TopicService.class);
-        userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
-        parameterService = mock(ParameterService.class);
-        questionService = mock(QuestionService.class);
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
-        answerService = mock(AnswerService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, usersAssessmentsRepository, accessControlRepository, userAssessmentModuleRepository, assessmentMasterDataService, userQuestionService, questionService, moduleRepository, parameterService, answerService, topicAndParameterLevelAssessmentService, notificationService, topicService);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, accessControlRepository, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
     }
 
     @Test
@@ -125,7 +106,7 @@ class AssessmentServiceTest {
         UserId userId = new UserId(loggedinUser.getUserEmail(), mockAssessment);
         assessmentUser.setUserId(userId);
 
-        when(usersAssessmentsRepository.findByUserEmail(loggedinUser.getUserEmail(), assessmentId)).thenReturn(assessmentUser);
+        when(usersAssessmentsService.getAssessment(assessmentId, loggedinUser)).thenReturn(mockAssessment);
 
         Assessment assessment = assessmentService.getAssessment(assessmentId, loggedinUser);
 
@@ -201,7 +182,7 @@ class AssessmentServiceTest {
         for (AssessmentUser eachUser : assessmentUsersList) {
             expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
         }
-        when(usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator)).thenReturn(assessmentUsersList);
+        when(usersAssessmentsService.getAssessmentFacilitators(assessmentId)).thenReturn(expectedAssessmentUsersList);
         List<String> actualResponse = assessmentService.getAssessmentFacilitators(assessmentId);
         assertEquals(expectedAssessmentUsersList, actualResponse);
 
@@ -241,7 +222,6 @@ class AssessmentServiceTest {
         assessmentUsers.add(assessmentUser1);
 
         doNothing().when(usersAssessmentsService).updateUsersInAssessment(assessmentUserSet, assessment.getAssessmentId());
-        when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUsers);
 
         assessmentService.getNewlyAddedUser(assessmentUserSet1, assessmentUserSet);
         assessmentUserSet.remove(assessmentUser1);
@@ -253,7 +233,7 @@ class AssessmentServiceTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setEmail("hello@email.com");
         user.setUserInfo(userInfo);
-        when(usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), 1)).thenReturn(assessmentUser1);
+        when(usersAssessmentsService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
 
         Assessment expectedAssessment = assessmentService.getAssessment(1, user);
 
@@ -317,102 +297,6 @@ class AssessmentServiceTest {
 
     }
 
-    @Test
-    void shouldSaveModulesSelectedByUser() {
-        Date created = new Date(2022 - 7 - 13);
-        Date updated = new Date(2022 - 9 - 24);
-        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-
-        List<ModuleRequest> moduleRequests = new ArrayList<>();
-        ModuleRequest moduleRequest = new ModuleRequest();
-        moduleRequest.setModuleId(1);
-        moduleRequests.add(moduleRequest);
-
-        AssessmentModule assessmentModule1 = new AssessmentModule();
-        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
-
-        when(moduleRepository.findByModuleId(moduleRequest.getModuleId())).thenReturn(assessmentModule1);
-
-        AssessmentModule assessmentModule = assessmentService.getModule(moduleRequest.getModuleId());
-        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
-        assessmentModuleId.setAssessment(assessment);
-        assessmentModuleId.setModule(assessmentModule);
-        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
-        userAssessmentModule.setModule(assessmentModule);
-        userAssessmentModule.setAssessment(assessment);
-
-        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
-
-        assessmentService.saveAssessmentModules(moduleRequests, assessment);
-
-        verify(userAssessmentModuleRepository).save(userAssessmentModule);
-
-    }
-
-    @Test
-    void shouldUpdateUserSelectedModules() {
-        Date created = new Date(2022 - 7 - 13);
-        Date updated = new Date(2022 - 9 - 24);
-        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-
-        List<ModuleRequest> moduleRequests = new ArrayList<>();
-        ModuleRequest moduleRequest = new ModuleRequest();
-        moduleRequest.setModuleId(2);
-        moduleRequests.add(moduleRequest);
-
-        AssessmentModule assessmentModule1 = new AssessmentModule();
-        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
-
-        when(moduleRepository.findByModuleId(moduleRequest.getModuleId())).thenReturn(assessmentModule1);
-
-        AssessmentModule assessmentModule = assessmentService.getModule(moduleRequest.getModuleId());
-        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
-        assessmentModuleId.setAssessment(assessment);
-        assessmentModuleId.setModule(assessmentModule);
-        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
-        userAssessmentModule.setModule(assessmentModule);
-        userAssessmentModule.setAssessment(assessment);
-
-        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
-
-        assessmentService.updateAssessmentModules(moduleRequests, assessment);
-
-        verify(userAssessmentModuleRepository).save(userAssessmentModule);
-    }
-
-    @Test
-    void shouldDeleteUserSelectedModule() {
-        Date created = new Date(2022 - 7 - 13);
-        Date updated = new Date(2022 - 9 - 24);
-        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
-        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-
-        List<ModuleRequest> moduleRequests = new ArrayList<>();
-        ModuleRequest moduleRequest = new ModuleRequest();
-        moduleRequest.setModuleId(2);
-        moduleRequests.add(moduleRequest);
-
-        AssessmentModule assessmentModule1 = new AssessmentModule();
-        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
-
-        when(moduleRepository.findByModuleId(moduleRequest.getModuleId())).thenReturn(assessmentModule1);
-
-        AssessmentModule assessmentModule = assessmentService.getModule(moduleRequest.getModuleId());
-        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
-        assessmentModuleId.setAssessment(assessment);
-        assessmentModuleId.setModule(assessmentModule);
-        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
-        userAssessmentModule.setModule(assessmentModule);
-        userAssessmentModule.setAssessment(assessment);
-
-        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
-        doNothing().when(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
-        assessmentService.updateAssessmentModules(moduleRequests, assessment);
-
-        verify(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
-    }
 
     @Test
     void softDeleteAssessment() {
@@ -426,5 +310,184 @@ class AssessmentServiceTest {
         assessmentService.softDeleteAssessment(assessment);
         verify(assessmentRepository).update(assessment);
     }
+
+    @Test
+    void shouldSaveUserQuestion() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("example");
+
+
+        Organisation organisation = new Organisation();
+        organisation.setOrganisationId(1);
+        organisation.setIndustry("new");
+        organisation.setOrganisationName("org");
+        organisation.setDomain("domain");
+
+        assessment.setOrganisation(organisation);
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+
+        String questionText = "new question ?";
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion(questionText);
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+        when(usersAssessmentsService.saveUserQuestion(assessment, assessmentParameter.getParameterId(), userQuestion.getQuestion())).thenReturn(userQuestion);
+        assessmentService.saveUserQuestion(assessment, assessmentParameter.getParameterId(), userQuestion.getQuestion());
+        verify(usersAssessmentsService).saveUserQuestion(assessment, assessmentParameter.getParameterId(), userQuestion.getQuestion());
+    }
+
+    @Test
+    void shouldSaveUserAnswer() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("example");
+
+
+        Organisation organisation = new Organisation();
+        organisation.setOrganisationId(1);
+        organisation.setIndustry("new");
+        organisation.setOrganisationName("org");
+        organisation.setDomain("domain");
+
+        assessment.setOrganisation(organisation);
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+
+        String questionText = "new question ?";
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion(questionText);
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+        userQuestion.setAnswer("answer Text?");
+
+        doNothing().when(usersAssessmentsService).saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
+        assessmentService.saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
+
+        verify(usersAssessmentsService).saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
+
+    }
+
+    @Test
+    void shouldBeAbleToUpdateUserQuestionText() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("example");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion("question Text?");
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+        userQuestion.setQuestion("updated question Text?");
+
+
+        doNothing().when(usersAssessmentsService).updateUserQuestion(userQuestion.getQuestionId(), userQuestion.getQuestion());
+        assessmentService.updateUserQuestion(userQuestion.getQuestionId(), userQuestion.getQuestion());
+
+        verify(usersAssessmentsService).updateUserQuestion(userQuestion.getQuestionId(), userQuestion.getQuestion());
+    }
+
+    @Test
+    void shouldDeleteUserQuestion() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("example");
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("name");
+
+        UserQuestion userQuestion = new UserQuestion();
+        userQuestion.setQuestionId(1);
+        userQuestion.setQuestion("question Text?");
+        userQuestion.setParameter(assessmentParameter);
+        userQuestion.setAssessment(assessment);
+        userQuestion.setAnswer("answer");
+
+        doNothing().when(usersAssessmentsService).deleteUserQuestion(userQuestion.getQuestionId());
+        assessmentService.deleteUserQuestion(userQuestion.getQuestionId());
+
+        verify(usersAssessmentsService).deleteUserQuestion(userQuestion.getQuestionId());
+
+    }
+
+    @Test
+    void shouldSaveModulesSelectedByUser() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+
+        List<ModuleRequest> moduleRequests = new ArrayList<>();
+        ModuleRequest moduleRequest = new ModuleRequest();
+        moduleRequest.setModuleId(1);
+        moduleRequests.add(moduleRequest);
+
+        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
+        assessmentModuleId.setAssessment(assessment);
+        assessmentModuleId.setModule(assessmentModule);
+        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
+        userAssessmentModule.setModule(assessmentModule);
+        userAssessmentModule.setAssessment(assessment);
+
+        doNothing().when(usersAssessmentsService).saveAssessmentModules(moduleRequests, assessment);
+
+        assessmentService.saveAssessmentModules(moduleRequests, assessment);
+
+        verify(usersAssessmentsService).saveAssessmentModules(moduleRequests, assessment);
+
+    }
+
+    @Test
+    void shouldUpdateModulesSelectedByUser() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+
+        List<ModuleRequest> moduleRequests = new ArrayList<>();
+        ModuleRequest moduleRequest = new ModuleRequest();
+        moduleRequest.setModuleId(1);
+        moduleRequests.add(moduleRequest);
+
+        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
+        assessmentModuleId.setAssessment(assessment);
+        assessmentModuleId.setModule(assessmentModule);
+        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
+        userAssessmentModule.setModule(assessmentModule);
+        userAssessmentModule.setAssessment(assessment);
+
+        doNothing().when(usersAssessmentsService).updateAssessmentModules(moduleRequests, assessment);
+
+        assessmentService.updateAssessmentModules(moduleRequests, assessment);
+
+        verify(usersAssessmentsService).updateAssessmentModules(moduleRequests, assessment);
+
+    }
+
 
 }

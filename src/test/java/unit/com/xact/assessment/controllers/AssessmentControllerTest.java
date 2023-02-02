@@ -29,13 +29,10 @@ class AssessmentControllerTest {
     private final Authentication authentication = Mockito.mock(Authentication.class);
     private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
-    private final AnswerService answerService = Mockito.mock(AnswerService.class);
-    private final TopicService topicService = Mockito.mock(TopicService.class);
-    private final AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
+    private final NotificationService notificationService=Mockito.mock(NotificationService.class);
 
-    private final UserQuestionService userQuestionService = Mockito.mock(UserQuestionService.class);
     private final ActivityLogService activityLogService = Mockito.mock(ActivityLogService.class);
-    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
+
     private final AssessmentController assessmentController = new AssessmentController( userAuthService, assessmentService, activityLogService, notificationService);
 
 
@@ -181,7 +178,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
         parameterLevelRecommendation.setDeliveryHorizon("some text");
         when(assessmentService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
+//        when(assesmentService.getParameterAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
         when(assessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();
@@ -229,8 +226,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
         topicLevelRecommendation.setDeliveryHorizon("some text");
-        when(topicService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(Collections.singletonList(topicLevelRecommendation));
+        when(assessmentService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
         when(assessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
@@ -1557,8 +1553,8 @@ class AssessmentControllerTest {
         answer.setAnswerId(answerId);
         answer.setAnswerNote("Answer");
 
-        when(answerService.getAnswer(answerId)).thenReturn(Optional.of(answer));
-        when(answerService.saveAnswer(answer)).thenReturn(answer);
+//        when(assessmentService.getAnswer(answerId)).thenReturn(Optional.of(answer));
+//        when(answerService.saveAnswer(answer)).thenReturn(answer);
 
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest();
         updateAnswerRequest.setQuestionId(1);

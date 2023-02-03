@@ -6,9 +6,9 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import com.xact.assessment.services.ModuleService;
+import com.xact.assessment.services.UserAssessmentModuleService;
 import com.xact.assessment.services.UserQuestionService;
 import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ class UsersAssessmentsServiceTest {
     private UsersAssessmentsRepository usersAssessmentsRepository;
     private UsersAssessmentsService usersAssessmentsService;
 
-    private UserAssessmentModuleRepository userAssessmentModuleRepository;
+    private UserAssessmentModuleService userAssessmentModuleService;
 
     private UserQuestionService userQuestionService;
     private ModuleService moduleService;
@@ -33,10 +33,10 @@ class UsersAssessmentsServiceTest {
     @BeforeEach
     public void beforeEach() {
         usersAssessmentsRepository = mock(UsersAssessmentsRepository.class);
-        userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
+        userAssessmentModuleService = mock(UserAssessmentModuleService.class);
         userQuestionService = mock(UserQuestionService.class);
         moduleService = mock(ModuleService.class);
-        usersAssessmentsService = new UsersAssessmentsService(usersAssessmentsRepository, userAssessmentModuleRepository, userAssessmentModuleService, userQuestionService, moduleService);
+        usersAssessmentsService = new UsersAssessmentsService(usersAssessmentsRepository, userAssessmentModuleService, userQuestionService, moduleService);
     }
 
     @Test
@@ -127,11 +127,11 @@ class UsersAssessmentsServiceTest {
         userAssessmentModule.setModule(assessmentModule);
         userAssessmentModule.setAssessment(assessment);
 
-        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
+        when(userAssessmentModuleService.save(userAssessmentModule)).thenReturn(userAssessmentModule);
 
         usersAssessmentsService.saveAssessmentModules(moduleRequests, assessment);
 
-        verify(userAssessmentModuleRepository).save(userAssessmentModule);
+        verify(userAssessmentModuleService).save(userAssessmentModule);
 
     }
 
@@ -161,11 +161,11 @@ class UsersAssessmentsServiceTest {
         userAssessmentModule.setModule(assessmentModule);
         userAssessmentModule.setAssessment(assessment);
 
-        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
+        when(userAssessmentModuleService.save(userAssessmentModule)).thenReturn(userAssessmentModule);
 
         usersAssessmentsService.updateAssessmentModules(moduleRequests, assessment);
 
-        verify(userAssessmentModuleRepository).save(userAssessmentModule);
+        verify(userAssessmentModuleService).save(userAssessmentModule);
     }
 
     @Test
@@ -193,11 +193,11 @@ class UsersAssessmentsServiceTest {
         userAssessmentModule.setModule(assessmentModule);
         userAssessmentModule.setAssessment(assessment);
 
-        when(userAssessmentModuleRepository.save(userAssessmentModule)).thenReturn(userAssessmentModule);
-        doNothing().when(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
+        when(userAssessmentModuleService.save(userAssessmentModule)).thenReturn(userAssessmentModule);
+        doNothing().when(userAssessmentModuleService).deleteByModule(assessment);
         usersAssessmentsService.updateAssessmentModules(moduleRequests, assessment);
 
-        verify(userAssessmentModuleRepository).deleteByModule(assessment.getAssessmentId());
+        verify(userAssessmentModuleService).deleteByModule(assessment);
     }
 
     @Test

@@ -22,15 +22,15 @@ import static org.mockito.Mockito.*;
 
 class AssessmentMasterDataServiceTest {
 
-    private final CategoryRepository categoryRepository = mock(CategoryRepository.class);
+    private final CategoryService categoryService = mock(CategoryService.class);
     private final TopicService topicService = mock(TopicService.class);
     private final ModuleService moduleService = mock(ModuleService.class);
     private final ParameterService parameterService = mock(ParameterService.class);
     private final QuestionService questionService = mock(QuestionService.class);
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
-    private final UserAssessmentModuleRepository userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
+    private final UserAssessmentModuleService userAssessmentModuleService = mock(UserAssessmentModuleService.class);
     private final ModuleService moduleService1 = new ModuleService(moduleRepository);
-    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, categoryService, moduleService, questionService, parameterService, topicService, userAssessmentModuleRepository);
+    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryService, moduleService,  questionService, parameterService, topicService, userAssessmentModuleService);
 
     @Test
     void getAllCategories() {
@@ -38,13 +38,13 @@ class AssessmentMasterDataServiceTest {
         category.setCategoryId(3);
         category.setCategoryName("My category");
         List<AssessmentCategory> allCategories = Collections.singletonList(category);
-        when(categoryRepository.findAll()).thenReturn(allCategories);
+        when(categoryService.getAllCategoriesByDesc()).thenReturn(allCategories);
 
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategoriesByDesc();
 
         assertEquals(assessmentCategories, allCategories);
 
-        verify(categoryRepository).findAll();
+        verify(categoryService).getAllCategoriesByDesc();
     }
 
     @Test
@@ -53,12 +53,12 @@ class AssessmentMasterDataServiceTest {
         categoryRequest.setCategoryName("Dummy category");
         categoryRequest.setActive(false);
         List<AssessmentCategory> categories = new ArrayList<>();
-        when(categoryRepository.findAll()).thenReturn(categories);
+        when(categoryService.getCategories()).thenReturn(categories);
         assessmentMasterDataService.createAssessmentCategory(categoryRequest);
         AssessmentCategory assessmentCategory = new AssessmentCategory(categoryRequest.getCategoryName(), categoryRequest.isActive(), categoryRequest.getComments());
 
-        when(categoryRepository.save(assessmentCategory)).thenReturn(assessmentCategory);
-        verify(categoryRepository).save(assessmentCategory);
+        doNothing().when(categoryService).save(assessmentCategory);
+        verify(categoryService).save(assessmentCategory);
     }
 
     @Test
@@ -78,11 +78,11 @@ class AssessmentMasterDataServiceTest {
         categoryRequest.setCategoryName("category");
         categoryRequest.setActive(false);
 
-        when(categoryRepository.findAll()).thenReturn(assessmentCategories);
-        when(categoryRepository.getAllCategories()).thenReturn(categoryNames);
+        when(categoryService.getCategories()).thenReturn(assessmentCategories);
+        when(categoryService.getAllCategories()).thenReturn(categoryNames);
         AssessmentCategory assessmentCategory1 = new AssessmentCategory(categoryRequest.getCategoryName(), categoryRequest.isActive(), categoryRequest.getComments());
 
-        when(categoryRepository.save(assessmentCategory1)).thenReturn(assessmentCategory1);
+        doNothing().when(categoryService).save(assessmentCategory1);
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.createAssessmentCategory(categoryRequest));
 
@@ -103,7 +103,7 @@ class AssessmentMasterDataServiceTest {
         assessmentModuleRequest.setActive(false);
         assessmentModuleRequest.setCategory(1);
 
-        when(categoryRepository.findCategoryById(category.getCategoryId())).thenReturn(category);
+        when(categoryService.findCategoryById(assessmentModuleRequest)).thenReturn(category);
 
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
 
@@ -205,12 +205,12 @@ class AssessmentMasterDataServiceTest {
         categoryRequest.setCategoryName("Dummy category");
         categoryRequest.setActive(false);
         List<AssessmentCategory> categories = new ArrayList<>();
-        when(categoryRepository.findAll()).thenReturn(categories);
+        when(categoryService.getCategories()).thenReturn(categories);
         assessmentMasterDataService.createAssessmentCategory(categoryRequest);
         AssessmentCategory assessmentCategory = new AssessmentCategory(categoryRequest.getCategoryName(), categoryRequest.isActive(), categoryRequest.getComments());
         assessmentCategory.setCategoryName("this is a category");
         assessmentMasterDataService.updateCategory(assessmentCategory, categoryRequest);
-        verify(categoryRepository).update(assessmentCategory);
+        verify(categoryService).update(assessmentCategory);
     }
 
     @Test
@@ -233,8 +233,8 @@ class AssessmentMasterDataServiceTest {
         categoryRequest.setCategoryName("category");
         categoryRequest.setActive(false);
 
-        when(categoryRepository.findAll()).thenReturn(assessmentCategories);
-        when(categoryRepository.getAllCategories()).thenReturn(categoryNames);
+        when(categoryService.getCategories()).thenReturn(assessmentCategories);
+        when(categoryService.getAllCategories()).thenReturn(categoryNames);
 
         assertThrows(DuplicateRecordException.class, () -> assessmentMasterDataService.updateCategory(assessmentCategory1, categoryRequest));
 
@@ -247,7 +247,7 @@ class AssessmentMasterDataServiceTest {
         assessmentModuleRequest.setActive(false);
         assessmentModuleRequest.setCategory(1);
         AssessmentCategory category = new AssessmentCategory("Dummy", false, "");
-        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(category);
+        when(categoryService.findCategoryById(assessmentModuleRequest)).thenReturn(category);
         AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), category, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
         AssessmentModule assessmentModule1 = new AssessmentModule(2, "new module", category, true, "");
         category.setModules(Collections.singleton(assessmentModule1));
@@ -285,7 +285,7 @@ class AssessmentMasterDataServiceTest {
         assessmentModules.add(assessmentModule);
         assessmentCategory.setModules(assessmentModules);
 
-        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(assessmentCategory);
+        when(categoryService.findCategoryById(assessmentModuleRequest)).thenReturn(assessmentCategory);
         doNothing().when(moduleService).createModule(assessmentModule);
         when(moduleRepository.save(assessmentModule)).thenReturn(assessmentModule);
         when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
@@ -314,7 +314,7 @@ class AssessmentMasterDataServiceTest {
         Integer moduleId = assessmentModule1.getModuleId();
         when(moduleService.getModule(assessmentModule.getModuleId())).thenReturn(assessmentModule);
         when(moduleService.getModule(moduleId)).thenReturn(assessmentModule1);
-        when(categoryRepository.findCategoryById(assessmentModuleRequest.getCategory())).thenReturn(assessmentCategory);
+        when(categoryService.findCategoryById(assessmentModuleRequest)).thenReturn(assessmentCategory);
         doNothing().when(moduleService).updateModule(assessmentModule);
         when(moduleRepository.update(assessmentModule)).thenReturn(assessmentModule);
 
@@ -452,7 +452,7 @@ class AssessmentMasterDataServiceTest {
         module.setTopics(validTopics);
         assessmentTopic.setParameters(validParameters);
 
-        when(userAssessmentModuleRepository.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules);
+        when(userAssessmentModuleService.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules);
 
         List<AssessmentCategory> actualAssessmentCategories = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
 
@@ -491,12 +491,12 @@ class AssessmentMasterDataServiceTest {
         assessmentTopic.setParameters(validParameters);
 
 
-        when(userAssessmentModuleRepository.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules1);
+        when(userAssessmentModuleService.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules1);
 
 
         assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
 
-        verify(userAssessmentModuleRepository).findModuleByAssessment(assessmentId);
+        verify(userAssessmentModuleService).findModuleByAssessment(assessmentId);
 
     }
 

@@ -7,7 +7,6 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import com.xact.assessment.repositories.UsersAssessmentsRepository;
 import jakarta.inject.Singleton;
 
@@ -101,7 +100,7 @@ public class UsersAssessmentsService {
     }
 
     public void updateAssessmentModules(List<ModuleRequest> moduleRequest, Assessment assessment) {
-        userAssessmentModuleService.getDeleteByModule(assessment);
+        userAssessmentModuleService.deleteByModule(assessment);
         saveAssessmentModules(moduleRequest, assessment);
     }
 

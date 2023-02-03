@@ -21,7 +21,7 @@ public class UserAssessmentModuleService {
         return userAssessmentModuleRepository.save(userAssessmentModule);
     }
 
-    public void getDeleteByModule(Assessment assessment) {
+    public void deleteByModule(Assessment assessment) {
         userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
     }
 

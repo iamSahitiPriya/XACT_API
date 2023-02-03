@@ -11,10 +11,7 @@ import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.services.AssessmentMasterDataService;
-import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
-import com.xact.assessment.services.UsersAssessmentsService;
+import com.xact.assessment.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +28,6 @@ import static org.mockito.Mockito.*;
 class AssessmentServiceTest {
     private UsersAssessmentsService usersAssessmentsService;
     private AssessmentRepository assessmentRepository;
-    private AccessControlRepository accessControlRepository;
     private AssessmentMasterDataService assessmentMasterDataService;
 
 
@@ -39,16 +35,17 @@ class AssessmentServiceTest {
 
 
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
+    private AccessControlService accessControlService;
 
 
     @BeforeEach
     public void beforeEach() {
         usersAssessmentsService = mock(UsersAssessmentsService.class);
         assessmentRepository = mock(AssessmentRepository.class);
-        accessControlRepository = mock(AccessControlRepository.class);
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, accessControlRepository, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
+        accessControlService = mock(AccessControlService.class);
+        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
     }
 
     @Test

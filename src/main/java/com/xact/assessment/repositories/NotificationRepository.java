@@ -19,5 +19,4 @@ public interface NotificationRepository extends CrudRepository<Notification, Int
     @Executable
     @Query("delete from Notification notification where notification.status = 'Y' and notification.updatedAt < :expiryDate")
     void deleteSentNotifications(@Parameter("expiryDate")Date expiryDate);
-
 }

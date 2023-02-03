@@ -29,4 +29,10 @@ public class EmailPayload {
 
     @JsonProperty(value = "created_at")
     private String createdAt;
+
+    @JsonProperty(value = "ownerName")
+    private String ownerName;
+
+    @JsonProperty(value = "ownerEmail")
+    private String ownerEmail;
 }

@@ -6,7 +6,6 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
-import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import jakarta.inject.Singleton;
 
 import java.util.List;

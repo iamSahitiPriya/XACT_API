@@ -7,7 +7,6 @@ package com.xact.assessment.services;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.exceptions.DuplicateRecordException;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
 import java.util.*;

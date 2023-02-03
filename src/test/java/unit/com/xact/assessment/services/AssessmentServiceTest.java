@@ -9,7 +9,6 @@ import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.dtos.UserDto;
 import com.xact.assessment.dtos.UserRole;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.BeforeEach;

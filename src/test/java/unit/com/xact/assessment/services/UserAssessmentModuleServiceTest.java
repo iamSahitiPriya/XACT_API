@@ -4,16 +4,13 @@
 
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.dtos.ModuleRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import com.xact.assessment.services.UserAssessmentModuleService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import static org.mockito.Mockito.*;
 

@@ -4,8 +4,8 @@
 
 package com.xact.assessment.repositories;
 
-import com.xact.assessment.models.TopicLevelRating;
 import com.xact.assessment.models.TopicLevelId;
+import com.xact.assessment.models.TopicLevelRating;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.data.annotation.Query;

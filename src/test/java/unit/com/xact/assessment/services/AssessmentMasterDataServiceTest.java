@@ -7,9 +7,7 @@ package unit.com.xact.assessment.services;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.exceptions.DuplicateRecordException;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.CategoryRepository;
 import com.xact.assessment.repositories.ModuleRepository;
-import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.Test;
 

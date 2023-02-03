@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class TopicAndParameterLevelAssessmentServiceTest {
+class TopicAndParameterLevelRatingServiceTest {
 
     private ModelMapper mapper = new ModelMapper();
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
@@ -59,27 +59,27 @@ class TopicAndParameterLevelAssessmentServiceTest {
 
         TopicLevelId topicLevelId = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
         topicLevelId.setAssessment(assessment);
-        TopicLevelAssessment topicLevelAssessment = mapper.map(topicRatingAndRecommendation, TopicLevelAssessment.class);
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
+        TopicLevelRating topicLevelRating = mapper.map(topicRatingAndRecommendation, TopicLevelRating.class);
+        topicLevelRating.setTopicLevelId(topicLevelId);
 
 
         TopicLevelRecommendation topicLevelRecommendation = mapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
-        when(topicService.saveRatingAndRecommendation(topicLevelAssessment)).thenReturn(topicLevelAssessment);
-        TopicLevelAssessment actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+        when(topicService.saveRatingAndRecommendation(topicLevelRating)).thenReturn(topicLevelRating);
+        TopicLevelRating actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelRating);
 
         when(topicService.saveTopicLevelRecommendation(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
         TopicLevelRecommendation actualResponse1 = topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
 
-        assertEquals(topicLevelAssessment.getRating(), actualResponse.getRating());
-        assertEquals(topicLevelAssessment.getTopicLevelId(), actualResponse.getTopicLevelId());
+        assertEquals(topicLevelRating.getRating(), actualResponse.getRating());
+        assertEquals(topicLevelRating.getTopicLevelId(), actualResponse.getTopicLevelId());
         assertEquals(topicLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
         assertEquals(topicLevelRecommendation.getRecommendationEffort(), actualResponse1.getRecommendationEffort());
 
-        assertEquals(topicLevelAssessment.getRating(), actualResponse.getRating());
-        assertEquals(topicLevelAssessment.getTopicLevelId(), actualResponse.getTopicLevelId());
+        assertEquals(topicLevelRating.getRating(), actualResponse.getRating());
+        assertEquals(topicLevelRating.getTopicLevelId(), actualResponse.getTopicLevelId());
 
     }
 

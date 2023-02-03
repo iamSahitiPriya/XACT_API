@@ -30,7 +30,7 @@ class AssessmentMasterDataServiceTest {
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
     private final UserAssessmentModuleRepository userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
     private final ModuleService moduleService1 = new ModuleService(moduleRepository);
-    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, moduleService, questionService, parameterService, topicService, userAssessmentModuleRepository);
+    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryRepository, categoryService, moduleService, questionService, parameterService, topicService, userAssessmentModuleRepository);
 
     @Test
     void getAllCategories() {
@@ -40,7 +40,7 @@ class AssessmentMasterDataServiceTest {
         List<AssessmentCategory> allCategories = Collections.singletonList(category);
         when(categoryRepository.findAll()).thenReturn(allCategories);
 
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
+        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategoriesByDesc();
 
         assertEquals(assessmentCategories, allCategories);
 
@@ -707,18 +707,18 @@ class AssessmentMasterDataServiceTest {
         ParameterLevelId parameterLevelId = new ParameterLevelId();
         parameterLevelId.setAssessment(assessment1);
         parameterLevelId.setParameter(assessmentParameter);
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-        parameterLevelAssessment.setRating(1);
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating();
+        parameterLevelRating.setParameterLevelId(parameterLevelId);
+        parameterLevelRating.setRating(1);
 
         TopicLevelId topicLevelId = new TopicLevelId();
         topicLevelId.setAssessment(assessment1);
         topicLevelId.setTopic(assessmentTopic);
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(2);
+        TopicLevelRating topicLevelRating = new TopicLevelRating();
+        topicLevelRating.setTopicLevelId(topicLevelId);
+        topicLevelRating.setRating(2);
 
-        Integer expectedValue = moduleService1.getAssessedModule(Collections.singletonList(topicLevelAssessment), Collections.singletonList(parameterLevelAssessment));
+        Integer expectedValue = moduleService1.getAssessedModule(Collections.singletonList(topicLevelRating), Collections.singletonList(parameterLevelRating));
 
         Integer actualResponse = 1;
 
@@ -757,19 +757,19 @@ class AssessmentMasterDataServiceTest {
         ParameterLevelId parameterLevelId = new ParameterLevelId();
         parameterLevelId.setAssessment(assessment1);
         parameterLevelId.setParameter(assessmentParameter);
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-        parameterLevelAssessment.setRating(1);
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating();
+        parameterLevelRating.setParameterLevelId(parameterLevelId);
+        parameterLevelRating.setRating(1);
 
         TopicLevelId topicLevelId = new TopicLevelId();
         topicLevelId.setAssessment(assessment1);
         topicLevelId.setTopic(assessmentTopic);
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(2);
+        TopicLevelRating topicLevelRating = new TopicLevelRating();
+        topicLevelRating.setTopicLevelId(topicLevelId);
+        topicLevelRating.setRating(2);
 
 
-        Integer expectedResponse = assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelAssessment), Collections.singletonList(parameterLevelAssessment));
+        Integer expectedResponse = assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelRating), Collections.singletonList(parameterLevelRating));
         Integer actualResponse = 1;
 
         assertEquals(expectedResponse, actualResponse);

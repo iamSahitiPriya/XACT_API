@@ -6,7 +6,6 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AccessControlRepository;
 import com.xact.assessment.repositories.AssessmentRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
@@ -25,7 +24,7 @@ public class AssessmentService {
 
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
-    private final AccessControlRepository accessControlRepository;
+    private final AccessControlService accessControlService;
 
     private final AssessmentMasterDataService assessmentMasterDataService;
 
@@ -35,10 +34,10 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, AccessControlRepository accessControlRepository, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
+    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
-        this.accessControlRepository = accessControlRepository;
+        this.accessControlService = accessControlService;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
     }
@@ -156,8 +155,9 @@ public class AssessmentService {
 
 
     public Optional<AccessControlRoles> getUserRole(String email) {
-        return accessControlRepository.getAccessControlRolesByEmail(email);
+        return accessControlService.getAccessControlRolesByEmail(email);
     }
+
 
     public List<Assessment> getTotalAssessments(String startDate, String endDate) throws ParseException {
         DateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
@@ -205,7 +205,7 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.getParameter(parameterId);
     }
 
-    public List<TopicLevelAssessment> getTopicAssessmentData(Integer assessmentId) {
+    public List<TopicLevelRating> getTopicAssessmentData(Integer assessmentId) {
         return topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
     }
 
@@ -213,7 +213,7 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId);
     }
 
-    public List<ParameterLevelAssessment> getParameterAssessmentData(Integer assessmentId) {
+    public List<ParameterLevelRating> getParameterAssessmentData(Integer assessmentId) {
         return topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
 
     }
@@ -258,21 +258,21 @@ public class AssessmentService {
         topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
     }
 
-    public Optional<TopicLevelAssessment> searchTopic(TopicLevelId topicLevelId) {
+    public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
         return topicAndParameterLevelAssessmentService.searchTopic(topicLevelId);
     }
 
-    public void saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
-        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+    public void saveRatingAndRecommendation(TopicLevelRating topicLevelRating) {
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelRating);
     }
 
-    public Optional<ParameterLevelAssessment> searchParameter(ParameterLevelId parameterLevelId) {
+    public Optional<ParameterLevelRating> searchParameter(ParameterLevelId parameterLevelId) {
         return topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId);
 
     }
 
-    public void saveRatingAndRecommendation(ParameterLevelAssessment parameterLevelAssessment) {
-        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+    public void saveRatingAndRecommendation(ParameterLevelRating parameterLevelRating) {
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelRating);
     }
 
 
@@ -281,7 +281,7 @@ public class AssessmentService {
     }
 
     public List<AssessmentCategory> getAllCategories() {
-        return assessmentMasterDataService.getAllCategories();
+        return assessmentMasterDataService.getAllCategoriesByDesc();
     }
 
     public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {

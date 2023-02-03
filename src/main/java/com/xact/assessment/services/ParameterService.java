@@ -7,8 +7,6 @@ package com.xact.assessment.services;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterReferenceRepository;
 import com.xact.assessment.repositories.AssessmentParameterRepository;
-import com.xact.assessment.repositories.ParameterLevelAssessmentRepository;
-import com.xact.assessment.repositories.ParameterLevelRecommendationRepository;
 import jakarta.inject.Singleton;
 
 import java.util.List;
@@ -17,18 +15,16 @@ import java.util.Optional;
 @Singleton
 public class ParameterService {
     private final AssessmentParameterRepository assessmentParameterRepository;
-    private final ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
-    private final ParameterLevelRecommendationRepository parameterLevelRecommendationRepository;
-    private final AssessmentParameterReferenceRepository assessmentParameterRRepository;
+    private final ParameterLevelRatingService parameterLevelRatingService;
+    private final ParameterLevelRecommendationService parameterLevelRecommendationService;
+    private final AssessmentParameterReferenceService assessmentParameterReferenceService;
 
 
-
-
-    public ParameterService(AssessmentParameterRepository assessmentParameterRepository, ParameterLevelAssessmentRepository parameterLevelAssessmentRepository, ParameterLevelRecommendationRepository parameterLevelRecommendationRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
+    public ParameterService(AssessmentParameterRepository assessmentParameterRepository, ParameterLevelRatingService parameterLevelRatingService, ParameterLevelRecommendationService parameterLevelRecommendationService, AssessmentParameterReferenceService assessmentParameterReferenceService) {
         this.assessmentParameterRepository = assessmentParameterRepository;
-        this.parameterLevelAssessmentRepository = parameterLevelAssessmentRepository;
-        this.parameterLevelRecommendationRepository = parameterLevelRecommendationRepository;
-        this.assessmentParameterRRepository = assessmentParameterRRepository;
+        this.parameterLevelRatingService = parameterLevelRatingService;
+        this.parameterLevelRecommendationService = parameterLevelRecommendationService;
+        this.assessmentParameterReferenceService = assessmentParameterReferenceService;
     }
 
     public Optional<AssessmentParameter> getParameter(Integer parameterId) {
@@ -50,77 +46,78 @@ public class ParameterService {
     public List<AssessmentParameter> getParameters() {
         return assessmentParameterRepository.listOrderByUpdatedAtDesc();
     }
-    public ParameterLevelAssessment saveRatingAndRecommendation(ParameterLevelAssessment parameterLevelAssessment) {
 
-        if (parameterLevelAssessmentRepository.existsById(parameterLevelAssessment.getParameterLevelId())) {
-            if (parameterLevelAssessment.getRating() == null) {
+    public ParameterLevelRating saveRatingAndRecommendation(ParameterLevelRating parameterLevelRating) {
 
-                parameterLevelAssessmentRepository.delete(parameterLevelAssessment);
+        if (parameterLevelRatingService.existsById(parameterLevelRating)) {
+            if (parameterLevelRating.getRating() == null) {
+
+                parameterLevelRatingService.delete(parameterLevelRating);
             } else {
-                parameterLevelAssessmentRepository.update(parameterLevelAssessment);
+                parameterLevelRatingService.update(parameterLevelRating);
             }
         } else {
-            if (parameterLevelAssessment.getRating() != null) {
+            if (parameterLevelRating.getRating() != null) {
 
-                parameterLevelAssessmentRepository.save(parameterLevelAssessment);
+                parameterLevelRatingService.save(parameterLevelRating);
             }
         }
-        return parameterLevelAssessment;
+        return parameterLevelRating;
     }
-    public List<ParameterLevelAssessment> getParameterAssessmentData(Integer assessmentId) {
-        return parameterLevelAssessmentRepository.findByAssessment(assessmentId);
+
+
+    public List<ParameterLevelRating> getParameterAssessmentData(Integer assessmentId) {
+        return parameterLevelRatingService.findByAssessment(assessmentId);
     }
-    public Optional<ParameterLevelAssessment> searchParameter(ParameterLevelId parameterLevelId) {
-        return parameterLevelAssessmentRepository.findById(parameterLevelId);
+
+
+    public Optional<ParameterLevelRating> searchParameter(ParameterLevelId parameterLevelId) {
+        return parameterLevelRatingService.findById(parameterLevelId);
     }
+
+
     public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
-        if (parameterLevelRecommendation.getRecommendationId() != null) {
-            if (parameterLevelRecommendation.hasRecommendation()) {
-                parameterLevelRecommendationRepository.update(parameterLevelRecommendation);
-            } else {
-                parameterLevelRecommendationRepository.delete(parameterLevelRecommendation);
-            }
-        } else {
-            if (parameterLevelRecommendation.hasRecommendation()) {
-                parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
-            }
-        }
-        return parameterLevelRecommendation;
+        return parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendation);
     }
+
     public List<ParameterLevelRecommendation> getAssessmentParameterRecommendationData(Integer assessmentId) {
-        return parameterLevelRecommendationRepository.findByAssessment(assessmentId);
+        return parameterLevelRecommendationService.findByAssessment(assessmentId);
     }
 
     public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId, Integer parameterId) {
-        return parameterLevelRecommendationRepository.findByAssessmentAndParameter(assessmentId, parameterId);
+        return parameterLevelRecommendationService.findByAssessmentAndParameter(assessmentId, parameterId);
     }
 
     public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
-        return parameterLevelRecommendationRepository.findById(recommendationId);
+        return parameterLevelRecommendationService.findById(recommendationId);
     }
 
     public boolean checkParameterRecommendationId(Integer recommendationId) {
-        return parameterLevelRecommendationRepository.existsById(recommendationId);
+        return parameterLevelRecommendationService.existsById(recommendationId);
     }
 
     public void deleteParameterRecommendation(Integer recommendationId) {
-        parameterLevelRecommendationRepository.deleteById(recommendationId);
+        parameterLevelRecommendationService.deleteById(recommendationId);
     }
-    public  String getParameterRecommendationById(Integer identifier) {
-        return parameterLevelRecommendationRepository.findById(identifier).orElseThrow().getRecommendation();
+
+    public String getParameterRecommendationById(Integer identifier) {
+        return parameterLevelRecommendationService.findById(identifier).orElseThrow().getRecommendation();
     }
+
     public void saveParameterReference(AssessmentParameterReference assessmentParameterReference) {
-        assessmentParameterRRepository.save(assessmentParameterReference);
+        assessmentParameterReferenceService.saveParameterReference(assessmentParameterReference);
     }
+
     public void updateParameterReference(AssessmentParameterReference assessmentParameterReference) {
-        assessmentParameterRRepository.update(assessmentParameterReference);
+        assessmentParameterReferenceService.updateParameterReference(assessmentParameterReference);
     }
 
     public AssessmentParameterReference getAssessmentParameterReference(Integer referenceId) {
-        return assessmentParameterRRepository.findById(referenceId).orElseThrow();
+        return assessmentParameterReferenceService.getAssessmentParameterReference(referenceId);
     }
+
     public void deleteParameterReference(Integer referenceId) {
-        assessmentParameterRRepository.deleteById(referenceId);
+        assessmentParameterReferenceService.deleteParameterReference(referenceId);
     }
 
 

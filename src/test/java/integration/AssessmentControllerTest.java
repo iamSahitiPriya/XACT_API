@@ -46,9 +46,9 @@ class AssessmentControllerTest {
     @Inject
     AnswerRepository answerRepository;
     @Inject
-    ParameterLevelAssessmentRepository parameterLevelAssessmentRepository;
+    ParameterLevelRatingRepository parameterLevelRatingRepository;
     @Inject
-    TopicLevelAssessmentRepository topicLevelAssessmentRepository;
+    TopicLevelRatingRepository topicLevelRatingRepository;
     @Inject
     QuestionRepository questionRepository;
     @Inject
@@ -102,8 +102,8 @@ class AssessmentControllerTest {
         Thread.sleep(1000);
         accessControlRepository.deleteAll();
         answerRepository.deleteAll();
-        parameterLevelAssessmentRepository.deleteAll();
-        topicLevelAssessmentRepository.deleteAll();
+        parameterLevelRatingRepository.deleteAll();
+        topicLevelRatingRepository.deleteAll();
         parameterLevelRecommendationRepository.deleteAll();
         topicLevelRecommendationRepository.deleteAll();
         userAssessmentModuleRepository.deleteAll();
@@ -163,10 +163,10 @@ class AssessmentControllerTest {
         userQuestion.setQuestion("question?");
         userQuestion.setAnswer("answer");
 
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating();
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
-        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-        parameterLevelAssessment.setRating(4);
+        parameterLevelRating.setParameterLevelId(parameterLevelId);
+        parameterLevelRating.setRating(4);
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendation("some recommendation");
@@ -179,12 +179,12 @@ class AssessmentControllerTest {
 
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        TopicLevelRating topicLevelRating = new TopicLevelRating();
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
 
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(4);
+        topicLevelRating.setTopicLevelId(topicLevelId);
+        topicLevelRating.setRating(4);
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendation("some recommendation");
@@ -200,8 +200,8 @@ class AssessmentControllerTest {
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
         answerRepository.save(answer);
-        parameterLevelAssessmentRepository.save(parameterLevelAssessment);
-        topicLevelAssessmentRepository.save(topicLevelAssessment);
+        parameterLevelRatingRepository.save(parameterLevelRating);
+        topicLevelRatingRepository.save(topicLevelRating);
         parameterLevelRecommendationRepository.save(parameterLevelRecommendation);
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
         userAssessmentModuleRepository.save(userAssessmentModule);
@@ -405,13 +405,13 @@ class AssessmentControllerTest {
         AssessmentParameter assessmentParameter = assessmentParameterRepository.findByParameterId(1);
 
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-        parameterLevelAssessment.setRating(1);
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating();
+        parameterLevelRating.setParameterLevelId(parameterLevelId);
+        parameterLevelRating.setRating(1);
 
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
-        parameterLevelAssessmentRepository.save(parameterLevelAssessment);
+        parameterLevelRatingRepository.save(parameterLevelRating);
         entityManager.getTransaction().commit();
 
 
@@ -436,13 +436,13 @@ class AssessmentControllerTest {
         AssessmentTopic assessmentTopic = assessmentTopicRepository.findByTopicId(1);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(1);
+        TopicLevelRating topicLevelRating = new TopicLevelRating();
+        topicLevelRating.setTopicLevelId(topicLevelId);
+        topicLevelRating.setRating(1);
 
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
-        topicLevelAssessmentRepository.save(topicLevelAssessment);
+        topicLevelRatingRepository.save(topicLevelRating);
         entityManager.getTransaction().commit();
 
         String dataRequest = resourceFileUtil.getJsonString("dto/update-particular-rating-values.json");

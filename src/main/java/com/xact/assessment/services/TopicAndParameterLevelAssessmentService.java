@@ -23,8 +23,6 @@ public class TopicAndParameterLevelAssessmentService {
     private final QuestionService questionService;
 
 
-
-
     public TopicAndParameterLevelAssessmentService(ParameterService parameterService, AnswerService answerService, TopicService topicService, QuestionService questionService) {
         this.parameterService = parameterService;
         this.answerService = answerService;
@@ -32,13 +30,13 @@ public class TopicAndParameterLevelAssessmentService {
         this.questionService = questionService;
     }
 
-    public TopicLevelAssessment saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
-        return topicService.saveRatingAndRecommendation(topicLevelAssessment);
+    public TopicLevelRating saveRatingAndRecommendation(TopicLevelRating topicLevelRating) {
+        return topicService.saveRatingAndRecommendation(topicLevelRating);
     }
 
 
-    public ParameterLevelAssessment saveRatingAndRecommendation(ParameterLevelAssessment parameterLevelAssessment) {
-        return parameterService.saveRatingAndRecommendation(parameterLevelAssessment);
+    public ParameterLevelRating saveRatingAndRecommendation(ParameterLevelRating parameterLevelRating) {
+        return parameterService.saveRatingAndRecommendation(parameterLevelRating);
     }
 
     public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
@@ -50,11 +48,11 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendation);
     }
 
-    public List<ParameterLevelAssessment> getParameterAssessmentData(Integer assessmentId) {
+    public List<ParameterLevelRating> getParameterAssessmentData(Integer assessmentId) {
         return parameterService.getParameterAssessmentData(assessmentId);
     }
 
-    public List<TopicLevelAssessment> getTopicAssessmentData(Integer assessmentId) {
+    public List<TopicLevelRating> getTopicAssessmentData(Integer assessmentId) {
         return topicService.getTopicAssessmentData(assessmentId);
     }
 
@@ -62,12 +60,12 @@ public class TopicAndParameterLevelAssessmentService {
         return topicService.getTopicAssessmentRecommendationData(assessmentId, topicId);
     }
 
-    public Optional<ParameterLevelAssessment> searchParameter(ParameterLevelId parameterLevelId) {
+    public Optional<ParameterLevelRating> searchParameter(ParameterLevelId parameterLevelId) {
         return parameterService.searchParameter(parameterLevelId);
     }
 
 
-    public Optional<TopicLevelAssessment> searchTopic(TopicLevelId topicLevelId) {
+    public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
         return topicService.searchTopic(topicLevelId);
     }
 
@@ -110,27 +108,32 @@ public class TopicAndParameterLevelAssessmentService {
     public void deleteParameterRecommendation(Integer recommendationId) {
         parameterService.deleteParameterRecommendation(recommendationId);
     }
+
     public Optional<AssessmentParameter> getParameter(Integer parameterId) {
         return parameterService.getParameter(parameterId);
     }
+
     public AssessmentTopic getTopicByQuestionId(Integer questionId) {
         return questionService.getTopicByQuestionId(questionId);
     }
+
     public void saveAnswer(UpdateAnswerRequest answerRequest, Assessment assessment) {
         answerService.saveAnswer(answerRequest, assessment);
     }
+
     public Optional<AssessmentTopic> getTopic(Integer topicId) {
         return topicService.getTopic(topicId);
     }
+
     public List<Answer> getAnswers(Integer assessmentId) {
         return answerService.getAnswers(assessmentId);
     }
 
 
     public String getRecommendationById(Integer identifier, ActivityType activityType) {
-        if(activityType.equals(ActivityType.TOPIC_RECOMMENDATION)){
+        if (activityType.equals(ActivityType.TOPIC_RECOMMENDATION)) {
             return topicService.getTopicRecommendationById(identifier);
-        }else{
+        } else {
             return parameterService.getParameterRecommendationById(identifier);
         }
     }

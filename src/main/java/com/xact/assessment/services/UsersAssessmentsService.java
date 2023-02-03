@@ -16,14 +16,14 @@ import java.util.*;
 @Singleton
 public class UsersAssessmentsService {
     UsersAssessmentsRepository usersAssessmentsRepository;
-    private final UserAssessmentModuleRepository userAssessmentModuleRepository;
+    private final UserAssessmentModuleService userAssessmentModuleService;
     private final UserQuestionService userQuestionService;
     private final ModuleService moduleService;
 
 
-    public UsersAssessmentsService(UsersAssessmentsRepository assessmentRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, UserQuestionService userQuestionService, ModuleService moduleService) {
+    public UsersAssessmentsService(UsersAssessmentsRepository assessmentRepository, UserAssessmentModuleService userAssessmentModuleService, UserQuestionService userQuestionService, ModuleService moduleService) {
         this.usersAssessmentsRepository = assessmentRepository;
-        this.userAssessmentModuleRepository = userAssessmentModuleRepository;
+        this.userAssessmentModuleService = userAssessmentModuleService;
         this.userQuestionService = userQuestionService;
         this.moduleService = moduleService;
     }
@@ -71,9 +71,10 @@ public class UsersAssessmentsService {
             AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment, assessmentModule);
             userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
             userAssessmentModule.setModule(assessmentModule);
-            userAssessmentModuleRepository.save(userAssessmentModule);
+            userAssessmentModuleService.save(userAssessmentModule);
         }
     }
+
 
     public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
         return userQuestionService.findAllUserQuestion(assessmentId);
@@ -100,7 +101,7 @@ public class UsersAssessmentsService {
     }
 
     public void updateAssessmentModules(List<ModuleRequest> moduleRequest, Assessment assessment) {
-        userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
+        userAssessmentModuleService.getDeleteByModule(assessment);
         saveAssessmentModules(moduleRequest, assessment);
     }
 

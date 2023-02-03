@@ -65,12 +65,12 @@ class ReportControllerTest {
 
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(reportService.generateReport(assessmentId)).thenReturn(getMockWorkbook());
-        List<ParameterLevelAssessment> parameterLevelAssessments=new ArrayList<>();
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterLevelAssessments);
+        List<ParameterLevelRating> parameterLevelRatings =new ArrayList<>();
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterLevelRatings);
         List<Answer> answers=new ArrayList<>();
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
-        List<TopicLevelAssessment> topicLevelAssessments=new ArrayList<>();
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicLevelAssessments);
+        List<TopicLevelRating> topicLevelRatings =new ArrayList<>();
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicLevelRatings);
 
         MutableHttpResponse<byte[]> xlsDataResponse = reportController.getReport(assessmentId, authentication);
 

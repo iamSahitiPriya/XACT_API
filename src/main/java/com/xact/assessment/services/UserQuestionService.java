@@ -37,7 +37,8 @@ public class UserQuestionService {
     public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
         return userQuestionRepository.findByAssessmentId(assessmentId);
     }
-    public List<UserQuestion> findByAssessmentAndAnswer(Integer assessmentId){
+
+    public List<UserQuestion> findByAssessmentAndAnswer(Integer assessmentId) {
         return userQuestionRepository.findByAssessmentAndAnswer(assessmentId);
     }
 

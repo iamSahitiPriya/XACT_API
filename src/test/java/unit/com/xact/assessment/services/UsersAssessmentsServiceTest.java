@@ -36,7 +36,7 @@ class UsersAssessmentsServiceTest {
         userAssessmentModuleRepository = mock(UserAssessmentModuleRepository.class);
         userQuestionService = mock(UserQuestionService.class);
         moduleService = mock(ModuleService.class);
-        usersAssessmentsService = new UsersAssessmentsService(usersAssessmentsRepository, userAssessmentModuleRepository, userQuestionService, moduleService);
+        usersAssessmentsService = new UsersAssessmentsService(usersAssessmentsRepository, userAssessmentModuleRepository, userAssessmentModuleService, userQuestionService, moduleService);
     }
 
     @Test

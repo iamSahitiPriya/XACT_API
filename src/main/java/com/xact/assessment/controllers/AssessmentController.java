@@ -172,13 +172,13 @@ public class AssessmentController {
 
         List<UserQuestion> userQuestionList = assessmentService.findAllUserQuestion(assessment.getAssessmentId());
 
-        List<TopicLevelAssessment> topicLevelAssessmentList = assessmentService.getTopicAssessmentData(assessment.getAssessmentId());
+        List<TopicLevelRating> topicLevelRatingList = assessmentService.getTopicAssessmentData(assessment.getAssessmentId());
         List<TopicLevelRecommendation> topicLevelRecommendationList = assessmentService.getAssessmentTopicRecommendationData(assessment.getAssessmentId());
-        List<TopicRatingAndRecommendation> topicRecommendationResponses = mergeTopicRatingAndRecommendation(topicLevelAssessmentList, topicLevelRecommendationList);
-        List<ParameterLevelAssessment> parameterLevelAssessmentList = assessmentService.getParameterAssessmentData(assessment.getAssessmentId());
+        List<TopicRatingAndRecommendation> topicRecommendationResponses = mergeTopicRatingAndRecommendation(topicLevelRatingList, topicLevelRecommendationList);
+        List<ParameterLevelRating> parameterLevelRatingList = assessmentService.getParameterAssessmentData(assessment.getAssessmentId());
 
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = assessmentService.getAssessmentParameterRecommendationData(assessment.getAssessmentId());
-        List<ParameterRatingAndRecommendation> paramRecommendationResponses = mergeParamRatingAndRecommendation(parameterLevelAssessmentList, parameterLevelRecommendationList);
+        List<ParameterRatingAndRecommendation> paramRecommendationResponses = mergeParamRatingAndRecommendation(parameterLevelRatingList, parameterLevelRecommendationList);
 
 
         AssessmentResponse assessmentResponse = assessmentMapper.map(assessment, answerResponse, userQuestionList, topicRecommendationResponses, paramRecommendationResponses);
@@ -288,7 +288,7 @@ public class AssessmentController {
 
     @Patch(value = "/{assessmentId}/topics/{topicId}/ratings", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelAssessment> saveTopicRating(@PathVariable("assessmentId") Integer
+    public HttpResponse<TopicLevelRating> saveTopicRating(@PathVariable("assessmentId") Integer
                                                                       assessmentId, @PathVariable("topicId") Integer topicId, @Body @Nullable String rating, Authentication
                                                                       authentication) {
         LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, topicId);
@@ -296,11 +296,11 @@ public class AssessmentController {
         if (assessment.isEditable()) {
             AssessmentTopic assessmentTopic = assessmentService.getTopic(topicId).orElseThrow();
             TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
-            TopicLevelAssessment topicLevelAssessment = assessmentService.searchTopic(topicLevelId).orElse(new TopicLevelAssessment());
-            topicLevelAssessment.setTopicLevelId(topicLevelId);
+            TopicLevelRating topicLevelRating = assessmentService.searchTopic(topicLevelId).orElse(new TopicLevelRating());
+            topicLevelRating.setTopicLevelId(topicLevelId);
             Integer topicRating = rating != null ? Integer.valueOf(rating) : null;
-            topicLevelAssessment.setRating(topicRating);
-            assessmentService.saveRatingAndRecommendation(topicLevelAssessment);
+            topicLevelRating.setRating(topicRating);
+            assessmentService.saveRatingAndRecommendation(topicLevelRating);
             updateAssessment(assessment);
         }
         return HttpResponse.ok();
@@ -308,17 +308,17 @@ public class AssessmentController {
 
     @Patch(value = "/{assessmentId}/parameters/{parameterId}/ratings")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<ParameterLevelAssessment> saveParameterRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String rating, Authentication authentication) {
+    public HttpResponse<ParameterLevelRating> saveParameterRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body @Nullable String rating, Authentication authentication) {
         LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, parameterId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
             AssessmentParameter assessmentParameter = assessmentService.getParameter(parameterId).orElseThrow();
             ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
-            ParameterLevelAssessment parameterLevelAssessment = assessmentService.searchParameter(parameterLevelId).orElse(new ParameterLevelAssessment());
-            parameterLevelAssessment.setParameterLevelId(parameterLevelId);
+            ParameterLevelRating parameterLevelRating = assessmentService.searchParameter(parameterLevelId).orElse(new ParameterLevelRating());
+            parameterLevelRating.setParameterLevelId(parameterLevelId);
             Integer parameterRating = rating != null ? Integer.valueOf(rating) : null;
-            parameterLevelAssessment.setRating(parameterRating);
-            assessmentService.saveRatingAndRecommendation(parameterLevelAssessment);
+            parameterLevelRating.setRating(parameterRating);
+            assessmentService.saveRatingAndRecommendation(parameterLevelRating);
             updateAssessment(assessment);
         }
         return HttpResponse.ok();
@@ -514,11 +514,11 @@ public class AssessmentController {
     }
 
 
-    private List<ParameterRatingAndRecommendation> mergeParamRatingAndRecommendation(List<ParameterLevelAssessment> parameterLevelAssessmentList, List<ParameterLevelRecommendation> parameterLevelRecommendationList) {
+    private List<ParameterRatingAndRecommendation> mergeParamRatingAndRecommendation(List<ParameterLevelRating> parameterLevelRatingList, List<ParameterLevelRecommendation> parameterLevelRecommendationList) {
         List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponse = new ArrayList<>();
         Set<Integer> processedParams = new HashSet<>();
 
-        for (ParameterLevelAssessment paramLevelAssessment : parameterLevelAssessmentList) {
+        for (ParameterLevelRating paramLevelAssessment : parameterLevelRatingList) {
             Integer parameterId = paramLevelAssessment.getParameterLevelId().getParameter().getParameterId();
             processedParams.add(parameterId);
             ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
@@ -555,16 +555,16 @@ public class AssessmentController {
         return parameterLevelRecommendationRequests;
     }
 
-    private List<TopicRatingAndRecommendation> mergeTopicRatingAndRecommendation(List<TopicLevelAssessment> topicLevelAssessmentList, List<TopicLevelRecommendation> topicLevelRecommendationList) {
+    private List<TopicRatingAndRecommendation> mergeTopicRatingAndRecommendation(List<TopicLevelRating> topicLevelRatingList, List<TopicLevelRecommendation> topicLevelRecommendationList) {
         List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponse = new ArrayList<>();
         Set<Integer> processedTopics = new HashSet<>();
 
-        for (TopicLevelAssessment topicLevelAssessment : topicLevelAssessmentList) {
-            Integer topicId = topicLevelAssessment.getTopicLevelId().getTopic().getTopicId();
+        for (TopicLevelRating topicLevelRating : topicLevelRatingList) {
+            Integer topicId = topicLevelRating.getTopicLevelId().getTopic().getTopicId();
             processedTopics.add(topicId);
             TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
             topicRatingAndRecommendation.setTopicId(topicId);
-            topicRatingAndRecommendation.setRating(topicLevelAssessment.getRating());
+            topicRatingAndRecommendation.setRating(topicLevelRating.getRating());
             topicRatingAndRecommendation.setTopicLevelRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
             topicRatingAndRecommendationsResponse.add(topicRatingAndRecommendation);
         }

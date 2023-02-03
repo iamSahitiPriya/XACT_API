@@ -5,7 +5,7 @@ import com.xact.assessment.dtos.TopicRatingAndRecommendation;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentTopicReferenceRepository;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
-import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
+import com.xact.assessment.repositories.TopicLevelRatingRepository;
 import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import com.xact.assessment.services.TopicService;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,16 +27,16 @@ class TopicServiceTest {
 
     private  AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
 
-    private  TopicLevelAssessmentRepository topicLevelAssessmentRepository;
+    private TopicLevelRatingRepository topicLevelRatingRepository;
     private TopicLevelRecommendationRepository topicLevelRecommendationRepository;
 
     @BeforeEach
     public void beforeEach() {
         assessmentTopicRepository = mock(AssessmentTopicRepository.class);
         assessmentTopicReferenceRepository=mock(AssessmentTopicReferenceRepository.class);
-        topicLevelAssessmentRepository=mock(TopicLevelAssessmentRepository.class);
+        topicLevelRatingRepository =mock(TopicLevelRatingRepository.class);
         topicLevelRecommendationRepository=mock(TopicLevelRecommendationRepository.class);
-        topicService = new TopicService(assessmentTopicRepository, assessmentTopicReferenceRepository, topicLevelAssessmentRepository, topicLevelRecommendationRepository);
+        topicService = new TopicService(assessmentTopicRepository, assessmentTopicReferenceRepository, topicLevelRatingRepository, topicLevelRatingService, topicLevelRecommendationRepository);
     }
 
     @Test
@@ -102,10 +102,10 @@ class TopicServiceTest {
 
         TopicLevelId topicLevelId1 = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
         topicLevelId1.setAssessment(assessment1);
-        TopicLevelAssessment topicLevelAssessment1 = mapper.map(topicRatingAndRecommendation, TopicLevelAssessment.class);
-        topicLevelAssessment1.setTopicLevelId(topicLevelId1);
+        TopicLevelRating topicLevelRating1 = mapper.map(topicRatingAndRecommendation, TopicLevelRating.class);
+        topicLevelRating1.setTopicLevelId(topicLevelId1);
 
-        topicLevelAssessmentRepository.save(topicLevelAssessment1);
+        topicLevelRatingRepository.save(topicLevelRating1);
 
         TopicLevelRecommendation topicLevelRecommendation = mapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
         topicLevelRecommendation.setAssessment(assessment1);
@@ -116,9 +116,9 @@ class TopicServiceTest {
         topicLevelRecommendationRepository.save(topicLevelRecommendation);
 
         List<TopicLevelRecommendation> topicLevelRecommendationList = Collections.singletonList(topicLevelRecommendation);
-        when(topicLevelAssessmentRepository.existsById(topicLevelId1)).thenReturn(true);
-        when(topicLevelAssessmentRepository.update(topicLevelAssessment1)).thenReturn(topicLevelAssessment1);
-        TopicLevelAssessment actualResponse = topicService.saveRatingAndRecommendation(topicLevelAssessment1);
+        when(topicLevelRatingRepository.existsById(topicLevelId1)).thenReturn(true);
+        when(topicLevelRatingRepository.update(topicLevelRating1)).thenReturn(topicLevelRating1);
+        TopicLevelRating actualResponse = topicService.saveRatingAndRecommendation(topicLevelRating1);
         when(topicService.getTopicAssessmentRecommendationData(assessmentId1,topicId)).thenReturn(topicLevelRecommendationList);
         when(topicLevelRecommendationRepository.existsById(1)).thenReturn(true);
 
@@ -128,8 +128,8 @@ class TopicServiceTest {
         TopicLevelRecommendation actualResponse1 = topicService.saveTopicLevelRecommendation(topicLevelRecommendation);
 
 
-        assertEquals(topicLevelAssessment1.getRating(), actualResponse.getRating());
-        assertEquals(topicLevelAssessment1.getTopicLevelId(), actualResponse.getTopicLevelId());
+        assertEquals(topicLevelRating1.getRating(), actualResponse.getRating());
+        assertEquals(topicLevelRating1.getTopicLevelId(), actualResponse.getTopicLevelId());
         assertEquals(topicLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
         assertEquals(topicLevelRecommendation.getRecommendationImpact(), actualResponse1.getRecommendationImpact());
 
@@ -156,12 +156,12 @@ class TopicServiceTest {
 
         TopicLevelId topicLevelId1 = mapper.map(topicRatingAndRecommendation, TopicLevelId.class);
         topicLevelId1.setAssessment(assessment1);
-        TopicLevelAssessment topicLevelAssessment1 = mapper.map(topicRatingAndRecommendation, TopicLevelAssessment.class);
-        topicLevelAssessment1.setTopicLevelId(topicLevelId1);
+        TopicLevelRating topicLevelRating1 = mapper.map(topicRatingAndRecommendation, TopicLevelRating.class);
+        topicLevelRating1.setTopicLevelId(topicLevelId1);
 
-        topicLevelAssessmentRepository.save(topicLevelAssessment1);
+        topicLevelRatingRepository.save(topicLevelRating1);
 
-        topicLevelAssessment1.setRating(null);
+        topicLevelRating1.setRating(null);
 
         TopicLevelRecommendation topicLevelRecommendation = mapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
         topicLevelRecommendation.setAssessment(assessment1);
@@ -173,10 +173,10 @@ class TopicServiceTest {
 
         topicLevelRecommendation.setRecommendation(null);
 
-        when(topicLevelAssessmentRepository.existsById(topicLevelId1)).thenReturn(true);
-        topicService.saveRatingAndRecommendation(topicLevelAssessment1);
+        when(topicLevelRatingRepository.existsById(topicLevelId1)).thenReturn(true);
+        topicService.saveRatingAndRecommendation(topicLevelRating1);
 
-        verify(topicLevelAssessmentRepository).delete(topicLevelAssessment1);
+        verify(topicLevelRatingRepository).delete(topicLevelRating1);
 
         when(topicLevelRecommendationRepository.existsById(topicLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
         topicService.saveTopicLevelRecommendation(topicLevelRecommendation);

@@ -95,15 +95,15 @@ class ReportServiceTest {
         userQuestion.setAnswer("answer");
         when(userQuestionService.findByAssessmentAndAnswer(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
 
-        List<ParameterLevelAssessment> parameterAssessments = new ArrayList<>();
-        List<TopicLevelAssessment> topicAssessments = new ArrayList<>();
-        ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment();
+        List<ParameterLevelRating> parameterAssessments = new ArrayList<>();
+        List<TopicLevelRating> topicAssessments = new ArrayList<>();
+        ParameterLevelRating parameterAssessment = new ParameterLevelRating();
         parameterAssessment.setRating(3);
         parameterAssessment.setParameterLevelId(new ParameterLevelId(assessment, parameter));
         parameterAssessments.add(parameterAssessment);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
-        TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId, 4, new Date(), new Date());
+        TopicLevelRating topicAssessment = new TopicLevelRating(topicLevelId, 4, new Date(), new Date());
         topicAssessments.add(topicAssessment);
         HashMap<Integer, List<TopicLevelRecommendation>> topicRecommendationMap = new HashMap<>();
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
@@ -212,9 +212,9 @@ class ReportServiceTest {
         AnswerId answerId = new AnswerId(assessment, question);
         Answer answer = new Answer(answerId, "my answer", new Date(), new Date());
         answers.add(answer);
-        List<ParameterLevelAssessment> parameterAssessments = new ArrayList<>();
-        List<TopicLevelAssessment> topicAssessments = new ArrayList<>();
-        ParameterLevelAssessment parameterAssessment = new ParameterLevelAssessment();
+        List<ParameterLevelRating> parameterAssessments = new ArrayList<>();
+        List<TopicLevelRating> topicAssessments = new ArrayList<>();
+        ParameterLevelRating parameterAssessment = new ParameterLevelRating();
         parameterAssessment.setRating(3);
 
 
@@ -222,7 +222,7 @@ class ReportServiceTest {
         parameterAssessments.add(parameterAssessment);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
-        TopicLevelAssessment topicAssessment = new TopicLevelAssessment(topicLevelId, 4, new Date(), new Date());
+        TopicLevelRating topicAssessment = new TopicLevelRating(topicLevelId, 4, new Date(), new Date());
         topicAssessments.add(topicAssessment);
 
         HashMap<Integer, List<TopicLevelRecommendation>> topicRecommendationMap = new HashMap<>();
@@ -467,22 +467,22 @@ class ReportServiceTest {
 
         assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));
 
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating();
+        TopicLevelRating topicLevelRating = new TopicLevelRating();
         TopicLevelId topicLevelId = new TopicLevelId();
         topicLevelId.setAssessment(assessment);
         topicLevelId.setTopic(assessmentTopic);
 
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(1);
+        topicLevelRating.setTopicLevelId(topicLevelId);
+        topicLevelRating.setRating(1);
 
 
-        List<TopicLevelAssessment> topicLevelAssessments = new ArrayList<>();
-        topicLevelAssessments.add(topicLevelAssessment);
+        List<TopicLevelRating> topicLevelRatings = new ArrayList<>();
+        topicLevelRatings.add(topicLevelRating);
 
         when(assessmentMasterDataService.getUserAssessmentCategories(assessment.getAssessmentId())).thenReturn(Collections.singletonList(assessmentCategory1));
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(topicLevelAssessments);
-        when(assessmentMasterDataService.getAllCategories()).thenReturn(assessmentCategories);
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(topicLevelRatings);
+        when(assessmentMasterDataService.getAllCategoriesByDesc()).thenReturn(assessmentCategories);
 
         String series1 = "Current Maturity";
         String series2 = "Desired Maturity";
@@ -543,18 +543,18 @@ class ReportServiceTest {
 
         assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));
 
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating();
+        TopicLevelRating topicLevelRating = new TopicLevelRating();
         TopicLevelId topicLevelId = new TopicLevelId();
         topicLevelId.setAssessment(assessment);
         topicLevelId.setTopic(assessmentTopic);
 
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(5);
+        topicLevelRating.setTopicLevelId(topicLevelId);
+        topicLevelRating.setRating(5);
 
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelAssessment));
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelAssessment));
-        when(assessmentMasterDataService.getAllCategories()).thenReturn(assessmentCategories);
+        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelRating));
+        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelRating));
+        when(assessmentMasterDataService.getAllCategoriesByDesc()).thenReturn(assessmentCategories);
         when(assessmentMasterDataService.isModuleSelectedByUser(assessment,assessmentModule)).thenReturn(true);
 
         List<AssessmentCategory> actualAssessmentCategoryList = reportService.generateSunburstData(assessment);
@@ -604,21 +604,21 @@ class ReportServiceTest {
         ParameterLevelId parameterLevelId = new ParameterLevelId();
         parameterLevelId.setAssessment(assessment1);
         parameterLevelId.setParameter(assessmentParameter);
-        ParameterLevelAssessment parameterLevelAssessment = new ParameterLevelAssessment();
-        parameterLevelAssessment.setParameterLevelId(parameterLevelId);
-        parameterLevelAssessment.setRating(1);
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating();
+        parameterLevelRating.setParameterLevelId(parameterLevelId);
+        parameterLevelRating.setRating(1);
 
         TopicLevelId topicLevelId = new TopicLevelId();
         topicLevelId.setAssessment(assessment1);
         topicLevelId.setTopic(assessmentTopic);
-        TopicLevelAssessment topicLevelAssessment = new TopicLevelAssessment();
-        topicLevelAssessment.setTopicLevelId(topicLevelId);
-        topicLevelAssessment.setRating(2);
+        TopicLevelRating topicLevelRating = new TopicLevelRating();
+        topicLevelRating.setTopicLevelId(topicLevelId);
+        topicLevelRating.setRating(2);
 
         when(answerService.getAnswers(1)).thenReturn(answers);
         when(userQuestionService.findAllUserQuestion(1)).thenReturn(questions);
-        when(moduleService.getAssessedModule(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1);
-        when(assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelAssessment),Collections.singletonList(parameterLevelAssessment))).thenReturn(1);
+        when(moduleService.getAssessedModule(Collections.singletonList(topicLevelRating),Collections.singletonList(parameterLevelRating))).thenReturn(1);
+        when(assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelRating),Collections.singletonList(parameterLevelRating))).thenReturn(1);
 
         SummaryResponse actualResponse = new SummaryResponse();
         actualResponse.setQuestionAssessed(2);

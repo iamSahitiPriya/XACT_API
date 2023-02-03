@@ -5,9 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AssessmentTopicReferenceRepository;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
-import com.xact.assessment.repositories.TopicLevelAssessmentRepository;
 import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import jakarta.inject.Singleton;
 
@@ -17,16 +15,16 @@ import java.util.Optional;
 @Singleton
 public class TopicService {
     private final AssessmentTopicRepository assessmentTopicRepository;
-    private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
+    private final AssessmentTopicReferenceService assessmentTopicReferenceService;
 
-    private final TopicLevelAssessmentRepository topicLevelAssessmentRepository;
-    private final TopicLevelRecommendationRepository topicLevelRecommendationRepository;
+    private final TopicLevelRatingService topicLevelRatingService;
+    private final TopicLevelRecommendationService topicLevelRecommendationService;
 
-    public TopicService(AssessmentTopicRepository assessmentTopicRepository, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, TopicLevelAssessmentRepository topicLevelAssessmentRepository, TopicLevelRecommendationRepository topicLevelRecommendationRepository) {
+    public TopicService(AssessmentTopicRepository assessmentTopicRepository, AssessmentTopicReferenceService assessmentTopicReferenceService, TopicLevelRatingService topicLevelRatingService, TopicLevelRecommendationService topicLevelRecommendationService) {
         this.assessmentTopicRepository = assessmentTopicRepository;
-        this.assessmentTopicReferenceRepository = assessmentTopicReferenceRepository;
-        this.topicLevelAssessmentRepository = topicLevelAssessmentRepository;
-        this.topicLevelRecommendationRepository = topicLevelRecommendationRepository;
+        this.assessmentTopicReferenceService = assessmentTopicReferenceService;
+        this.topicLevelRatingService = topicLevelRatingService;
+        this.topicLevelRecommendationService = topicLevelRecommendationService;
     }
 
     public Optional<AssessmentTopic> getTopic(Integer topicId) {
@@ -45,82 +43,95 @@ public class TopicService {
         return assessmentTopicRepository.findByTopicId(topicId);
     }
 
-    public TopicLevelAssessment saveRatingAndRecommendation(TopicLevelAssessment topicLevelAssessment) {
+    public TopicLevelRating saveRatingAndRecommendation(TopicLevelRating topicLevelRating) {
 
-        if (topicLevelAssessmentRepository.existsById(topicLevelAssessment.getTopicLevelId())) {
-            if (topicLevelAssessment.getRating() == null) {
-                topicLevelAssessmentRepository.delete(topicLevelAssessment);
+        if (topicLevelRatingService.existsByID(topicLevelRating)) {
+            if (topicLevelRating.getRating() == null) {
+                topicLevelRatingService.delete(topicLevelRating);
             } else {
-                topicLevelAssessmentRepository.update(topicLevelAssessment);
+                topicLevelRatingService.update(topicLevelRating);
             }
         } else {
-            if (topicLevelAssessment.getRating() != null)
+            if (topicLevelRating.getRating() != null)
 
-                topicLevelAssessmentRepository.save(topicLevelAssessment);
+                topicLevelRatingService.save(topicLevelRating);
         }
-        return topicLevelAssessment;
+        return topicLevelRating;
     }
 
-    public List<TopicLevelAssessment> getTopicAssessmentData(Integer assessmentId) {
-        return topicLevelAssessmentRepository.findByAssessment(assessmentId);
+
+    public List<TopicLevelRating> getTopicAssessmentData(Integer assessmentId) {
+        return topicLevelRatingService.findByAssessment(assessmentId);
     }
 
-    public Optional<TopicLevelAssessment> searchTopic(TopicLevelId topicLevelId) {
-        return topicLevelAssessmentRepository.findById(topicLevelId);
+
+    public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
+        return topicLevelRatingService.findById(topicLevelId);
     }
+
 
     public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
         if (topicLevelRecommendation.getRecommendationId() != null) {
             if (topicLevelRecommendation.hasRecommendation()) {
-                topicLevelRecommendationRepository.update(topicLevelRecommendation);
+                topicLevelRecommendationService.update(topicLevelRecommendation);
             } else {
-                topicLevelRecommendationRepository.delete(topicLevelRecommendation);
+                topicLevelRecommendationService.delete(topicLevelRecommendation);
             }
         } else {
             if (topicLevelRecommendation.hasRecommendation()) {
-                topicLevelRecommendationRepository.save(topicLevelRecommendation);
+                topicLevelRecommendationService.save(topicLevelRecommendation);
             }
         }
         return topicLevelRecommendation;
     }
 
+
     public List<TopicLevelRecommendation> getTopicAssessmentRecommendationData(Integer assessmentId, Integer topicId) {
-        return topicLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId, topicId);
+        return topicLevelRecommendationService.findByAssessmentAndTopic(assessmentId, topicId);
     }
 
+
     public Optional<TopicLevelRecommendation> searchTopicRecommendation(Integer recommendationId) {
-        return topicLevelRecommendationRepository.findById(recommendationId);
+        return topicLevelRecommendationService.findById(recommendationId);
     }
 
 
     public void deleteRecommendation(Integer recommendationId) {
-        topicLevelRecommendationRepository.deleteById(recommendationId);
+        topicLevelRecommendationService.deleteById(recommendationId);
     }
 
 
     public boolean checkTopicRecommendationId(Integer recommendationId) {
-        return topicLevelRecommendationRepository.existsById(recommendationId);
+        return topicLevelRecommendationService.existsById(recommendationId);
     }
 
 
     public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
-        return topicLevelRecommendationRepository.findByAssessment(assessmentId);
+        return topicLevelRecommendationService.findByAssessment(assessmentId);
     }
 
+
     public String getTopicRecommendationById(Integer identifier) {
-        return topicLevelRecommendationRepository.findById(identifier).orElseThrow().getRecommendation();
+        return topicLevelRecommendationService.findById(identifier).orElseThrow().getRecommendation();
     }
+
     public void saveTopicReference(AssessmentTopicReference assessmentTopicReference) {
-        assessmentTopicReferenceRepository.save(assessmentTopicReference);
+        assessmentTopicReferenceService.save(assessmentTopicReference);
     }
+
+
     public AssessmentTopicReference updateTopicReference(AssessmentTopicReference assessmentTopicReference) {
-        return assessmentTopicReferenceRepository.update(assessmentTopicReference);
+        return assessmentTopicReferenceService.update(assessmentTopicReference);
     }
+
+
     public AssessmentTopicReference getAssessmentTopicReference(Integer referenceId) {
-        return assessmentTopicReferenceRepository.findById(referenceId).orElseThrow();
+        return assessmentTopicReferenceService.findById(referenceId);
     }
+
+
     public void deleteTopicReference(Integer referenceId) {
-        assessmentTopicReferenceRepository.deleteById(referenceId);
+        assessmentTopicReferenceService.deleteById(referenceId);
     }
 
 

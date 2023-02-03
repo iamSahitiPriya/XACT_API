@@ -23,7 +23,6 @@ import java.util.List;
 @Singleton
 public class ActivityLogService {
     public static final int EXPIRY_TIME = 30000;
-    public static final String SPACE_DELIMITER = " ";
     private AssessmentService assessmentService;
     private ActivityLogRepository activityLogRepository;
     private AnswerService answerService;
@@ -63,7 +62,7 @@ public class ActivityLogService {
             ActivityResponse activityResponse = mapper.map(activityLog, ActivityResponse.class);
             UserInfo userInfo = userAuthService.getUserInfo(activityLog.getActivityId().getUserName());
             activityResponse.setEmail(userInfo.getEmail());
-            activityResponse.setFullName(String.join(SPACE_DELIMITER,userInfo.getFirstName(),userInfo.getLastName()));
+            activityResponse.setFullName(userInfo.getFullName());
             activityResponse.setInputText(getInputText(activityLog));
             activityResponses.add(activityResponse);
         }

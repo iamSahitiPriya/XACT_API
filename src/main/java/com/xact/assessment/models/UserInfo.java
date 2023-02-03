@@ -32,4 +32,8 @@ public class UserInfo {
 
     @Column(name = "locale", nullable = false)
     private String locale;
+
+    public String getFullName() {
+        return String.join(" ",firstName,lastName);
+    }
 }

@@ -5,7 +5,8 @@ public enum NotificationType {
     CREATED_V1("v1_notification_for_create_assessment.vm", "Assessment created"),
     ADD_USER_V1("v1_notification_for_add_user.vm", "You have been added to assessment"),
     REOPENED_V1("v1_notification_for_reopen_assessment.vm", "Assessment reopened"),
-    DELETE_USER_V1("v1_notification_for_delete_user.vm","You have been removed from assessment");
+    DELETE_USER_V1("v1_notification_for_delete_user.vm","You have been removed from assessment"),
+    DELETE_ASSESSMENT_V1("v1_notification_for_delete_assessment.vm","Assessment Deleted");
 
     private final String templateResource;
     private final String emailSubject;

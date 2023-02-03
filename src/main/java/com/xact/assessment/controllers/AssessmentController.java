@@ -353,8 +353,10 @@ public class AssessmentController {
         User loggedInUser = userAuthService.getCurrentUser(authentication);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        if (assessment.isEditable() && (assessment.getOwnerEmail().equals(loggedInUser.getUserEmail())))
+        if (assessment.isEditable() && (assessment.getOwnerEmail().equals(loggedInUser.getUserEmail()))) {
             assessmentService.softDeleteAssessment(assessment);
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForDeleteAssessment(assessment));
+        }
     }
 
     @Transactional

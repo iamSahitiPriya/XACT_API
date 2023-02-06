@@ -44,7 +44,7 @@ class AssessmentServiceTest {
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
         accessControlService = mock(AccessControlService.class);
-        assessmentService = new AssessmentService(usersAssessmentsService, assessmentRepository, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
+        assessmentService = new AssessmentService( assessmentRepository,usersAssessmentsService,accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
     }
 
     @Test
@@ -523,6 +523,5 @@ class AssessmentServiceTest {
 
         verify(usersAssessmentsService).getAssessmentFacilitatorsSet(assessment);
     }
-
 
 }

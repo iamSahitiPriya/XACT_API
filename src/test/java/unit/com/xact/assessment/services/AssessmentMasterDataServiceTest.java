@@ -9,6 +9,7 @@ import com.xact.assessment.exceptions.DuplicateRecordException;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ModuleRepository;
 import com.xact.assessment.services.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -28,7 +29,7 @@ class AssessmentMasterDataServiceTest {
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
     private final UserAssessmentModuleService userAssessmentModuleService = mock(UserAssessmentModuleService.class);
     private final ModuleService moduleService1 = new ModuleService(moduleRepository);
-    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryService, moduleService,  questionService, parameterService, topicService, userAssessmentModuleService);
+    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryService, moduleService, questionService, parameterService, topicService, userAssessmentModuleService);
 
     @Test
     void getAllCategories() {
@@ -772,4 +773,30 @@ class AssessmentMasterDataServiceTest {
 
         assertEquals(expectedResponse, actualResponse);
     }
+
+
+    @Test
+    void shouldReturnTrueWhenUserAssessmentModuleExists() {
+        Date created = new Date(2022 - 7 - 13);
+        Date updated = new Date(2022 - 9 - 24);
+        Organisation organisation = new Organisation(1, "It", "industry", "domain", 3);
+        Assessment assessment = new Assessment(1, "assessmentName", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+
+        UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId();
+        assessmentModuleId.setAssessment(assessment);
+        assessmentModuleId.setModule(assessmentModule);
+        userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
+        userAssessmentModule.setModule(assessmentModule);
+        userAssessmentModule.setAssessment(assessment);
+
+        when(userAssessmentModuleService.existsById(assessmentModuleId)).thenReturn(true);
+
+
+        Assertions.assertTrue(assessmentMasterDataService.isModuleSelectedByUser(assessment, assessmentModule));
+
+    }
+
 }

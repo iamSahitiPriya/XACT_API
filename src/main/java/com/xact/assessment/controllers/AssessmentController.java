@@ -79,6 +79,7 @@ public class AssessmentController {
             assessments.forEach(assessment ->
             {
                 AssessmentResponse assessmentResponse = assessmentMapper.map(assessment);
+                assessmentResponse.setAssessmentDescription(assessment.getAssessmentDescription());
                 assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwnerEmail()));
                 assessmentResponses.add(assessmentResponse);
             });

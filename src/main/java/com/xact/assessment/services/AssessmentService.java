@@ -4,12 +4,9 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentRequest;
-import com.xact.assessment.dtos.ModuleRequest;
-import com.xact.assessment.dtos.UserDto;
-import com.xact.assessment.dtos.UserRole;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.*;
+import com.xact.assessment.repositories.AssessmentRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
@@ -27,21 +24,22 @@ public class AssessmentService {
 
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
-    private final UsersAssessmentsRepository usersAssessmentsRepository;
-    private final AccessControlRepository accessControlRepository;
-    private final UserAssessmentModuleRepository userAssessmentModuleRepository;
-    private final ModuleRepository moduleRepository;
+    private final AccessControlService accessControlService;
+
+    private final AssessmentMasterDataService assessmentMasterDataService;
+
+    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
+
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(UsersAssessmentsService usersAssessmentsService, AssessmentRepository assessmentRepository, UsersAssessmentsRepository usersAssessmentsRepository, AccessControlRepository accessControlRepository, UserAssessmentModuleRepository userAssessmentModuleRepository, ModuleRepository moduleRepository) {
+    public AssessmentService(AssessmentRepository assessmentRepository,UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
-        this.usersAssessmentsRepository = usersAssessmentsRepository;
-        this.accessControlRepository = accessControlRepository;
-        this.userAssessmentModuleRepository = userAssessmentModuleRepository;
-        this.moduleRepository = moduleRepository;
+        this.accessControlService = accessControlService;
+        this.assessmentMasterDataService = assessmentMasterDataService;
+        this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
     }
 
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
@@ -108,8 +106,7 @@ public class AssessmentService {
 
 
     public Set<AssessmentUser> getAssessmentFacilitatorsSet(Assessment assessment) {
-        List<AssessmentUser> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
-        return new HashSet<>(assessmentFacilitators);
+        return usersAssessmentsService.getAssessmentFacilitatorsSet(assessment);
     }
 
     private Set<String> getUpdatedUsers(Set<AssessmentUser> assessmentUsers, Set<AssessmentUser> assessmentUsersSet) {
@@ -125,17 +122,11 @@ public class AssessmentService {
 
 
     public Assessment getAssessment(Integer assessmentId, User user) {
-        AssessmentUser assessmentUser = usersAssessmentsRepository.findByUserEmail(String.valueOf(user.getUserEmail()), assessmentId);
-        return assessmentUser.getUserId().getAssessment();
+        return usersAssessmentsService.getAssessment(assessmentId, user);
     }
 
     public List<String> getAssessmentFacilitators(Integer assessmentId) {
-        List<AssessmentUser> assessmentUsers = usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator);
-        List<String> assessmentUsers1 = new ArrayList<>();
-        for (AssessmentUser eachUser : assessmentUsers) {
-            assessmentUsers1.add(eachUser.getUserId().getUserEmail());
-        }
-        return assessmentUsers1;
+        return usersAssessmentsService.getAssessmentFacilitators(assessmentId);
     }
 
     public Assessment finishAssessment(Assessment assessment) {
@@ -164,8 +155,9 @@ public class AssessmentService {
 
 
     public Optional<AccessControlRoles> getUserRole(String email) {
-        return accessControlRepository.getAccessControlRolesByEmail(email);
+        return accessControlService.getAccessControlRolesByEmail(email);
     }
+
 
     public List<Assessment> getTotalAssessments(String startDate, String endDate) throws ParseException {
         DateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
@@ -180,24 +172,11 @@ public class AssessmentService {
     }
 
     public void saveAssessmentModules(List<ModuleRequest> moduleRequests, Assessment assessment) {
-        for (ModuleRequest moduleRequest1 : moduleRequests) {
-            UserAssessmentModule userAssessmentModule = new UserAssessmentModule();
-            userAssessmentModule.setAssessment(assessment);
-            AssessmentModule assessmentModule = getModule(moduleRequest1.getModuleId());
-            AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment, assessmentModule);
-            userAssessmentModule.setAssessmentModuleId(assessmentModuleId);
-            userAssessmentModule.setModule(assessmentModule);
-            userAssessmentModuleRepository.save(userAssessmentModule);
-        }
-    }
-
-    public AssessmentModule getModule(Integer moduleId) {
-        return moduleRepository.findByModuleId(moduleId);
+        usersAssessmentsService.saveAssessmentModules(moduleRequests, assessment);
     }
 
     public void updateAssessmentModules(List<ModuleRequest> moduleRequest, Assessment assessment) {
-        userAssessmentModuleRepository.deleteByModule(assessment.getAssessmentId());
-        saveAssessmentModules(moduleRequest, assessment);
+        usersAssessmentsService.updateAssessmentModules(moduleRequest, assessment);
     }
 
     public void softDeleteAssessment(Assessment assessment) {
@@ -205,7 +184,135 @@ public class AssessmentService {
         assessment.setUpdatedAt(new Date());
         updateAssessment(assessment);
     }
+
     public Assessment getAssessmentById(Integer assessmentId) {
         return assessmentRepository.findByAssessmentId(assessmentId);
+    }
+
+    public List<Assessment> findAssessments(String userEmail) {
+        return usersAssessmentsService.findAssessments(userEmail);
+    }
+
+    public List<Answer> getAnswers(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getAnswers(assessmentId);
+    }
+
+    public void saveAnswer(UpdateAnswerRequest answerRequest, Assessment assessment) {
+        topicAndParameterLevelAssessmentService.saveAnswer(answerRequest, assessment);
+    }
+
+    public Optional<AssessmentParameter> getParameter(Integer parameterId) {
+        return topicAndParameterLevelAssessmentService.getParameter(parameterId);
+    }
+
+    public List<TopicLevelRating> getTopicAssessmentData(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+    }
+
+    public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId);
+    }
+
+    public List<ParameterLevelRating> getParameterAssessmentData(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+
+    }
+
+    public List<ParameterLevelRecommendation> getAssessmentParameterRecommendationData(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId);
+    }
+
+    public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
+        return topicAndParameterLevelAssessmentService.searchParameterRecommendation(recommendationId);
+
+    }
+
+    public void saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
+        topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
+
+    }
+
+    public boolean checkParameterRecommendationId(Integer recommendationId) {
+        return topicAndParameterLevelAssessmentService.checkParameterRecommendationId(recommendationId);
+    }
+
+    public Optional<TopicLevelRecommendation> searchTopicRecommendation(Integer recommendationId) {
+        return topicAndParameterLevelAssessmentService.searchTopicRecommendation(recommendationId);
+
+    }
+
+    public void saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+        topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
+    }
+
+    public boolean checkTopicRecommendationId(Integer recommendationId) {
+        return topicAndParameterLevelAssessmentService.checkTopicRecommendationId(recommendationId);
+
+    }
+
+    public void deleteRecommendation(Integer recommendationId) {
+        topicAndParameterLevelAssessmentService.deleteRecommendation(recommendationId);
+    }
+
+    public void deleteParameterRecommendation(Integer recommendationId) {
+        topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
+    }
+
+    public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
+        return topicAndParameterLevelAssessmentService.searchTopic(topicLevelId);
+    }
+
+    public void saveRatingAndRecommendation(TopicLevelRating topicLevelRating) {
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelRating);
+    }
+
+    public Optional<ParameterLevelRating> searchParameter(ParameterLevelId parameterLevelId) {
+        return topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId);
+
+    }
+
+    public void saveRatingAndRecommendation(ParameterLevelRating parameterLevelRating) {
+        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelRating);
+    }
+
+
+    public AssessmentTopic getTopicByQuestionId(Integer questionId) {
+        return topicAndParameterLevelAssessmentService.getTopicByQuestionId(questionId);
+    }
+
+    public List<AssessmentCategory> getAllCategories() {
+        return assessmentMasterDataService.getAllCategoriesByDesc();
+    }
+
+    public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
+        return assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+    }
+
+    public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
+        return usersAssessmentsService.findAllUserQuestion(assessmentId);
+    }
+
+    public UserQuestion saveUserQuestion(Assessment assessment, Integer parameterId, String userQuestion) {
+        return usersAssessmentsService.saveUserQuestion(assessment, parameterId, userQuestion);
+    }
+
+    public void saveUserAnswer(Integer questionId, String answer) {
+        usersAssessmentsService.saveUserAnswer(questionId, answer);
+    }
+
+    public void updateUserQuestion(Integer questionId, String updatedQuestion) {
+        usersAssessmentsService.updateUserQuestion(questionId, updatedQuestion);
+    }
+
+    public Optional<UserQuestion> searchUserQuestion(Integer questionId) {
+        return usersAssessmentsService.searchUserQuestion(questionId);
+    }
+
+    public void deleteUserQuestion(Integer questionId) {
+        usersAssessmentsService.deleteUserQuestion(questionId);
+    }
+
+    public Optional<AssessmentTopic> getTopic(Integer topicId) {
+        return topicAndParameterLevelAssessmentService.getTopic(topicId);
     }
 }

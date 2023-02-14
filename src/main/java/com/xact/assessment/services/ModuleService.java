@@ -5,8 +5,8 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.models.AssessmentModule;
-import com.xact.assessment.models.ParameterLevelAssessment;
-import com.xact.assessment.models.TopicLevelAssessment;
+import com.xact.assessment.models.ParameterLevelRating;
+import com.xact.assessment.models.TopicLevelRating;
 import com.xact.assessment.repositories.ModuleRepository;
 import jakarta.inject.Singleton;
 
@@ -31,18 +31,19 @@ public class ModuleService {
         moduleRepository.update(assessmentModule);
     }
 
-    public Integer getAssessedModule(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
+    public Integer getAssessedModule(List<TopicLevelRating> topicLevelRatingList, List<ParameterLevelRating> parameterLevelRatingList){
         Set<Integer> assessedModule = new TreeSet<>();
-        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
-            assessedModule.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getModule().getModuleId());
+        for (ParameterLevelRating parameterLevelRating : parameterLevelRatingList) {
+            assessedModule.add(parameterLevelRating.getParameterLevelId().getParameter().getTopic().getModule().getModuleId());
         }
 
-        for (TopicLevelAssessment topicLevelAssessment:topicLevelAssessmentList) {
-            assessedModule.add(topicLevelAssessment.getTopicLevelId().getTopic().getModule().getModuleId());
+        for (TopicLevelRating topicLevelRating : topicLevelRatingList) {
+            assessedModule.add(topicLevelRating.getTopicLevelId().getTopic().getModule().getModuleId());
         }
 
         return assessedModule.size();
     }
+
 
 }
 

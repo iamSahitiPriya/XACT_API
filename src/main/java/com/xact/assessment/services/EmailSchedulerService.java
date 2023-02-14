@@ -15,7 +15,6 @@ import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
-import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.utils.NamingConventionUtil;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
@@ -36,17 +35,15 @@ public class EmailSchedulerService {
     private static final Integer MAXIMUM_RETRIES = 6;
     private final EmailConfig emailConfig;
     private final ProfileConfig profileConfig;
-    private final NotificationRepository notificationRepository;
     private final TokenService tokenService;
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
     private final NamingConventionUtil namingConventionUtil = new NamingConventionUtil();
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailSchedulerService.class);
 
-    public EmailSchedulerService(EmailConfig emailConfig, ProfileConfig profileConfig, NotificationRepository notificationRepository, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
+    public EmailSchedulerService(EmailConfig emailConfig, ProfileConfig profileConfig, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
         this.emailConfig = emailConfig;
         this.profileConfig = profileConfig;
-        this.notificationRepository = notificationRepository;
         this.tokenService = tokenService;
         this.emailNotificationClient = emailNotificationClient;
         this.notificationService = notificationService;
@@ -56,7 +53,7 @@ public class EmailSchedulerService {
     public void sendEmailNotifications() throws JsonProcessingException {
         LOGGER.info("Scheduling notifications ...");
         if (emailConfig.isNotificationEnabled()) {
-            List<Notification> notificationList = notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, MAXIMUM_RETRIES);
+            List<Notification> notificationList = notificationService.getTop50ByStatusAndRetriesLessThan(MAXIMUM_RETRIES);
             if (!notificationList.isEmpty()) {
                 String accessToken = "Bearer " + tokenService.getToken(emailConfig.getScope());
                 for (Notification notification : notificationList) {

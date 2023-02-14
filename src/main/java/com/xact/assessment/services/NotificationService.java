@@ -220,5 +220,9 @@ public class NotificationService {
     }
 
 
+
+    public List<Notification> getTop50ByStatusAndRetriesLessThan(Integer maximumRetries) {
+        return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
+    }
 }
 

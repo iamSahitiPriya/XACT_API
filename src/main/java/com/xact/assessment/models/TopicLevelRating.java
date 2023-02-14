@@ -22,12 +22,13 @@ import java.util.Date;
 @AllArgsConstructor
 @Introspected
 @Entity
-@Table(name = "tbl_assessment_parameter")
-public class ParameterLevelAssessment implements Serializable {
+@Table(name = "tbl_assessment_topic")
+public class TopicLevelRating implements Serializable {
+
     @EmbeddedId
-    @AttributeOverride(name = "assessmentParameter", column = @Column(name = "parameter_id"))
+    @AttributeOverride(name = "assessmentTopic", column = @Column(name = "topic_id"))
     @AttributeOverride(name = "assessment", column = @Column(name = "assessment_id"))
-    public ParameterLevelId parameterLevelId;
+    public TopicLevelId topicLevelId;
 
     @Column(name = "score")
     private Integer rating;

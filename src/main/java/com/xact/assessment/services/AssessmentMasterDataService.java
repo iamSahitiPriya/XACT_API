@@ -7,10 +7,6 @@ package com.xact.assessment.services;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.exceptions.DuplicateRecordException;
 import com.xact.assessment.models.*;
-import com.xact.assessment.repositories.AssessmentParameterReferenceRepository;
-import com.xact.assessment.repositories.AssessmentTopicReferenceRepository;
-import com.xact.assessment.repositories.CategoryRepository;
-import com.xact.assessment.repositories.UserAssessmentModuleRepository;
 import jakarta.inject.Singleton;
 
 import java.util.*;
@@ -18,47 +14,42 @@ import java.util.*;
 @Singleton
 public class AssessmentMasterDataService {
 
-    private final CategoryRepository categoryRepository;
-    private final AssessmentTopicReferenceRepository assessmentTopicReferenceRepository;
+    private final CategoryService categoryService;
     private final ParameterService parameterService;
     private final TopicService topicService;
     private final QuestionService questionService;
-    private final UserAssessmentModuleRepository userAssessmentModuleRepository;
-    private final AssessmentParameterReferenceRepository assessmentParameterRRepository;
+    private final UserAssessmentModuleService userAssessmentModuleService;
     private final ModuleService moduleService;
     private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
 
 
-    public AssessmentMasterDataService(CategoryRepository categoryRepository, ModuleService moduleService, QuestionService questionService, AssessmentTopicReferenceRepository assessmentTopicReferenceRepository, ParameterService parameterService, TopicService topicService, UserAssessmentModuleRepository userAssessmentModuleRepository, AssessmentParameterReferenceRepository assessmentParameterRRepository) {
-        this.categoryRepository = categoryRepository;
+    public AssessmentMasterDataService(CategoryService categoryService, ModuleService moduleService, QuestionService questionService, ParameterService parameterService, TopicService topicService, UserAssessmentModuleService userAssessmentModuleService) {
+        this.categoryService = categoryService;
         this.moduleService = moduleService;
         this.questionService = questionService;
-        this.assessmentTopicReferenceRepository = assessmentTopicReferenceRepository;
         this.parameterService = parameterService;
         this.topicService = topicService;
-        this.userAssessmentModuleRepository = userAssessmentModuleRepository;
-        this.assessmentParameterRRepository = assessmentParameterRRepository;
-
+        this.userAssessmentModuleService = userAssessmentModuleService;
     }
 
-    public List<AssessmentCategory> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<AssessmentCategory> getAllCategoriesByDesc() {
+        return categoryService.getAllCategoriesByDesc();
     }
 
     public AssessmentCategory getCategory(Integer categoryId) {
-        return categoryRepository.findCategoryById(categoryId);
+        return categoryService.getCategory(categoryId);
     }
 
     public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
         List<AssessmentCategory> categories = new ArrayList<>();
         Set<AssessmentCategory> categorySet = new HashSet<>();
-        List<AssessmentModule> assessmentModules = userAssessmentModuleRepository.findModuleByAssessment(assessmentId);
+        List<AssessmentModule> assessmentModules = userAssessmentModuleService.findModuleByAssessment(assessmentId);
         if (!assessmentModules.isEmpty()) {
             for (AssessmentModule assessmentModule : assessmentModules) {
-                if(assessmentModule.getCategory().getIsActive()) {
+                if (assessmentModule.getCategory().getIsActive()) {
                     AssessmentCategory category = assessmentModule.getCategory();
                     assessmentModule.setTopics(assessmentModule.getActiveTopics());
-                    for(AssessmentTopic assessmentTopic : assessmentModule.getTopics()){
+                    for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
                         assessmentTopic.setParameters(assessmentTopic.getActiveParameters());
                     }
                     categorySet.add(category);
@@ -82,7 +73,7 @@ public class AssessmentMasterDataService {
     public AssessmentCategory createAssessmentCategory(AssessmentCategoryRequest assessmentCategoryRequest) {
         if (isCategoryUnique(assessmentCategoryRequest.getCategoryName())) {
             AssessmentCategory assessmentCategory = new AssessmentCategory(assessmentCategoryRequest.getCategoryName(), assessmentCategoryRequest.isActive(), assessmentCategoryRequest.getComments());
-            categoryRepository.save(assessmentCategory);
+            categoryService.save(assessmentCategory);
             return assessmentCategory;
         } else {
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
@@ -91,12 +82,13 @@ public class AssessmentMasterDataService {
     }
 
     private boolean isCategoryUnique(String categoryName) {
-        List<String> categories = categoryRepository.getAllCategories();
+        List<String> categories = categoryService.getAllCategories();
         return isUnique(categories, categoryName);
     }
 
+
     public AssessmentModule createAssessmentModule(AssessmentModuleRequest assessmentModuleRequest) {
-        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());
+        AssessmentCategory assessmentCategory = categoryService.findCategoryById(assessmentModuleRequest);
         if (isModuleUnique(assessmentModuleRequest.getModuleName(), assessmentCategory)) {
             AssessmentModule assessmentModule = new AssessmentModule(assessmentModuleRequest.getModuleName(), assessmentCategory, assessmentModuleRequest.isActive(), assessmentModuleRequest.getComments());
             moduleService.createModule(assessmentModule);
@@ -105,6 +97,7 @@ public class AssessmentMasterDataService {
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
         }
     }
+
 
     public AssessmentTopic createAssessmentTopics(AssessmentTopicRequest assessmentTopicRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
@@ -153,7 +146,7 @@ public class AssessmentMasterDataService {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         if (isTopicRatingUnique(assessmentTopic.getReferences(), topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopic.getReferences(), topicReferencesRequest.getReference())) {
             AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
-            assessmentTopicReferenceRepository.save(assessmentTopicReference);
+            topicService.saveTopicReference(assessmentTopicReference);
             return assessmentTopicReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
@@ -177,7 +170,7 @@ public class AssessmentMasterDataService {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         if (isParameterRatingUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getReference())) {
             AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference());
-            assessmentParameterRRepository.save(assessmentParameterReference);
+            parameterService.saveParameterReference(assessmentParameterReference);
             return assessmentParameterReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
@@ -202,7 +195,7 @@ public class AssessmentMasterDataService {
             assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
             assessmentCategory.setActive(assessmentCategoryRequest.isActive());
             assessmentCategory.setComments(assessmentCategoryRequest.getComments());
-            categoryRepository.update(assessmentCategory);
+            categoryService.update(assessmentCategory);
             return assessmentCategory;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
@@ -222,7 +215,7 @@ public class AssessmentMasterDataService {
 
     public AssessmentModule updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(moduleId);
-        AssessmentCategory assessmentCategory = categoryRepository.findCategoryById(assessmentModuleRequest.getCategory());
+        AssessmentCategory assessmentCategory = categoryService.findCategoryById(assessmentModuleRequest);
         if (removeWhiteSpaces(assessmentModule.getModuleName()).equals(removeWhiteSpaces(assessmentModuleRequest.getModuleName())) || isModuleUnique(assessmentModuleRequest.getModuleName(), assessmentCategory)) {
             assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
             assessmentModule.setCategory(assessmentCategory);
@@ -279,27 +272,27 @@ public class AssessmentMasterDataService {
 
     public AssessmentTopicReference updateTopicReference(Integer referenceId, TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
-        AssessmentTopicReference assessmentTopicReference = assessmentTopicReferenceRepository.findById(referenceId).orElseThrow();
+        AssessmentTopicReference assessmentTopicReference = topicService.getAssessmentTopicReference(referenceId);
         Set<AssessmentTopicReference> assessmentTopicReferences = new HashSet<>(assessmentTopic.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentTopicReference.getReferenceId())).toList());
         if (isTopicRatingUnique(assessmentTopicReferences, topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopicReferences, topicReferencesRequest.getReference())) {
             assessmentTopicReference.setReference(topicReferencesRequest.getReference());
             assessmentTopicReference.setTopic(assessmentTopic);
             assessmentTopicReference.setRating(topicReferencesRequest.getRating());
-            return assessmentTopicReferenceRepository.update(assessmentTopicReference);
+            return topicService.updateTopicReference(assessmentTopicReference);
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
     public AssessmentParameterReference updateParameterReferences(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
-        AssessmentParameterReference assessmentParameterReference = assessmentParameterRRepository.findById(referenceId).orElseThrow();
+        AssessmentParameterReference assessmentParameterReference = parameterService.getAssessmentParameterReference(referenceId);
         Set<AssessmentParameterReference> assessmentParameterReferences = new HashSet<>(assessmentParameter.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentParameterReference.getReferenceId())).toList());
         if (isParameterRatingUnique(assessmentParameterReferences, parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameterReferences, parameterReferencesRequest.getReference())) {
             assessmentParameterReference.setParameter(assessmentParameter);
             assessmentParameterReference.setReference(parameterReferencesRequest.getReference());
             assessmentParameterReference.setRating(parameterReferencesRequest.getRating());
 
-            assessmentParameterRRepository.update(assessmentParameterReference);
+            parameterService.updateParameterReference(assessmentParameterReference);
             return assessmentParameterReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
@@ -310,32 +303,35 @@ public class AssessmentMasterDataService {
     }
 
     public List<AssessmentCategory> getCategories() {
-        return categoryRepository.findCategories();
+        return categoryService.getCategories();
     }
 
     public void deleteTopicReference(Integer referenceId) {
-        assessmentTopicReferenceRepository.deleteById(referenceId);
+        topicService.deleteTopicReference(referenceId);
     }
 
     public void deleteParameterReference(Integer referenceId) {
-        assessmentParameterRRepository.deleteById(referenceId);
+        parameterService.deleteParameterReference(referenceId);
     }
-    public Integer getAssessedCategory(List<TopicLevelAssessment> topicLevelAssessmentList, List<ParameterLevelAssessment> parameterLevelAssessmentList){
+
+    public Integer getAssessedCategory(List<TopicLevelRating> topicLevelRatingList, List<ParameterLevelRating> parameterLevelRatingList) {
         Set<Integer> assessedCategories = new TreeSet<>();
-        for (ParameterLevelAssessment parameterLevelAssessment : parameterLevelAssessmentList) {
-            assessedCategories.add(parameterLevelAssessment.getParameterLevelId().getParameter().getTopic().getModule().getCategory().getCategoryId());
+        for (ParameterLevelRating parameterLevelRating : parameterLevelRatingList) {
+            assessedCategories.add(parameterLevelRating.getParameterLevelId().getParameter().getTopic().getModule().getCategory().getCategoryId());
         }
 
-        for (TopicLevelAssessment topicLevelAssessment:topicLevelAssessmentList) {
-            assessedCategories.add(topicLevelAssessment.getTopicLevelId().getTopic().getModule().getCategory().getCategoryId());
+        for (TopicLevelRating topicLevelRating : topicLevelRatingList) {
+            assessedCategories.add(topicLevelRating.getTopicLevelId().getTopic().getModule().getCategory().getCategoryId());
 
         }
         return assessedCategories.size();
     }
 
     public boolean isModuleSelectedByUser(Assessment assessment, AssessmentModule assessmentModule) {
-        AssessmentModuleId assessmentModuleId=new AssessmentModuleId(assessment,assessmentModule);
-        return userAssessmentModuleRepository.existsById(assessmentModuleId);
+        AssessmentModuleId assessmentModuleId = new AssessmentModuleId(assessment, assessmentModule);
+        return userAssessmentModuleService.existsById(assessmentModuleId);
     }
+
+
 }
 

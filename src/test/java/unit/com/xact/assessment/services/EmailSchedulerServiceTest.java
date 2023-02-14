@@ -15,7 +15,6 @@ import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
 import com.xact.assessment.models.NotificationType;
-import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.TokenService;
@@ -33,7 +32,6 @@ class EmailSchedulerServiceTest {
     private EmailSchedulerService emailSchedulerService;
     private final EmailConfig emailConfig;
     private final TokenService tokenService;
-    private final NotificationRepository notificationRepository;
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
     private final ProfileConfig profileConfig;
@@ -41,12 +39,11 @@ class EmailSchedulerServiceTest {
     public EmailSchedulerServiceTest() {
         emailConfig = mock(EmailConfig.class);
         tokenService = mock(TokenService.class);
-        notificationRepository = mock(NotificationRepository.class);
         emailNotificationClient = mock(EmailNotificationClient.class);
         notificationService = mock(NotificationService.class);
         profileConfig = mock(ProfileConfig.class);
 
-        emailSchedulerService = new EmailSchedulerService(emailConfig, profileConfig, notificationRepository, tokenService, emailNotificationClient, notificationService);
+        emailSchedulerService = new EmailSchedulerService(emailConfig, profileConfig, tokenService, emailNotificationClient, notificationService);
     }
 
     @Test
@@ -54,7 +51,6 @@ class EmailSchedulerServiceTest {
         NotificationResponse notificationResponse = new NotificationResponse("1", "EMail sent successfully!");
         String scope = "email.send";
         Notification notification = new Notification(1, NotificationType.CREATED_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\",\"created_at\":\"1-Dec-22 06:32 pm\"}", NotificationStatus.N, 0, new Date(), new Date());
-        Notification notification1 = new Notification(1, NotificationType.CREATED_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\",\"created_at\":\"31-Dec-22 06:32 pm\"}", NotificationStatus.Y, 0, new Date(), new Date());
         List<Notification> notificationList = new ArrayList<>();
         notificationList.add(notification);
         when(emailConfig.isNotificationEnabled()).thenReturn(true);
@@ -71,15 +67,14 @@ class EmailSchedulerServiceTest {
         notificationRequest.setEmail(notificationEmail);
 
 
-        when(notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, 6)).thenReturn(notificationList);
+        when(notificationService.getTop50ByStatusAndRetriesLessThan( 6)).thenReturn(notificationList);
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
         when(emailNotificationClient.sendNotification(token, notificationRequest)).thenReturn(notificationResponse);
-        when(notificationRepository.update(notification)).thenReturn(notification1);
         doNothing().when(notificationService).update(notification);
 
         emailSchedulerService.sendEmailNotifications();
-        Notification notification2 = notificationRepository.update(notification);
+          notificationService.update(notification);
 
-        Assertions.assertEquals(NotificationStatus.Y, notification2.getStatus());
+        Assertions.assertEquals(NotificationStatus.Y, notification.getStatus());
     }
 }

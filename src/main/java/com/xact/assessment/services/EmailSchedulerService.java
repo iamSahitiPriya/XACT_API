@@ -13,6 +13,7 @@ import com.xact.assessment.dtos.EmailHeader;
 import com.xact.assessment.dtos.EmailPayload;
 import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
+import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
 import com.xact.assessment.utils.NamingConventionUtil;
@@ -25,10 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @Singleton
 public class EmailSchedulerService {
@@ -38,17 +36,29 @@ public class EmailSchedulerService {
     private final TokenService tokenService;
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
+    private final AssessmentService assessmentService;
     private final NamingConventionUtil namingConventionUtil = new NamingConventionUtil();
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailSchedulerService.class);
 
-    public EmailSchedulerService(EmailConfig emailConfig, ProfileConfig profileConfig, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
+    public EmailSchedulerService(EmailConfig emailConfig, ProfileConfig profileConfig, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService, AssessmentService assessmentService) {
         this.emailConfig = emailConfig;
         this.profileConfig = profileConfig;
         this.tokenService = tokenService;
         this.emailNotificationClient = emailNotificationClient;
         this.notificationService = notificationService;
+        this.assessmentService = assessmentService;
     }
 
+    @Scheduled(fixedDelay = "1s")
+    public void sendInactiveAssessmentEmailNotifications() throws JsonProcessingException {
+        List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(15);
+        for (Assessment inactiveAssessment: inactiveAssessments) {
+            notificationService.setNotificationForInactiveAssessment(inactiveAssessment);
+
+        }
+
+
+    }
     @Scheduled(fixedDelay = "${email.delay}")
     public void sendEmailNotifications() throws JsonProcessingException {
         LOGGER.info("Scheduling notifications ...");

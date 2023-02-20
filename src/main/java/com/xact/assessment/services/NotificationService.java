@@ -6,8 +6,11 @@ import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentAction;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
+import io.micronaut.data.exceptions.EmptyResultException;
 import jakarta.inject.Singleton;
+import lombok.Data;
 import lombok.SneakyThrows;
+import org.hibernate.QueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,9 +223,40 @@ public class NotificationService {
     }
 
 
-
     public List<Notification> getTop50ByStatusAndRetriesLessThan(Integer maximumRetries) {
         return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
+    }
+
+    public void setNotificationForInactiveAssessment(Assessment inactiveAssessment) throws JsonProcessingException {
+        Set<String> users = inactiveAssessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
+        Notification notification = getNotification(users);
+        notification.setTemplateName(NotificationType.INACTIVE_V1);
+        Map<String, String> payload = getAssessmentCommonPayload(inactiveAssessment);
+        ObjectMapper objectMapper = new ObjectMapper();
+        notification.setPayload(objectMapper.writeValueAsString(payload));
+        saveInactiveAssessmentNotification(notification);
+    }
+
+    private void saveInactiveAssessmentNotification(Notification notification) {
+        Notification notification1 = getInactiveNotification(notification);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -5);
+        Date expiryDate = calendar.getTime();
+        if (notification1 == null) {
+            saveNotification(notification);
+        } else if (notification1.getUpdatedAt().getDate() == expiryDate.getDate()) {
+            notificationRepository.delete(notification1);
+            saveNotification(notification);
+        }
+    }
+
+    public Notification getInactiveNotification(Notification notificationRequest) {
+        try {
+            return notificationRepository.findByTemplateNameAndPayload(notificationRequest.getTemplateName(), notificationRequest.getPayload());
+        } catch (EmptyResultException e) {
+            LOGGER.info("No Notification found");
+        }
+        return new Notification();
     }
 }
 

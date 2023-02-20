@@ -4,6 +4,8 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.DeliveryHorizon;
+import com.xact.assessment.dtos.Recommendation;
 import com.xact.assessment.dtos.ReportAnswerResponse;
 import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.models.*;
@@ -11,8 +13,10 @@ import jakarta.inject.Singleton;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.modelmapper.ModelMapper;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -37,6 +41,7 @@ public class ReportService {
     private final UserQuestionService userQuestionService;
 
     private final ModuleService moduleService;
+    private final ModelMapper mapper = new ModelMapper();
 
 
     public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ChartService chartService, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, ModuleService moduleService) {
@@ -562,4 +567,71 @@ public class ReportService {
     }
 
 
+    public List<Recommendation> getRecommendations(Integer assessmentId) {
+        List<TopicLevelRecommendation> topicLevelRecommendations = topicAndParameterLevelAssessmentService.getTopicRecommendations(assessmentId);
+        List<ParameterLevelRecommendation> parameterLevelRecommendations = topicAndParameterLevelAssessmentService.getParameterRecommendations(assessmentId);
+        List<Recommendation> recommendations = new ArrayList<>();
+
+        recommendations.addAll(getTopicRecommendations(topicLevelRecommendations));
+
+        recommendations.addAll(getParameterRecommendations(parameterLevelRecommendations));
+
+        List<Recommendation> recommendationList = groupRecommendationsByDeliveryHorizon(recommendations);
+
+        return recommendationList;
+    }
+
+    private List<Recommendation> getParameterRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations) {
+        List<Recommendation> recommendationList = new ArrayList<>();
+        for(ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
+            if(parameterLevelRecommendation.getDeliveryHorizon() != null && parameterLevelRecommendation.getRecommendationEffort() != null && parameterLevelRecommendation.getRecommendationImpact() != null) {
+                String categoryName = parameterLevelRecommendation.getParameter().getTopic().getModule().getCategory().getCategoryName();
+                Recommendation recommendation = mapper.map(parameterLevelRecommendation, Recommendation.class);
+                recommendation.setCategoryName(categoryName);
+                recommendationList.add(recommendation);
+            }
+        }
+        return recommendationList;
+    }
+
+    private List<Recommendation> getTopicRecommendations(List<TopicLevelRecommendation> topicLevelRecommendations) {
+        List<Recommendation> recommendationList = new ArrayList<>();
+        for(TopicLevelRecommendation topicLevelRecommendation : topicLevelRecommendations) {
+            if(topicLevelRecommendation.getDeliveryHorizon() != null && topicLevelRecommendation.getRecommendationEffort() != null && topicLevelRecommendation.getRecommendationImpact() != null) {
+                String categoryName = topicLevelRecommendation.getTopic().getModule().getCategory().getCategoryName();
+                Recommendation recommendation = mapper.map(topicLevelRecommendation, Recommendation.class);
+                recommendation.setCategoryName(categoryName);
+                recommendationList.add(recommendation);
+            }
+        }
+        return recommendationList;
+    }
+
+    private List<Recommendation> groupRecommendationsByDeliveryHorizon(List<Recommendation> recommendations) {
+        Map<DeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> sortedMap = recommendations.stream()
+                .sorted(Recommendation::compareByDeliveryHorizon)
+                .collect(Collectors.groupingBy(Recommendation::getDeliveryHorizon, LinkedHashMap::new,
+                        Collectors.groupingBy(Recommendation::getImpact, LinkedHashMap::new, Collectors.toList())));
+
+        List<Recommendation> recommendationList = sortRecommendationsByImpact(sortedMap);
+
+        return recommendationList;
+    }
+
+    private List<Recommendation> sortRecommendationsByImpact(Map<DeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> sortedMap) {
+        List<Recommendation> recommendations = new ArrayList<>();
+
+        for (Map.Entry<DeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> deliveryHorizonMap : sortedMap.entrySet()) {
+            sortRecommendations(recommendations, deliveryHorizonMap.getValue(),RecommendationImpact.HIGH);
+            sortRecommendations(recommendations, deliveryHorizonMap.getValue(),RecommendationImpact.MEDIUM);
+            sortRecommendations(recommendations, deliveryHorizonMap.getValue(),RecommendationImpact.LOW);
+        }
+
+        return recommendations;
+    }
+
+    private void sortRecommendations(List<Recommendation> sortedRecommendations, Map<RecommendationImpact, List<Recommendation>> deliveryHorizonMap, RecommendationImpact recommendationImpact) {
+        if(deliveryHorizonMap.containsKey(recommendationImpact))
+            sortedRecommendations.addAll(deliveryHorizonMap.get(recommendationImpact).stream().sorted(Recommendation::sortRecommendationByUpdatedTime).toList());
+    }
 }

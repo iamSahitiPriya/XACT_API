@@ -120,4 +120,7 @@ public class ParameterService {
     }
 
 
+    public List<ParameterLevelRecommendation> getParameterRecommendationByAssessmentId(Integer assessmentId) {
+        return parameterLevelRecommendationService.findByAssessment(assessmentId);
+    }
 }

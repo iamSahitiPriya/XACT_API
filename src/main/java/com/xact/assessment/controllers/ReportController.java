@@ -5,6 +5,7 @@
 package com.xact.assessment.controllers;
 
 
+import com.xact.assessment.dtos.Recommendation;
 import com.xact.assessment.dtos.ReportCategoryResponse;
 import com.xact.assessment.dtos.ReportDataResponse;
 import com.xact.assessment.dtos.SummaryResponse;
@@ -117,6 +118,15 @@ public class ReportController {
             return HttpResponse.serverError();
         }
     }
+
+    @Get(value = "/{assessmentId}/charts/roadmap",produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<List<Recommendation>> getRecommendations(@PathVariable("assessmentId") Integer assessmentId, Authentication authentication) {
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        List<Recommendation> recommendationResponse = reportService.getRecommendations(assessment.getAssessmentId());
+        return HttpResponse.ok(recommendationResponse);
+    }
+
 
     private Assessment getAuthenticatedAssessment(Integer assessmentId, Authentication authentication) {
         User loggedInUser = userAuthService.getCurrentUser(authentication);

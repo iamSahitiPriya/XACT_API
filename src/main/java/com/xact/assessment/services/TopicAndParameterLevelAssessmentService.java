@@ -138,4 +138,11 @@ public class TopicAndParameterLevelAssessmentService {
         }
     }
 
+    public List<TopicLevelRecommendation> getTopicRecommendations(Integer assessmentId) {
+        return topicService.getTopicRecommendationByAssessmentId(assessmentId);
+    }
+
+    public List<ParameterLevelRecommendation> getParameterRecommendations(Integer assessmentId) {
+        return parameterService.getParameterRecommendationByAssessmentId(assessmentId);
+    }
 }

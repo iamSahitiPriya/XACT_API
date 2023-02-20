@@ -6,13 +6,18 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.exceptions.DuplicateRecordException;
+import com.xact.assessment.exceptions.InvalidHierarchyException;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 @Singleton
 public class AssessmentMasterDataService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataService.class);
+
 
     private final CategoryService categoryService;
     private final ParameterService parameterService;
@@ -21,6 +26,7 @@ public class AssessmentMasterDataService {
     private final UserAssessmentModuleService userAssessmentModuleService;
     private final ModuleService moduleService;
     private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
+    private static final String HIERARCHY_NOT_ALLOWED = "Update not allowed because topic and parameter both have associated references.";
 
 
     public AssessmentMasterDataService(CategoryService categoryService, ModuleService moduleService, QuestionService questionService, ParameterService parameterService, TopicService topicService, UserAssessmentModuleService userAssessmentModuleService) {
@@ -191,7 +197,7 @@ public class AssessmentMasterDataService {
     }
 
     public AssessmentCategory updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
-        if (removeWhiteSpaces(assessmentCategory.getCategoryName()).equals(removeWhiteSpaces(assessmentCategoryRequest.getCategoryName())) || isCategoryUnique(assessmentCategoryRequest.getCategoryName())) {
+        if (isUnique(assessmentCategory.getCategoryName(), assessmentCategoryRequest.getCategoryName(), isCategoryUnique(assessmentCategoryRequest.getCategoryName()))) {
             assessmentCategory.setCategoryName(assessmentCategoryRequest.getCategoryName());
             assessmentCategory.setActive(assessmentCategoryRequest.isActive());
             assessmentCategory.setComments(assessmentCategoryRequest.getComments());
@@ -216,7 +222,7 @@ public class AssessmentMasterDataService {
     public AssessmentModule updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(moduleId);
         AssessmentCategory assessmentCategory = categoryService.findCategoryById(assessmentModuleRequest);
-        if (removeWhiteSpaces(assessmentModule.getModuleName()).equals(removeWhiteSpaces(assessmentModuleRequest.getModuleName())) || isModuleUnique(assessmentModuleRequest.getModuleName(), assessmentCategory)) {
+        if (isUnique(assessmentModule.getModuleName(), assessmentModuleRequest.getModuleName(), isModuleUnique(assessmentModuleRequest.getModuleName(), assessmentCategory))) {
             assessmentModule.setModuleName(assessmentModuleRequest.getModuleName());
             assessmentModule.setCategory(assessmentCategory);
             assessmentModule.setActive(assessmentModuleRequest.isActive());
@@ -232,7 +238,7 @@ public class AssessmentMasterDataService {
     public AssessmentTopic updateTopic(Integer topicId, AssessmentTopicRequest assessmentTopicRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
-        if (removeWhiteSpaces(assessmentTopic.getTopicName()).equals(removeWhiteSpaces(assessmentTopicRequest.getTopicName())) || isTopicUnique(assessmentTopicRequest.getTopicName(), assessmentModule)) {
+        if (isUnique(assessmentTopic.getTopicName(), assessmentTopicRequest.getTopicName(), isTopicUnique(assessmentTopicRequest.getTopicName(), assessmentModule))) {
             assessmentTopic.setModule(assessmentModule);
             assessmentTopic.setTopicName(assessmentTopicRequest.getTopicName());
             assessmentTopic.setActive(assessmentTopicRequest.isActive());
@@ -247,7 +253,13 @@ public class AssessmentMasterDataService {
     public AssessmentParameter updateParameter(Integer parameterId, AssessmentParameterRequest assessmentParameterRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterId).orElseThrow();
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameterRequest.getTopic()).orElseThrow();
-        if (removeWhiteSpaces(assessmentParameter.getParameterName()).equals(removeWhiteSpaces(assessmentParameterRequest.getParameterName())) || isParameterUnique(assessmentParameterRequest.getParameterName(), assessmentTopic)) {
+        if (isUnique(assessmentParameter.getParameterName(), assessmentParameterRequest.getParameterName(), isParameterUnique(assessmentParameterRequest.getParameterName(), assessmentTopic))) {
+
+            if (assessmentParameter.hasReferences() && assessmentTopic.hasReferences()) {
+                LOGGER.info(HIERARCHY_NOT_ALLOWED);
+                throw new InvalidHierarchyException(HIERARCHY_NOT_ALLOWED);
+            }
+
             assessmentParameter.setParameterName(assessmentParameterRequest.getParameterName());
             assessmentParameter.setTopic(assessmentTopic);
             assessmentParameter.setActive(assessmentParameterRequest.isActive());
@@ -256,6 +268,10 @@ public class AssessmentMasterDataService {
             return assessmentParameter;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
+    }
+
+    private boolean isUnique(String parameterName, String parameterName2, boolean isOtherDataUnique) {
+        return removeWhiteSpaces(parameterName).equals(removeWhiteSpaces(parameterName2)) || isOtherDataUnique;
     }
 
     public Question updateQuestion(Integer questionId, QuestionRequest questionRequest) {

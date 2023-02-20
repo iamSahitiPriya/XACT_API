@@ -15,7 +15,7 @@ import org.modelmapper.ModelMapper;
 
 import static org.mockito.Mockito.*;
 
-public class ParameterLevelRatingServiceTest {
+class ParameterLevelRatingServiceTest {
     private ModelMapper mapper = new ModelMapper();
     private ParameterLevelRatingService parameterLevelRatingService;
     private ParameterLevelRatingRepository parameterLevelRatingRepository;

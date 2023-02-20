@@ -134,4 +134,7 @@ public class TopicService {
     }
 
 
+    public List<TopicLevelRecommendation> getTopicRecommendationByAssessmentId(Integer assessmentId) {
+        return topicLevelRecommendationService.findByAssessment(assessmentId);
+    }
 }

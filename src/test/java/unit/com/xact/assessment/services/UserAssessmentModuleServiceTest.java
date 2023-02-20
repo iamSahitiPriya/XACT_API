@@ -15,7 +15,7 @@ import java.util.Date;
 
 import static org.mockito.Mockito.*;
 
-public class UserAssessmentModuleServiceTest {
+class UserAssessmentModuleServiceTest {
     private UserAssessmentModuleRepository userAssessmentModuleRepository;
     private UserAssessmentModuleService userAssessmentModuleService;
 

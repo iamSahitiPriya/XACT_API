@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentAction;
+import com.xact.assessment.dtos.EmailPayload;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import io.micronaut.scheduling.annotation.Scheduled;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -46,21 +48,36 @@ public class NotificationService {
 
     @Scheduled(fixedDelay = "1d")
     public void saveFeedbackNotificationForFinishedAssessments() {
-        LOGGER.info("Set notifications for finished assessments ...");
         List<Assessment> assessments = assessmentService.getFinishedAssessments();
+        List<Notification> notifications=notificationRepository.findByType(NotificationType.FEEDBACK_V1);
         assessments.forEach(assessment -> {
             try {
                 Notification notification = getNotificationForFeedback(assessment);
-                saveNotification(notification);
+                if(!hasNotificationAlreadySent(assessment,notifications)){
+                    System.out.println(hasNotificationAlreadySent(assessment,notifications));
+                    LOGGER.info("Save notifications for feedback ...");
+                    saveNotification(notification);
+                }
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e);
             }
         });
     }
 
+    @SneakyThrows
+    private boolean hasNotificationAlreadySent(Assessment assessment, List<Notification> notifications) {
+        for(Notification notification : notifications){
+                EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(), EmailPayload.class);
+                 if(emailPayload.getAssessmentId().equals(assessment.getAssessmentId().toString())){
+                     return true;
+                 };
+        };
+        return false;
+    }
+
     private Notification getNotificationForFeedback(Assessment assessment) throws JsonProcessingException {
         List<UserInfo> userInfos = getLoggedInUserInfo(assessment);
-        Set<String> userEmails = userInfos.stream().map(UserInfo -> UserInfo.getEmail()).collect(Collectors.toSet());
+        Set<String> userEmails = userInfos.stream().map(UserInfo::getEmail).collect(Collectors.toSet());
         Notification notification = getNotification(userEmails);
         notification.setTemplateName(NotificationType.FEEDBACK_V1);
         Set<String> userNames = userInfos.stream().map(UserInfo -> UserInfo.getFirstName() + " " + UserInfo.getLastName()).collect(Collectors.toSet());

@@ -5,6 +5,7 @@
 package com.xact.assessment.repositories;
 
 import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.AssessmentStatus;
 import io.micronaut.context.annotation.Executable;
 import io.micronaut.context.annotation.Parameter;
 import io.micronaut.data.annotation.Query;
@@ -25,4 +26,8 @@ public interface AssessmentRepository extends CrudRepository<Assessment, Integer
     @Executable
     @Query("SELECT tla FROM Assessment  tla WHERE tla.assessmentId=:assessmentId")
     Assessment findByAssessmentId(Integer assessmentId);
+
+    @Executable
+    @Query("SELECT tla from Assessment tla where tla.updatedAt<:finishedDate and tla.assessmentStatus=:completed")
+    List<Assessment> getFinishedAssessments(@Parameter("finishedDate") Date finishedDate,@Parameter("completed") AssessmentStatus completed);
 }

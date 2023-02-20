@@ -6,6 +6,7 @@ import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentAction;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
+import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -26,15 +27,66 @@ public class NotificationService {
     public static final String ASSESSMENT_NAME = "assessment_name";
     public static final String OWNER_NAME = "ownerName";
     public static final String OWNER_EMAIL = "ownerEmail";
+
+    public static final String UPDATED_AT = "updated_at";
+    public static final String COLLABORATORS = "collaborators";
     private final NotificationRepository notificationRepository;
+
+    private final AssessmentService assessmentService;
     private final EmailConfig emailConfig;
     private final UserAuthService userAuthService;
 
 
-    public NotificationService(NotificationRepository notificationRepository, EmailConfig emailConfig, UserAuthService userAuthService) {
+    public NotificationService(NotificationRepository notificationRepository, AssessmentService assessmentService, EmailConfig emailConfig, UserAuthService userAuthService) {
         this.notificationRepository = notificationRepository;
+        this.assessmentService = assessmentService;
         this.emailConfig = emailConfig;
         this.userAuthService = userAuthService;
+    }
+
+    @Scheduled(fixedDelay = "1d")
+    public void saveFeedbackNotificationForFinishedAssessments() {
+        LOGGER.info("Set notifications for finished assessments ...");
+        List<Assessment> assessments = assessmentService.getFinishedAssessments();
+        assessments.forEach(assessment -> {
+            try {
+                Notification notification = getNotificationForFeedback(assessment);
+                saveNotification(notification);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private Notification getNotificationForFeedback(Assessment assessment) throws JsonProcessingException {
+        List<UserInfo> userInfos = getLoggedInUserInfo(assessment);
+        Set<String> userEmails = userInfos.stream().map(UserInfo -> UserInfo.getEmail()).collect(Collectors.toSet());
+        Notification notification = getNotification(userEmails);
+        notification.setTemplateName(NotificationType.FEEDBACK_V1);
+        Set<String> userNames = userInfos.stream().map(UserInfo -> UserInfo.getFirstName() + " " + UserInfo.getLastName()).collect(Collectors.toSet());
+        Map<String, String> payload = getPayloadForFeedback(assessment, userNames);
+        ObjectMapper objectMapper = new ObjectMapper();
+        notification.setPayload(objectMapper.writeValueAsString(payload));
+
+        return notification;
+    }
+
+    private Map<String, String> getPayloadForFeedback(Assessment assessment, Set<String> userNames) {
+        Map<String, String> payload = getAssessmentCommonPayload(assessment);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a zz");
+        String date = simpleDateFormat.format(assessment.getUpdatedAt());
+        String time = timeFormat.format(assessment.getCreatedAt());
+        String updatedAt = date + " " + time;
+        payload.put(UPDATED_AT, updatedAt);
+        payload.put(COLLABORATORS, String.join(",", userNames));
+
+        return payload;
+    }
+
+    private List<UserInfo> getLoggedInUserInfo(Assessment assessment) {
+        Set<String> users = assessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
+        return userAuthService.getLoggedInUsers(users);
     }
 
     @SneakyThrows
@@ -220,9 +272,9 @@ public class NotificationService {
     }
 
 
-
     public List<Notification> getTop50ByStatusAndRetriesLessThan(Integer maximumRetries) {
         return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
     }
+
 }
 

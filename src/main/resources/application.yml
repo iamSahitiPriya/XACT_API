@@ -30,7 +30,8 @@ profile:
   url: "http://localhost:4200/assessment/"
   homePageUrl: "http://localhost:4200/"
   supportUrl: "https://sites.google.com/thoughtworks.com/x-act"
-  microSiteUrl:  "https://sites.google.com/thoughtworks.com/x-act"
+  microSiteUrl: "https://sites.google.com/thoughtworks.com/x-act"
+  feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSdazGMcKL5cURmLZ54JgwBOHk6P7KEpbH0ZcQvaOV78_o2GJA/viewform"
 
 datasources:
   default:
@@ -59,11 +60,11 @@ email:
   scope: "email.send"
   endpoint: "/notification/messages"
   delay: "30s"
-  notificationEnabled : false
-  maskEmail : true
-  defaultEmail : "shashank.mishra@thoughtworks.com"
-  fromEmail : "project-xact@thoughtworks.net"
-  name : "X-ACT Support"
+  notificationEnabled: true
+  maskEmail: false
+  defaultEmail: "shashank.mishra@thoughtworks.com"
+  fromEmail: "project-xact@thoughtworks.net"
+  name: "X-ACT Support"
 
 cleanup:
   initialDelay: "1m"

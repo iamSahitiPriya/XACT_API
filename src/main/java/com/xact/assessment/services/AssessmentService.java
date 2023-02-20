@@ -34,7 +34,7 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(AssessmentRepository assessmentRepository,UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
+    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.accessControlService = accessControlService;
@@ -314,5 +314,13 @@ public class AssessmentService {
 
     public Optional<AssessmentTopic> getTopic(Integer topicId) {
         return topicAndParameterLevelAssessmentService.getTopic(topicId);
+    }
+
+
+    public List<Assessment> getFinishedAssessments() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -29);
+        Date finishedDate = calendar.getTime();
+        return assessmentRepository.getFinishedAssessments(finishedDate, Completed);
     }
 }

@@ -10,8 +10,10 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UserAuthService;
+import io.micronaut.data.exceptions.EmptyResultException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Not;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -256,5 +258,60 @@ class NotificationServiceTest {
 
         verify(notificationRepository).save(notification);
         verify(notificationRepository).findByTemplateNameAndPayload(notification.getTemplateName(), notification.getPayload());
+    }
+
+    @Test
+    void shouldResendNotificationToInactiveAssessments() throws JsonProcessingException {
+        String email = "abc@thoughtworks.com";
+        Organisation organisation = new Organisation(1, "IT Consultant", "ABC", "abc", 6);
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("hello");
+        assessment.setCreatedAt(new Date());
+        assessment.setOrganisation(organisation);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -5);
+        Date updatedDate = calendar.getTime();
+
+        AssessmentUser assessmentUser = new AssessmentUser();
+        UserId userId = new UserId(email, assessment);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Facilitator);
+        AssessmentUser assessmentUser1 = new AssessmentUser();
+        UserId userId1 = new UserId(email, assessment);
+        assessmentUser1.setUserId(userId1);
+        assessmentUser1.setRole(AssessmentRole.Owner);
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
+        assessmentUsers.add(assessmentUser);
+        assessmentUsers.add(assessmentUser1);
+        assessment.setAssessmentUsers(assessmentUsers);
+        Set<String> users = new HashSet<>();
+        users.add(assessmentUser1.getUserId().getUserEmail());
+
+        Notification notification = new Notification(1, NotificationType.INACTIVE_V1, email, "{\"assessment_name\":\"hello\",\"created_at\":\"17-Feb-2023 12:26 pm IST\",\"assessment_id\":\"1\",\"organisation_name\":\"IT Consultant\"}", NotificationStatus.N, 0, new Date(), updatedDate);
+
+        doNothing().when(notificationRepository).delete(notification);
+        when(notificationRepository.save(notification)).thenReturn(notification);
+        when(notificationRepository.findByTemplateNameAndPayload(any(NotificationType.class), any(String.class))).thenReturn(notification);
+
+        notificationService.setNotificationForInactiveAssessment(assessment);
+        notificationRepository.save(notification);
+        notificationRepository.findByTemplateNameAndPayload(notification.getTemplateName(), notification.getPayload());
+
+        verify(notificationRepository).save(notification);
+        verify(notificationRepository).findByTemplateNameAndPayload(notification.getTemplateName(), notification.getPayload());
+
+    }
+
+    @Test
+    void shouldHandleEmptyResultException() {
+        String email = "abc@thoughtworks.com";
+        Notification notification = new Notification(1, NotificationType.INACTIVE_V1, email, "{\"assessment_name\":\"hello\",\"created_at\":\"17-Feb-2023 12:26 pm IST\",\"assessment_id\":\"1\",\"organisation_name\":\"IT Consultant\"}", NotificationStatus.N, 0, new Date(), new Date());
+
+        when(notificationRepository.findByTemplateNameAndPayload(any(NotificationType.class), any(String.class))).thenThrow(new EmptyResultException());
+        Notification actualNotification = notificationService.getInactiveNotification(notification);
+
+        Assertions.assertNull(actualNotification.getNotificationId());
+
     }
 }

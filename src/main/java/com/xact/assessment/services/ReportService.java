@@ -576,15 +576,13 @@ public class ReportService {
 
         recommendations.addAll(getParameterRecommendations(parameterLevelRecommendations));
 
-        List<Recommendation> recommendationList = groupRecommendationsByDeliveryHorizon(recommendations);
-
-        return recommendationList;
+        return groupRecommendationsByDeliveryHorizon(recommendations);
     }
 
     private List<Recommendation> getParameterRecommendations(List<ParameterLevelRecommendation> parameterLevelRecommendations) {
         List<Recommendation> recommendationList = new ArrayList<>();
-        for(ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
-            if(parameterLevelRecommendation.getDeliveryHorizon() != null && parameterLevelRecommendation.getRecommendationEffort() != null && parameterLevelRecommendation.getRecommendationImpact() != null) {
+        for (ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
+            if (parameterLevelRecommendation.getDeliveryHorizon() != null && parameterLevelRecommendation.getRecommendationEffort() != null && parameterLevelRecommendation.getRecommendationImpact() != null) {
                 String categoryName = parameterLevelRecommendation.getParameter().getTopic().getModule().getCategory().getCategoryName();
                 Recommendation recommendation = mapper.map(parameterLevelRecommendation, Recommendation.class);
                 recommendation.setCategoryName(categoryName);
@@ -596,8 +594,8 @@ public class ReportService {
 
     private List<Recommendation> getTopicRecommendations(List<TopicLevelRecommendation> topicLevelRecommendations) {
         List<Recommendation> recommendationList = new ArrayList<>();
-        for(TopicLevelRecommendation topicLevelRecommendation : topicLevelRecommendations) {
-            if(topicLevelRecommendation.getDeliveryHorizon() != null && topicLevelRecommendation.getRecommendationEffort() != null && topicLevelRecommendation.getRecommendationImpact() != null) {
+        for (TopicLevelRecommendation topicLevelRecommendation : topicLevelRecommendations) {
+            if (topicLevelRecommendation.getDeliveryHorizon() != null && topicLevelRecommendation.getRecommendationEffort() != null && topicLevelRecommendation.getRecommendationImpact() != null) {
                 String categoryName = topicLevelRecommendation.getTopic().getModule().getCategory().getCategoryName();
                 Recommendation recommendation = mapper.map(topicLevelRecommendation, Recommendation.class);
                 recommendation.setCategoryName(categoryName);
@@ -612,26 +610,23 @@ public class ReportService {
                 .sorted(Recommendation::compareByDeliveryHorizon)
                 .collect(Collectors.groupingBy(Recommendation::getDeliveryHorizon, LinkedHashMap::new,
                         Collectors.groupingBy(Recommendation::getImpact, LinkedHashMap::new, Collectors.toList())));
-
-        List<Recommendation> recommendationList = sortRecommendationsByImpact(sortedMap);
-
-        return recommendationList;
+        return sortRecommendationsByImpact(sortedMap);
     }
 
     private List<Recommendation> sortRecommendationsByImpact(Map<DeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> sortedMap) {
         List<Recommendation> recommendations = new ArrayList<>();
 
         for (Map.Entry<DeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> deliveryHorizonMap : sortedMap.entrySet()) {
-            sortRecommendations(recommendations, deliveryHorizonMap.getValue(),RecommendationImpact.HIGH);
-            sortRecommendations(recommendations, deliveryHorizonMap.getValue(),RecommendationImpact.MEDIUM);
-            sortRecommendations(recommendations, deliveryHorizonMap.getValue(),RecommendationImpact.LOW);
+            sortRecommendations(recommendations, deliveryHorizonMap.getValue(), RecommendationImpact.HIGH);
+            sortRecommendations(recommendations, deliveryHorizonMap.getValue(), RecommendationImpact.MEDIUM);
+            sortRecommendations(recommendations, deliveryHorizonMap.getValue(), RecommendationImpact.LOW);
         }
 
         return recommendations;
     }
 
     private void sortRecommendations(List<Recommendation> sortedRecommendations, Map<RecommendationImpact, List<Recommendation>> deliveryHorizonMap, RecommendationImpact recommendationImpact) {
-        if(deliveryHorizonMap.containsKey(recommendationImpact))
+        if (deliveryHorizonMap.containsKey(recommendationImpact))
             sortedRecommendations.addAll(deliveryHorizonMap.get(recommendationImpact).stream().sorted(Recommendation::sortRecommendationByUpdatedTime).toList());
     }
 }

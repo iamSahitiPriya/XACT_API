@@ -22,6 +22,7 @@ import static com.xact.assessment.models.AssessmentStatus.Completed;
 @Singleton
 public class AssessmentService {
 
+    public static final int FEEDBACK_DURATION = 29;
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
     private final AccessControlService accessControlService;
@@ -319,7 +320,7 @@ public class AssessmentService {
 
     public List<Assessment> getFinishedAssessments() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -29);
+        calendar.add(Calendar.DAY_OF_YEAR, -FEEDBACK_DURATION);
         Date finishedDate = calendar.getTime();
         return assessmentRepository.getFinishedAssessments(finishedDate, Completed);
     }

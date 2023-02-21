@@ -8,9 +8,7 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import io.micronaut.data.exceptions.EmptyResultException;
 import jakarta.inject.Singleton;
-import lombok.Data;
 import lombok.SneakyThrows;
-import org.hibernate.QueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

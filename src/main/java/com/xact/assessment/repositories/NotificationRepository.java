@@ -11,7 +11,6 @@ import io.micronaut.data.repository.CrudRepository;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public interface NotificationRepository extends CrudRepository<Notification, Integer> {

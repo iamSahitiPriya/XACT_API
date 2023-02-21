@@ -139,6 +139,7 @@ class TopicServiceTest {
 
 
 
+
     @Test
     void shouldDeleteRatingForTopicLevelAssessment() {
         Integer assessmentId1 = 1;
@@ -222,7 +223,28 @@ class TopicServiceTest {
         verify(topicLevelRecommendationService).deleteById(topicLevelRecommendationRequest.getRecommendationId());
     }
 
+    @Test
+    void shouldSaveTopicLevelRecommendation() {
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendation("This is a recommendation");
 
+        topicService.saveTopicLevelRecommendation(topicLevelRecommendation);
+
+        verify(topicLevelRecommendationService).save(topicLevelRecommendation);
+
+    }
+
+    @Test
+    void shouldGetTopicRecommendationById() {
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendation("This is a recommendation");
+
+        when(topicLevelRecommendationService.findById(any(Integer.class))).thenReturn(Optional.of(topicLevelRecommendation));
+
+        topicService.getTopicRecommendationById(1);
+
+        verify(topicLevelRecommendationService).findById(any(Integer.class));
+    }
 }
 
 

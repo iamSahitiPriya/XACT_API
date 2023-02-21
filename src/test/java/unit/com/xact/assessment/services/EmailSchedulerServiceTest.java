@@ -11,10 +11,7 @@ import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.dtos.NotificationResponse;
-import com.xact.assessment.models.AccessTokenResponse;
-import com.xact.assessment.models.Notification;
-import com.xact.assessment.models.NotificationStatus;
-import com.xact.assessment.models.NotificationType;
+import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
@@ -22,10 +19,7 @@ import com.xact.assessment.services.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
@@ -94,6 +88,13 @@ class EmailSchedulerServiceTest {
         String token = "Bearer " + accessTokenResponse.getAccessToken();
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
 
+        Organisation organisation = new Organisation(1, "abC", "ABC", "abc", 6);
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("Assessment");
+        assessment.setCreatedAt(new Date());
+        assessment.setOrganisation(organisation);
+
         var notificationRequest = new NotificationRequest();
         var notificationEmail = new NotificationDetail();
         notificationEmail.setSubject("Assessment Inactive");
@@ -104,6 +105,7 @@ class EmailSchedulerServiceTest {
 
         when(notificationService.getTop50ByStatusAndRetriesLessThan( 6)).thenReturn(notificationList);
         when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
+        when(assessmentService.findInactiveAssessments(15)).thenReturn(Collections.singletonList(assessment));
         when(emailNotificationClient.sendNotification(token, notificationRequest)).thenReturn(notificationResponse);
         doNothing().when(notificationService).update(notification);
 

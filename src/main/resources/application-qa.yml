@@ -28,6 +28,8 @@ profile:
   type: "qa"
   url: "https://qa.xact.thoughtworks.net/assessment/"
   homePageUrl: "https://qa.xact.thoughtworks.net/"
+  supportUrl: "https://sites.google.com/thoughtworks.com/x-act"
+  microSiteUrl: "https://sites.google.com/thoughtworks.com/x-act"
 
 token:
   username: ${AUTH_USERNAME}

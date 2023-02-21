@@ -17,7 +17,7 @@ public interface NotificationRepository extends CrudRepository<Notification, Int
 
     List<Notification> findTop50ByStatusAndRetriesLessThan(NotificationStatus status, Integer retries);
 
-    Notification findByTemplateNameAndPayload(NotificationType templateName, String payload);
+    List<Notification> findByTemplateName(NotificationType templateName);
 
     @Executable
     @Query("delete from Notification notification where notification.status = 'Y' and notification.updatedAt < :expiryDate")

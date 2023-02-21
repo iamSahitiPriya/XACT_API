@@ -20,15 +20,13 @@ import java.util.*;
 
 import static org.mockito.Mockito.*;
 
-public class NotificationSchedulerServiceTest {
+class NotificationSchedulerServiceTest {
     private final AssessmentService assessmentService;
-    private final EmailConfig emailConfig;
     private final NotificationService notificationService;
     private final NotificationSchedulerService notificationSchedulerService;
 
     public NotificationSchedulerServiceTest() {
         assessmentService = mock(AssessmentService.class);
-        emailConfig = mock(EmailConfig.class);
         notificationService = mock(NotificationService.class);
         notificationSchedulerService = new NotificationSchedulerService(notificationService, assessmentService);
 

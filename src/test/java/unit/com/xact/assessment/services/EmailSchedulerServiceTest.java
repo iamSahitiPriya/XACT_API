@@ -11,7 +11,10 @@ import com.xact.assessment.config.ProfileConfig;
 import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.dtos.NotificationResponse;
-import com.xact.assessment.models.*;
+import com.xact.assessment.models.AccessTokenResponse;
+import com.xact.assessment.models.Notification;
+import com.xact.assessment.models.NotificationStatus;
+import com.xact.assessment.models.NotificationType;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
@@ -19,7 +22,10 @@ import com.xact.assessment.services.TokenService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import static org.mockito.Mockito.*;
 

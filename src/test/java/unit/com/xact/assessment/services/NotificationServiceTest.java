@@ -298,7 +298,7 @@ class NotificationServiceTest {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
         assessment.setAssessmentName("hello");
-        assessment.setCreatedAt(new Date(2023,Calendar.FEBRUARY,17));
+        assessment.setCreatedAt(new Date(2023, Calendar.FEBRUARY, 17));
         assessment.setOrganisation(organisation);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -5);
@@ -336,7 +336,7 @@ class NotificationServiceTest {
         when(notificationRepository.findByTemplateName(any(NotificationType.class))).thenThrow(new EmptyResultException());
         List<Notification> actualNotification = notificationService.getNotificationBy(NotificationType.INACTIVE_V1);
 
-        Assertions.assertEquals(actualNotification.size(), 0);
+        Assertions.assertEquals(0, actualNotification.size());
 
     }
 }

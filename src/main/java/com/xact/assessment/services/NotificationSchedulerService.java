@@ -20,7 +20,7 @@ public class NotificationSchedulerService {
 
     private final NotificationService notificationService;
     public static final int DURATION = 15;
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmailSchedulerService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(NotificationSchedulerService.class);
 
 
     private final AssessmentService assessmentService;
@@ -35,7 +35,7 @@ public class NotificationSchedulerService {
         LOGGER.info("Sending email for Inactive assessment ...");
         List<Notification> inactiveNotifications = notificationService.getNotificationBy(NotificationType.INACTIVE_V1);
         List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(DURATION);
-        if (inactiveAssessments.size() > 0) {
+        if (!inactiveAssessments.isEmpty()) {
             for (Assessment inactiveAssessment : inactiveAssessments) {
                 notificationService.setNotificationForInactiveAssessment(inactiveAssessment, inactiveNotifications);
 

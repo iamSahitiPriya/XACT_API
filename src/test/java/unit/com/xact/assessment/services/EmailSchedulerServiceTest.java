@@ -40,7 +40,7 @@ class EmailSchedulerServiceTest {
         notificationService = mock(NotificationService.class);
         profileConfig = mock(ProfileConfig.class);
 
-        emailSchedulerService = new EmailSchedulerService(emailConfig, profileConfig, tokenService, emailNotificationClient, notificationService, assessmentService);
+        emailSchedulerService = new EmailSchedulerService(emailConfig, profileConfig, tokenService, emailNotificationClient, notificationService);
     }
 
     @Test
@@ -73,45 +73,5 @@ class EmailSchedulerServiceTest {
           notificationService.update(notification);
 
         Assertions.assertEquals(NotificationStatus.Y, notification.getStatus());
-    }
-
-    @Test
-    void shouldSendNotificationForInactiveAssessment() throws JsonProcessingException {
-        NotificationResponse notificationResponse = new NotificationResponse("1", "EMail sent successfully!");
-        String scope = "email.send";
-        Notification notification = new Notification(1, NotificationType.INACTIVE_V1, "brindha.e@thoughtworks.com", "{\"assessment_id\":\"1\",\"assessment_name\":\"fintech\",\"created_at\":\"1-Dec-22 06:32 pm\"}", NotificationStatus.N, 0, new Date(), new Date());
-        List<Notification> notificationList = new ArrayList<>();
-        notificationList.add(notification);
-        when(emailConfig.isNotificationEnabled()).thenReturn(true);
-        when(emailConfig.getScope()).thenReturn(scope);
-        AccessTokenResponse accessTokenResponse = new AccessTokenResponse("", 1, "abc", "", new Date());
-        String token = "Bearer " + accessTokenResponse.getAccessToken();
-        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
-
-        Organisation organisation = new Organisation(1, "abC", "ABC", "abc", 6);
-        Assessment assessment = new Assessment();
-        assessment.setAssessmentId(1);
-        assessment.setAssessmentName("Assessment");
-        assessment.setCreatedAt(new Date());
-        assessment.setOrganisation(organisation);
-
-        var notificationRequest = new NotificationRequest();
-        var notificationEmail = new NotificationDetail();
-        notificationEmail.setSubject("Assessment Inactive");
-        notificationEmail.setTo(Arrays.asList("brindha.e@thoughtworks.com"));
-        notificationEmail.setContentType("html/text");
-        notificationRequest.setEmail(notificationEmail);
-
-
-        when(notificationService.getTop50ByStatusAndRetriesLessThan( 6)).thenReturn(notificationList);
-        when(tokenService.getToken(scope)).thenReturn(accessTokenResponse.getAccessToken());
-        when(assessmentService.findInactiveAssessments(15)).thenReturn(Collections.singletonList(assessment));
-        when(emailNotificationClient.sendNotification(token, notificationRequest)).thenReturn(notificationResponse);
-        doNothing().when(notificationService).update(notification);
-
-        emailSchedulerService.sendInactiveAssessmentNotification();
-        notificationService.update(notification);
-
-        Assertions.assertEquals(NotificationStatus.N, notification.getStatus());
     }
 }

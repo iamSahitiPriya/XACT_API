@@ -226,22 +226,22 @@ public class NotificationService {
         return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
     }
 
-    public void setNotificationForInactiveAssessment(Assessment inactiveAssessment) throws JsonProcessingException {
+    public void setNotificationForInactiveAssessment(Assessment inactiveAssessment, List<Notification> inactiveNotificationList) throws JsonProcessingException {
         Set<String> users = inactiveAssessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
         Notification notification = getNotification(users);
         notification.setTemplateName(NotificationType.INACTIVE_V1);
         Map<String, String> payload = getAssessmentCommonPayload(inactiveAssessment);
         ObjectMapper objectMapper = new ObjectMapper();
         notification.setPayload(objectMapper.writeValueAsString(payload));
-        saveInactiveAssessmentNotification(notification);
+        saveInactiveAssessmentNotification(notification, inactiveNotificationList);
     }
 
-    private void saveInactiveAssessmentNotification(Notification notification) {
-        Notification inactiveNotification = getInactiveNotification(notification);
+    private void saveInactiveAssessmentNotification(Notification notification, List<Notification> inactiveNotificationList) {
+        Notification inactiveNotification = getInactiveNotification(inactiveNotificationList, notification);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -DURATION);
         Date expiryDate = calendar.getTime();
-        if (inactiveNotification == null) {
+        if (inactiveNotification.getNotificationId() == null) {
             saveNotification(notification);
         } else if (inactiveNotification.getUpdatedAt().getDate() == expiryDate.getDate()) {
             notificationRepository.delete(inactiveNotification);
@@ -249,13 +249,24 @@ public class NotificationService {
         }
     }
 
-    public Notification getInactiveNotification(Notification notificationRequest) {
+    public Notification getInactiveNotification(List<Notification> notificationList, Notification notificationRequest) {
+        for (Notification inactiveNotification : notificationList) {
+            if (Objects.equals(inactiveNotification.getPayload(), notificationRequest.getPayload())) {
+                return inactiveNotification;
+            }
+
+        }
+        return new Notification();
+    }
+
+    public List<Notification> getNotificationBy(NotificationType notificationType) {
+        List<Notification> inactiveNotifications = new ArrayList<>();
         try {
-            return notificationRepository.findByTemplateNameAndPayload(notificationRequest.getTemplateName(), notificationRequest.getPayload());
+            inactiveNotifications = notificationRepository.findByTemplateName(notificationType);
         } catch (EmptyResultException e) {
             LOGGER.info("No Notification found");
         }
-        return new Notification();
+        return inactiveNotifications;
     }
 }
 

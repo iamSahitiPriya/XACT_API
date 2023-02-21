@@ -16,6 +16,7 @@ import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
+import com.xact.assessment.models.NotificationType;
 import com.xact.assessment.utils.NamingConventionUtil;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
@@ -34,32 +35,21 @@ import java.util.Properties;
 @Singleton
 public class EmailSchedulerService {
     private static final Integer MAXIMUM_RETRIES = 6;
+
     private final EmailConfig emailConfig;
     private final ProfileConfig profileConfig;
     private final TokenService tokenService;
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
-    private final AssessmentService assessmentService;
     private final NamingConventionUtil namingConventionUtil = new NamingConventionUtil();
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailSchedulerService.class);
 
-    public EmailSchedulerService(EmailConfig emailConfig, ProfileConfig profileConfig, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService, AssessmentService assessmentService) {
+    public EmailSchedulerService(EmailConfig emailConfig, ProfileConfig profileConfig, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
         this.emailConfig = emailConfig;
         this.profileConfig = profileConfig;
         this.tokenService = tokenService;
         this.emailNotificationClient = emailNotificationClient;
         this.notificationService = notificationService;
-        this.assessmentService = assessmentService;
-    }
-
-    @Scheduled(fixedDelay = "${email.inactive.fixedDelay}")
-    public void sendInactiveAssessmentNotification() throws JsonProcessingException {
-        LOGGER.info("Sending email for Inactive assessment ...");
-        List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(15);
-        for (Assessment inactiveAssessment : inactiveAssessments) {
-            notificationService.setNotificationForInactiveAssessment(inactiveAssessment);
-
-        }
     }
 
     @Scheduled(fixedDelay = "${email.delay}")

@@ -284,14 +284,11 @@ class NotificationServiceTest {
 
         doNothing().when(notificationRepository).delete(notification);
         when(notificationRepository.save(notification)).thenReturn(notification);
-        when(notificationRepository.findByTemplateNameAndPayload(notification.getTemplateName(), notification.getPayload())).thenReturn(notification);
 
-        notificationService.setNotificationForInactiveAssessment(assessment);
+        notificationService.setNotificationForInactiveAssessment(assessment, Collections.singletonList(notification));
         notificationRepository.save(notification);
-        notificationRepository.findByTemplateNameAndPayload(notification.getTemplateName(), notification.getPayload());
 
         verify(notificationRepository).save(notification);
-        verify(notificationRepository).findByTemplateNameAndPayload(notification.getTemplateName(), notification.getPayload());
     }
 
     @Test
@@ -301,7 +298,7 @@ class NotificationServiceTest {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
         assessment.setAssessmentName("hello");
-        assessment.setCreatedAt(new Date());
+        assessment.setCreatedAt(new Date(2023,Calendar.FEBRUARY,17));
         assessment.setOrganisation(organisation);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -5);
@@ -322,30 +319,24 @@ class NotificationServiceTest {
         Set<String> users = new HashSet<>();
         users.add(assessmentUser1.getUserId().getUserEmail());
 
-        Notification notification = new Notification(1, NotificationType.INACTIVE_V1, email, "{\"assessment_name\":\"hello\",\"created_at\":\"17-Feb-2023 12:26 pm IST\",\"assessment_id\":\"1\",\"organisation_name\":\"IT Consultant\"}", NotificationStatus.N, 0, new Date(), updatedDate);
-
+        Notification notification = new Notification(1, NotificationType.INACTIVE_V1, email, "{\"assessment_name\":\"hello\",\"created_at\":\"17-Feb-3923 12:00 am IST\",\"assessment_id\":\"1\",\"organisation_name\":\"IT Consultant\"}", NotificationStatus.N, 0, new Date(), updatedDate);
+        System.out.println(assessment.getCreatedAt());
         doNothing().when(notificationRepository).delete(notification);
         when(notificationRepository.save(notification)).thenReturn(notification);
-        when(notificationRepository.findByTemplateNameAndPayload(any(NotificationType.class), any(String.class))).thenReturn(notification);
 
-        notificationService.setNotificationForInactiveAssessment(assessment);
+        notificationService.setNotificationForInactiveAssessment(assessment, Collections.singletonList(notification));
         notificationRepository.save(notification);
-        notificationRepository.findByTemplateNameAndPayload(notification.getTemplateName(), notification.getPayload());
 
         verify(notificationRepository).save(notification);
-        verify(notificationRepository).findByTemplateNameAndPayload(notification.getTemplateName(), notification.getPayload());
-
     }
 
     @Test
     void shouldHandleEmptyResultException() {
-        String email = "abc@thoughtworks.com";
-        Notification notification = new Notification(1, NotificationType.INACTIVE_V1, email, "{\"assessment_name\":\"hello\",\"created_at\":\"17-Feb-2023 12:26 pm IST\",\"assessment_id\":\"1\",\"organisation_name\":\"IT Consultant\"}", NotificationStatus.N, 0, new Date(), new Date());
 
-        when(notificationRepository.findByTemplateNameAndPayload(any(NotificationType.class), any(String.class))).thenThrow(new EmptyResultException());
-        Notification actualNotification = notificationService.getInactiveNotification(notification);
+        when(notificationRepository.findByTemplateName(any(NotificationType.class))).thenThrow(new EmptyResultException());
+        List<Notification> actualNotification = notificationService.getNotificationBy(NotificationType.INACTIVE_V1);
 
-        Assertions.assertNull(actualNotification.getNotificationId());
+        Assertions.assertEquals(actualNotification.size(), 0);
 
     }
 }

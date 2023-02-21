@@ -534,10 +534,10 @@ class AssessmentServiceTest {
         List<Assessment> assessmentList = new ArrayList<>();
         assessmentList.add(assessment);
 
-        when(assessmentRepository.findInactiveAssessment(any(Date.class))).thenReturn(assessmentList);
+        when(assessmentRepository.findInactiveAssessments(any(Date.class))).thenReturn(assessmentList);
         List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(15);
 
-        verify(assessmentRepository).findInactiveAssessment(any(Date.class));
+        verify(assessmentRepository).findInactiveAssessments(any(Date.class));
         assertEquals(inactiveAssessments.size(),1);
 
 

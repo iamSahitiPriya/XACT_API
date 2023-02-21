@@ -53,7 +53,7 @@ public class EmailSchedulerService {
     }
 
     @Scheduled(fixedDelay = "${email.inactive.fixedDelay}")
-    public void sendInactiveAssessmentEmailNotifications() throws JsonProcessingException {
+    public void sendInactiveAssessmentNotification() throws JsonProcessingException {
         LOGGER.info("Sending email for Inactive assessment ...");
         List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(15);
         for (Assessment inactiveAssessment : inactiveAssessments) {

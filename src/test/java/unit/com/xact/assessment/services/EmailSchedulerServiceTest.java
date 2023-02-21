@@ -107,7 +107,7 @@ class EmailSchedulerServiceTest {
         when(emailNotificationClient.sendNotification(token, notificationRequest)).thenReturn(notificationResponse);
         doNothing().when(notificationService).update(notification);
 
-        emailSchedulerService.sendInactiveAssessmentEmailNotifications();
+        emailSchedulerService.sendInactiveAssessmentNotification();
         notificationService.update(notification);
 
         Assertions.assertEquals(NotificationStatus.N, notification.getStatus());

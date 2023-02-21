@@ -29,7 +29,7 @@ public class NotificationService {
     public static final String ASSESSMENT_NAME = "assessment_name";
     public static final String OWNER_NAME = "ownerName";
     public static final String OWNER_EMAIL = "ownerEmail";
-    public static final int DURATION = -5;
+    public static final int DURATION = 5;
     private final NotificationRepository notificationRepository;
     private final EmailConfig emailConfig;
     private final UserAuthService userAuthService;
@@ -239,14 +239,14 @@ public class NotificationService {
     }
 
     private void saveInactiveAssessmentNotification(Notification notification) {
-        Notification notification1 = getInactiveNotification(notification);
+        Notification inactiveNotification = getInactiveNotification(notification);
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, DURATION);
+        calendar.add(Calendar.DAY_OF_YEAR, -DURATION);
         Date expiryDate = calendar.getTime();
-        if (notification1 == null) {
+        if (inactiveNotification == null) {
             saveNotification(notification);
-        } else if (notification1.getUpdatedAt().getDate() == expiryDate.getDate()) {
-            notificationRepository.delete(notification1);
+        } else if (inactiveNotification.getUpdatedAt().getDate() == expiryDate.getDate()) {
+            notificationRepository.delete(inactiveNotification);
             saveNotification(notification);
         }
     }

@@ -320,7 +320,7 @@ public class AssessmentService {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -duration);
         Date expiryDate = calendar.getTime();
-        return assessmentRepository.findInactiveAssessment(expiryDate);
+        return assessmentRepository.findInactiveAssessments(expiryDate);
 
     }
 }

@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -46,15 +45,14 @@ public class NotificationService {
         this.userAuthService = userAuthService;
     }
 
-    @Scheduled(fixedDelay = "1d")
+    @Scheduled(initialDelay = "${notification.feedback.initialDelay}", fixedDelay = "${notification.feedback.delay}")
     public void saveFeedbackNotificationForFinishedAssessments() {
         List<Assessment> assessments = assessmentService.getFinishedAssessments();
-        List<Notification> notifications=notificationRepository.findByType(NotificationType.FEEDBACK_V1);
+        List<Notification> notifications = notificationRepository.findByType(NotificationType.FEEDBACK_V1);
         assessments.forEach(assessment -> {
             try {
                 Notification notification = getNotificationForFeedback(assessment);
-                if(!hasNotificationAlreadySent(assessment,notifications)){
-                    System.out.println(hasNotificationAlreadySent(assessment,notifications));
+                if (!hasNotificationAlreadySent(assessment, notifications)) {
                     LOGGER.info("Save notifications for feedback ...");
                     saveNotification(notification);
                 }
@@ -66,12 +64,12 @@ public class NotificationService {
 
     @SneakyThrows
     private boolean hasNotificationAlreadySent(Assessment assessment, List<Notification> notifications) {
-        for(Notification notification : notifications){
-                EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(), EmailPayload.class);
-                 if(emailPayload.getAssessmentId().equals(assessment.getAssessmentId().toString())){
-                     return true;
-                 };
-        };
+        for (Notification notification : notifications) {
+            EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(), EmailPayload.class);
+            if (emailPayload.getAssessmentId().equals(assessment.getAssessmentId().toString())) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -80,8 +78,8 @@ public class NotificationService {
         Set<String> userEmails = userInfos.stream().map(UserInfo::getEmail).collect(Collectors.toSet());
         Notification notification = getNotification(userEmails);
         notification.setTemplateName(NotificationType.FEEDBACK_V1);
-        Set<String> userNames = userInfos.stream().map(UserInfo -> UserInfo.getFirstName() + " " + UserInfo.getLastName()).collect(Collectors.toSet());
-        Map<String, String> payload = getPayloadForFeedback(assessment, userNames);
+        Set<String> userDetails = userInfos.stream().map(UserInfo -> UserInfo.getFirstName() + " " + UserInfo.getLastName() + ":" + UserInfo.getEmail()).collect(Collectors.toSet());
+        Map<String, String> payload = getPayloadForFeedback(assessment, userDetails);
         ObjectMapper objectMapper = new ObjectMapper();
         notification.setPayload(objectMapper.writeValueAsString(payload));
 
@@ -102,8 +100,8 @@ public class NotificationService {
     }
 
     private List<UserInfo> getLoggedInUserInfo(Assessment assessment) {
-        Set<String> users = assessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
-        return userAuthService.getLoggedInUsers(users);
+        Set<String> assessmentUsers = assessment.getAssessmentUsers().stream().map(assessmentUser -> assessmentUser.getUserId().getUserEmail()).collect(Collectors.toSet());
+        return userAuthService.getLoggedInUsers(assessmentUsers);
     }
 
     @SneakyThrows

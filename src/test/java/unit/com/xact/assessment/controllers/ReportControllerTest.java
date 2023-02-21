@@ -5,6 +5,8 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.ReportController;
+import com.xact.assessment.dtos.DeliveryHorizon;
+import com.xact.assessment.dtos.Recommendation;
 import com.xact.assessment.dtos.ReportDataResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -188,6 +190,44 @@ class ReportControllerTest {
         MutableHttpResponse<byte[]> actualResponse = reportController.getReportTemplate();
         MutableHttpResponse<ReportDataResponse> expectedResponse = HttpResponse.ok();
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void shouldGetRecommendations() {
+        Integer assessmentId = 123;
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
+
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUser assessmentUser = new AssessmentUser();
+        assessmentUser.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessment.getAssessmentId(),user)).thenReturn(assessment);
+        Recommendation recommendation = new Recommendation("recommendation", DeliveryHorizon.NOW,RecommendationImpact.LOW,RecommendationEffort.LOW,"category",new Date());
+        Recommendation recommendation1 = new Recommendation("recommendation", DeliveryHorizon.NEXT,RecommendationImpact.LOW,RecommendationEffort.LOW,"category",new Date());
+        List<Recommendation> recommendations = new ArrayList<>();
+        recommendations.add(recommendation);
+        recommendations.add(recommendation1);
+
+        when(reportService.getRecommendations(assessmentId)).thenReturn(recommendations);
+
+        HttpResponse<List<Recommendation>> actualResponse = reportController.getRecommendations(1,authentication);
+
+        assertEquals(HttpStatus.OK, actualResponse.status());
     }
 
 }

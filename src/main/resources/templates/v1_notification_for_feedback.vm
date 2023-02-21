@@ -4,7 +4,7 @@
     <hr style="height: 4px;background: #4BA1AC; border: none;"/>
     <h1 style="color: #4BA1AC; font-size: 20px;">Thoughtworks X-Act</h1>
     <p style="padding-left: 5px;font-size: 15px;">Hello there,</p>
-    <p>Please share your feedback in the below link<a style="text-decoration: none;color: #4BA1AC" href="${feedbackUrl}"> here</a>.</p>
+    <p style="padding-left: 5px;font-size: 15px;">Please share your feedback in the <a style="text-decoration: none;color: #4BA1AC" href="${feedbackUrl}">link</a>.</p>
     <br>
     <hr>
     <div style="padding-top: 8px;padding-left: 5px">
@@ -22,7 +22,7 @@
         <br>
         <heading style="font-size: 13px;"><strong>Collaborators:</strong></heading>
         #foreach ($user in $assessment.collaborators.split(','))
-            <p>$user</p>
+            <p style="font-style: italic;font-size: 12px;"> ${user.split(':')[0]} &lt;${user.split(':')[1]}&gt;</p>
         #end
         <br>
     </div>

@@ -15,8 +15,7 @@ import java.util.Set;
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.mockito.Mockito.*;
-
-public class TopicLevelRecommendationServiceTest {
+class TopicLevelRecommendationServiceTest {
     private TopicLevelRecommendationRepository topicLevelRecommendationRepository;
     private TopicLevelRecommendationService topicLevelRecommendationService;
 

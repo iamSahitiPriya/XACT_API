@@ -65,6 +65,11 @@ email:
   fromEmail: "project-xact@thoughtworks.net"
   name: "X-ACT Support"
 
+notification:
+  feedback:
+    initialDelay: "1m"
+    delay : "1d"
+
 cleanup:
   initialDelay: "1m"
   notification:

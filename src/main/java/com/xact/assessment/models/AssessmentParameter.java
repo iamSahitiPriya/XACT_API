@@ -77,4 +77,8 @@ public class AssessmentParameter implements Serializable {
     public Integer getRating() {
         return rating == null ? 0 : rating;
     }
+
+    public boolean hasReferences() {
+        return references != null && !references.isEmpty();
+    }
 }

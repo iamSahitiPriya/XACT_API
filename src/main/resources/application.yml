@@ -60,11 +60,16 @@ email:
   scope: "email.send"
   endpoint: "/notification/messages"
   delay: "30s"
-  notificationEnabled: true
-  maskEmail: false
+  notificationEnabled: false
+  maskEmail: true
   defaultEmail: "shashank.mishra@thoughtworks.com"
   fromEmail: "project-xact@thoughtworks.net"
   name: "X-ACT Support"
+
+notification:
+  feedback:
+    initialDelay: "1m"
+    delay : "1d"
 
 cleanup:
   initialDelay: "1m"

@@ -5,6 +5,7 @@
 package unit.com.xact.assessment.services;
 
 
+import com.xact.assessment.dtos.Recommendation;
 import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -21,6 +22,7 @@ import java.util.*;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.RecommendationEffort.HIGH;
+import static com.xact.assessment.models.RecommendationEffort.MEDIUM;
 import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -629,5 +631,39 @@ class ReportServiceTest {
         SummaryResponse expectedResponse = reportService.getSummary(1);
 
         assertEquals(expectedResponse.getCategoryAssessed(), actualResponse.getCategoryAssessed());
+    }
+
+    @Test
+    void getRecommendations() {
+        Assessment assessment1 = new Assessment(1, "Name", "Client Assessment", new Organisation(), Active, new Date(), new Date());
+
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryId(1);
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setCategory(assessmentCategory);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        assessmentTopic1.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setTopic(assessmentTopic1);
+
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(1,assessment1,assessmentTopic,"recommendation",LOW,MEDIUM,"NOW",new Date(),new Date());
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(1,assessment1,assessmentParameter,"recommendation1",LOW,MEDIUM,"NEXT",new Date(),new Date());
+
+        when(topicAndParameterLevelAssessmentService.getTopicRecommendations(1)).thenReturn(Collections.singletonList(topicLevelRecommendation));
+        when(topicAndParameterLevelAssessmentService.getParameterRecommendations(1)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
+
+        List<Recommendation> recommendations = reportService.getRecommendations(1);
+
+        assertEquals("recommendation",recommendations.get(0).getRecommendation());
     }
 }

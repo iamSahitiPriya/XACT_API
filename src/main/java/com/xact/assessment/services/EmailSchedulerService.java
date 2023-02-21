@@ -26,7 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
 
 @Singleton
 public class EmailSchedulerService {
@@ -49,16 +52,16 @@ public class EmailSchedulerService {
         this.assessmentService = assessmentService;
     }
 
-    @Scheduled(fixedDelay = "1s")
+    @Scheduled(fixedDelay = "${email.inactive.fixedDelay}")
     public void sendInactiveAssessmentEmailNotifications() throws JsonProcessingException {
+        LOGGER.info("Sending email for Inactive assessment ...");
         List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(15);
-        for (Assessment inactiveAssessment: inactiveAssessments) {
+        for (Assessment inactiveAssessment : inactiveAssessments) {
             notificationService.setNotificationForInactiveAssessment(inactiveAssessment);
 
         }
-
-
     }
+
     @Scheduled(fixedDelay = "${email.delay}")
     public void sendEmailNotifications() throws JsonProcessingException {
         LOGGER.info("Scheduling notifications ...");
@@ -124,7 +127,7 @@ public class EmailSchedulerService {
     }
 
     private void sendEmail(String accessToken, Notification notification, NotificationRequest notificationRequest) {
-        LOGGER.info("Sending notification {} {}", notification.getNotificationId(),notification.getTemplateName());
+        LOGGER.info("Sending notification {} {}", notification.getNotificationId(), notification.getTemplateName());
         notification.setRetries(notification.getRetries() + 1);
         notificationService.update(notification);
 

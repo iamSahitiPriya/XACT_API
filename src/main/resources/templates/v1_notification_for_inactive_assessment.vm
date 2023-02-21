@@ -4,7 +4,7 @@
     <hr style="height: 4px;background: #4BA1AC; border: none;"/>
     <h1 style="color: #4BA1AC; font-size: 20px;">Thoughtworks X-Act</h1>
     <p style="padding-left: 5px;font-size: 15px;">Hello there,</p>
-    <p style="padding-left: 5px;font-size: 15px;font-style: italic;">You have created/are a part of the assessment <b style="color:#4BA1AC ;font-size: 16px">${assessment.assessmentName}</b>. It has been inactive for few days.</p>
+    <p style="padding-left: 5px;font-size: 15px;font-style: italic;">You are a part of the assessment <b style="color:#4BA1AC ;font-size: 16px">${assessment.assessmentName}</b>. It has been inactive for more than 15 days.</p>
     <br>
     <p style="padding-left: 5px">Please visit our microsite for information on Thoughtworks X-Act <a style="text-decoration: none;color: #4BA1AC" href="${microSiteUrl}"> here</a>.</p>
     <p style="padding-left: 5px;">If you have any questions reach out to support mail id <a style="text-decoration: none;color: #4BA1AC" href="${supportUrl}"> here</a>.</p>

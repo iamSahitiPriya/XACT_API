@@ -52,18 +52,18 @@ public class NotificationService {
         assessments.forEach(assessment -> {
             try {
                 Notification notification = getNotificationForFeedback(assessment);
-                if (!hasNotificationAlreadySent(assessment, notifications)) {
+                if (!isNotificationSent(assessment, notifications)) {
                     LOGGER.info("Save notifications for feedback ...");
                     saveNotification(notification);
                 }
             } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
+                LOGGER.error("JsonProcessingException");
             }
         });
     }
 
     @SneakyThrows
-    private boolean hasNotificationAlreadySent(Assessment assessment, List<Notification> notifications) {
+    private boolean isNotificationSent(Assessment assessment, List<Notification> notifications) {
         for (Notification notification : notifications) {
             EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(), EmailPayload.class);
             if (emailPayload.getAssessmentId().equals(assessment.getAssessmentId().toString())) {

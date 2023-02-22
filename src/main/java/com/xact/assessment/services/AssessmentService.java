@@ -321,7 +321,7 @@ public class AssessmentService {
     public List<Assessment> getFinishedAssessments() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -FEEDBACK_DURATION);
-        Date finishedDate = calendar.getTime();
-        return assessmentRepository.getFinishedAssessments(finishedDate, Completed);
+        Date completedDate = calendar.getTime();
+        return assessmentRepository.findByCompletedStatus(completedDate);
     }
 }

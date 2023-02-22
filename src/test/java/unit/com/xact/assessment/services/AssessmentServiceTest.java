@@ -529,6 +529,6 @@ class AssessmentServiceTest {
     void shouldReturnListOfCompletedAssessmentsBefore30Days() {
         assessmentService.getFinishedAssessments();
 
-        verify(assessmentRepository).getFinishedAssessments(any(Date.class), eq(Completed));
+        verify(assessmentRepository).findByCompletedStatus(any(Date.class));
     }
 }

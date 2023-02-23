@@ -5,7 +5,6 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.ReportController;
-import com.xact.assessment.models.RecommendationDeliveryHorizon;
 import com.xact.assessment.dtos.Recommendation;
 import com.xact.assessment.dtos.ReportDataResponse;
 import com.xact.assessment.models.*;

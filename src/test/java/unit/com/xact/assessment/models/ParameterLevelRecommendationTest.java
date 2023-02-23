@@ -1,9 +1,10 @@
 package unit.com.xact.assessment.models;
 
-import com.xact.assessment.models.*;
+import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.AssessmentParameter;
+import com.xact.assessment.models.ParameterLevelRecommendation;
 import org.junit.jupiter.api.Test;
 
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
  class ParameterLevelRecommendationTest {

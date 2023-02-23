@@ -4,7 +4,6 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.models.RecommendationDeliveryHorizon;
 import com.xact.assessment.dtos.Recommendation;
 import com.xact.assessment.dtos.ReportAnswerResponse;
 import com.xact.assessment.dtos.SummaryResponse;

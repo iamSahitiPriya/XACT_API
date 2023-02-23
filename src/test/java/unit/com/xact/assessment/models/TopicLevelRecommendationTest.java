@@ -1,11 +1,11 @@
 package unit.com.xact.assessment.models;
 
 
-import com.xact.assessment.models.*;
+import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.AssessmentTopic;
+import com.xact.assessment.models.TopicLevelRecommendation;
 import org.junit.jupiter.api.Test;
 
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
-import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TopicLevelRecommendationTest {

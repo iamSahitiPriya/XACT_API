@@ -1,5 +1,7 @@
 package unit.com.xact.assessment.services;
 
+import com.xact.assessment.dtos.RecommendationEffort;
+import com.xact.assessment.dtos.RecommendationImpact;
 import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
 import com.xact.assessment.dtos.TopicRatingAndRecommendation;
 import com.xact.assessment.models.*;
@@ -16,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.xact.assessment.models.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 

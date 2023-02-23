@@ -4,9 +4,6 @@
 
 package com.xact.assessment.dtos;
 
-import com.xact.assessment.models.RecommendationDeliveryHorizon;
-import com.xact.assessment.models.RecommendationEffort;
-import com.xact.assessment.models.RecommendationImpact;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

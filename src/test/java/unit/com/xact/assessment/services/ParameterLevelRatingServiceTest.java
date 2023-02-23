@@ -6,6 +6,8 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
 import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
+import com.xact.assessment.dtos.RecommendationEffort;
+import com.xact.assessment.dtos.RecommendationImpact;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ParameterLevelRatingRepository;
 import com.xact.assessment.services.ParameterLevelRatingService;
@@ -13,7 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
-import static com.xact.assessment.models.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static org.mockito.Mockito.*;
 
 class ParameterLevelRatingServiceTest {

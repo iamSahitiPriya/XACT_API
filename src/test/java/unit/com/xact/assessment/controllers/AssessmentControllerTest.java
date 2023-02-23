@@ -19,10 +19,10 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
-import static com.xact.assessment.models.RecommendationDeliveryHorizon.LATER;
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
-import static com.xact.assessment.models.RecommendationEffort.MEDIUM;
-import static com.xact.assessment.models.RecommendationImpact.LOW;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
+import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
+import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;

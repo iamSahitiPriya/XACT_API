@@ -5,6 +5,9 @@
 package com.xact.assessment.models;
 
 
+import com.xact.assessment.dtos.RecommendationDeliveryHorizon;
+import com.xact.assessment.dtos.RecommendationEffort;
+import com.xact.assessment.dtos.RecommendationImpact;
 import io.micronaut.core.annotation.Introspected;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

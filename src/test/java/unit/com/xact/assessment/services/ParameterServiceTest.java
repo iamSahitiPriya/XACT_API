@@ -2,6 +2,7 @@ package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
 import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
+import com.xact.assessment.dtos.RecommendationImpact;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterRepository;
 import com.xact.assessment.services.AssessmentParameterReferenceService;
@@ -17,9 +18,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.xact.assessment.models.RecommendationDeliveryHorizon.LATER;
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
-import static com.xact.assessment.models.RecommendationEffort.LOW;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
+import static com.xact.assessment.dtos.RecommendationEffort.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 

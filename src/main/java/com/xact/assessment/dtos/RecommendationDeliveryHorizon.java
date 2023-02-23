@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package com.xact.assessment.models;
+package com.xact.assessment.dtos;
 
 public enum RecommendationDeliveryHorizon {
     NOW,NEXT,LATER

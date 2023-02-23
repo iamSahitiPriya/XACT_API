@@ -1,6 +1,7 @@
 package unit.com.xact.assessment.services;
 
 
+import com.xact.assessment.dtos.RecommendationEffort;
 import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
 import com.xact.assessment.dtos.TopicRatingAndRecommendation;
 import com.xact.assessment.models.*;
@@ -14,10 +15,10 @@ import java.util.Date;
 import java.util.List;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
-import static com.xact.assessment.models.RecommendationDeliveryHorizon.*;
-import static com.xact.assessment.models.RecommendationEffort.MEDIUM;
-import static com.xact.assessment.models.RecommendationImpact.HIGH;
-import static com.xact.assessment.models.RecommendationImpact.LOW;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.*;
+import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
+import static com.xact.assessment.dtos.RecommendationImpact.HIGH;
+import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

@@ -21,10 +21,10 @@ import java.io.IOException;
 import java.util.*;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
-import static com.xact.assessment.models.RecommendationDeliveryHorizon.LATER;
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
-import static com.xact.assessment.models.RecommendationEffort.MEDIUM;
-import static com.xact.assessment.models.RecommendationImpact.LOW;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
+import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
+import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -33,11 +33,8 @@ class ReportServiceTest {
     TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
     AnswerService answerService = mock(AnswerService.class);
     SpiderChartService chartService = mock(SpiderChartService.class);
-
     UserQuestionService userQuestionService = mock(UserQuestionService.class);
     ModuleService moduleService = mock(ModuleService.class);
-
-
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
 
 

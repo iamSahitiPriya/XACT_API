@@ -5,8 +5,7 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.ReportController;
-import com.xact.assessment.dtos.Recommendation;
-import com.xact.assessment.dtos.ReportDataResponse;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
 import io.micronaut.http.HttpResponse;
@@ -216,7 +215,7 @@ class ReportControllerTest {
         assessmentUser.setUserId(userId);
 
         when(assessmentService.getAssessment(assessment.getAssessmentId(),user)).thenReturn(assessment);
-        Recommendation recommendation = new Recommendation("recommendation", RecommendationDeliveryHorizon.NOW,RecommendationImpact.LOW,RecommendationEffort.LOW,"category",new Date());
+        Recommendation recommendation = new Recommendation("recommendation", RecommendationDeliveryHorizon.NOW, RecommendationImpact.LOW, RecommendationEffort.LOW,"category",new Date());
         Recommendation recommendation1 = new Recommendation("recommendation", RecommendationDeliveryHorizon.NEXT,RecommendationImpact.LOW,RecommendationEffort.LOW,"category",new Date());
         List<Recommendation> recommendations = new ArrayList<>();
         recommendations.add(recommendation);

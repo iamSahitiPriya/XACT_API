@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+import static com.xact.assessment.models.RecommendationDeliveryHorizon.LATER;
 import static org.mockito.Mockito.*;
 
 class ParameterLevelRatingServiceTest {
@@ -35,9 +36,9 @@ class ParameterLevelRatingServiceTest {
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
-        parameterLevelRecommendationRequest.setDeliveryHorizon("some other text");
-        parameterLevelRecommendationRequest.setImpact("HIGH");
-        parameterLevelRecommendationRequest.setEffort("LOW");
+        parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
 
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
@@ -77,9 +78,9 @@ class ParameterLevelRatingServiceTest {
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(1);
         parameterLevelRecommendationRequest.setRecommendation("some text");
-        parameterLevelRecommendationRequest.setDeliveryHorizon("some other teext");
-        parameterLevelRecommendationRequest.setImpact("HIGH");
-        parameterLevelRecommendationRequest.setEffort("LOW");
+        parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.MEDIUM);
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
 
         Assessment assessment1 = new Assessment();
         assessment1.setAssessmentId(assessmentId1);

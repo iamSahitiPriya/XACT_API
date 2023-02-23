@@ -54,8 +54,9 @@ public class TopicLevelRecommendation{
     private RecommendationEffort recommendationEffort;
 
 
-    @Column(name = "delivery_horizon", nullable = false, unique = true)
-    private String deliveryHorizon;
+    @Column(name = "delivery_horizon", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RecommendationDeliveryHorizon deliveryHorizon;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -68,10 +69,7 @@ public class TopicLevelRecommendation{
     private Date updatedAt;
 
     public boolean hasRecommendation() {
-        return ((this.recommendation != null && !this.recommendation.isBlank()) ||
-                (this.recommendationEffort !=null && !this.recommendationEffort.toString().isBlank()) ||
-                (this.recommendationImpact !=null && !this.recommendationImpact.toString().isBlank())||
-                (this.deliveryHorizon !=null && !this.deliveryHorizon.isBlank()));
+        return ((this.recommendation != null && !this.recommendation.isBlank()));
     }
 
 }

@@ -2,8 +2,8 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package com.xact.assessment.dtos;
+package com.xact.assessment.models;
 
-public enum DeliveryHorizon {
+public enum RecommendationDeliveryHorizon {
     NOW,NEXT,LATER
 }

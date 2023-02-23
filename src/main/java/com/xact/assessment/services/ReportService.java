@@ -4,10 +4,7 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.DeliveryHorizon;
-import com.xact.assessment.dtos.Recommendation;
-import com.xact.assessment.dtos.ReportAnswerResponse;
-import com.xact.assessment.dtos.SummaryResponse;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
 import org.apache.poi.ss.usermodel.*;
@@ -412,10 +409,12 @@ public class ReportService {
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, Integer topicRating, TopicLevelRecommendation topicRecommendation, int topicRecommendationCount, AssessmentParameter parameter, Integer paramRating, ParameterLevelRecommendation
                                           paramRecommendation, int paramRecommendationCount, String questionText, String answer) {
-        String topicImpact = getTopicRecommendationImpact(topicRecommendation);
-        String topicEffort = getTopicRecommendationEffort(topicRecommendation);
-        String paramImpact = getParameterRecommendationImpact(paramRecommendation);
-        String paramEffort = getParameterRecommendationEffort(paramRecommendation);
+        String topicImpact = getRecommendationImpact(topicRecommendation.getRecommendationImpact());
+        String topicEffort = getRecommendationEffort(topicRecommendation.getRecommendationEffort());
+        String topicDeliveryHorizon = getRecommendationDeliveryHorizon(topicRecommendation.getDeliveryHorizon());
+        String paramImpact =getRecommendationImpact(paramRecommendation.getRecommendationImpact());
+        String paramEffort = getRecommendationEffort(paramRecommendation.getRecommendationEffort());
+        String paramDeliveryHorizon = getRecommendationDeliveryHorizon(paramRecommendation.getDeliveryHorizon());
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
         CellStyle style = workbook.createCellStyle();
         style.setQuotePrefixed(true);
@@ -429,7 +428,7 @@ public class ReportService {
         createStyledStringCell(row, 3, topicRecommendation.getRecommendation(), style);
         createStyledStringCell(row, 4, topicImpact, style);
         createStyledStringCell(row, 5, topicEffort, style);
-        createStyledStringCell(row, 6, topicRecommendation.getDeliveryHorizon(), style);
+        createStyledStringCell(row, 6, topicDeliveryHorizon, style);
 
         createStyledStringCell(row, 7, parameter.getParameterName(), style);
 
@@ -439,49 +438,37 @@ public class ReportService {
         createStyledStringCell(row, 9, paramRecommendation.getRecommendation(), style);
         createStyledStringCell(row, 10, paramImpact, style);
         createStyledStringCell(row, 11, paramEffort, style);
-        createStyledStringCell(row, 12, paramRecommendation.getDeliveryHorizon(), style);
+        createStyledStringCell(row, 12, paramDeliveryHorizon, style);
         createStyledStringCell(row, 13, questionText, style);
         createStyledStringCell(row, 14, answer, style);
     }
 
-    private String getParameterRecommendationImpact(ParameterLevelRecommendation paramRecommendation) {
+    private String getRecommendationImpact(RecommendationImpact recommendationImpact) {
         String impact;
-        if (paramRecommendation.getRecommendationImpact() != null) {
-            impact = paramRecommendation.getRecommendationImpact().toString();
+        if (recommendationImpact!= null) {
+            impact = recommendationImpact.toString();
         } else {
             impact = BLANK_STRING;
         }
         return impact;
     }
-
-    private String getParameterRecommendationEffort(ParameterLevelRecommendation parameterRecommendation) {
+    private String getRecommendationEffort(RecommendationEffort recommendationEffort) {
         String effort;
-        if (parameterRecommendation.getRecommendationEffort() != null) {
-            effort = parameterRecommendation.getRecommendationEffort().toString();
+        if (recommendationEffort != null) {
+            effort = recommendationEffort.toString();
         } else {
             effort = BLANK_STRING;
         }
         return effort;
     }
-
-    private String getTopicRecommendationEffort(TopicLevelRecommendation topicRecommendation) {
-        String effort;
-        if (topicRecommendation.getRecommendationEffort() != null) {
-            effort = topicRecommendation.getRecommendationEffort().toString();
+    private String getRecommendationDeliveryHorizon(RecommendationDeliveryHorizon recommendationDeliveryHorizon) {
+        String deliveryHorizon;
+        if (recommendationDeliveryHorizon!= null) {
+            deliveryHorizon = recommendationDeliveryHorizon.toString();
         } else {
-            effort = BLANK_STRING;
+            deliveryHorizon = BLANK_STRING;
         }
-        return effort;
-    }
-
-    private String getTopicRecommendationImpact(TopicLevelRecommendation topicRecommendation) {
-        String impact;
-        if (topicRecommendation.getRecommendationImpact() != null) {
-            impact = topicRecommendation.getRecommendationImpact().toString();
-        } else {
-            impact = BLANK_STRING;
-        }
-        return impact;
+        return deliveryHorizon;
     }
 
     private void checkToMergeRatingColumn(Sheet sheet, int totalRecommendationCount, int columnNo) {
@@ -606,17 +593,17 @@ public class ReportService {
     }
 
     private List<Recommendation> groupRecommendationsByDeliveryHorizon(List<Recommendation> recommendations) {
-        Map<DeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> sortedMap = recommendations.stream()
+        Map<RecommendationDeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> sortedMap = recommendations.stream()
                 .sorted(Recommendation::compareByDeliveryHorizon)
                 .collect(Collectors.groupingBy(Recommendation::getDeliveryHorizon, LinkedHashMap::new,
                         Collectors.groupingBy(Recommendation::getImpact, LinkedHashMap::new, Collectors.toList())));
         return sortRecommendationsByImpact(sortedMap);
     }
 
-    private List<Recommendation> sortRecommendationsByImpact(Map<DeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> sortedMap) {
+    private List<Recommendation> sortRecommendationsByImpact(Map<RecommendationDeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> sortedMap) {
         List<Recommendation> recommendations = new ArrayList<>();
 
-        for (Map.Entry<DeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> deliveryHorizonMap : sortedMap.entrySet()) {
+        for (Map.Entry<RecommendationDeliveryHorizon, Map<RecommendationImpact, List<Recommendation>>> deliveryHorizonMap : sortedMap.entrySet()) {
             sortRecommendations(recommendations, deliveryHorizonMap.getValue(), RecommendationImpact.HIGH);
             sortRecommendations(recommendations, deliveryHorizonMap.getValue(), RecommendationImpact.MEDIUM);
             sortRecommendations(recommendations, deliveryHorizonMap.getValue(), RecommendationImpact.LOW);

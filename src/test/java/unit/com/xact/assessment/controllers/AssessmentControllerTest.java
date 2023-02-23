@@ -19,9 +19,10 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
-import static com.xact.assessment.models.RecommendationEffort.MEDIUM;
-import static com.xact.assessment.models.RecommendationImpact.LOW;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
+import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
+import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -179,7 +180,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setParameter(parameter);
         parameterLevelRecommendation.setRecommendationImpact(LOW);
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
-        parameterLevelRecommendation.setDeliveryHorizon("some text");
+        parameterLevelRecommendation.setDeliveryHorizon(LATER);
         when(assessmentService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
 //        when(assesmentService.getParameterAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
         when(assessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
@@ -228,7 +229,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setTopic(topic);
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
-        topicLevelRecommendation.setDeliveryHorizon("some text");
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
         when(assessmentService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
         when(assessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
@@ -554,8 +555,8 @@ class AssessmentControllerTest {
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
-        topicLevelRecommendationRequest.setImpact("HIGH");
-        topicLevelRecommendationRequest.setEffort("");
+        topicLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        topicLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
 
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
@@ -611,8 +612,8 @@ class AssessmentControllerTest {
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
-        topicLevelRecommendationRequest.setEffort("HIGH");
-        topicLevelRecommendationRequest.setImpact("");
+        topicLevelRecommendationRequest.setEffort(HIGH);
+        topicLevelRecommendationRequest.setImpact(LOW);
 
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
@@ -669,21 +670,21 @@ class AssessmentControllerTest {
 
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
-        topicLevelRecommendationRequest.setDeliveryHorizon("some text");
-        topicLevelRecommendationRequest.setImpact("");
-        topicLevelRecommendationRequest.setEffort("");
+        topicLevelRecommendationRequest.setDeliveryHorizon(LATER);
+        topicLevelRecommendationRequest.setImpact(LOW);
+        topicLevelRecommendationRequest.setEffort(HIGH);
 
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
-        topicLevelRecommendation.setDeliveryHorizon("");
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
 
 
         HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        assertEquals("some text", topicLevelRecommendation.getDeliveryHorizon());
+        assertEquals(LATER, topicLevelRecommendation.getDeliveryHorizon());
         verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 
@@ -733,7 +734,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setTopic(assessmentTopic);
         topicLevelRecommendation.setRecommendationId(recommendationId);
         topicLevelRecommendation.setRecommendation("some dummy recommendation");
-        topicLevelRecommendation.setDeliveryHorizon("some text");
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
 
         HttpResponse<TopicLevelRecommendationRequest> actualResponse = assessmentController.deleteRecommendation(assessmentId, topicId, recommendationId, authentication);
 
@@ -828,9 +829,9 @@ class AssessmentControllerTest {
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setEffort("");
-        parameterLevelRecommendationRequest.setImpact("");
-        parameterLevelRecommendationRequest.setDeliveryHorizon("");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
@@ -887,9 +888,9 @@ class AssessmentControllerTest {
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("");
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setEffort("");
-        parameterLevelRecommendationRequest.setImpact("");
-        parameterLevelRecommendationRequest.setDeliveryHorizon("");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
@@ -950,9 +951,9 @@ class AssessmentControllerTest {
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setEffort("");
-        parameterLevelRecommendationRequest.setImpact("HIGH");
-        parameterLevelRecommendationRequest.setDeliveryHorizon("");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
@@ -963,7 +964,7 @@ class AssessmentControllerTest {
         when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
-        parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.valueOf(parameterLevelRecommendationRequest.getImpact()));
+        parameterLevelRecommendation.setRecommendationImpact(parameterLevelRecommendationRequest.getImpact());
 
         HttpResponse<ParameterLevelRecommendationResponse> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, parameterLevelRecommendationRequest, authentication);
 
@@ -1010,9 +1011,9 @@ class AssessmentControllerTest {
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setEffort("LOW");
-        parameterLevelRecommendationRequest.setImpact("HIGH");
-        parameterLevelRecommendationRequest.setDeliveryHorizon("");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
@@ -1023,7 +1024,7 @@ class AssessmentControllerTest {
         when(assessmentService.searchParameterRecommendation(parameterLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(parameterLevelRecommendation));
 
         parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
-        parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.valueOf(parameterLevelRecommendationRequest.getEffort()));
+        parameterLevelRecommendation.setRecommendationEffort(parameterLevelRecommendationRequest.getEffort());
 
         HttpResponse<ParameterLevelRecommendationResponse> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, parameterLevelRecommendationRequest, authentication);
 
@@ -1070,9 +1071,9 @@ class AssessmentControllerTest {
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendation("some text");
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setEffort("");
-        parameterLevelRecommendationRequest.setImpact("");
-        parameterLevelRecommendationRequest.setDeliveryHorizon("some text");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
@@ -1130,9 +1131,9 @@ class AssessmentControllerTest {
         parameterLevelRecommendationRequest.setRecommendationId(recommendationId);
         parameterLevelRecommendationRequest.setRecommendation("some text");
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setEffort("HIGH");
-        parameterLevelRecommendationRequest.setImpact("LOW");
-        parameterLevelRecommendationRequest.setDeliveryHorizon("some text");
+        parameterLevelRecommendationRequest.setEffort(HIGH);
+        parameterLevelRecommendationRequest.setImpact(LOW);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());

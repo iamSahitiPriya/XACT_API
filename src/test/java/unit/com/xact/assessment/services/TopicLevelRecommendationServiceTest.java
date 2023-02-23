@@ -12,8 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
-import static com.xact.assessment.models.RecommendationImpact.LOW;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
+import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.mockito.Mockito.*;
 class TopicLevelRecommendationServiceTest {
     private TopicLevelRecommendationRepository topicLevelRecommendationRepository;
@@ -58,7 +59,7 @@ class TopicLevelRecommendationServiceTest {
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendation("some recommendation");
-        topicLevelRecommendation.setDeliveryHorizon("some text");
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
         topicLevelRecommendation.setAssessment(assessment);
@@ -103,7 +104,7 @@ class TopicLevelRecommendationServiceTest {
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendation("some recommendation");
-        topicLevelRecommendation.setDeliveryHorizon("some text");
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
         topicLevelRecommendation.setAssessment(assessment);

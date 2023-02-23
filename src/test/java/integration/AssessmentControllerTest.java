@@ -6,6 +6,8 @@ package integration;
 
 import com.xact.assessment.dtos.AssessmentResponse;
 import com.xact.assessment.dtos.AssessmentStatusDto;
+import com.xact.assessment.dtos.RecommendationEffort;
+import com.xact.assessment.dtos.RecommendationImpact;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.utils.ResourceFileUtil;
@@ -26,8 +28,9 @@ import java.io.IOException;
 import java.util.List;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
-import static com.xact.assessment.models.RecommendationImpact.LOW;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
+import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @MicronautTest
@@ -170,7 +173,7 @@ class AssessmentControllerTest {
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendation("some recommendation");
-        parameterLevelRecommendation.setDeliveryHorizon("some text");
+        parameterLevelRecommendation.setDeliveryHorizon(LATER);
         parameterLevelRecommendation.setRecommendationImpact(LOW);
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
         parameterLevelRecommendation.setAssessment(assessment);
@@ -188,7 +191,7 @@ class AssessmentControllerTest {
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendation("some recommendation");
-        topicLevelRecommendation.setDeliveryHorizon("some text");
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
         topicLevelRecommendation.setAssessment(assessment);
@@ -207,7 +210,7 @@ class AssessmentControllerTest {
         userAssessmentModuleRepository.save(userAssessmentModule);
         entityManager.getTransaction().commit();
 
-        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," + "\"assessmentDescription\"" + ":" + "\"description\"" + "," + "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 5 + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"inProgress\"" + "," + "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," + "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"" + "}]}]," + "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"some text\"}]}],\"owner\":true}";
+        String expectedResponse = "{" + "\"assessmentId\"" + ":" + assessment.getAssessmentId() + "," + "\"assessmentPurpose\"" + ":" + "\"Client Assessment\"" + "," + "\"assessmentName\"" + ":" + "\"mocked assessment\"" + "," + "\"assessmentDescription\"" + ":" + "\"description\"" + "," + "\"organisationName\"" + ":" + "\"testorg\"" + "," + "\"assessmentStatus\"" + ":" + "\"Completed\"" + "," + "\"updatedAt\"" + ":" + assessment.getUpdatedAt().getTime() + "," + "\"teamSize\"" + ":" + 5 + "," + "\"domain\"" + ":" + "\"new\"" + "," + "\"industry\"" + ":" + "\"new\"" + "," + "\"assessmentState\"" + ":" + "\"inProgress\"" + "," + "\"answerResponseList\"" + ":" + "[" + "{" + "\"questionId\"" + ":" + question.getQuestionId() + "," + "\"answer\"" + ":" + "\"answer\"" + "}" + "]" + "," + "\"parameterRatingAndRecommendation\"" + ":" + "[" + "{" + "\"parameterId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"parameterLevelRecommendation\"" + ":" + "[" + "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"LATER\"" + "}]}]," + "\"topicRatingAndRecommendation\"" + ":" + "[{" + "\"topicId\"" + ":" + 1 + "," + "\"rating\"" + ":" + 4 + "," + "\"topicLevelRecommendation\"" + ":" + "[{" + "\"recommendationId\"" + ":" + topicLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"LATER\"}]}],\"owner\":true}";
 
         String assessmentResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/assessments/" + assessment.getAssessmentId()).bearerAuth("anything"), String.class);
 
@@ -308,7 +311,7 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
         topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setDeliveryHorizon("Low");
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
 
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
@@ -342,7 +345,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.MEDIUM);
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
         parameterLevelRecommendation.setAssessment(assessment);
-        parameterLevelRecommendation.setDeliveryHorizon("HIGH");
+        parameterLevelRecommendation.setDeliveryHorizon(LATER);
 
         assessmentRepository.save(assessment);
         usersAssessmentsRepository.save(assessmentUser);
@@ -351,7 +354,7 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}";
+        String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"LATER\"" + "}";
         var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations", dataRequest).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -373,7 +376,7 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setRecommendation("some recommendation");
         parameterLevelRecommendation.setParameter(assessmentParameter);
         parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.MEDIUM);
-        parameterLevelRecommendation.setDeliveryHorizon("MEDIUM");
+        parameterLevelRecommendation.setDeliveryHorizon(LATER);
         parameterLevelRecommendation.setAssessment(assessment);
 
         assessmentRepository.save(assessment);
@@ -383,7 +386,7 @@ class AssessmentControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"dummy text\"" + "}";
+        String dataRequest = "{" + "\"recommendationId\"" + ":" + parameterLevelRecommendation.getRecommendationId() + "," + "\"recommendation\"" + ":" + "\"some recommendation\"" + "," + "\"impact\"" + ":" + "\"LOW\"" + "," + "\"effort\"" + ":" + "\"HIGH\"" + "," + "\"deliveryHorizon\"" + ":" + "\"LATER\"" + "}";
 
         var saveResponse = client.toBlocking().exchange(HttpRequest.PATCH("/v1/assessments/" + assessment.getAssessmentId() + "/parameters/" + assessmentParameter.getParameterId() + "/recommendations", dataRequest).bearerAuth("anything"));
 

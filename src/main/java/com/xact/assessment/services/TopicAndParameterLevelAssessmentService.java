@@ -5,6 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ActivityType;
+import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
 import com.xact.assessment.dtos.UpdateAnswerRequest;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
@@ -38,11 +39,6 @@ public class TopicAndParameterLevelAssessmentService {
     public ParameterLevelRating saveRatingAndRecommendation(ParameterLevelRating parameterLevelRating) {
         return parameterService.saveRatingAndRecommendation(parameterLevelRating);
     }
-
-    public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
-        return topicService.saveTopicLevelRecommendation(topicLevelRecommendation);
-    }
-
 
     public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
         return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendation);
@@ -144,5 +140,14 @@ public class TopicAndParameterLevelAssessmentService {
 
     public List<ParameterLevelRecommendation> getParameterRecommendations(Integer assessmentId) {
         return parameterService.getParameterRecommendationByAssessmentId(assessmentId);
+    }
+
+    public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
+        return topicService.updateTopicRecommendation(topicLevelRecommendationRequest);
+    }
+
+    public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
+        return topicService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,topicId);
+
     }
 }

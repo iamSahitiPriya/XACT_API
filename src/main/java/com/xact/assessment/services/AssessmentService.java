@@ -236,15 +236,6 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.checkParameterRecommendationId(recommendationId);
     }
 
-    public Optional<TopicLevelRecommendation> searchTopicRecommendation(Integer recommendationId) {
-        return topicAndParameterLevelAssessmentService.searchTopicRecommendation(recommendationId);
-
-    }
-
-    public void saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
-        topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
-    }
-
     public boolean checkTopicRecommendationId(Integer recommendationId) {
         return topicAndParameterLevelAssessmentService.checkTopicRecommendationId(recommendationId);
 
@@ -314,5 +305,13 @@ public class AssessmentService {
 
     public Optional<AssessmentTopic> getTopic(Integer topicId) {
         return topicAndParameterLevelAssessmentService.getTopic(topicId);
+    }
+
+    public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
+        return topicAndParameterLevelAssessmentService.updateTopicRecommendation(topicLevelRecommendationRequest);
+    }
+
+    public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
+        return topicAndParameterLevelAssessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,topicId);
     }
 }

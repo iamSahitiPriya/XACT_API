@@ -16,10 +16,12 @@ import io.micronaut.http.HttpStatus;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 
 import java.util.*;
 
 import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.NOW;
 import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
 import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
@@ -34,8 +36,8 @@ class AssessmentControllerTest {
     private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     private final NotificationService notificationService=Mockito.mock(NotificationService.class);
-
     private final ActivityLogService activityLogService = Mockito.mock(ActivityLogService.class);
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     private final AssessmentController assessmentController = new AssessmentController( userAuthService, assessmentService, activityLogService, notificationService);
 
@@ -182,7 +184,6 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
         parameterLevelRecommendation.setDeliveryHorizon(LATER);
         when(assessmentService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
-//        when(assesmentService.getParameterAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
         when(assessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();
@@ -350,7 +351,7 @@ class AssessmentControllerTest {
     }
 
     @Test
-    void testUpdateAssessmentTopicRecommendationTextWithOutRecommendationId() {
+    void testSaveNewTopicRecommendation() {
         Integer assessmentId = 1;
 
         User user = new User();
@@ -381,29 +382,22 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
-
-
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendation("some text");
-
-
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setTopic(assessmentTopic);
-        topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest(null,"text",LOW,RecommendationEffort.LOW,NOW);
+        TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
+        topicLevelRecommendation.setRecommendationId(1);
+        when(assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,topicId)).thenReturn(topicLevelRecommendation);
 
         HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+        verify(assessmentService).saveTopicRecommendation(topicLevelRecommendationRequest,assessment,topicId);
     }
 
     @Test
-    void testUpdateAssessmentTopicRecommendationTextWithRecommendationId() {
+    void testUpdateTopicRecommendation() {
         Integer assessmentId = 1;
-
+        Integer topicId = 1;
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
         UserInfo userInfo = new UserInfo();
@@ -427,94 +421,22 @@ class AssessmentControllerTest {
 
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
 
-        Integer topicId = 1;
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(topicId);
-        assessmentTopic.setTopicName("Topic Name");
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest(1,"text",LOW,RecommendationEffort.LOW,NOW);
+        TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
 
-        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
-
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendation("some text");
-        topicLevelRecommendationRequest.setRecommendationId(1);
-
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setTopic(assessmentTopic);
-
-        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
-
-        topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
-
-
-        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
+        when(assessmentService.updateTopicRecommendation(topicLevelRecommendationRequest)).thenReturn(topicLevelRecommendation);
+        when(assessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())).thenReturn(true);
+        doNothing().when(assessmentService).updateAssessment(assessment);
 
         HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
+        verify(assessmentService).updateTopicRecommendation(topicLevelRecommendationRequest);
     }
 
     @Test
-    void testUpdateAssessmentTopicRecommendationWithNewRecommendationId() {
-        Integer assessmentId = 1;
-
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail(userEmail);
-        user.setUserInfo(userInfo);
-
-        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-
-        UserId userId = new UserId();
-        userId.setUserEmail("hello@thoughtworks.com");
-
-        Date created = new Date(2022 - 4 - 13);
-        Date updated = new Date(2022 - 4 - 13);
-        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        userId.setAssessment(assessment);
-
-        AssessmentUser assessmentUser = new AssessmentUser();
-        assessmentUser.setUserId(userId);
-
-        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
-
-        Integer topicId = 1;
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(topicId);
-        assessmentTopic.setTopicName("Topic Name");
-
-        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
-
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendation("");
-        topicLevelRecommendationRequest.setRecommendationId(1);
-
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setTopic(assessmentTopic);
-
-        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
-
-        topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
-
-        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
-
-        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-
-        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
-    }
-
-    @Test
-    void testUpdateAssessmentTopicRecommendationImpact() {
+    void testDeleteTopicRecommendation() {
         Integer assessmentId = 1;
 
         User user = new User();
@@ -550,183 +472,6 @@ class AssessmentControllerTest {
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setRecommendation("some recommendation");
-
-        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
-
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendationId(1);
-        topicLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
-        topicLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
-
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setTopic(assessmentTopic);
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
-        topicLevelRecommendation.setRecommendationImpact(LOW);
-
-        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-
-        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
-    }
-
-    @Test
-    void testUpdateAssessmentTopicRecommendationEffect() {
-        Integer assessmentId = 1;
-
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail(userEmail);
-        user.setUserInfo(userInfo);
-
-        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-
-        UserId userId = new UserId();
-        userId.setUserEmail("hello@thoughtworks.com");
-
-        Date created = new Date(2022 - 4 - 13);
-        Date updated = new Date(2022 - 4 - 13);
-        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        userId.setAssessment(assessment);
-
-        AssessmentUser assessmentUser = new AssessmentUser();
-        assessmentUser.setUserId(userId);
-
-        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
-
-        Integer topicId = 1;
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(topicId);
-        assessmentTopic.setTopicName("Topic Name");
-
-        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
-
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setRecommendation("some recommendation");
-
-        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
-
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendationId(1);
-        topicLevelRecommendationRequest.setEffort(HIGH);
-        topicLevelRecommendationRequest.setImpact(LOW);
-
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setTopic(assessmentTopic);
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
-        topicLevelRecommendation.setRecommendationEffort(MEDIUM);
-
-        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-
-        assertEquals("HIGH", topicLevelRecommendation.getRecommendationEffort().toString());
-        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
-    }
-
-    @Test
-    void testUpdateAssessmentTopicRecommendationDeliveryHorizon() {
-        Integer assessmentId = 1;
-
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail(userEmail);
-        user.setUserInfo(userInfo);
-
-        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-
-        UserId userId = new UserId();
-        userId.setUserEmail("hello@thoughtworks.com");
-
-        Date created = new Date(2022 - 4 - 13);
-        Date updated = new Date(2022 - 4 - 13);
-        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        userId.setAssessment(assessment);
-
-        AssessmentUser assessmentUser = new AssessmentUser();
-        assessmentUser.setUserId(userId);
-
-        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
-
-        Integer topicId = 1;
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(topicId);
-        assessmentTopic.setTopicName("Topic Name");
-
-        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
-
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setRecommendation("some recommendation");
-
-        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
-
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendationId(1);
-        topicLevelRecommendationRequest.setDeliveryHorizon(LATER);
-        topicLevelRecommendationRequest.setImpact(LOW);
-        topicLevelRecommendationRequest.setEffort(HIGH);
-
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setTopic(assessmentTopic);
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
-        topicLevelRecommendation.setDeliveryHorizon(LATER);
-
-
-        HttpResponse<TopicLevelRecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-
-        assertEquals(LATER, topicLevelRecommendation.getDeliveryHorizon());
-        verify(assessmentService).saveTopicLevelRecommendation(topicLevelRecommendation);
-    }
-
-    @Test
-    void testDeleteTopicRecommendationWithRecommendationId() {
-        Integer assessmentId = 1;
-
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail(userEmail);
-        user.setUserInfo(userInfo);
-
-        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-
-        UserId userId = new UserId();
-        userId.setUserEmail("hello@thoughtworks.com");
-
-        Date created = new Date(2022 - 4 - 13);
-        Date updated = new Date(2022 - 4 - 13);
-        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-
-        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        userId.setAssessment(assessment);
-
-        AssessmentUser assessmentUser = new AssessmentUser();
-        assessmentUser.setUserId(userId);
-
-        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
-
-        Integer topicId = 1;
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(topicId);
-        assessmentTopic.setTopicName("Topic Name");
-
-        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
-
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setRecommendation("some recommendation");
-
-        when(assessmentService.searchTopicRecommendation(topicLevelRecommendation.getRecommendationId())).thenReturn(Optional.of(topicLevelRecommendation));
 
         Integer recommendationId = 1;
 

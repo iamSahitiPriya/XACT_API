@@ -4,10 +4,7 @@
 
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentRequest;
-import com.xact.assessment.dtos.ModuleRequest;
-import com.xact.assessment.dtos.UserDto;
-import com.xact.assessment.dtos.UserRole;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.services.*;
@@ -524,4 +521,17 @@ class AssessmentServiceTest {
         verify(usersAssessmentsService).getAssessmentFacilitatorsSet(assessment);
     }
 
+    @Test
+    void shouldReturnTopicRecommendation() {
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendation("text");
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
+        Assessment assessment = new Assessment();
+
+        when(topicAndParameterLevelAssessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,1)).thenReturn(topicLevelRecommendation);
+
+        TopicLevelRecommendation topicLevelRecommendation1 = assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,1);
+
+        assertEquals("text", topicLevelRecommendation1.getRecommendation());
+    }
 }

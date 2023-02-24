@@ -229,33 +229,19 @@ public class AssessmentController {
     @Transactional
     public HttpResponse<TopicLevelRecommendationResponse> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
         LOGGER.info("Update individual topic recommendation. assessment: {}, topic: {}", assessmentId, topicId);
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
-        AssessmentTopic assessmentTopic = assessmentService.getTopic(topicId).orElseThrow();
         User user = userAuthService.getCurrentUser(authentication);
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setTopic(assessmentTopic);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
         if (assessment.isEditable()) {
             if (topicLevelRecommendationRequest.getRecommendationId() != null) {
-                topicLevelRecommendation = assessmentService.searchTopicRecommendation(topicLevelRecommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
-                topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
+                TopicLevelRecommendation topicLevelRecommendation = assessmentService.updateTopicRecommendation(topicLevelRecommendationRequest);
+                topicLevelRecommendationResponse = getTopicLevelRecommendationResponse(user, assessment, topicLevelRecommendation);
             }
-            topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
-            topicLevelRecommendation.setRecommendationImpact(topicLevelRecommendationRequest.getImpact());
-            topicLevelRecommendation.setRecommendationEffort(topicLevelRecommendationRequest.getEffort());
-            topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
-            assessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
+            else {
+                TopicLevelRecommendation topicLevelRecommendation = assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,topicId);
+                topicLevelRecommendationResponse = getTopicLevelRecommendationResponse(user, assessment, topicLevelRecommendation);
+            }
             updateAssessment(assessment);
-            if (assessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())) {
-                topicLevelRecommendationResponse.setRecommendationId(topicLevelRecommendation.getRecommendationId());
-                topicLevelRecommendationResponse.setRecommendation(topicLevelRecommendation.getRecommendation());
-                TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
-                CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment, user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
-
-            } else {
-                topicLevelRecommendationResponse.setRecommendationId(null);
-            }
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
     }
@@ -554,5 +540,18 @@ public class AssessmentController {
     private void updateAssessment(Assessment assessment) {
         LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessmentService.updateAssessment(assessment);
+    }
+
+    private TopicLevelRecommendationResponse getTopicLevelRecommendationResponse(User user, Assessment assessment, TopicLevelRecommendation topicLevelRecommendation) {
+        TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
+        if (assessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())) {
+            topicLevelRecommendationResponse = modelMapper.map(topicLevelRecommendation,TopicLevelRecommendationResponse.class);
+            TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment, user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
+
+        } else {
+            topicLevelRecommendationResponse.setRecommendationId(null);
+        }
+        return topicLevelRecommendationResponse;
     }
 }

@@ -24,6 +24,4 @@ public interface TopicLevelRecommendationRepository extends CrudRepository<Topic
     @Executable
     @Query("SELECT tlr FROM TopicLevelRecommendation tlr WHERE tlr.assessment.assessmentId=:assessmentId and tlr.topic.module.category.isActive=true and tlr.topic.module.isActive=true and tlr.topic.isActive=true and tlr.topic.module.moduleId IN(SELECT userModule.module.moduleId  from  UserAssessmentModule userModule where userModule.assessment.assessmentId=:assessmentId) order by tlr.recommendationId")
     List<TopicLevelRecommendation> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
-
-
 }

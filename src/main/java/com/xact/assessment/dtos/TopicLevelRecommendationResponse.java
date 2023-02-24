@@ -18,4 +18,7 @@ import lombok.Setter;
 public class TopicLevelRecommendationResponse {
     private Integer recommendationId;
     private String recommendation;
+    private RecommendationDeliveryHorizon deliveryHorizon;
+    private RecommendationImpact impact;
+    private RecommendationEffort effort;
 }

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -117,8 +118,6 @@ class TopicServiceTest {
         assessmentTopic.setTopicId(topicId);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
-        topicLevelRecommendationService.save(topicLevelRecommendation);
-
         List<TopicLevelRecommendation> topicLevelRecommendationList = Collections.singletonList(topicLevelRecommendation);
         when(topicLevelRatingService.existsByID(topicLevelRating1)).thenReturn(true);
         when(topicLevelRatingService.save(topicLevelRating1)).thenReturn(topicLevelRating1);
@@ -127,20 +126,9 @@ class TopicServiceTest {
         when(topicLevelRecommendationService.existsById(1)).thenReturn(true);
 
 
-        when(topicLevelRecommendationService.existsById(topicLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
-        when(topicLevelRecommendationService.update(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
-        TopicLevelRecommendation actualResponse1 = topicService.saveTopicLevelRecommendation(topicLevelRecommendation);
-
-
         assertEquals(topicLevelRating1.getRating(), actualResponse.getRating());
         assertEquals(topicLevelRating1.getTopicLevelId(), actualResponse.getTopicLevelId());
-        assertEquals(topicLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
-        assertEquals(topicLevelRecommendation.getRecommendationImpact(), actualResponse1.getRecommendationImpact());
-
     }
-
-
-
 
     @Test
     void shouldDeleteRatingForTopicLevelAssessment() {
@@ -172,20 +160,12 @@ class TopicServiceTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(topicId);
         topicLevelRecommendation.setTopic(assessmentTopic);
-
-        topicLevelRecommendationService.save(topicLevelRecommendation);
-
         topicLevelRecommendation.setRecommendation(null);
 
         when(topicLevelRatingService.existsByID(topicLevelRating1)).thenReturn(true);
         topicService.saveRatingAndRecommendation(topicLevelRating1);
 
         verify(topicLevelRatingService).delete(topicLevelRating1);
-
-        when(topicLevelRecommendationService.existsById(topicLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
-        topicService.saveTopicLevelRecommendation(topicLevelRecommendation);
-
-        verify(topicLevelRecommendationService).delete(topicLevelRecommendation);
     }
 
     @Test
@@ -214,18 +194,63 @@ class TopicServiceTest {
         assessmentTopic.setTopicId(topicId);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
-
-        when(topicLevelRecommendationService.save(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
         doNothing().when(topicLevelRecommendationService).deleteById(topicLevelRecommendationRequest.getRecommendationId());
 
-
-        topicLevelRecommendationService.save(topicLevelRecommendation);
         topicLevelRecommendationService.deleteById(topicLevelRecommendationRequest.getRecommendationId());
 
         verify(topicLevelRecommendationService).deleteById(topicLevelRecommendationRequest.getRecommendationId());
     }
 
+    @Test
+    void shouldReturnTopicRecommendationWhenRecommendationIdIsGiven() {
+        TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
+        topicLevelRecommendation1.setRecommendation("text");
+        when(topicLevelRecommendationService.findById(1)).thenReturn(Optional.of(topicLevelRecommendation1));
 
+        Optional<TopicLevelRecommendation> topicLevelRecommendation = topicService.searchTopicRecommendation(1);
+
+        assertEquals("text",topicLevelRecommendation.get().getRecommendation());
+    }
+
+    @Test
+    void shouldReturnRecommendationTextWhenRecommendationIdIsGiven() {
+        TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
+        topicLevelRecommendation1.setRecommendation("text");
+        when(topicLevelRecommendationService.findById(1)).thenReturn(Optional.of(topicLevelRecommendation1));
+
+        String recommendation = topicService.getTopicRecommendationById(1);
+        
+        assertEquals("text",recommendation);
+    }
+
+    @Test
+    void name() {
+        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
+        TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
+        topicLevelRecommendationList.add(topicLevelRecommendation1);
+
+        when(topicLevelRecommendationService.findByAssessment(1)).thenReturn(topicLevelRecommendationList);
+
+        List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicService.getTopicRecommendationByAssessmentId(1);
+
+        assertEquals(1,topicLevelRecommendationList1.size());
+    }
+
+    @Test
+    void shouldReturnRecommendationAfterSaved() {
+        TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
+        topicLevelRecommendation1.setRecommendation("text");
+        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
+        Assessment assessment = new Assessment();
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        when(topicLevelRecommendationService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,assessmentTopic)).thenReturn(topicLevelRecommendation1);
+        when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
+
+        TopicLevelRecommendation topicLevelRecommendation = topicService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,assessmentTopic.getTopicId());
+
+        assertEquals("text",topicLevelRecommendation.getRecommendation());
+    }
 }
 
 

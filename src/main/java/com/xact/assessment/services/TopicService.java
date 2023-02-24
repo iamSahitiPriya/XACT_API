@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
 import jakarta.inject.Singleton;
@@ -63,27 +64,9 @@ public class TopicService {
         return topicLevelRatingService.findByAssessment(assessmentId);
     }
 
-
     public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
         return topicLevelRatingService.findById(topicLevelId);
     }
-
-
-    public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
-        if (topicLevelRecommendation.getRecommendationId() != null) {
-            if (topicLevelRecommendation.hasRecommendation()) {
-                topicLevelRecommendationService.update(topicLevelRecommendation);
-            } else {
-                topicLevelRecommendationService.delete(topicLevelRecommendation);
-            }
-        } else {
-            if (topicLevelRecommendation.hasRecommendation()) {
-                topicLevelRecommendationService.save(topicLevelRecommendation);
-            }
-        }
-        return topicLevelRecommendation;
-    }
-
 
     public List<TopicLevelRecommendation> getTopicAssessmentRecommendationData(Integer assessmentId, Integer topicId) {
         return topicLevelRecommendationService.findByAssessmentAndTopic(assessmentId, topicId);
@@ -136,5 +119,14 @@ public class TopicService {
 
     public List<TopicLevelRecommendation> getTopicRecommendationByAssessmentId(Integer assessmentId) {
         return topicLevelRecommendationService.findByAssessment(assessmentId);
+    }
+
+    public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
+        return topicLevelRecommendationService.updateTopicRecommendation(topicLevelRecommendationRequest);
+    }
+
+    public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
+        AssessmentTopic assessmentTopic = getTopic(topicId).orElseThrow();
+        return topicLevelRecommendationService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,assessmentTopic);
     }
 }

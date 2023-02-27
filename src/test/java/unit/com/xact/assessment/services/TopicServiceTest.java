@@ -1,5 +1,7 @@
 package unit.com.xact.assessment.services;
 
+import com.xact.assessment.dtos.RecommendationEffort;
+import com.xact.assessment.dtos.RecommendationImpact;
 import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
 import com.xact.assessment.dtos.TopicRatingAndRecommendation;
 import com.xact.assessment.models.*;
@@ -16,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -92,9 +95,9 @@ class TopicServiceTest {
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(1);
         topicLevelRecommendationRequest.setRecommendation("some text");
-        topicLevelRecommendationRequest.setDeliveryHorizon("some other teext");
-        topicLevelRecommendationRequest.setImpact("HIGH");
-        topicLevelRecommendationRequest.setEffort("LOW");
+        topicLevelRecommendationRequest.setDeliveryHorizon(LATER);
+        topicLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        topicLevelRecommendationRequest.setEffort(RecommendationEffort.MEDIUM);
 
 
         Assessment assessment1 = new Assessment();
@@ -198,9 +201,9 @@ class TopicServiceTest {
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         topicLevelRecommendationRequest.setRecommendationId(2);
         topicLevelRecommendationRequest.setRecommendation("some text");
-        topicLevelRecommendationRequest.setDeliveryHorizon("some other teext");
-        topicLevelRecommendationRequest.setImpact("HIGH");
-        topicLevelRecommendationRequest.setEffort("LOW");
+        topicLevelRecommendationRequest.setDeliveryHorizon(LATER);
+        topicLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        topicLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
 
         Assessment assessment1 = new Assessment();
         assessment1.setAssessmentId(assessmentId1);

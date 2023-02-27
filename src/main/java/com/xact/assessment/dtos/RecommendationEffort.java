@@ -4,6 +4,9 @@
 
 package com.xact.assessment.dtos;
 
-public enum DeliveryHorizon {
-    NOW,NEXT,LATER
+import lombok.Getter;
+
+@Getter
+public enum RecommendationEffort {
+    HIGH,MEDIUM,LOW
 }

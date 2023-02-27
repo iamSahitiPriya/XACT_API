@@ -4,8 +4,6 @@
 
 package com.xact.assessment.dtos;
 
-import com.xact.assessment.models.RecommendationEffort;
-import com.xact.assessment.models.RecommendationImpact;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +17,7 @@ import java.util.Date;
 @Setter
 public class Recommendation {
     private String recommendation;
-    private DeliveryHorizon deliveryHorizon;
+    private RecommendationDeliveryHorizon deliveryHorizon;
     private RecommendationImpact impact;
     private RecommendationEffort effort;
     private String categoryName;

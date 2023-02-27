@@ -10,6 +10,7 @@ import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -32,6 +33,8 @@ class AssessmentServiceTest {
 
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private AccessControlService accessControlService;
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
 
     @BeforeEach
@@ -533,5 +536,24 @@ class AssessmentServiceTest {
         TopicLevelRecommendation topicLevelRecommendation1 = assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,1);
 
         assertEquals("text", topicLevelRecommendation1.getRecommendation());
+    }
+
+    @Test
+    void shouldReturnParameterLevelRecommendation() {
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendation("text");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(RecommendationDeliveryHorizon.LATER);
+
+        Assessment assessment = new Assessment();
+
+
+        ParameterLevelRecommendation parameterLevelRecommendation=modelMapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
+
+        when(assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation parameterLevelRecommendation1=assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1);
+
+        assertEquals("text",parameterLevelRecommendation1.getRecommendation());
     }
 }

@@ -18,9 +18,6 @@ public class TopicLevelRecommendationService {
         this.topicLevelRecommendationRepository = topicLevelRecommendationRepository;
     }
 
-    public void delete(TopicLevelRecommendation topicLevelRecommendation) {
-        topicLevelRecommendationRepository.delete(topicLevelRecommendation);
-    }
 
     public List<TopicLevelRecommendation> findByAssessmentAndTopic(Integer assessmentId, Integer topicId) {
         return topicLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId, topicId);
@@ -73,11 +70,7 @@ public class TopicLevelRecommendationService {
 
     private TopicLevelRecommendation updateTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
         if (topicLevelRecommendation.getRecommendationId() != null) {
-            if (topicLevelRecommendation.hasRecommendation()) {
                 topicLevelRecommendationRepository.update(topicLevelRecommendation);
-            } else {
-                topicLevelRecommendationRepository.delete(topicLevelRecommendation);
-            }
         }
         return topicLevelRecommendation;
     }

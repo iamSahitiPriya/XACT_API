@@ -27,10 +27,10 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.List;
 
-import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
+import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @MicronautTest

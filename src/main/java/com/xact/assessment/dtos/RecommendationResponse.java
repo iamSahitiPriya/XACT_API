@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
- */
-
 package com.xact.assessment.dtos;
 
 import io.micronaut.core.annotation.Introspected;
@@ -15,7 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TopicLevelRecommendationResponse {
+public class RecommendationResponse {
     private Integer recommendationId;
     private String recommendation;
     private RecommendationDeliveryHorizon deliveryHorizon;

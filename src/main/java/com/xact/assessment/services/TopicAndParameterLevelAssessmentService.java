@@ -5,6 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ActivityType;
+import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
 import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
 import com.xact.assessment.dtos.UpdateAnswerRequest;
 import com.xact.assessment.models.*;
@@ -40,9 +41,6 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterService.saveRatingAndRecommendation(parameterLevelRating);
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
-        return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendation);
-    }
 
     public List<ParameterLevelRating> getParameterAssessmentData(Integer assessmentId) {
         return parameterService.getParameterAssessmentData(assessmentId);
@@ -93,9 +91,6 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterService.getParameterAssessmentRecommendationData(assessmentId, parameterId);
     }
 
-    public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
-        return parameterService.searchParameterRecommendation(recommendationId);
-    }
 
     public boolean checkParameterRecommendationId(Integer recommendationId) {
         return parameterService.checkParameterRecommendationId(recommendationId);
@@ -149,5 +144,13 @@ public class TopicAndParameterLevelAssessmentService {
     public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
         return topicService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,topicId);
 
+    }
+
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
+        return parameterService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+    }
+
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+        return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,parameterId);
     }
 }

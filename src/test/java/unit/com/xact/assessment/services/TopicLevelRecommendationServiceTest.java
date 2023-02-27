@@ -16,11 +16,8 @@ import org.modelmapper.ModelMapper;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
-import java.util.Set;
 
-import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.NOW;
-import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.mockito.Mockito.*;
 class TopicLevelRecommendationServiceTest {
@@ -58,34 +55,6 @@ class TopicLevelRecommendationServiceTest {
 
     }
     @Test
-    void shouldDeleteRecommendation() {
-        Assessment assessment = new Assessment();
-        assessment.setAssessmentName("mocked assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setAssessmentDescription("description");
-        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(1);
-        assessmentTopic.setTopicName("First Topic");
-        assessmentTopic.setModule(new AssessmentModule());
-        assessmentTopic.setActive(true);
-
-
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendation("some recommendation");
-        topicLevelRecommendation.setDeliveryHorizon(LATER);
-        topicLevelRecommendation.setRecommendationImpact(LOW);
-        topicLevelRecommendation.setRecommendationEffort(HIGH);
-        topicLevelRecommendation.setAssessment(assessment);
-        topicLevelRecommendation.setTopic(assessmentTopic);
-
-        doNothing().when(topicLevelRecommendationRepository).delete(topicLevelRecommendation);
-        topicLevelRecommendationService.delete(topicLevelRecommendation);
-
-        verify(topicLevelRecommendationRepository).delete(topicLevelRecommendation);
-    }
-
-    @Test
     void shouldUpdateRecommendation() {
         Assessment assessment = new Assessment();
         assessment.setAssessmentName("mocked assessment");
@@ -109,29 +78,6 @@ class TopicLevelRecommendationServiceTest {
         verify(topicLevelRecommendationRepository).update(any(TopicLevelRecommendation.class));
     }
 
-    @Test
-    void shouldDeleteRecommendationWhenRecommendationTextIsEmpty() {
-        Assessment assessment = new Assessment();
-        assessment.setAssessmentName("mocked assessment");
-        assessment.setAssessmentPurpose("Client Assessment");
-        assessment.setAssessmentDescription("description");
-        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-
-        AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setTopicId(1);
-        assessmentTopic.setTopicName("First Topic");
-        assessmentTopic.setModule(new AssessmentModule());
-        assessmentTopic.setActive(true);
-
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest(1,"",LOW, RecommendationEffort.LOW,NOW);
-        TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(topicLevelRecommendationRequest,TopicLevelRecommendation.class);
-        when(topicLevelRecommendationRepository.findById(1)).thenReturn(Optional.ofNullable(topicLevelRecommendation));
-        when(topicLevelRecommendationRepository.update(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
-
-        topicLevelRecommendationService.updateTopicRecommendation(topicLevelRecommendationRequest);
-
-        verify(topicLevelRecommendationRepository).delete(any(TopicLevelRecommendation.class));
-    }
 
     @Test
     void getRecommendationsByTopicAndAssessment() {

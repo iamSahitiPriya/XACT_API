@@ -1,10 +1,7 @@
 package unit.com.xact.assessment.services;
 
 
-import com.xact.assessment.dtos.ActivityType;
-import com.xact.assessment.dtos.RecommendationEffort;
-import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
-import com.xact.assessment.dtos.TopicRatingAndRecommendation;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +10,11 @@ import org.modelmapper.ModelMapper;
 
 import java.util.*;
 
-import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.*;
 import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
 import static com.xact.assessment.dtos.RecommendationImpact.HIGH;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
+import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,6 +30,8 @@ class TopicAndParameterLevelAssessmentServiceTest {
     private ParameterService parameterService;
 
     private TopicService topicService;
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     @BeforeEach
     public void beforeEach() {
@@ -186,6 +185,24 @@ class TopicAndParameterLevelAssessmentServiceTest {
 
         assertEquals(1,topicLevelRecommendationList1.size());
 
+    }
+    @Test
+    void shouldReturnParameterLevelRecommendation() {
+        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendation("text");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(RecommendationDeliveryHorizon.LATER);
+
+        Assessment assessment = new Assessment();
+
+
+        ParameterLevelRecommendation parameterLevelRecommendation=modelMapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
+
+        when(topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation parameterLevelRecommendation1=topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1);
+
+        assertEquals("text",parameterLevelRecommendation1.getRecommendation());
     }
 }
 

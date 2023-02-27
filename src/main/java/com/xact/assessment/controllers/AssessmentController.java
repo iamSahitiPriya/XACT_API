@@ -190,35 +190,20 @@ public class AssessmentController {
     @Patch(value = "/{assessmentId}/parameters/{parameterId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @Transactional
-    public HttpResponse<ParameterLevelRecommendationResponse> saveParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Authentication authentication) {
-        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+    public HttpResponse<RecommendationResponse> saveParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Authentication authentication) {
         LOGGER.info("Update individual parameter maturity recommendation. assessment: {}, parameter: {}", assessmentId, parameterId);
-        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
-        ParameterLevelRecommendationResponse parameterLevelRecommendationResponse = new ParameterLevelRecommendationResponse();
-        AssessmentParameter assessmentParameter = assessmentService.getParameter(parameterId).orElseThrow();
-        parameterLevelRecommendation.setAssessment(assessment);
         User user = userAuthService.getCurrentUser(authentication);
-        parameterLevelRecommendation.setParameter(assessmentParameter);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        RecommendationResponse parameterLevelRecommendationResponse = new RecommendationResponse();
         if (assessment.isEditable()) {
+            ParameterLevelRecommendation parameterLevelRecommendation;
             if (parameterLevelRecommendationRequest.getRecommendationId() != null) {
-                parameterLevelRecommendation = assessmentService.searchParameterRecommendation(parameterLevelRecommendationRequest.getRecommendationId()).orElse(new ParameterLevelRecommendation());
-                parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
-            }
-            parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
-            parameterLevelRecommendation.setRecommendationImpact(parameterLevelRecommendationRequest.getImpact());
-            parameterLevelRecommendation.setRecommendationEffort(parameterLevelRecommendationRequest.getEffort());
-            parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
-            assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
-            updateAssessment(assessment);
-            if (assessmentService.checkParameterRecommendationId(parameterLevelRecommendation.getRecommendationId())) {
-                parameterLevelRecommendationResponse.setRecommendationId(parameterLevelRecommendation.getRecommendationId());
-                parameterLevelRecommendationResponse.setRecommendation(parameterLevelRecommendation.getRecommendation());
-                ParameterLevelRecommendation finalParameterLevelRecommendation = parameterLevelRecommendation;
-                CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment, user, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
-
+                parameterLevelRecommendation = assessmentService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
             } else {
-                parameterLevelRecommendationResponse.setRecommendationId(null);
+                parameterLevelRecommendation = assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
             }
+            parameterLevelRecommendationResponse = getParameterLevelRecommendationResponse(user, assessment, parameterLevelRecommendation);
+            updateAssessment(assessment);
         }
         return HttpResponse.ok(parameterLevelRecommendationResponse);
     }
@@ -227,20 +212,19 @@ public class AssessmentController {
     @Patch(value = "/{assessmentId}/topics/{topicId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @Transactional
-    public HttpResponse<TopicLevelRecommendationResponse> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
+    public HttpResponse<RecommendationResponse> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
         LOGGER.info("Update individual topic recommendation. assessment: {}, topic: {}", assessmentId, topicId);
         User user = userAuthService.getCurrentUser(authentication);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
+        RecommendationResponse topicLevelRecommendationResponse = new RecommendationResponse();
         if (assessment.isEditable()) {
+            TopicLevelRecommendation topicLevelRecommendation;
             if (topicLevelRecommendationRequest.getRecommendationId() != null) {
-                TopicLevelRecommendation topicLevelRecommendation = assessmentService.updateTopicRecommendation(topicLevelRecommendationRequest);
-                topicLevelRecommendationResponse = getTopicLevelRecommendationResponse(user, assessment, topicLevelRecommendation);
+                topicLevelRecommendation = assessmentService.updateTopicRecommendation(topicLevelRecommendationRequest);
+            } else {
+                topicLevelRecommendation = assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, topicId);
             }
-            else {
-                TopicLevelRecommendation topicLevelRecommendation = assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,topicId);
-                topicLevelRecommendationResponse = getTopicLevelRecommendationResponse(user, assessment, topicLevelRecommendation);
-            }
+            topicLevelRecommendationResponse = getTopicLevelRecommendationResponse(user, assessment, topicLevelRecommendation);
             updateAssessment(assessment);
         }
         return HttpResponse.ok(topicLevelRecommendationResponse);
@@ -542,10 +526,10 @@ public class AssessmentController {
         assessmentService.updateAssessment(assessment);
     }
 
-    private TopicLevelRecommendationResponse getTopicLevelRecommendationResponse(User user, Assessment assessment, TopicLevelRecommendation topicLevelRecommendation) {
-        TopicLevelRecommendationResponse topicLevelRecommendationResponse = new TopicLevelRecommendationResponse();
+    private RecommendationResponse getTopicLevelRecommendationResponse(User user, Assessment assessment, TopicLevelRecommendation topicLevelRecommendation) {
+        RecommendationResponse topicLevelRecommendationResponse = new RecommendationResponse();
         if (assessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())) {
-            topicLevelRecommendationResponse = modelMapper.map(topicLevelRecommendation,TopicLevelRecommendationResponse.class);
+            topicLevelRecommendationResponse = modelMapper.map(topicLevelRecommendation, RecommendationResponse.class);
             TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
             CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment, user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
 
@@ -554,4 +538,18 @@ public class AssessmentController {
         }
         return topicLevelRecommendationResponse;
     }
+
+    private RecommendationResponse getParameterLevelRecommendationResponse(User user, Assessment assessment, ParameterLevelRecommendation parameterLevelRecommendation) {
+        RecommendationResponse parameterLevelRecommendationResponse = new RecommendationResponse();
+        if (assessmentService.checkParameterRecommendationId(parameterLevelRecommendation.getRecommendationId())) {
+            parameterLevelRecommendationResponse = modelMapper.map(parameterLevelRecommendation, RecommendationResponse.class);
+            ParameterLevelRecommendation finalParameterLevelRecommendation = parameterLevelRecommendation;
+            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment, user, finalParameterLevelRecommendation.getRecommendationId(), finalParameterLevelRecommendation.getParameter().getTopic(), ActivityType.PARAMETER_RECOMMENDATION));
+
+        } else {
+            parameterLevelRecommendationResponse.setRecommendationId(null);
+        }
+        return parameterLevelRecommendationResponse;
+    }
+
 }

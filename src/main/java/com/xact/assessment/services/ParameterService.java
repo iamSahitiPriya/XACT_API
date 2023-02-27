@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterRepository;
 import jakarta.inject.Singleton;
@@ -75,20 +76,12 @@ public class ParameterService {
     }
 
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
-        return parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendation);
-    }
-
     public List<ParameterLevelRecommendation> getAssessmentParameterRecommendationData(Integer assessmentId) {
         return parameterLevelRecommendationService.findByAssessment(assessmentId);
     }
 
     public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId, Integer parameterId) {
         return parameterLevelRecommendationService.findByAssessmentAndParameter(assessmentId, parameterId);
-    }
-
-    public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
-        return parameterLevelRecommendationService.findById(recommendationId);
     }
 
     public boolean checkParameterRecommendationId(Integer recommendationId) {
@@ -122,5 +115,14 @@ public class ParameterService {
 
     public List<ParameterLevelRecommendation> getParameterRecommendationByAssessmentId(Integer assessmentId) {
         return parameterLevelRecommendationService.findByAssessment(assessmentId);
+    }
+
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
+        return parameterLevelRecommendationService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+    }
+
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+        AssessmentParameter assessmentParameter = getParameter(parameterId).orElseThrow();
+        return parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, assessmentParameter);
     }
 }

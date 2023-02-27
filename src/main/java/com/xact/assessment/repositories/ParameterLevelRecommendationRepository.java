@@ -22,7 +22,7 @@ public interface ParameterLevelRecommendationRepository extends CrudRepository<P
     List<ParameterLevelRecommendation> findByAssessmentAndParameter(@Parameter("assessmentId") Integer assessmentId, @Parameter("parameterId") Integer parameterId);
 
     @Executable
-    @Query("SELECT plr FROM ParameterLevelRecommendation plr WHERE plr.assessment.assessmentId=:assessmentId and plr.parameter.topic.module.category.isActive=true and plr.parameter.topic.module.isActive=true and plr.parameter.topic.isActive=true and plr.parameter.isActive=true and plr.parameter.topic.module.moduleId IN(SELECT userModule.module.moduleId  from  UserAssessmentModule userModule where userModule.assessment.assessmentId=:assessmentId)order by plr.recommendationId")
+    @Query("SELECT plr FROM ParameterLevelRecommendation plr WHERE plr.assessment.assessmentId=:assessmentId and plr.parameter.topic.module.category.isActive=true and plr.parameter.topic.module.isActive=true and plr.parameter.topic.isActive=true and plr.parameter.isActive=true and plr.parameter.topic.module.moduleId IN(SELECT userModule.module.moduleId  from  UserAssessmentModule userModule where userModule.assessment.assessmentId=:assessmentId)order by plr.recommendationId desc")
     List<ParameterLevelRecommendation> findByAssessment(@Parameter("assessmentId") Integer assessmentId);
 
 }

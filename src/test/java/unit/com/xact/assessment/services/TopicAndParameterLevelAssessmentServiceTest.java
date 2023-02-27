@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.*;
 import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
 import static com.xact.assessment.dtos.RecommendationImpact.HIGH;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
+import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

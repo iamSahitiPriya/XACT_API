@@ -31,7 +31,7 @@ public class NotificationSchedulerService {
     }
 
     @Scheduled(fixedDelay = "${email.inactive.fixedDelay}")
-    public void sendInactiveAssessmentNotification() throws JsonProcessingException {
+    public void saveInactiveAssessmentNotification() throws JsonProcessingException {
         LOGGER.info("Sending email for Inactive assessment ...");
         List<Notification> inactiveNotifications = notificationService.getNotificationBy(NotificationType.INACTIVE_V1);
         List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(DURATION);

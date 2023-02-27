@@ -5,7 +5,6 @@
 package unit.com.xact.assessment.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.dtos.NotificationResponse;
@@ -59,7 +58,7 @@ class NotificationSchedulerServiceTest {
         when(assessmentService.findInactiveAssessments(15)).thenReturn(Collections.singletonList(assessment));
         doNothing().when(notificationService).update(notification);
 
-        notificationSchedulerService.sendInactiveAssessmentNotification();
+        notificationSchedulerService.saveInactiveAssessmentNotification();
         notificationService.update(notification);
 
         Assertions.assertEquals(NotificationStatus.N, notification.getStatus());

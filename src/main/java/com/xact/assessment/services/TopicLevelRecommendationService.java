@@ -43,10 +43,10 @@ public class TopicLevelRecommendationService {
     }
 
     public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
-        TopicLevelRecommendation topicLevelRecommendation =findById(topicLevelRecommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
+        TopicLevelRecommendation topicLevelRecommendation = findById(topicLevelRecommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
         topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
         setTopicLevelRecommendation(topicLevelRecommendation, topicLevelRecommendationRequest);
-        return saveTopicLevelRecommendation(topicLevelRecommendation);
+        return updateTopicLevelRecommendation(topicLevelRecommendation);
     }
 
     private void setTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation, TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
@@ -57,7 +57,7 @@ public class TopicLevelRecommendationService {
     }
 
     public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, AssessmentTopic assessmentTopic) {
-        TopicLevelRecommendation topicLevelRecommendation=new TopicLevelRecommendation();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         setTopicLevelRecommendation(topicLevelRecommendation, topicLevelRecommendationRequest);
@@ -65,17 +65,22 @@ public class TopicLevelRecommendationService {
     }
 
     private TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+        if (topicLevelRecommendation.hasRecommendation()) {
+            topicLevelRecommendationRepository.save(topicLevelRecommendation);
+        }
+        return topicLevelRecommendation;
+    }
+
+    private TopicLevelRecommendation updateTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
         if (topicLevelRecommendation.getRecommendationId() != null) {
             if (topicLevelRecommendation.hasRecommendation()) {
                 topicLevelRecommendationRepository.update(topicLevelRecommendation);
             } else {
                 topicLevelRecommendationRepository.delete(topicLevelRecommendation);
             }
-        } else {
-            if (topicLevelRecommendation.hasRecommendation()) {
-                topicLevelRecommendationRepository.save(topicLevelRecommendation);
-            }
         }
         return topicLevelRecommendation;
     }
 }
+
+

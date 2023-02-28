@@ -15,6 +15,7 @@ import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
 import com.xact.assessment.models.NotificationType;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.TokenService;
@@ -35,8 +36,10 @@ class EmailSchedulerServiceTest {
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
     private final ProfileConfig profileConfig;
+    private final AssessmentService assessmentService;
 
     public EmailSchedulerServiceTest() {
+        assessmentService = mock(AssessmentService.class);
         emailConfig = mock(EmailConfig.class);
         tokenService = mock(TokenService.class);
         emailNotificationClient = mock(EmailNotificationClient.class);

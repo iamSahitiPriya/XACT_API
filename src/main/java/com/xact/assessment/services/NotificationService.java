@@ -6,6 +6,7 @@ import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentAction;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
+import io.micronaut.data.exceptions.EmptyResultException;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class NotificationService {
     public static final String ASSESSMENT_NAME = "assessment_name";
     public static final String OWNER_NAME = "ownerName";
     public static final String OWNER_EMAIL = "ownerEmail";
+    public static final int DURATION = 5;
     private final NotificationRepository notificationRepository;
     private final EmailConfig emailConfig;
     private final UserAuthService userAuthService;
@@ -220,9 +222,51 @@ public class NotificationService {
     }
 
 
-
     public List<Notification> getTop50ByStatusAndRetriesLessThan(Integer maximumRetries) {
         return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
+    }
+
+    public void setNotificationForInactiveAssessment(Assessment inactiveAssessment, List<Notification> inactiveNotificationList) throws JsonProcessingException {
+        Set<String> users = inactiveAssessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
+        Notification notification = getNotification(users);
+        notification.setTemplateName(NotificationType.INACTIVE_V1);
+        Map<String, String> payload = getAssessmentCommonPayload(inactiveAssessment);
+        ObjectMapper objectMapper = new ObjectMapper();
+        notification.setPayload(objectMapper.writeValueAsString(payload));
+        saveInactiveAssessmentNotification(notification, inactiveNotificationList);
+    }
+
+    private void saveInactiveAssessmentNotification(Notification notification, List<Notification> inactiveNotificationList) {
+        Notification inactiveNotification = getInactiveNotification(inactiveNotificationList, notification);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -DURATION);
+        Date expiryDate = calendar.getTime();
+        if (inactiveNotification.getNotificationId() == null) {
+            saveNotification(notification);
+        } else if (inactiveNotification.getUpdatedAt().getDate() == expiryDate.getDate()) {
+            notificationRepository.delete(inactiveNotification);
+            saveNotification(notification);
+        }
+    }
+
+    public Notification getInactiveNotification(List<Notification> notificationList, Notification notificationRequest) {
+        for (Notification inactiveNotification : notificationList) {
+            if (Objects.equals(inactiveNotification.getPayload(), notificationRequest.getPayload())) {
+                return inactiveNotification;
+            }
+
+        }
+        return new Notification();
+    }
+
+    public List<Notification> getNotificationBy(NotificationType notificationType) {
+        List<Notification> inactiveNotifications = new ArrayList<>();
+        try {
+            inactiveNotifications = notificationRepository.findByTemplateName(notificationType);
+        } catch (EmptyResultException e) {
+            LOGGER.info("No Notification found");
+        }
+        return inactiveNotifications;
     }
 }
 

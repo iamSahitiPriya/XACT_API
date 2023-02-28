@@ -25,4 +25,8 @@ public interface AssessmentRepository extends CrudRepository<Assessment, Integer
     @Executable
     @Query("SELECT tla FROM Assessment  tla WHERE tla.assessmentId=:assessmentId")
     Assessment findByAssessmentId(Integer assessmentId);
+
+    @Executable
+    @Query("select tla from Assessment tla where tla.updatedAt <= :expiryDate")
+    List<Assessment> findInactiveAssessments(@Parameter("expiryDate") Date expiryDate);
 }

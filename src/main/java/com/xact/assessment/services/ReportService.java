@@ -5,6 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.mappers.ReportDataMapper;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
 import org.apache.poi.ss.usermodel.*;
@@ -38,7 +39,7 @@ public class ReportService {
     private final UserQuestionService userQuestionService;
 
     private final ModuleService moduleService;
-    private final ModelMapper mapper = new ModelMapper();
+    private final ReportDataMapper mapper = new ReportDataMapper();
 
 
     public ReportService(TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ChartService chartService, AssessmentMasterDataService assessmentMasterDataService, UserQuestionService userQuestionService, ModuleService moduleService) {
@@ -570,9 +571,7 @@ public class ReportService {
         List<Recommendation> recommendationList = new ArrayList<>();
         for (ParameterLevelRecommendation parameterLevelRecommendation : parameterLevelRecommendations) {
             if (parameterLevelRecommendation.getDeliveryHorizon() != null && parameterLevelRecommendation.getRecommendationEffort() != null && parameterLevelRecommendation.getRecommendationImpact() != null) {
-                String categoryName = parameterLevelRecommendation.getParameter().getTopic().getModule().getCategory().getCategoryName();
-                Recommendation recommendation = mapper.map(parameterLevelRecommendation, Recommendation.class);
-                recommendation.setCategoryName(categoryName);
+                Recommendation recommendation = mapper.mapReportRecommendationResponse(parameterLevelRecommendation);
                 recommendationList.add(recommendation);
             }
         }
@@ -583,9 +582,7 @@ public class ReportService {
         List<Recommendation> recommendationList = new ArrayList<>();
         for (TopicLevelRecommendation topicLevelRecommendation : topicLevelRecommendations) {
             if (topicLevelRecommendation.getDeliveryHorizon() != null && topicLevelRecommendation.getRecommendationEffort() != null && topicLevelRecommendation.getRecommendationImpact() != null) {
-                String categoryName = topicLevelRecommendation.getTopic().getModule().getCategory().getCategoryName();
-                Recommendation recommendation = mapper.map(topicLevelRecommendation, Recommendation.class);
-                recommendation.setCategoryName(categoryName);
+                Recommendation recommendation = mapper.mapReportRecommendationResponse(topicLevelRecommendation);
                 recommendationList.add(recommendation);
             }
         }

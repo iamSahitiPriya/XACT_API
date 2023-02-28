@@ -215,8 +215,8 @@ class ReportControllerTest {
         assessmentUser.setUserId(userId);
 
         when(assessmentService.getAssessment(assessment.getAssessmentId(),user)).thenReturn(assessment);
-        Recommendation recommendation = new Recommendation("recommendation", RecommendationDeliveryHorizon.NOW, RecommendationImpact.LOW, RecommendationEffort.LOW,"category",new Date());
-        Recommendation recommendation1 = new Recommendation("recommendation", RecommendationDeliveryHorizon.NEXT,RecommendationImpact.LOW,RecommendationEffort.LOW,"category",new Date());
+        Recommendation recommendation = new Recommendation(1,"recommendation", RecommendationDeliveryHorizon.NOW, RecommendationImpact.LOW, RecommendationEffort.LOW,"category",new Date(),1,1,1);
+        Recommendation recommendation1 = new Recommendation(1,"recommendation", RecommendationDeliveryHorizon.NEXT,RecommendationImpact.LOW,RecommendationEffort.LOW,"category",new Date(),1,1,1);
         List<Recommendation> recommendations = new ArrayList<>();
         recommendations.add(recommendation);
         recommendations.add(recommendation1);

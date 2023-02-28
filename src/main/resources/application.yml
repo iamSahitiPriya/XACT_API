@@ -55,6 +55,8 @@ token:
   grantType: "client_credentials"
 
 email:
+  inactive:
+    fixedDelay: "1d"
   url: "https://api.thoughtworks.net"
   scope: "email.send"
   endpoint: "/notification/messages"

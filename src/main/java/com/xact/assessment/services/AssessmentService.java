@@ -315,4 +315,12 @@ public class AssessmentService {
     public Optional<AssessmentTopic> getTopic(Integer topicId) {
         return topicAndParameterLevelAssessmentService.getTopic(topicId);
     }
+
+    public List<Assessment> findInactiveAssessments(Integer duration) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -duration);
+        Date expiryDate = calendar.getTime();
+        return assessmentRepository.findInactiveAssessments(expiryDate);
+
+    }
 }

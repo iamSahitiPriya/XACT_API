@@ -369,7 +369,6 @@ class NotificationServiceTest {
         String payload = "{\"assessment_name\":\"New Assessment\",\"created_at\":\"27-Jan-2023 06:33 pm IST\",\"assessment_id\":\"2\",\"organisation_name\":\"EQ International\"}";
         Notification notification = new Notification(1, NotificationType.FEEDBACK_V1, email, payload, NotificationStatus.N, 0, new Date(22 - 10 - 2022), new Date(22 - 10 - 2022));
 
-        when(assessmentService.getFinishedAssessments()).thenReturn(Collections.singletonList(assessment));
         when(notificationRepository.findByType(NotificationType.FEEDBACK_V1)).thenReturn(Collections.singletonList(notification));
 
         notificationService.saveFeedbackNotificationForFinishedAssessments(assessment, Collections.singletonList(notification));
@@ -404,7 +403,6 @@ class NotificationServiceTest {
 
         Notification notification = new Notification(1, NotificationType.FEEDBACK_V1, email, payload, NotificationStatus.N, 0, new Date(22 - 10 - 2022), new Date(22 - 10 - 2022));
 
-        when(assessmentService.getFinishedAssessments()).thenReturn(Collections.singletonList(assessment));
         when(notificationRepository.findByType(NotificationType.FEEDBACK_V1)).thenReturn(Collections.singletonList(notification));
 
         notificationService.saveFeedbackNotificationForFinishedAssessments(assessment, Collections.singletonList(notification));

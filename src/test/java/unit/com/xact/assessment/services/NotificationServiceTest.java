@@ -12,7 +12,6 @@ import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.data.exceptions.EmptyResultException;
-import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -27,11 +26,10 @@ class NotificationServiceTest {
     NotificationRepository notificationRepository = mock(NotificationRepository.class);
     EmailConfig emailConfig = mock(EmailConfig.class);
     UserAuthService userAuthService = mock(UserAuthService.class);
-    AssessmentService assessmentService = mock(AssessmentService.class);
 
 
     public NotificationServiceTest() {
-        notificationService = new NotificationService(notificationRepository, assessmentService, emailConfig, userAuthService);
+        notificationService = new NotificationService(notificationRepository, emailConfig, userAuthService);
     }
 
     @Test

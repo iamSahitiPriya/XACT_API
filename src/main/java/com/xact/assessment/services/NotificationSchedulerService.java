@@ -48,8 +48,8 @@ public class NotificationSchedulerService {
         LOGGER.info("Sending email for feedback ...");
         List<Assessment> finishedAssessments = assessmentService.getFinishedAssessments();
         List<Notification> notifications = notificationService.findByType(NotificationType.FEEDBACK_V1);
-        finishedAssessments.forEach(finishedAssessment -> {
-            notificationService.saveFeedbackNotificationForFinishedAssessments(finishedAssessment,notifications);
-        });
+        finishedAssessments.forEach(finishedAssessment ->
+            notificationService.saveFeedbackNotificationForFinishedAssessments(finishedAssessment,notifications)
+        );
     }
 }

@@ -7,7 +7,6 @@ import com.xact.assessment.dtos.AssessmentAction;
 import com.xact.assessment.dtos.EmailPayload;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
-import io.micronaut.scheduling.annotation.Scheduled;
 import io.micronaut.data.exceptions.EmptyResultException;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
@@ -34,15 +33,12 @@ public class NotificationService {
     public static final String COLLABORATORS = "collaborators";
     public static final int DURATION = 5;
     private final NotificationRepository notificationRepository;
-
-    private final AssessmentService assessmentService;
     private final EmailConfig emailConfig;
     private final UserAuthService userAuthService;
 
 
-    public NotificationService(NotificationRepository notificationRepository, AssessmentService assessmentService, EmailConfig emailConfig, UserAuthService userAuthService) {
+    public NotificationService(NotificationRepository notificationRepository, EmailConfig emailConfig, UserAuthService userAuthService) {
         this.notificationRepository = notificationRepository;
-        this.assessmentService = assessmentService;
         this.emailConfig = emailConfig;
         this.userAuthService = userAuthService;
     }

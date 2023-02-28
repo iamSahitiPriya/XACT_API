@@ -423,7 +423,6 @@ class AssessmentControllerTest {
         TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
 
         when(assessmentService.updateTopicRecommendation(topicLevelRecommendationRequest)).thenReturn(topicLevelRecommendation);
-        when(assessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())).thenReturn(true);
         doNothing().when(assessmentService).updateAssessment(assessment);
 
         HttpResponse<RecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, topicLevelRecommendationRequest, authentication);

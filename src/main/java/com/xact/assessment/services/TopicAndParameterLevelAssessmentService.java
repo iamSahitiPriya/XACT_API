@@ -4,11 +4,9 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.ActivityType;
-import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
-import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
-import com.xact.assessment.dtos.UpdateAnswerRequest;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
+import com.xact.assessment.models.Recommendation;
 import jakarta.inject.Singleton;
 
 import java.util.List;
@@ -18,18 +16,18 @@ import java.util.Optional;
 public class TopicAndParameterLevelAssessmentService {
 
     private final ParameterService parameterService;
-
     private final AnswerService answerService;
     private final TopicService topicService;
-
     private final QuestionService questionService;
+    private final RecommendationService recommendationService;
 
 
-    public TopicAndParameterLevelAssessmentService(ParameterService parameterService, AnswerService answerService, TopicService topicService, QuestionService questionService) {
+    public TopicAndParameterLevelAssessmentService(ParameterService parameterService, AnswerService answerService, TopicService topicService, QuestionService questionService, RecommendationService recommendationService) {
         this.parameterService = parameterService;
         this.answerService = answerService;
         this.topicService = topicService;
         this.questionService = questionService;
+        this.recommendationService = recommendationService;
     }
 
     public TopicLevelRating saveRatingAndRecommendation(TopicLevelRating topicLevelRating) {
@@ -144,4 +142,11 @@ public class TopicAndParameterLevelAssessmentService {
     public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
     }
+
+    public Recommendation updateRecommendation(RecommendationRequest recommendationRequest,Recommendation recommendation) {
+        return recommendationService.updateRecommendation(recommendationRequest,recommendation);
+    }
+//    public Recommendation saveRecommendation(RecommendationRequest recommendationRequest,Assessment assessment,Integer id) {
+//        return recommendationService.saveRecommendation(recommendationRequest,assessment,id);
+//    }
 }

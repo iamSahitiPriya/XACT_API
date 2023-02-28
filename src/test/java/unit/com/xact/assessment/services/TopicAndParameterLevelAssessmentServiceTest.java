@@ -39,7 +39,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
         answerService = mock(AnswerService.class);
         parameterService = mock(ParameterService.class);
         topicService = mock(TopicService.class);
-        topicAndParameterLevelAssessmentService = new TopicAndParameterLevelAssessmentService(parameterService, answerService, topicService, questionService);
+        topicAndParameterLevelAssessmentService = new TopicAndParameterLevelAssessmentService(parameterService, answerService, topicService, questionService, recommendationService);
     }
 
     @Test

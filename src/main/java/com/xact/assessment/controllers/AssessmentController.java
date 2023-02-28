@@ -8,6 +8,7 @@ import com.xact.assessment.dtos.*;
 import com.xact.assessment.mappers.AssessmentMapper;
 import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
+import com.xact.assessment.models.Recommendation;
 import com.xact.assessment.services.ActivityLogService;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.NotificationService;
@@ -212,22 +213,23 @@ public class AssessmentController {
     @Patch(value = "/{assessmentId}/topics/{topicId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @Transactional
-    public HttpResponse<RecommendationResponse> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
+    public HttpResponse<RecommendationResponse> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body RecommendationRequest recommendationRequest, Authentication authentication) {
         LOGGER.info("Update individual topic recommendation. assessment: {}, topic: {}", assessmentId, topicId);
         User user = userAuthService.getCurrentUser(authentication);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        RecommendationResponse topicLevelRecommendationResponse = new RecommendationResponse();
+        RecommendationResponse recommendationResponse = new RecommendationResponse();
         if (assessment.isEditable()) {
-            TopicLevelRecommendation topicLevelRecommendation;
-            if (topicLevelRecommendationRequest.getRecommendationId() != null) {
-                topicLevelRecommendation = assessmentService.updateTopicRecommendation(topicLevelRecommendationRequest);
-            } else {
-                topicLevelRecommendation = assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, topicId);
+            Recommendation recommendation = new TopicLevelRecommendation();
+            if (recommendationRequest.getRecommendationId() != null) {
+                recommendation = assessmentService.updateRecommendation(recommendationRequest,recommendation);
             }
-            topicLevelRecommendationResponse = getTopicLevelRecommendationResponse(user, assessment, topicLevelRecommendation);
+            else {
+                recommendation = assessmentService.saveRecommendation(recommendationRequest, assessment, topicId,recommendation);
+            }
+            recommendationResponse = getTopicLevelRecommendationResponse(user, assessment, recommendation);
             updateAssessment(assessment);
         }
-        return HttpResponse.ok(topicLevelRecommendationResponse);
+        return HttpResponse.ok(recommendationResponse);
     }
 
     @Delete(value = "/{assessmentId}/topics/{topicId}/recommendations/{recommendationId}")
@@ -526,10 +528,23 @@ public class AssessmentController {
         assessmentService.updateAssessment(assessment);
     }
 
+<<<<<<< HEAD
     private RecommendationResponse getTopicLevelRecommendationResponse(User user, Assessment assessment, TopicLevelRecommendation topicLevelRecommendation) {
         RecommendationResponse topicLevelRecommendationResponse = modelMapper.map(topicLevelRecommendation, RecommendationResponse.class);
         TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
         CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment, user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
+=======
+    private RecommendationResponse getTopicLevelRecommendationResponse(User user, Assessment assessment, Recommendation topicLevelRecommendation) {
+        RecommendationResponse topicLevelRecommendationResponse = new RecommendationResponse();
+        if (assessmentService.checkTopicRecommendationId(topicLevelRecommendation.getRecommendationId())) {
+            topicLevelRecommendationResponse = modelMapper.map(topicLevelRecommendation, RecommendationResponse.class);
+//            TopicLevelRecommendation finalTopicLevelRecommendation = topicLevelRecommendation;
+//            CompletableFuture.supplyAsync(() -> activityLogService.saveActivityLog(assessment, user, finalTopicLevelRecommendation.getRecommendationId(), finalTopicLevelRecommendation.getTopic(), ActivityType.TOPIC_RECOMMENDATION));
+
+        } else {
+            topicLevelRecommendationResponse.setRecommendationId(null);
+        }
+>>>>>>> 2b32ebc ([331][Brindha | Sahiti]Refactor. implementation of recommendation by inheritance)
         return topicLevelRecommendationResponse;
     }
 

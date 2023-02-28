@@ -5,17 +5,14 @@
 package com.xact.assessment.models;
 
 
-import com.xact.assessment.dtos.RecommendationDeliveryHorizon;
-import com.xact.assessment.dtos.RecommendationEffort;
-import com.xact.assessment.dtos.RecommendationImpact;
 import io.micronaut.core.annotation.Introspected;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -25,22 +22,12 @@ import java.util.Date;
 @EqualsAndHashCode
 @Entity
 @Table(name = "tbl_assessment_topic_recommendation")
-public class TopicLevelRecommendation{
-
-    @Id
-    @Column(name = "recommendation_id",unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer recommendationId;
-
-    @NotNull
-    @ManyToOne()
-    @JoinColumn(name = "assessment", referencedColumnName = "assessment_id")
-    private Assessment assessment;
-
+public class TopicLevelRecommendation extends Recommendation {
     @NotNull
     @ManyToOne()
     @JoinColumn(name = "topic", referencedColumnName = "topic_id")
     private AssessmentTopic topic;
+<<<<<<< HEAD
 
 
     @Column(name = "recommendation")
@@ -75,4 +62,6 @@ public class TopicLevelRecommendation{
         return (this.recommendation != null && !this.recommendation.isBlank());
     }
 
+=======
+>>>>>>> 2b32ebc ([331][Brindha | Sahiti]Refactor. implementation of recommendation by inheritance)
 }

@@ -1,35 +1,39 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.models;
 
-
-import io.micronaut.core.annotation.Introspected;
+import com.xact.assessment.dtos.RecommendationDeliveryHorizon;
+import com.xact.assessment.dtos.RecommendationEffort;
+import com.xact.assessment.dtos.RecommendationImpact;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Introspected
 @EqualsAndHashCode
-@Entity
-@Table(name = "tbl_assessment_parameter_recommendation")
-public class ParameterLevelRecommendation extends Recommendation {
+@MappedSuperclass
+public class Recommendation {
+    @Id
+    @Column(name = "recommendation_id",unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer recommendationId;
+
     @NotNull
     @ManyToOne()
-    @JoinColumn(name = "parameter", referencedColumnName = "parameter_id")
-    private AssessmentParameter parameter;
-
-<<<<<<< HEAD
+    @JoinColumn(name = "assessment", referencedColumnName = "assessment_id")
+    private Assessment assessment;
 
     @Column(name = "recommendation")
     private String recommendation;
-
 
     @Column(name = "impact", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -56,9 +60,7 @@ public class ParameterLevelRecommendation extends Recommendation {
     private Date updatedAt;
 
     public  boolean hasRecommendation() {
-        return (this.recommendation != null && !this.recommendation.isBlank());
+        return ((this.recommendation != null && !this.recommendation.isBlank()));
     }
 
-=======
->>>>>>> 2b32ebc ([331][Brindha | Sahiti]Refactor. implementation of recommendation by inheritance)
 }

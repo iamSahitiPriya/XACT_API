@@ -317,4 +317,8 @@ public class AssessmentService {
     public Recommendation updateRecommendation(RecommendationRequest recommendationRequest,Recommendation recommendation) {
         return topicAndParameterLevelAssessmentService.updateRecommendation(recommendationRequest,recommendation);
     }
+
+    public Recommendation saveRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId, Recommendation recommendation) {
+        return topicAndParameterLevelAssessmentService.saveRecommendation(recommendationRequest,assessment,topicId,recommendation);
+    }
 }

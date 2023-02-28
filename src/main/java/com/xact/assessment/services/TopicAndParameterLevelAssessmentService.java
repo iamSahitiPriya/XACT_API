@@ -146,7 +146,8 @@ public class TopicAndParameterLevelAssessmentService {
     public Recommendation updateRecommendation(RecommendationRequest recommendationRequest,Recommendation recommendation) {
         return recommendationService.updateRecommendation(recommendationRequest,recommendation);
     }
-//    public Recommendation saveRecommendation(RecommendationRequest recommendationRequest,Assessment assessment,Integer id) {
-//        return recommendationService.saveRecommendation(recommendationRequest,assessment,id);
-//    }
+
+    public Recommendation saveRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId, Recommendation recommendation) {
+        return recommendationService.saveRecommendation(recommendationRequest,assessment,topicId,recommendation);
+    }
 }

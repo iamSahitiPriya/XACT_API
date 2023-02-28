@@ -129,6 +129,7 @@ class TopicServiceTest {
         assertEquals(topicLevelRating1.getTopicLevelId(), actualResponse.getTopicLevelId());
     }
 
+
     @Test
     void shouldDeleteRatingForTopicLevelAssessment() {
         Integer assessmentId1 = 1;
@@ -249,6 +250,18 @@ class TopicServiceTest {
         TopicLevelRecommendation topicLevelRecommendation = topicService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,assessmentTopic.getTopicId());
 
         assertEquals("text",topicLevelRecommendation.getRecommendation());
+    }
+
+    @Test
+    void shouldGetTopicRecommendationById() {
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendation("This is a recommendation");
+
+        when(topicLevelRecommendationService.findById(any(Integer.class))).thenReturn(Optional.of(topicLevelRecommendation));
+
+        topicService.getTopicRecommendationById(1);
+
+        verify(topicLevelRecommendationService).findById(any(Integer.class));
     }
 }
 

@@ -33,6 +33,7 @@ import java.util.Properties;
 @Singleton
 public class EmailSchedulerService {
     private static final Integer MAXIMUM_RETRIES = 6;
+
     private final EmailConfig emailConfig;
     private final ProfileConfig profileConfig;
     private final TokenService tokenService;
@@ -114,7 +115,7 @@ public class EmailSchedulerService {
     }
 
     private void sendEmail(String accessToken, Notification notification, NotificationRequest notificationRequest) {
-        LOGGER.info("Sending notification {} {}", notification.getNotificationId(),notification.getTemplateName());
+        LOGGER.info("Sending notification {} {}", notification.getNotificationId(), notification.getTemplateName());
         notification.setRetries(notification.getRetries() + 1);
         notificationService.update(notification);
 

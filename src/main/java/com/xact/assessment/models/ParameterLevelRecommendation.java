@@ -72,7 +72,7 @@ public class ParameterLevelRecommendation{
     private Date updatedAt;
 
     public  boolean hasRecommendation() {
-        return ((this.recommendation != null && !this.recommendation.isBlank()));
+        return (this.recommendation != null && !this.recommendation.isBlank());
     }
 
 }

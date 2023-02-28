@@ -304,4 +304,12 @@ public class AssessmentService {
     public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         return topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
     }
+
+    public List<Assessment> findInactiveAssessments(Integer duration) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -duration);
+        Date expiryDate = calendar.getTime();
+        return assessmentRepository.findInactiveAssessments(expiryDate);
+
+    }
 }

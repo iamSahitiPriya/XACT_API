@@ -44,7 +44,7 @@ class AssessmentServiceTest {
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
         accessControlService = mock(AccessControlService.class);
-        assessmentService = new AssessmentService( assessmentRepository,usersAssessmentsService,accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
+        assessmentService = new AssessmentService(assessmentRepository,usersAssessmentsService,accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
     }
 
     @Test
@@ -555,5 +555,23 @@ class AssessmentServiceTest {
         ParameterLevelRecommendation parameterLevelRecommendation1=assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1);
 
         assertEquals("text",parameterLevelRecommendation1.getRecommendation());
+    }
+    @Test
+    void shouldGetInactiveAssessments() {
+        Date created = new Date(22 - 10 - 2022);
+        Date updated = new Date(22 - 10 - 2022);
+
+        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
+        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        List<Assessment> assessmentList = new ArrayList<>();
+        assessmentList.add(assessment);
+
+        when(assessmentRepository.findInactiveAssessments(any(Date.class))).thenReturn(assessmentList);
+        List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(15);
+
+        verify(assessmentRepository).findInactiveAssessments(any(Date.class));
+        assertEquals(inactiveAssessments.size(),1);
+
+
     }
 }

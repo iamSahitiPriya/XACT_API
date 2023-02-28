@@ -388,7 +388,7 @@ public class AssessmentController {
 
     @Patch(value = "/{assessmentId}/answers/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse updateAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable UpdateAnswerRequest answerRequest, Authentication authentication) {
+    public HttpResponse<Assessment> updateAnswer(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable UpdateAnswerRequest answerRequest, Authentication authentication) {
         LOGGER.info("Update individual user added answer. assessment: {}, question:{}", assessmentId, questionId);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);

@@ -55,6 +55,8 @@ account:
   initialDelay: "1m"
 
 email:
+  inactive:
+    fixedDelay: "1d"
   url: "https://api.thoughtworks.net"
   scope: "email.send"
   endpoint: "/notification/messages"

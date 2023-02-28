@@ -20,10 +20,11 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.*;
 
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
+import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
+import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
+import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static com.xact.assessment.models.AssessmentStatus.Active;
-import static com.xact.assessment.models.RecommendationEffort.HIGH;
-import static com.xact.assessment.models.RecommendationEffort.MEDIUM;
-import static com.xact.assessment.models.RecommendationImpact.LOW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -32,11 +33,8 @@ class ReportServiceTest {
     TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
     AnswerService answerService = mock(AnswerService.class);
     SpiderChartService chartService = mock(SpiderChartService.class);
-
     UserQuestionService userQuestionService = mock(UserQuestionService.class);
     ModuleService moduleService = mock(ModuleService.class);
-
-
     AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
 
 
@@ -354,6 +352,7 @@ class ReportServiceTest {
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
 
         TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
         topicLevelRecommendation1.setRecommendationId(2);
@@ -362,6 +361,7 @@ class ReportServiceTest {
         topicLevelRecommendation1.setAssessment(assessment);
         topicLevelRecommendation1.setRecommendationImpact(LOW);
         topicLevelRecommendation1.setRecommendationEffort(HIGH);
+        topicLevelRecommendation1.setDeliveryHorizon(LATER);
 
         topicLevelRecommendationList.add(topicLevelRecommendation);
         topicLevelRecommendationList.add(topicLevelRecommendation1);
@@ -376,6 +376,7 @@ class ReportServiceTest {
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setRecommendationImpact(LOW);
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
+        parameterLevelRecommendation.setDeliveryHorizon(LATER);
 
         ParameterLevelRecommendation parameterLevelRecommendation1 = new ParameterLevelRecommendation();
         parameterLevelRecommendation1.setRecommendationId(2);
@@ -384,6 +385,7 @@ class ReportServiceTest {
         parameterLevelRecommendation1.setAssessment(assessment);
         parameterLevelRecommendation1.setRecommendationImpact(LOW);
         parameterLevelRecommendation1.setRecommendationEffort(HIGH);
+        parameterLevelRecommendation1.setDeliveryHorizon(LATER);
 
         parameterLevelRecommendationList.add(parameterLevelRecommendation);
         parameterLevelRecommendationList.add(parameterLevelRecommendation1);
@@ -656,8 +658,8 @@ class ReportServiceTest {
         assessmentParameter.setParameterId(1);
         assessmentParameter.setTopic(assessmentTopic1);
 
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(1,assessment1,assessmentTopic,"recommendation",LOW,MEDIUM,"NOW",new Date(),new Date());
-        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(1,assessment1,assessmentParameter,"recommendation1",LOW,MEDIUM,"NEXT",new Date(),new Date());
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(1,assessment1,assessmentTopic,"recommendation",LOW,MEDIUM,LATER,new Date(),new Date());
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(1,assessment1,assessmentParameter,"recommendation1",LOW,MEDIUM,LATER,new Date(),new Date());
 
         when(topicAndParameterLevelAssessmentService.getTopicRecommendations(1)).thenReturn(Collections.singletonList(topicLevelRecommendation));
         when(topicAndParameterLevelAssessmentService.getParameterRecommendations(1)).thenReturn(Collections.singletonList(parameterLevelRecommendation));

@@ -324,4 +324,12 @@ public class AssessmentService {
         Date completedDate = calendar.getTime();
         return assessmentRepository.findByCompletedStatus(completedDate);
     }
+
+    public List<Assessment> findInactiveAssessments(Integer duration) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -duration);
+        Date expiryDate = calendar.getTime();
+        return assessmentRepository.findInactiveAssessments(expiryDate);
+
+    }
 }

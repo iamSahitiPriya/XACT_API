@@ -52,7 +52,7 @@ jpa:
       packages: 'com.xact.assessment.models'
     properties:
       hibernate:
-        default-schema : test_schema_v2
+        default-schema : test_schema_v3
         hbm2ddl:
           auto: validate
         show_sql: true

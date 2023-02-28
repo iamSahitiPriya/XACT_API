@@ -8,6 +8,7 @@ import com.xact.assessment.dtos.EmailPayload;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import io.micronaut.scheduling.annotation.Scheduled;
+import io.micronaut.data.exceptions.EmptyResultException;
 import jakarta.inject.Singleton;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ public class NotificationService {
 
     public static final String UPDATED_AT = "updated_at";
     public static final String COLLABORATORS = "collaborators";
+    public static final int DURATION = 5;
     private final NotificationRepository notificationRepository;
 
     private final AssessmentService assessmentService;
@@ -45,22 +47,6 @@ public class NotificationService {
         this.userAuthService = userAuthService;
     }
 
-    @Scheduled(initialDelay = "${notification.feedback.initialDelay}", fixedDelay = "${notification.feedback.delay}")
-    public void saveFeedbackNotificationForFinishedAssessments() {
-        List<Assessment> assessments = assessmentService.getFinishedAssessments();
-        List<Notification> notifications = notificationRepository.findByType(NotificationType.FEEDBACK_V1);
-        assessments.forEach(assessment -> {
-            try {
-                Notification notification = getNotificationForFeedback(assessment);
-                if (!isNotificationSent(assessment, notifications)) {
-                    LOGGER.info("Save notifications for feedback ...");
-                    saveNotification(notification);
-                }
-            } catch (JsonProcessingException e) {
-                LOGGER.error("JsonProcessingException");
-            }
-        });
-    }
 
     @SneakyThrows
     private boolean isNotificationSent(Assessment assessment, List<Notification> notifications) {
@@ -291,5 +277,63 @@ public class NotificationService {
         return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
     }
 
+    public void setNotificationForInactiveAssessment(Assessment inactiveAssessment, List<Notification> inactiveNotificationList) throws JsonProcessingException {
+        Set<String> users = inactiveAssessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
+        Notification notification = getNotification(users);
+        notification.setTemplateName(NotificationType.INACTIVE_V1);
+        Map<String, String> payload = getAssessmentCommonPayload(inactiveAssessment);
+        ObjectMapper objectMapper = new ObjectMapper();
+        notification.setPayload(objectMapper.writeValueAsString(payload));
+        saveInactiveAssessmentNotification(notification, inactiveNotificationList);
+    }
+
+    private void saveInactiveAssessmentNotification(Notification notification, List<Notification> inactiveNotificationList) {
+        Notification inactiveNotification = getInactiveNotification(inactiveNotificationList, notification);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -DURATION);
+        Date expiryDate = calendar.getTime();
+        if (inactiveNotification.getNotificationId() == null) {
+            saveNotification(notification);
+        } else if (inactiveNotification.getUpdatedAt().getDate() == expiryDate.getDate()) {
+            notificationRepository.delete(inactiveNotification);
+            saveNotification(notification);
+        }
+    }
+
+    public Notification getInactiveNotification(List<Notification> notificationList, Notification notificationRequest) {
+        for (Notification inactiveNotification : notificationList) {
+            if (Objects.equals(inactiveNotification.getPayload(), notificationRequest.getPayload())) {
+                return inactiveNotification;
+            }
+
+        }
+        return new Notification();
+    }
+
+    public List<Notification> getNotificationBy(NotificationType notificationType) {
+        List<Notification> inactiveNotifications = new ArrayList<>();
+        try {
+            inactiveNotifications = notificationRepository.findByTemplateName(notificationType);
+        } catch (EmptyResultException e) {
+            LOGGER.info("No Notification found");
+        }
+        return inactiveNotifications;
+    }
+
+    public List<Notification> findByType(NotificationType notificationType) {
+        return notificationRepository.findByType(notificationType);
+    }
+
+    public void saveFeedbackNotificationForFinishedAssessments(Assessment assessment, List<Notification> notifications) {
+        try {
+            Notification notification = getNotificationForFeedback(assessment);
+            if (!isNotificationSent(assessment, notifications)) {
+                LOGGER.info("Save notifications for feedback ...");
+                saveNotification(notification);
+            }
+        } catch (JsonProcessingException e) {
+            LOGGER.error("JsonProcessingException");
+        }
+    }
 }
 

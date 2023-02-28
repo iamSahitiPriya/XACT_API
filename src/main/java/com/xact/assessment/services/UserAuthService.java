@@ -24,6 +24,8 @@ import static com.xact.assessment.constants.AppConstants.USER_ID;
 @Singleton
 public class UserAuthService {
     private static final Logger LOG = LoggerFactory.getLogger(UserAuthService.class);
+    public static final String DEFAULT_LAST_NAME = "";
+    public static final String DEFAULT_LOCALE = "en_US";
 
     private final UserInfoClient userInfoClient;
     private final UserRepository userRepository;
@@ -55,7 +57,8 @@ public class UserAuthService {
     }
 
     public UserInfo getUserInfo(String email) {
-        return userRepository.findById(email).orElseThrow();
+        UserInfo defaultUserInfo = new UserInfo(email, email, DEFAULT_LAST_NAME, DEFAULT_LOCALE);
+        return userRepository.findById(email).orElse(defaultUserInfo);
     }
 
     public List<UserInfo> getLoggedInUsers(Set<String> users) {

@@ -33,7 +33,7 @@ public class Recommendation {
     private Assessment assessment;
 
     @Column(name = "recommendation")
-    private String recommendation;
+    private String recommendationText;
 
     @Column(name = "impact", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -60,7 +60,7 @@ public class Recommendation {
     private Date updatedAt;
 
     public  boolean hasRecommendation() {
-        return ((this.recommendation != null && !this.recommendation.isBlank()));
+        return (this.recommendationText != null && !this.recommendationText.isBlank());
     }
 
 }

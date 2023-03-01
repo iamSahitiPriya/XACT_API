@@ -527,7 +527,7 @@ class AssessmentServiceTest {
     @Test
     void shouldReturnTopicRecommendation() {
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendation("text");
+        topicLevelRecommendation.setRecommendationText("text");
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         Assessment assessment = new Assessment();
 
@@ -535,13 +535,13 @@ class AssessmentServiceTest {
 
         TopicLevelRecommendation topicLevelRecommendation1 = assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,1);
 
-        assertEquals("text", topicLevelRecommendation1.getRecommendation());
+        assertEquals("text", topicLevelRecommendation1.getRecommendationText());
     }
 
     @Test
     void shouldReturnParameterLevelRecommendation() {
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest=new ParameterLevelRecommendationRequest();
-        parameterLevelRecommendationRequest.setRecommendation("text");
+        parameterLevelRecommendationRequest.setRecommendationText("text");
         parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
         parameterLevelRecommendationRequest.setDeliveryHorizon(RecommendationDeliveryHorizon.LATER);
@@ -554,7 +554,7 @@ class AssessmentServiceTest {
         when(assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1)).thenReturn(parameterLevelRecommendation);
         ParameterLevelRecommendation parameterLevelRecommendation1=assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1);
 
-        assertEquals("text",parameterLevelRecommendation1.getRecommendation());
+        assertEquals("text",parameterLevelRecommendation1.getRecommendationText());
     }
     @Test
     void shouldGetInactiveAssessments() {

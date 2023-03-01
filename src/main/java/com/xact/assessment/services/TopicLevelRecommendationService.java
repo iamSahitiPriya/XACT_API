@@ -44,7 +44,7 @@ public class TopicLevelRecommendationService {
     }
 
     private void setTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation, TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
-        topicLevelRecommendation.setRecommendation(topicLevelRecommendationRequest.getRecommendation());
+        topicLevelRecommendation.setRecommendationText(topicLevelRecommendationRequest.getRecommendation());
         topicLevelRecommendation.setRecommendationImpact(topicLevelRecommendationRequest.getImpact());
         topicLevelRecommendation.setRecommendationEffort(topicLevelRecommendationRequest.getEffort());
         topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());

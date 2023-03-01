@@ -94,7 +94,7 @@ class ParameterServiceTest {
         parameterRatingAndRecommendation.setRating(1);
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
-        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.LOW);
         parameterLevelRecommendationRequest.setEffort(LOW);
@@ -128,7 +128,7 @@ class ParameterServiceTest {
 
         assertEquals(parameterLevelRating.getRating(), actualResponse.getRating());
         assertEquals(parameterLevelRating.getParameterLevelId(), actualResponse.getParameterLevelId());
-        assertEquals(parameterLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
+        assertEquals(parameterLevelRecommendation.getRecommendationText(), actualResponse1.getRecommendationText());
 
     }
 
@@ -145,7 +145,7 @@ class ParameterServiceTest {
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.MEDIUM);
         parameterLevelRecommendationRequest.setEffort(LOW);
@@ -183,7 +183,7 @@ class ParameterServiceTest {
 
         assertEquals(parameterLevelRating.getRating(), actualResponse.getRating());
         assertEquals(parameterLevelRating.getParameterLevelId(), actualResponse.getParameterLevelId());
-        assertEquals(parameterLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
+        assertEquals(parameterLevelRecommendation.getRecommendationText(), actualResponse1.getRecommendationText());
 
     }
 
@@ -210,7 +210,7 @@ class ParameterServiceTest {
         parameterLevelRecommendation.setParameter(assessmentParameter);
         parameterLevelRecommendation.setRecommendationId(1);
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
-        parameterLevelRecommendation.setRecommendation("some recommendation");
+        parameterLevelRecommendation.setRecommendationText("some recommendation");
         parameterLevelRecommendation.setDeliveryHorizon(LATER);
         parameterLevelRecommendation.setRecommendationImpact(RecommendationImpact.LOW);
 
@@ -223,7 +223,7 @@ class ParameterServiceTest {
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterService.getAssessmentParameterRecommendationData(assessmentId);
 
         assertEquals(parameterLevelRatingList.get(0).getRating(), parameterLevelRating.getRating());
-        assertEquals(parameterLevelRecommendationList.get(0).getRecommendation(), parameterLevelRecommendation.getRecommendation());
+        assertEquals(parameterLevelRecommendationList.get(0).getRecommendationText(), parameterLevelRecommendation.getRecommendationText());
     }
 
     @Test
@@ -264,7 +264,7 @@ class ParameterServiceTest {
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(recommendationId);
-        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.MEDIUM);
         parameterLevelRecommendationRequest.setEffort(LOW);
@@ -303,7 +303,7 @@ class ParameterServiceTest {
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setRecommendation("");
+        parameterLevelRecommendationRequest.setRecommendationText("");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.MEDIUM);
         parameterLevelRecommendationRequest.setEffort(LOW);
@@ -339,7 +339,7 @@ class ParameterServiceTest {
         ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,parameterId);
 
         assertEquals(parameterLevelRating.getRating(), actualResponse.getRating());
-        assertEquals(parameterLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
+        assertEquals(parameterLevelRecommendation.getRecommendationText(), actualResponse1.getRecommendationText());
 
     }
 

@@ -109,7 +109,7 @@ class ReportServiceTest {
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setRecommendation("some text");
+        topicLevelRecommendation.setRecommendationText("some text");
         topicLevelRecommendation.setTopic(topic);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setRecommendationImpact(LOW);
@@ -117,7 +117,7 @@ class ReportServiceTest {
 
         TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
         topicLevelRecommendation1.setRecommendationId(2);
-        topicLevelRecommendation1.setRecommendation("some text");
+        topicLevelRecommendation1.setRecommendationText("some text");
         topicLevelRecommendation1.setTopic(topic);
         topicLevelRecommendation1.setAssessment(assessment);
         topicLevelRecommendation1.setRecommendationImpact(LOW);
@@ -132,7 +132,7 @@ class ReportServiceTest {
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(1);
-        parameterLevelRecommendation.setRecommendation("some text");
+        parameterLevelRecommendation.setRecommendationText("some text");
         parameterLevelRecommendation.setParameter(parameter);
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setRecommendationImpact(LOW);
@@ -140,7 +140,7 @@ class ReportServiceTest {
 
         ParameterLevelRecommendation parameterLevelRecommendation1 = new ParameterLevelRecommendation();
         parameterLevelRecommendation1.setRecommendationId(2);
-        parameterLevelRecommendation1.setRecommendation("some text");
+        parameterLevelRecommendation1.setRecommendationText("some text");
         parameterLevelRecommendation1.setParameter(parameter);
         parameterLevelRecommendation1.setAssessment(assessment);
         parameterLevelRecommendation1.setRecommendationImpact(LOW);
@@ -229,7 +229,7 @@ class ReportServiceTest {
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setRecommendation("some text");
+        topicLevelRecommendation.setRecommendationText("some text");
         topicLevelRecommendation.setTopic(topic);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setRecommendationImpact(LOW);
@@ -237,7 +237,7 @@ class ReportServiceTest {
 
         TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
         topicLevelRecommendation1.setRecommendationId(2);
-        topicLevelRecommendation1.setRecommendation("some text");
+        topicLevelRecommendation1.setRecommendationText("some text");
         topicLevelRecommendation1.setTopic(topic);
         topicLevelRecommendation1.setAssessment(assessment);
         topicLevelRecommendation1.setRecommendationImpact(LOW);
@@ -252,7 +252,7 @@ class ReportServiceTest {
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(1);
-        parameterLevelRecommendation.setRecommendation("some text");
+        parameterLevelRecommendation.setRecommendationText("some text");
         parameterLevelRecommendation.setParameter(parameter);
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setRecommendationImpact(LOW);
@@ -260,7 +260,7 @@ class ReportServiceTest {
 
         ParameterLevelRecommendation parameterLevelRecommendation1 = new ParameterLevelRecommendation();
         parameterLevelRecommendation1.setRecommendationId(2);
-        parameterLevelRecommendation1.setRecommendation("some text");
+        parameterLevelRecommendation1.setRecommendationText("some text");
         parameterLevelRecommendation1.setParameter(parameter);
         parameterLevelRecommendation1.setAssessment(assessment);
         parameterLevelRecommendation1.setRecommendationImpact(LOW);
@@ -347,7 +347,7 @@ class ReportServiceTest {
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setRecommendation("some text");
+        topicLevelRecommendation.setRecommendationText("some text");
         topicLevelRecommendation.setTopic(topic);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setRecommendationImpact(LOW);
@@ -356,7 +356,7 @@ class ReportServiceTest {
 
         TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
         topicLevelRecommendation1.setRecommendationId(2);
-        topicLevelRecommendation1.setRecommendation("some text");
+        topicLevelRecommendation1.setRecommendationText("some text");
         topicLevelRecommendation1.setTopic(topic);
         topicLevelRecommendation1.setAssessment(assessment);
         topicLevelRecommendation1.setRecommendationImpact(LOW);
@@ -371,7 +371,7 @@ class ReportServiceTest {
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setRecommendationId(1);
-        parameterLevelRecommendation.setRecommendation("some text");
+        parameterLevelRecommendation.setRecommendationText("some text");
         parameterLevelRecommendation.setParameter(parameter);
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setRecommendationImpact(LOW);
@@ -380,7 +380,7 @@ class ReportServiceTest {
 
         ParameterLevelRecommendation parameterLevelRecommendation1 = new ParameterLevelRecommendation();
         parameterLevelRecommendation1.setRecommendationId(2);
-        parameterLevelRecommendation1.setRecommendation("some text");
+        parameterLevelRecommendation1.setRecommendationText("some text");
         parameterLevelRecommendation1.setParameter(parameter);
         parameterLevelRecommendation1.setAssessment(assessment);
         parameterLevelRecommendation1.setRecommendationImpact(LOW);
@@ -659,7 +659,7 @@ class ReportServiceTest {
         assessmentParameter.setTopic(assessmentTopic1);
 
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(assessmentTopic);
-        topicLevelRecommendation.setRecommendation("recommendation");
+        topicLevelRecommendation.setRecommendationText("recommendation");
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setAssessment(assessment1);
         topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
@@ -667,7 +667,7 @@ class ReportServiceTest {
         topicLevelRecommendation.setDeliveryHorizon(LATER);
 
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(assessmentParameter);
-        parameterLevelRecommendation.setRecommendation("recommendation");
+        parameterLevelRecommendation.setRecommendationText("recommendation");
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setAssessment(new Assessment());
         topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);

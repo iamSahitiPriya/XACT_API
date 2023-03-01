@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         AssessmentParameter assessmentParameter=new AssessmentParameter();
         assessmentParameter.setParameterId(1);
         parameterLevelRecommendation.setParameter(assessmentParameter);
-        parameterLevelRecommendation.setRecommendation("some text");
+        parameterLevelRecommendation.setRecommendationText("some text");
         assertEquals(true,parameterLevelRecommendation.hasRecommendation());
     }
 

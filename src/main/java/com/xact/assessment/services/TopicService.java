@@ -89,7 +89,7 @@ public class TopicService {
 
 
     public String getTopicRecommendationById(Integer identifier) {
-        return topicLevelRecommendationService.findById(identifier).orElseThrow().getRecommendation();
+        return topicLevelRecommendationService.findById(identifier).orElseThrow().getRecommendationText();
     }
 
     public void saveTopicReference(AssessmentTopicReference assessmentTopicReference) {

@@ -89,7 +89,7 @@ public class ParameterService {
     }
 
     public String getParameterRecommendationById(Integer identifier) {
-        return parameterLevelRecommendationService.findById(identifier).orElseThrow().getRecommendation();
+        return parameterLevelRecommendationService.findById(identifier).orElseThrow().getRecommendationText();
     }
 
     public void saveParameterReference(AssessmentParameterReference assessmentParameterReference) {

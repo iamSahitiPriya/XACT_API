@@ -426,7 +426,7 @@ public class ReportService {
         checkToMergeRatingColumn(sheet, topicRecommendationCount, 2);
 
         createStyledNumberCell(row, 2, topicRating);
-        createStyledStringCell(row, 3, topicRecommendation.getRecommendation(), style);
+        createStyledStringCell(row, 3, topicRecommendation.getRecommendationText(), style);
         createStyledStringCell(row, 4, topicImpact, style);
         createStyledStringCell(row, 5, topicEffort, style);
         createStyledStringCell(row, 6, topicDeliveryHorizon, style);
@@ -436,7 +436,7 @@ public class ReportService {
         checkToMergeRatingColumn(sheet, paramRecommendationCount, 8);
 
         createStyledNumberCell(row, 8, paramRating);
-        createStyledStringCell(row, 9, paramRecommendation.getRecommendation(), style);
+        createStyledStringCell(row, 9, paramRecommendation.getRecommendationText(), style);
         createStyledStringCell(row, 10, paramImpact, style);
         createStyledStringCell(row, 11, paramEffort, style);
         createStyledStringCell(row, 12, paramDeliveryHorizon, style);

@@ -160,7 +160,7 @@ class TopicServiceTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(topicId);
         topicLevelRecommendation.setTopic(assessmentTopic);
-        topicLevelRecommendation.setRecommendation(null);
+        topicLevelRecommendation.setRecommendationText(null);
 
         when(topicLevelRatingService.existsByID(topicLevelRating1)).thenReturn(true);
         topicService.saveRatingAndRecommendation(topicLevelRating1);
@@ -204,18 +204,18 @@ class TopicServiceTest {
     @Test
     void shouldReturnTopicRecommendationWhenRecommendationIdIsGiven() {
         TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
-        topicLevelRecommendation1.setRecommendation("text");
+        topicLevelRecommendation1.setRecommendationText("text");
         when(topicLevelRecommendationService.findById(1)).thenReturn(Optional.of(topicLevelRecommendation1));
 
         Optional<TopicLevelRecommendation> topicLevelRecommendation = topicService.searchTopicRecommendation(1);
 
-        assertEquals("text",topicLevelRecommendation.get().getRecommendation());
+        assertEquals("text",topicLevelRecommendation.get().getRecommendationText());
     }
 
     @Test
     void shouldReturnRecommendationTextWhenRecommendationIdIsGiven() {
         TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
-        topicLevelRecommendation1.setRecommendation("text");
+        topicLevelRecommendation1.setRecommendationText("text");
         when(topicLevelRecommendationService.findById(1)).thenReturn(Optional.of(topicLevelRecommendation1));
 
         String recommendation = topicService.getTopicRecommendationById(1);
@@ -239,7 +239,7 @@ class TopicServiceTest {
     @Test
     void shouldReturnRecommendationAfterSaved() {
         TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation();
-        topicLevelRecommendation1.setRecommendation("text");
+        topicLevelRecommendation1.setRecommendationText("text");
         TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
         Assessment assessment = new Assessment();
         AssessmentTopic assessmentTopic = new AssessmentTopic();
@@ -249,13 +249,13 @@ class TopicServiceTest {
 
         TopicLevelRecommendation topicLevelRecommendation = topicService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,assessmentTopic.getTopicId());
 
-        assertEquals("text",topicLevelRecommendation.getRecommendation());
+        assertEquals("text",topicLevelRecommendation.getRecommendationText());
     }
 
     @Test
     void shouldGetTopicRecommendationById() {
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendation("This is a recommendation");
+        topicLevelRecommendation.setRecommendationText("This is a recommendation");
 
         when(topicLevelRecommendationService.findById(any(Integer.class))).thenReturn(Optional.of(topicLevelRecommendation));
 

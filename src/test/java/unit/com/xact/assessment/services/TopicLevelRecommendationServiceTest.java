@@ -86,7 +86,7 @@ class TopicLevelRecommendationServiceTest {
         int assessmentId = 1;
         int topicId = 1;
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(new AssessmentTopic());
-        topicLevelRecommendation.setRecommendation("recommendation");
+        topicLevelRecommendation.setRecommendationText("recommendation");
         topicLevelRecommendation.setRecommendationId(1);
         topicLevelRecommendation.setAssessment(new Assessment());
         topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);

@@ -37,7 +37,7 @@ class ParameterLevelRatingServiceTest {
         parameterRatingAndRecommendation.setRating(1);
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
-        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
         parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
@@ -79,7 +79,7 @@ class ParameterLevelRatingServiceTest {
 
         ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.MEDIUM);
         parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);

@@ -51,7 +51,7 @@ public class ParameterLevelRecommendationService {
     }
 
     private void setParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation, ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
-        parameterLevelRecommendation.setRecommendation(parameterLevelRecommendationRequest.getRecommendation());
+        parameterLevelRecommendation.setRecommendationText(parameterLevelRecommendationRequest.getRecommendationText());
         parameterLevelRecommendation.setRecommendationImpact(parameterLevelRecommendationRequest.getImpact());
         parameterLevelRecommendation.setRecommendationEffort(parameterLevelRecommendationRequest.getEffort());
         parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());

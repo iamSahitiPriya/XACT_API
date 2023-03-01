@@ -6,7 +6,6 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
-import com.xact.assessment.models.Recommendation;
 import com.xact.assessment.repositories.AssessmentRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
@@ -35,7 +34,7 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(AssessmentRepository assessmentRepository,UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
+    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.accessControlService = accessControlService;
@@ -224,16 +223,6 @@ public class AssessmentService {
     }
 
 
-
-    public boolean checkParameterRecommendationId(Integer recommendationId) {
-        return topicAndParameterLevelAssessmentService.checkParameterRecommendationId(recommendationId);
-    }
-
-    public boolean checkTopicRecommendationId(Integer recommendationId) {
-        return topicAndParameterLevelAssessmentService.checkTopicRecommendationId(recommendationId);
-
-    }
-
     public void deleteRecommendation(Integer recommendationId) {
         topicAndParameterLevelAssessmentService.deleteRecommendation(recommendationId);
     }
@@ -305,7 +294,7 @@ public class AssessmentService {
     }
 
     public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
-        return topicAndParameterLevelAssessmentService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,topicId);
+        return topicAndParameterLevelAssessmentService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, topicId);
     }
 
     public ParameterLevelRecommendation updateParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
@@ -313,7 +302,7 @@ public class AssessmentService {
     }
 
     public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
-        return topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,parameterId);
+        return topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
     }
 
     public List<Assessment> findInactiveAssessments(Integer duration) {
@@ -324,11 +313,4 @@ public class AssessmentService {
 
     }
 
-    public Recommendation updateRecommendation(RecommendationRequest recommendationRequest,Recommendation recommendation) {
-        return topicAndParameterLevelAssessmentService.updateRecommendation(recommendationRequest,recommendation);
-    }
-
-    public Recommendation saveRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId, Recommendation recommendation) {
-        return topicAndParameterLevelAssessmentService.saveRecommendation(recommendationRequest,assessment,topicId,recommendation);
-    }
 }

@@ -6,6 +6,7 @@ package unit.com.xact.assessment.services;
 
 
 import com.xact.assessment.dtos.Recommendation;
+import com.xact.assessment.dtos.RecommendationEffort;
 import com.xact.assessment.dtos.SummaryResponse;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -22,7 +23,6 @@ import java.util.*;
 
 import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static com.xact.assessment.dtos.RecommendationEffort.HIGH;
-import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -658,8 +658,21 @@ class ReportServiceTest {
         assessmentParameter.setParameterId(1);
         assessmentParameter.setTopic(assessmentTopic1);
 
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(1,assessment1,assessmentTopic,"recommendation",LOW,MEDIUM,LATER,new Date(),new Date());
-        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(1,assessment1,assessmentParameter,"recommendation1",LOW,MEDIUM,LATER,new Date(),new Date());
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(assessmentTopic);
+        topicLevelRecommendation.setRecommendation("recommendation");
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setAssessment(assessment1);
+        topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
+
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(assessmentParameter);
+        parameterLevelRecommendation.setRecommendation("recommendation");
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setAssessment(new Assessment());
+        topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
 
         when(topicAndParameterLevelAssessmentService.getTopicRecommendations(1)).thenReturn(Collections.singletonList(topicLevelRecommendation));
         when(topicAndParameterLevelAssessmentService.getParameterRecommendations(1)).thenReturn(Collections.singletonList(parameterLevelRecommendation));

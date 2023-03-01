@@ -8,7 +8,6 @@ import com.xact.assessment.dtos.*;
 import com.xact.assessment.mappers.AssessmentMapper;
 import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
-import com.xact.assessment.models.Recommendation;
 import com.xact.assessment.services.ActivityLogService;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.NotificationService;

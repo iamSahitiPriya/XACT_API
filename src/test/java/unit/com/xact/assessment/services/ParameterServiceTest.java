@@ -177,7 +177,6 @@ class ParameterServiceTest {
         ParameterLevelRating actualResponse = parameterService.saveRatingAndRecommendation(parameterLevelRating);
 
         when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
-        when(parameterLevelRecommendationService.existsById(parameterLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
         when(parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter)).thenReturn(parameterLevelRecommendation);
 
         ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,parameterId);
@@ -336,7 +335,6 @@ class ParameterServiceTest {
         ParameterLevelRating actualResponse = parameterService.saveRatingAndRecommendation(parameterLevelRating);
 
 
-        when(parameterLevelRecommendationService.existsById(parameterLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
         when(parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter)).thenReturn(parameterLevelRecommendation);
         ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,parameterId);
 

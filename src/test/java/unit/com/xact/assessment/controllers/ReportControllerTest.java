@@ -5,6 +5,7 @@
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.ReportController;
+import com.xact.assessment.dtos.Recommendation;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
@@ -35,8 +36,8 @@ class ReportControllerTest {
     private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
 
-    private  final AnswerService answerService=Mockito.mock(AnswerService.class);
-    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService=Mockito.mock(TopicAndParameterLevelAssessmentService.class);
+    private final AnswerService answerService = Mockito.mock(AnswerService.class);
+    private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService = Mockito.mock(TopicAndParameterLevelAssessmentService.class);
     private ReportController reportController = new ReportController(reportService, assessmentService, userAuthService);
 
     @Test
@@ -57,7 +58,7 @@ class ReportControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -65,11 +66,11 @@ class ReportControllerTest {
 
         when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
         when(reportService.generateReport(assessmentId)).thenReturn(getMockWorkbook());
-        List<ParameterLevelRating> parameterLevelRatings =new ArrayList<>();
+        List<ParameterLevelRating> parameterLevelRatings = new ArrayList<>();
         when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterLevelRatings);
-        List<Answer> answers=new ArrayList<>();
+        List<Answer> answers = new ArrayList<>();
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
-        List<TopicLevelRating> topicLevelRatings =new ArrayList<>();
+        List<TopicLevelRating> topicLevelRatings = new ArrayList<>();
         when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicLevelRatings);
 
         MutableHttpResponse<byte[]> xlsDataResponse = reportController.getReport(assessmentId, authentication);
@@ -88,7 +89,7 @@ class ReportControllerTest {
     }
 
     @Test
-    void shouldGetAssessmentReportData(){
+    void shouldGetAssessmentReportData() {
         Integer assessmentId = 123;
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
@@ -105,7 +106,7 @@ class ReportControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUser assessmentUser = new AssessmentUser();
@@ -120,7 +121,7 @@ class ReportControllerTest {
         assessmentCategory1.setCategoryName("First Category");
         assessmentCategory1.setActive(true);
         assessmentCategories.add(assessmentCategory1);
-        AssessmentCategory assessmentCategory2 = new AssessmentCategory("Second Category",true,"2");
+        AssessmentCategory assessmentCategory2 = new AssessmentCategory("Second Category", true, "2");
         assessmentCategory2.setCategoryId(2);
         assessmentCategories.add(assessmentCategory2);
 
@@ -131,7 +132,7 @@ class ReportControllerTest {
         assessmentModule.setCategory(assessmentCategory1);
         assessmentModule.setActive(true);
 
-        AssessmentModule assessmentModule1 = new AssessmentModule("Second Module",assessmentCategory2,true,"");
+        AssessmentModule assessmentModule1 = new AssessmentModule("Second Module", assessmentCategory2, true, "");
 
         assessmentCategory1.setModules(Set.of(assessmentModule));
         assessmentCategory2.setModules(Set.of(assessmentModule1));
@@ -178,13 +179,13 @@ class ReportControllerTest {
 
         when(reportService.generateSunburstData(assessment)).thenReturn(assessmentCategories);
 
-        MutableHttpResponse<ReportDataResponse>  actualResponse = reportController.getAssessmentReportData(assessmentId,authentication);
+        MutableHttpResponse<ReportDataResponse> actualResponse = reportController.getAssessmentReportData(assessmentId, authentication);
         MutableHttpResponse<ReportDataResponse> expectedResponse = HttpResponse.ok();
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
     }
 
     @Test
-    void shouldGetTemplateReport(){
+    void shouldGetTemplateReport() {
         MutableHttpResponse<byte[]> actualResponse = reportController.getReportTemplate();
         MutableHttpResponse<ReportDataResponse> expectedResponse = HttpResponse.ok();
         assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
@@ -208,22 +209,27 @@ class ReportControllerTest {
         Date updated = new Date(2022 - 4 - 13);
         Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
 
-        Assessment assessment = new Assessment(1, "Name","Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
         userId.setAssessment(assessment);
 
         AssessmentUser assessmentUser = new AssessmentUser();
         assessmentUser.setUserId(userId);
 
-        when(assessmentService.getAssessment(assessment.getAssessmentId(),user)).thenReturn(assessment);
-        Recommendation recommendation = new Recommendation("recommendation", RecommendationDeliveryHorizon.NOW, RecommendationImpact.LOW, RecommendationEffort.LOW,"category",new Date());
-        Recommendation recommendation1 = new Recommendation("recommendation", RecommendationDeliveryHorizon.NEXT,RecommendationImpact.LOW,RecommendationEffort.LOW,"category",new Date());
-        List<Recommendation> recommendations = new ArrayList<>();
+        when(assessmentService.getAssessment(assessment.getAssessmentId(), user)).thenReturn(assessment);
+
+        com.xact.assessment.dtos.Recommendation recommendation = new com.xact.assessment.dtos.Recommendation();
+        recommendation.setRecommendation("recommendation");
+        recommendation.setDeliveryHorizon(RecommendationDeliveryHorizon.LATER);
+        recommendation.setEffort(RecommendationEffort.LOW);
+        recommendation.setImpact(RecommendationImpact.HIGH);
+        recommendation.setCategoryName("new");
+
+        List<com.xact.assessment.dtos.Recommendation> recommendations = new ArrayList<>();
         recommendations.add(recommendation);
-        recommendations.add(recommendation1);
 
         when(reportService.getRecommendations(assessmentId)).thenReturn(recommendations);
 
-        HttpResponse<List<Recommendation>> actualResponse = reportController.getRecommendations(1,authentication);
+        HttpResponse<List<Recommendation>> actualResponse = reportController.getRecommendations(1, authentication);
 
         assertEquals(HttpStatus.OK, actualResponse.status());
     }

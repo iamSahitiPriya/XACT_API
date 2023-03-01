@@ -35,6 +35,9 @@ public class TopicLevelRecommendationService {
         topicLevelRecommendationRepository.deleteById(recommendationId);
     }
 
+    public boolean existsById(Integer recommendationId) {
+        return topicLevelRecommendationRepository.existsById(recommendationId);
+    }
 
     public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
         TopicLevelRecommendation topicLevelRecommendation = findById(topicLevelRecommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
@@ -67,7 +70,7 @@ public class TopicLevelRecommendationService {
 
     private TopicLevelRecommendation updateTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
         if (topicLevelRecommendation.getRecommendationId() != null) {
-            topicLevelRecommendationRepository.update(topicLevelRecommendation);
+                topicLevelRecommendationRepository.update(topicLevelRecommendation);
         }
         return topicLevelRecommendation;
     }

@@ -123,6 +123,7 @@ class TopicServiceTest {
         when(topicLevelRatingService.save(topicLevelRating1)).thenReturn(topicLevelRating1);
         TopicLevelRating actualResponse = topicService.saveRatingAndRecommendation(topicLevelRating1);
         when(topicService.getTopicAssessmentRecommendationData(assessmentId1,topicId)).thenReturn(topicLevelRecommendationList);
+        when(topicLevelRecommendationService.existsById(1)).thenReturn(true);
 
 
         assertEquals(topicLevelRating1.getRating(), actualResponse.getRating());

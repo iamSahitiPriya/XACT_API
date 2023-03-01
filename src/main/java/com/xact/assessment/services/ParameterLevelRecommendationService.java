@@ -31,6 +31,9 @@ public class ParameterLevelRecommendationService {
         return parameterLevelRecommendationRepository.findById(recommendationId);
     }
 
+    public boolean existsById(Integer recommendationId) {
+        return parameterLevelRecommendationRepository.existsById(recommendationId);
+    }
 
     public void deleteById(Integer recommendationId) {
         parameterLevelRecommendationRepository.deleteById(recommendationId);
@@ -45,7 +48,7 @@ public class ParameterLevelRecommendationService {
 
     private ParameterLevelRecommendation updateParameterRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
         if (parameterLevelRecommendation.getRecommendationId() != null) {
-            parameterLevelRecommendationRepository.update(parameterLevelRecommendation);
+                parameterLevelRecommendationRepository.update(parameterLevelRecommendation);
         }
         return parameterLevelRecommendation;
     }

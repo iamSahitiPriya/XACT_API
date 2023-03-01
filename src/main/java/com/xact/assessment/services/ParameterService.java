@@ -84,6 +84,9 @@ public class ParameterService {
         return parameterLevelRecommendationService.findByAssessmentAndParameter(assessmentId, parameterId);
     }
 
+    public boolean checkParameterRecommendationId(Integer recommendationId) {
+        return parameterLevelRecommendationService.existsById(recommendationId);
+    }
 
     public void deleteParameterRecommendation(Integer recommendationId) {
         parameterLevelRecommendationService.deleteById(recommendationId);

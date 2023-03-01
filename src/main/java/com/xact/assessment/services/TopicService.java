@@ -83,6 +83,11 @@ public class TopicService {
     }
 
 
+    public boolean checkTopicRecommendationId(Integer recommendationId) {
+        return topicLevelRecommendationService.existsById(recommendationId);
+    }
+
+
     public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
         return topicLevelRecommendationService.findByAssessment(assessmentId);
     }
@@ -122,6 +127,6 @@ public class TopicService {
 
     public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
         AssessmentTopic assessmentTopic = getTopic(topicId).orElseThrow();
-        return topicLevelRecommendationService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, assessmentTopic);
+        return topicLevelRecommendationService.saveTopicRecommendation(topicLevelRecommendationRequest,assessment,assessmentTopic);
     }
 }

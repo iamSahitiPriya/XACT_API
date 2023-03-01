@@ -1,6 +1,6 @@
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentParameter;
 import com.xact.assessment.models.ParameterLevelRecommendation;
@@ -36,7 +36,7 @@ public class ParameterLevelRecommendationService {
         parameterLevelRecommendationRepository.deleteById(recommendationId);
     }
 
-    public ParameterLevelRecommendation updateParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
         ParameterLevelRecommendation parameterLevelRecommendation = findById(parameterLevelRecommendationRequest.getRecommendationId()).orElse(new ParameterLevelRecommendation());
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
         setParameterLevelRecommendation(parameterLevelRecommendation, parameterLevelRecommendationRequest);
@@ -50,14 +50,14 @@ public class ParameterLevelRecommendationService {
         return parameterLevelRecommendation;
     }
 
-    private void setParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation, ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
+    private void setParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation, RecommendationRequest parameterLevelRecommendationRequest) {
         parameterLevelRecommendation.setRecommendationText(parameterLevelRecommendationRequest.getRecommendationText());
         parameterLevelRecommendation.setRecommendationImpact(parameterLevelRecommendationRequest.getImpact());
         parameterLevelRecommendation.setRecommendationEffort(parameterLevelRecommendationRequest.getEffort());
         parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, AssessmentParameter assessmentParameter) {
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, AssessmentParameter assessmentParameter) {
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setParameter(assessmentParameter);

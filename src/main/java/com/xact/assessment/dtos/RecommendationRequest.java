@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.dtos;
@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+
 @Introspected
 @NoArgsConstructor
 @Getter
@@ -17,7 +19,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RecommendationRequest {
     private Integer recommendationId;
-    private String recommendation;
+    private String recommendationText;
     private RecommendationImpact impact;
     private RecommendationEffort effort;
     private RecommendationDeliveryHorizon deliveryHorizon;

@@ -289,19 +289,19 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.getTopic(topicId);
     }
 
-    public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
-        return topicAndParameterLevelAssessmentService.updateTopicRecommendation(topicLevelRecommendationRequest);
+    public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
+        return topicAndParameterLevelAssessmentService.updateTopicRecommendation(recommendationRequest);
     }
 
-    public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
-        return topicAndParameterLevelAssessmentService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, topicId);
+    public TopicLevelRecommendation saveTopicRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId) {
+        return topicAndParameterLevelAssessmentService.saveTopicRecommendation(recommendationRequest, assessment, topicId);
     }
 
-    public ParameterLevelRecommendation updateParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
         return topicAndParameterLevelAssessmentService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         return topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
     }
 

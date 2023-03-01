@@ -190,7 +190,7 @@ public class AssessmentController {
     @Patch(value = "/{assessmentId}/parameters/{parameterId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @Transactional
-    public HttpResponse<RecommendationResponse> saveParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Authentication authentication) {
+    public HttpResponse<RecommendationResponse> saveParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @Body RecommendationRequest parameterLevelRecommendationRequest, Authentication authentication) {
         LOGGER.info("Update individual parameter maturity recommendation. assessment: {}, parameter: {}", assessmentId, parameterId);
         User user = userAuthService.getCurrentUser(authentication);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
@@ -212,17 +212,17 @@ public class AssessmentController {
     @Patch(value = "/{assessmentId}/topics/{topicId}/recommendations", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @Transactional
-    public HttpResponse<RecommendationResponse> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body TopicLevelRecommendationRequest topicLevelRecommendationRequest, Authentication authentication) {
+    public HttpResponse<RecommendationResponse> saveTopicRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer topicId, @Body RecommendationRequest recommendationRequest, Authentication authentication) {
         LOGGER.info("Update individual topic recommendation. assessment: {}, topic: {}", assessmentId, topicId);
         User user = userAuthService.getCurrentUser(authentication);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         RecommendationResponse topicLevelRecommendationResponse = new RecommendationResponse();
         if (assessment.isEditable()) {
             TopicLevelRecommendation topicLevelRecommendation;
-            if (topicLevelRecommendationRequest.getRecommendationId() != null) {
-                topicLevelRecommendation = assessmentService.updateTopicRecommendation(topicLevelRecommendationRequest);
+            if (recommendationRequest.getRecommendationId() != null) {
+                topicLevelRecommendation = assessmentService.updateTopicRecommendation(recommendationRequest);
             } else {
-                topicLevelRecommendation = assessmentService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, topicId);
+                topicLevelRecommendation = assessmentService.saveTopicRecommendation(recommendationRequest, assessment, topicId);
             }
             topicLevelRecommendationResponse = getTopicLevelRecommendationResponse(user, assessment, topicLevelRecommendation);
             updateAssessment(assessment);
@@ -232,7 +232,7 @@ public class AssessmentController {
 
     @Delete(value = "/{assessmentId}/topics/{topicId}/recommendations/{recommendationId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicLevelRecommendationRequest> deleteRecommendation
+    public HttpResponse<RecommendationRequest> deleteRecommendation
             (@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer
                     topicId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
         LOGGER.info("Delete recommendation. assessment: {}, topic: {}", assessmentId, topicId);
@@ -246,7 +246,7 @@ public class AssessmentController {
 
     @Delete(value = "/{assessmentId}/parameters/{parameterId}/recommendations/{recommendationId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<ParameterLevelRecommendationRequest> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
+    public HttpResponse<RecommendationResponse> deleteParameterRecommendation(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("parameterId") Integer parameterId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         LOGGER.info("Delete recommendation. assessment: {}, parameter: {}", assessmentId, parameterId);
         if (assessment.isEditable()) {
@@ -471,11 +471,11 @@ public class AssessmentController {
         return parameterRatingAndRecommendationsResponse;
     }
 
-    private List<ParameterLevelRecommendationRequest> getParameterRecommendation(List<ParameterLevelRecommendation> parameterLevelRecommendationList, Integer parameterId) {
-        List<ParameterLevelRecommendationRequest> parameterLevelRecommendationRequests = new ArrayList<>();
+    private List<RecommendationRequest> getParameterRecommendation(List<ParameterLevelRecommendation> parameterLevelRecommendationList, Integer parameterId) {
+        List<RecommendationRequest> parameterLevelRecommendationRequests = new ArrayList<>();
         List<ParameterLevelRecommendation> matchingList = parameterLevelRecommendationList.stream().filter(parameterLevelRecommendation -> parameterId.equals(parameterLevelRecommendation.getParameter().getParameterId())).toList();
         for (ParameterLevelRecommendation parameterLevelRecommendation : matchingList) {
-            ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = modelMapper.map(parameterLevelRecommendation, ParameterLevelRecommendationRequest.class);
+            RecommendationRequest parameterLevelRecommendationRequest = modelMapper.map(parameterLevelRecommendation, RecommendationRequest.class);
             parameterLevelRecommendationRequests.add(parameterLevelRecommendationRequest);
         }
         return parameterLevelRecommendationRequests;
@@ -491,7 +491,7 @@ public class AssessmentController {
             TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
             topicRatingAndRecommendation.setTopicId(topicId);
             topicRatingAndRecommendation.setRating(topicLevelRating.getRating());
-            topicRatingAndRecommendation.setTopicLevelRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
+            topicRatingAndRecommendation.setRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
             topicRatingAndRecommendationsResponse.add(topicRatingAndRecommendation);
         }
 
@@ -504,21 +504,21 @@ public class AssessmentController {
                 processedTopics.add(topicId);
                 TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
                 topicRatingAndRecommendation.setTopicId(topicId);
-                topicRatingAndRecommendation.setTopicLevelRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
+                topicRatingAndRecommendation.setRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
                 topicRatingAndRecommendationsResponse.add(topicRatingAndRecommendation);
             }
         }
         return topicRatingAndRecommendationsResponse;
     }
 
-    private List<TopicLevelRecommendationRequest> getTopicRecommendation(List<TopicLevelRecommendation> topicLevelRecommendationList, Integer topicId) {
-        List<TopicLevelRecommendationRequest> topicLevelRecommendationRequests = new ArrayList<>();
+    private List<RecommendationRequest> getTopicRecommendation(List<TopicLevelRecommendation> topicLevelRecommendationList, Integer topicId) {
+        List<RecommendationRequest> recommendationRequests = new ArrayList<>();
         List<TopicLevelRecommendation> matchingList = topicLevelRecommendationList.stream().filter(topicLevelRecommendation -> topicId.equals(topicLevelRecommendation.getTopic().getTopicId())).toList();
         for (TopicLevelRecommendation topicLevelRecommendation : matchingList) {
-            TopicLevelRecommendationRequest topicLevelRecommendationRequest = modelMapper.map(topicLevelRecommendation, TopicLevelRecommendationRequest.class);
-            topicLevelRecommendationRequests.add(topicLevelRecommendationRequest);
+            RecommendationRequest recommendationRequest = modelMapper.map(topicLevelRecommendation, RecommendationRequest.class);
+            recommendationRequests.add(recommendationRequest);
         }
-        return topicLevelRecommendationRequests;
+        return recommendationRequests;
     }
 
     private void updateAssessment(Assessment assessment) {

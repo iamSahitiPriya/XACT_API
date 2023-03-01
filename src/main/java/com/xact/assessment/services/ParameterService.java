@@ -4,7 +4,7 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterRepository;
 import jakarta.inject.Singleton;
@@ -113,11 +113,11 @@ public class ParameterService {
         return parameterLevelRecommendationService.findByAssessment(assessmentId);
     }
 
-    public ParameterLevelRecommendation updateParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
         return parameterLevelRecommendationService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         AssessmentParameter assessmentParameter = getParameter(parameterId).orElseThrow();
         return parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, assessmentParameter);
     }

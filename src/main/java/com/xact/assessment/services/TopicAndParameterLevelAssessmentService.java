@@ -5,8 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ActivityType;
-import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
-import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.dtos.UpdateAnswerRequest;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
@@ -125,20 +124,20 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterService.getParameterRecommendationByAssessmentId(assessmentId);
     }
 
-    public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
-        return topicService.updateTopicRecommendation(topicLevelRecommendationRequest);
+    public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
+        return topicService.updateTopicRecommendation(recommendationRequest);
     }
 
-    public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
-        return topicService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, topicId);
+    public TopicLevelRecommendation saveTopicRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId) {
+        return topicService.saveTopicRecommendation(recommendationRequest, assessment, topicId);
 
     }
 
-    public ParameterLevelRecommendation updateParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest) {
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
         return parameterService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
     }
 

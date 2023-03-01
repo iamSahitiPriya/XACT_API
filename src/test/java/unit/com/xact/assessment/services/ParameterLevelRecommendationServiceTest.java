@@ -1,7 +1,7 @@
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
 import com.xact.assessment.dtos.RecommendationEffort;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ParameterLevelRecommendationRepository;
 import com.xact.assessment.services.ParameterLevelRecommendationService;
@@ -40,7 +40,7 @@ class ParameterLevelRecommendationServiceTest {
         assessmentParameter.setTopic(new AssessmentTopic());
         assessmentParameter.setActive(true);
 
-        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest(null,"text",LOW, RecommendationEffort.LOW,NOW);
+       RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest(null,"text",LOW, RecommendationEffort.LOW,NOW);
         ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
         when(parameterLevelRecommendationRepository.save(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
 

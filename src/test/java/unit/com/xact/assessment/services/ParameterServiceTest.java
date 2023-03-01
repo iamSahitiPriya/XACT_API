@@ -1,8 +1,8 @@
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
 import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
 import com.xact.assessment.dtos.RecommendationImpact;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterRepository;
 import com.xact.assessment.services.AssessmentParameterReferenceService;
@@ -93,7 +93,7 @@ class ParameterServiceTest {
 
         parameterRatingAndRecommendation.setRating(1);
 
-        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
+        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.LOW);
@@ -143,7 +143,7 @@ class ParameterServiceTest {
         parameterRatingAndRecommendation.setParameterId(1);
         parameterRatingAndRecommendation.setRating(1);
 
-        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
+        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(1);
         parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
@@ -262,7 +262,7 @@ class ParameterServiceTest {
         parameterRatingAndRecommendation.setParameterId(1);
         parameterRatingAndRecommendation.setRating(1);
 
-        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
+        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(recommendationId);
         parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
@@ -301,7 +301,7 @@ class ParameterServiceTest {
         parameterRatingAndRecommendation.setParameterId(1);
         parameterRatingAndRecommendation.setRating(1);
 
-        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
+        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(1);
         parameterLevelRecommendationRequest.setRecommendationText("");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);

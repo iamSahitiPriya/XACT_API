@@ -4,7 +4,7 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
 import jakarta.inject.Singleton;
@@ -116,12 +116,12 @@ public class TopicService {
         return topicLevelRecommendationService.findByAssessment(assessmentId);
     }
 
-    public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
-        return topicLevelRecommendationService.updateTopicRecommendation(topicLevelRecommendationRequest);
+    public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
+        return topicLevelRecommendationService.updateTopicRecommendation(recommendationRequest);
     }
 
-    public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, Integer topicId) {
+    public TopicLevelRecommendation saveTopicRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId) {
         AssessmentTopic assessmentTopic = getTopic(topicId).orElseThrow();
-        return topicLevelRecommendationService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, assessmentTopic);
+        return topicLevelRecommendationService.saveTopicRecommendation(recommendationRequest, assessment, assessmentTopic);
     }
 }

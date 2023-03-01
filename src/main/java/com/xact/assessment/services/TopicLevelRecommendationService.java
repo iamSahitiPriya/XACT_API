@@ -1,6 +1,6 @@
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.models.TopicLevelRecommendation;
@@ -36,25 +36,25 @@ public class TopicLevelRecommendationService {
     }
 
 
-    public TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
-        TopicLevelRecommendation topicLevelRecommendation = findById(topicLevelRecommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
-        topicLevelRecommendation.setRecommendationId(topicLevelRecommendationRequest.getRecommendationId());
-        setTopicLevelRecommendation(topicLevelRecommendation, topicLevelRecommendationRequest);
+    public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
+        TopicLevelRecommendation topicLevelRecommendation = findById(recommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
+        topicLevelRecommendation.setRecommendationId(recommendationRequest.getRecommendationId());
+        setTopicLevelRecommendation(topicLevelRecommendation, recommendationRequest);
         return updateTopicLevelRecommendation(topicLevelRecommendation);
     }
 
-    private void setTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation, TopicLevelRecommendationRequest topicLevelRecommendationRequest) {
-        topicLevelRecommendation.setRecommendationText(topicLevelRecommendationRequest.getRecommendation());
-        topicLevelRecommendation.setRecommendationImpact(topicLevelRecommendationRequest.getImpact());
-        topicLevelRecommendation.setRecommendationEffort(topicLevelRecommendationRequest.getEffort());
-        topicLevelRecommendation.setDeliveryHorizon(topicLevelRecommendationRequest.getDeliveryHorizon());
+    private void setTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation, RecommendationRequest recommendationRequest) {
+        topicLevelRecommendation.setRecommendationText(recommendationRequest.getRecommendationText());
+        topicLevelRecommendation.setRecommendationImpact(recommendationRequest.getImpact());
+        topicLevelRecommendation.setRecommendationEffort(recommendationRequest.getEffort());
+        topicLevelRecommendation.setDeliveryHorizon(recommendationRequest.getDeliveryHorizon());
     }
 
-    public TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendationRequest topicLevelRecommendationRequest, Assessment assessment, AssessmentTopic assessmentTopic) {
+    public TopicLevelRecommendation saveTopicRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, AssessmentTopic assessmentTopic) {
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
-        setTopicLevelRecommendation(topicLevelRecommendation, topicLevelRecommendationRequest);
+        setTopicLevelRecommendation(topicLevelRecommendation, recommendationRequest);
         return saveTopicLevelRecommendation(topicLevelRecommendation);
     }
 

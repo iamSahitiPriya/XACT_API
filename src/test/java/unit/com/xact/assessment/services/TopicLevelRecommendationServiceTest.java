@@ -5,7 +5,7 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.dtos.RecommendationEffort;
-import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import com.xact.assessment.services.TopicLevelRecommendationService;
@@ -46,11 +46,11 @@ class TopicLevelRecommendationServiceTest {
         assessmentTopic.setModule(new AssessmentModule());
         assessmentTopic.setActive(true);
 
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest(null, "text", LOW, RecommendationEffort.LOW, NOW);
-        TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
+        RecommendationRequest recommendationRequest = new RecommendationRequest(null, "text", LOW, RecommendationEffort.LOW, NOW);
+        TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(recommendationRequest, TopicLevelRecommendation.class);
         when(topicLevelRecommendationRepository.save(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
 
-        topicLevelRecommendationService.saveTopicRecommendation(topicLevelRecommendationRequest, assessment, assessmentTopic);
+        topicLevelRecommendationService.saveTopicRecommendation(recommendationRequest, assessment, assessmentTopic);
 
         verify(topicLevelRecommendationRepository).save(any(TopicLevelRecommendation.class));
 
@@ -70,12 +70,12 @@ class TopicLevelRecommendationServiceTest {
         assessmentTopic.setModule(new AssessmentModule());
         assessmentTopic.setActive(true);
 
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest(1, "text", LOW, RecommendationEffort.LOW, NOW);
-        TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
+        RecommendationRequest recommendationRequest = new RecommendationRequest(1, "text", LOW, RecommendationEffort.LOW, NOW);
+        TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(recommendationRequest, TopicLevelRecommendation.class);
         when(topicLevelRecommendationRepository.findById(1)).thenReturn(Optional.ofNullable(topicLevelRecommendation));
         when(topicLevelRecommendationRepository.update(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
 
-        topicLevelRecommendationService.updateTopicRecommendation(topicLevelRecommendationRequest);
+        topicLevelRecommendationService.updateTopicRecommendation(recommendationRequest);
 
         verify(topicLevelRecommendationRepository).update(any(TopicLevelRecommendation.class));
     }

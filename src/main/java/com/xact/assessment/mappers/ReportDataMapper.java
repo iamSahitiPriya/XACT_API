@@ -4,8 +4,8 @@
 
 package com.xact.assessment.mappers;
 
-import com.xact.assessment.dtos.*;
 import com.xact.assessment.dtos.Recommendation;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 
 import java.util.ArrayList;

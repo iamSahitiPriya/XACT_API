@@ -232,7 +232,7 @@ public class AssessmentController {
 
     @Delete(value = "/{assessmentId}/topics/{topicId}/recommendations/{recommendationId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<RecommendationRequest> deleteRecommendation
+    public HttpResponse<RecommendationRequest> deleteTopicRecommendation
             (@PathVariable("assessmentId") Integer assessmentId, @PathVariable("topicId") Integer
                     topicId, @PathVariable("recommendationId") Integer recommendationId, Authentication authentication) {
         LOGGER.info("Delete recommendation. assessment: {}, topic: {}", assessmentId, topicId);

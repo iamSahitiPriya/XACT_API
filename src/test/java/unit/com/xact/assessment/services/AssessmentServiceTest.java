@@ -577,7 +577,7 @@ class AssessmentServiceTest {
         List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(15);
 
         verify(assessmentRepository).findInactiveAssessments(any(Date.class));
-        assertEquals(inactiveAssessments.size(),1);
+        assertEquals(1,inactiveAssessments.size());
 
 
     }

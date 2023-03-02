@@ -223,6 +223,10 @@ class ReportControllerTest {
         recommendation.setEffort(RecommendationEffort.LOW);
         recommendation.setImpact(RecommendationImpact.HIGH);
         recommendation.setCategoryName("new");
+        recommendation.setRecommendationId(1);
+        recommendation.setTopic(1);
+        recommendation.setModule(1);
+        recommendation.setCategory(1);
 
         List<com.xact.assessment.dtos.Recommendation> recommendations = new ArrayList<>();
         recommendations.add(recommendation);

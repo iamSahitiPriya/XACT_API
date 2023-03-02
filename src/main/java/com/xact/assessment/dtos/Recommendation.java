@@ -16,12 +16,16 @@ import java.util.Date;
 @Getter
 @Setter
 public class Recommendation {
+    private Integer recommendationId;
     private String recommendation;
     private RecommendationDeliveryHorizon deliveryHorizon;
     private RecommendationImpact impact;
     private RecommendationEffort effort;
     private String categoryName;
     private Date updatedAt;
+    private Integer topic;
+    private Integer module;
+    private Integer category;
 
     public static int compareByDeliveryHorizon(Recommendation recommendation1, Recommendation recommendation2) {
         return recommendation1.getDeliveryHorizon().compareTo(recommendation2.getDeliveryHorizon());

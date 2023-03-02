@@ -30,7 +30,7 @@ public class NotificationSchedulerService {
         this.assessmentService = assessmentService;
     }
 
-    @Scheduled(fixedDelay = "${email.inactive.fixedDelay}")
+    @Scheduled(fixedDelay = "${notification.inactive.fixedDelay}")
     public void saveInactiveAssessmentNotification() throws JsonProcessingException {
         LOGGER.info("Sending email for Inactive assessment ...");
         List<Notification> inactiveNotifications = notificationService.getNotificationBy(NotificationType.INACTIVE_V1);
@@ -41,5 +41,15 @@ public class NotificationSchedulerService {
 
             }
         }
+    }
+
+    @Scheduled(initialDelay = "${notification.feedback.initialDelay}", fixedDelay = "${notification.feedback.delay}")
+    public void saveFeedbackNotificationForFinishedAssessments() {
+        LOGGER.info("Sending email for feedback ...");
+        List<Assessment> finishedAssessments = assessmentService.getFinishedAssessments();
+        List<Notification> notifications = notificationService.findByType(NotificationType.FEEDBACK_V1);
+        finishedAssessments.forEach(finishedAssessment ->
+            notificationService.saveFeedbackNotificationForFinishedAssessments(finishedAssessment,notifications)
+        );
     }
 }

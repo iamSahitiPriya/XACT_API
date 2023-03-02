@@ -4,14 +4,9 @@
 
 package com.xact.assessment.mappers;
 
-import com.xact.assessment.dtos.ReportCategoryResponse;
-import com.xact.assessment.dtos.ReportModuleResponse;
-import com.xact.assessment.dtos.ReportParameterResponse;
-import com.xact.assessment.dtos.ReportTopicResponse;
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.AssessmentModule;
-import com.xact.assessment.models.AssessmentParameter;
-import com.xact.assessment.models.AssessmentTopic;
+import com.xact.assessment.dtos.*;
+import com.xact.assessment.dtos.Recommendation;
+import com.xact.assessment.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,5 +73,39 @@ public class ReportDataMapper {
         reportCategoryResponse.setName(assessmentCategory.getCategoryName());
         reportCategoryResponse.setRating(assessmentCategory.getCategoryAverage());
         return reportCategoryResponse;
+    }
+
+    public Recommendation mapReportRecommendationResponse(TopicLevelRecommendation recommendation) {
+        Recommendation recommendationResponse = new Recommendation();
+        recommendationResponse.setRecommendationId(recommendation.getRecommendationId());
+        recommendationResponse.setRecommendation(recommendation.getRecommendationText());
+        recommendationResponse.setDeliveryHorizon(recommendation.getDeliveryHorizon());
+        recommendationResponse.setImpact(recommendation.getRecommendationImpact());
+        recommendationResponse.setEffort(recommendation.getRecommendationEffort());
+
+        recommendationResponse.setTopic(recommendation.getTopic().getTopicId());
+        recommendationResponse.setModule(recommendation.getTopic().getModule().getModuleId());
+        recommendationResponse.setCategory(recommendation.getTopic().getModule().getCategory().getCategoryId());
+
+        recommendationResponse.setUpdatedAt(recommendation.getUpdatedAt());
+        recommendationResponse.setCategoryName(recommendation.getTopic().getModule().getCategory().getCategoryName());
+        return recommendationResponse;
+    }
+
+    public Recommendation mapReportRecommendationResponse(ParameterLevelRecommendation recommendation) {
+        Recommendation recommendationResponse = new Recommendation();
+        recommendationResponse.setRecommendationId(recommendation.getRecommendationId());
+        recommendationResponse.setRecommendation(recommendation.getRecommendationText());
+        recommendationResponse.setDeliveryHorizon(recommendation.getDeliveryHorizon());
+        recommendationResponse.setImpact(recommendation.getRecommendationImpact());
+        recommendationResponse.setEffort(recommendation.getRecommendationEffort());
+
+        recommendationResponse.setTopic(recommendation.getParameter().getTopic().getTopicId());
+        recommendationResponse.setModule(recommendation.getParameter().getTopic().getModule().getModuleId());
+        recommendationResponse.setCategory(recommendation.getParameter().getTopic().getModule().getCategory().getCategoryId());
+
+        recommendationResponse.setUpdatedAt(recommendation.getUpdatedAt());
+        recommendationResponse.setCategoryName(recommendation.getParameter().getTopic().getModule().getCategory().getCategoryName());
+        return recommendationResponse;
     }
 }

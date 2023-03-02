@@ -13,7 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class RecommendationResponse {
     private Integer recommendationId;
-    private String recommendation;
+    private String recommendationText;
     private RecommendationDeliveryHorizon deliveryHorizon;
     private RecommendationImpact impact;
     private RecommendationEffort effort;

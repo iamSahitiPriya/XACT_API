@@ -108,7 +108,7 @@ public class EmailSchedulerService {
         context.put("homePageUrl", profileConfig.getHomePageUrl());
         context.put("microSiteUrl", profileConfig.getMicroSiteUrl());
         context.put("supportUrl", profileConfig.getSupportUrl());
-
+        context.put("feedbackUrl",profileConfig.getFeedbackUrl());
         template.merge(context, writer);
 
         return writer.toString();

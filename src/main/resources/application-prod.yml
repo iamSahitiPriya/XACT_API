@@ -38,6 +38,7 @@ profile:
   homePageUrl: "https://xact.thoughtworks.net/"
   supportUrl: "https://sites.google.com/thoughtworks.com/x-act"
   microSiteUrl: "https://sites.google.com/thoughtworks.com/x-act"
+  feedbackUrl: "https://docs.google.com/forms/d/e/1FAIpQLSdazGMcKL5cURmLZ54JgwBOHk6P7KEpbH0ZcQvaOV78_o2GJA/viewform"
 
 
 token:
@@ -55,8 +56,6 @@ account:
   initialDelay: "1m"
 
 email:
-  inactive:
-    fixedDelay: "1d"
   url: "https://api.thoughtworks.net"
   scope: "email.send"
   endpoint: "/notification/messages"
@@ -65,6 +64,13 @@ email:
   maskEmail : false
   fromEmail: "project-xact@thoughtworks.net"
   name: "X-ACT Support"
+
+notification:
+  feedback:
+    initialDelay: "1m"
+    delay : "1d"
+  inactive:
+    fixedDelay: "1d"
 
 cleanup:
   initialDelay: "1m"

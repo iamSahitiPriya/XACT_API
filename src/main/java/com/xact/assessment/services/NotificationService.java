@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.dtos.AssessmentAction;
+import com.xact.assessment.dtos.EmailPayload;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import io.micronaut.data.exceptions.EmptyResultException;
@@ -27,6 +28,9 @@ public class NotificationService {
     public static final String ASSESSMENT_NAME = "assessment_name";
     public static final String OWNER_NAME = "ownerName";
     public static final String OWNER_EMAIL = "ownerEmail";
+
+    public static final String UPDATED_AT = "updated_at";
+    public static final String COLLABORATORS = "collaborators";
     public static final int DURATION = 5;
     private final NotificationRepository notificationRepository;
     private final EmailConfig emailConfig;
@@ -37,6 +41,49 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
         this.emailConfig = emailConfig;
         this.userAuthService = userAuthService;
+    }
+
+
+    @SneakyThrows
+    private boolean isNotificationSent(Assessment assessment, List<Notification> notifications) {
+        for (Notification notification : notifications) {
+            EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(), EmailPayload.class);
+            if (emailPayload.getAssessmentId().equals(assessment.getAssessmentId().toString())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Notification getNotificationForFeedback(Assessment assessment) throws JsonProcessingException {
+        List<UserInfo> userInfos = getLoggedInUserInfo(assessment);
+        Set<String> userEmails = userInfos.stream().map(UserInfo::getEmail).collect(Collectors.toSet());
+        Notification notification = getNotification(userEmails);
+        notification.setTemplateName(NotificationType.FEEDBACK_V1);
+        Set<String> userDetails = userInfos.stream().map(UserInfo -> UserInfo.getFirstName() + " " + UserInfo.getLastName() + ":" + UserInfo.getEmail()).collect(Collectors.toSet());
+        Map<String, String> payload = getPayloadForFeedback(assessment, userDetails);
+        ObjectMapper objectMapper = new ObjectMapper();
+        notification.setPayload(objectMapper.writeValueAsString(payload));
+
+        return notification;
+    }
+
+    private Map<String, String> getPayloadForFeedback(Assessment assessment, Set<String> userNames) {
+        Map<String, String> payload = getAssessmentCommonPayload(assessment);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm a zz");
+        String date = simpleDateFormat.format(assessment.getUpdatedAt());
+        String time = timeFormat.format(assessment.getCreatedAt());
+        String updatedAt = date + " " + time;
+        payload.put(UPDATED_AT, updatedAt);
+        payload.put(COLLABORATORS, String.join(",", userNames));
+
+        return payload;
+    }
+
+    private List<UserInfo> getLoggedInUserInfo(Assessment assessment) {
+        Set<String> assessmentUsers = assessment.getAssessmentUsers().stream().map(assessmentUser -> assessmentUser.getUserId().getUserEmail()).collect(Collectors.toSet());
+        return userAuthService.getLoggedInUsers(assessmentUsers);
     }
 
     @SneakyThrows
@@ -267,6 +314,22 @@ public class NotificationService {
             LOGGER.info("No Notification found");
         }
         return inactiveNotifications;
+    }
+
+    public List<Notification> findByType(NotificationType notificationType) {
+        return notificationRepository.findByType(notificationType);
+    }
+
+    public void saveFeedbackNotificationForFinishedAssessments(Assessment assessment, List<Notification> notifications) {
+        try {
+            Notification notification = getNotificationForFeedback(assessment);
+            if (!isNotificationSent(assessment, notifications)) {
+                LOGGER.info("Save notifications for feedback ...");
+                saveNotification(notification);
+            }
+        } catch (JsonProcessingException e) {
+            LOGGER.error("JsonProcessingException");
+        }
     }
 }
 

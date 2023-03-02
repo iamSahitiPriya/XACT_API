@@ -8,11 +8,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.data.exceptions.EmptyResultException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.*;
 
@@ -24,6 +26,7 @@ class NotificationServiceTest {
     NotificationRepository notificationRepository = mock(NotificationRepository.class);
     EmailConfig emailConfig = mock(EmailConfig.class);
     UserAuthService userAuthService = mock(UserAuthService.class);
+
 
     public NotificationServiceTest() {
         notificationService = new NotificationService(notificationRepository, emailConfig, userAuthService);
@@ -208,6 +211,7 @@ class NotificationServiceTest {
         when(userAuthService.getUserInfo(email)).thenReturn(userInfo);
 
 
+
         notificationService.setNotificationForDeleteAssessment(assessment);
         notificationRepository.save(notification);
 
@@ -339,4 +343,75 @@ class NotificationServiceTest {
         Assertions.assertEquals(0, actualNotification.size());
 
     }
+    @Test
+    void shouldSaveNotificationForFeedback() {
+        String email = "abc@thoughtworks.com";
+        Organisation organisation = new Organisation(1, "abC", "ABC", "abc", 6);
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("Assessment");
+        assessment.setCreatedAt(new Date());
+        assessment.setUpdatedAt(new Date(22 - 11 - 2022));
+        assessment.setOrganisation(organisation);
+
+        AssessmentUser assessmentUser = new AssessmentUser();
+        UserId userId = new UserId(email, assessment);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Facilitator);
+        AssessmentUser assessmentUser1 = new AssessmentUser();
+        UserId userId1 = new UserId(email, assessment);
+        assessmentUser1.setUserId(userId1);
+        assessmentUser1.setRole(AssessmentRole.Owner);
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
+        assessmentUsers.add(assessmentUser);
+        assessmentUsers.add(assessmentUser1);
+        assessment.setAssessmentUsers(assessmentUsers);
+        String payload = "{\"assessment_name\":\"New Assessment\",\"created_at\":\"27-Jan-2023 06:33 pm IST\",\"assessment_id\":\"2\",\"organisation_name\":\"EQ International\"}";
+        Notification notification = new Notification(1, NotificationType.FEEDBACK_V1, email, payload, NotificationStatus.N, 0, new Date(22 - 10 - 2022), new Date(22 - 10 - 2022));
+
+        when(notificationRepository.findByType(NotificationType.FEEDBACK_V1)).thenReturn(Collections.singletonList(notification));
+
+        notificationService.saveFeedbackNotificationForFinishedAssessments(assessment, Collections.singletonList(notification));
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    void shouldNotSaveNotificationForFeedbackWhenEmailHasAlreadySent() {
+        String email = "abc@thoughtworks.com";
+        Organisation organisation = new Organisation(1, "abC", "ABC", "abc", 6);
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentName("Assessment");
+        assessment.setCreatedAt(new Date());
+        assessment.setUpdatedAt(new Date(22 - 11 - 2022));
+        assessment.setOrganisation(organisation);
+
+        AssessmentUser assessmentUser = new AssessmentUser();
+        UserId userId = new UserId(email, assessment);
+        assessmentUser.setUserId(userId);
+        assessmentUser.setRole(AssessmentRole.Facilitator);
+        AssessmentUser assessmentUser1 = new AssessmentUser();
+        UserId userId1 = new UserId(email, assessment);
+        assessmentUser1.setUserId(userId1);
+        assessmentUser1.setRole(AssessmentRole.Owner);
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
+        assessmentUsers.add(assessmentUser);
+        assessmentUsers.add(assessmentUser1);
+        assessment.setAssessmentUsers(assessmentUsers);
+        String payload = "{\"assessment_name\":\"New Assessment\",\"created_at\":\"27-Jan-2023 06:33 pm IST\",\"assessment_id\":\"1\",\"organisation_name\":\"EQ International\"}";
+
+        Notification notification = new Notification(1, NotificationType.FEEDBACK_V1, email, payload, NotificationStatus.N, 0, new Date(22 - 10 - 2022), new Date(22 - 10 - 2022));
+
+        when(notificationRepository.findByType(NotificationType.FEEDBACK_V1)).thenReturn(Collections.singletonList(notification));
+
+        notificationService.saveFeedbackNotificationForFinishedAssessments(assessment, Collections.singletonList(notification));
+        notificationService.findByType(NotificationType.FEEDBACK_V1);
+
+        verify(notificationRepository, Mockito.times(0)).save(any(Notification.class));
+
+        verify(notificationRepository).findByType( NotificationType.FEEDBACK_V1);
+    }
+
+
 }

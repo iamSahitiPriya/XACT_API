@@ -22,6 +22,7 @@ import static com.xact.assessment.models.AssessmentStatus.Completed;
 @Singleton
 public class AssessmentService {
 
+    public static final int FEEDBACK_DURATION = 29;
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
     private final AccessControlService accessControlService;
@@ -34,7 +35,7 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(AssessmentRepository assessmentRepository,UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
+    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.accessControlService = accessControlService;
@@ -314,6 +315,14 @@ public class AssessmentService {
 
     public Optional<AssessmentTopic> getTopic(Integer topicId) {
         return topicAndParameterLevelAssessmentService.getTopic(topicId);
+    }
+
+
+    public List<Assessment> getFinishedAssessments() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_YEAR, -FEEDBACK_DURATION);
+        Date completedDate = calendar.getTime();
+        return assessmentRepository.findByCompletedStatus(completedDate);
     }
 
     public List<Assessment> findInactiveAssessments(Integer duration) {

@@ -44,7 +44,7 @@ class AssessmentServiceTest {
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
         accessControlService = mock(AccessControlService.class);
-        assessmentService = new AssessmentService(assessmentRepository,usersAssessmentsService,accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
     }
 
     @Test
@@ -505,6 +505,7 @@ class AssessmentServiceTest {
 
         verify(usersAssessmentsService).getAssessmentFacilitators(assessment.getAssessmentId());
     }
+
     @Test
     void shouldGetFacilitatorsSet() {
         Date created = new Date(22 - 10 - 2022);
@@ -524,6 +525,12 @@ class AssessmentServiceTest {
         verify(usersAssessmentsService).getAssessmentFacilitatorsSet(assessment);
     }
 
+    @Test
+    void shouldReturnListOfCompletedAssessmentsBefore30Days() {
+        assessmentService.getFinishedAssessments();
+
+        verify(assessmentRepository).findByCompletedStatus(any(Date.class));
+    }
     @Test
     void shouldGetInactiveAssessments() {
         Date created = new Date(22 - 10 - 2022);

@@ -15,6 +15,9 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+import java.util.Set;
+
 import static com.xact.assessment.constants.AppConstants.EMAIL;
 import static com.xact.assessment.constants.AppConstants.USER_ID;
 
@@ -56,5 +59,9 @@ public class UserAuthService {
     public UserInfo getUserInfo(String email) {
         UserInfo defaultUserInfo = new UserInfo(email, email, DEFAULT_LAST_NAME, DEFAULT_LOCALE);
         return userRepository.findById(email).orElse(defaultUserInfo);
+    }
+
+    public List<UserInfo> getLoggedInUsers(Set<String> users) {
+        return userRepository.findByUsers(users);
     }
 }

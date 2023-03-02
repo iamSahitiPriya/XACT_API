@@ -19,7 +19,7 @@ import lombok.Setter;
 public class EmailPayload {
 
     @JsonProperty(value = "assessment_id")
-    private String  assessmentId;
+    private String assessmentId;
 
     @JsonProperty(value = "assessment_name")
     private String assessmentName;
@@ -35,4 +35,10 @@ public class EmailPayload {
 
     @JsonProperty(value = "ownerEmail")
     private String ownerEmail;
+
+    @JsonProperty(value = "updated_at")
+    private String updatedAt;
+
+    @JsonProperty(value = "collaborators")
+    private String collaborators;
 }

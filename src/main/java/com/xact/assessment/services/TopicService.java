@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentTopicRepository;
 import jakarta.inject.Singleton;
@@ -63,27 +64,9 @@ public class TopicService {
         return topicLevelRatingService.findByAssessment(assessmentId);
     }
 
-
     public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
         return topicLevelRatingService.findById(topicLevelId);
     }
-
-
-    public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
-        if (topicLevelRecommendation.getRecommendationId() != null) {
-            if (topicLevelRecommendation.hasRecommendation()) {
-                topicLevelRecommendationService.update(topicLevelRecommendation);
-            } else {
-                topicLevelRecommendationService.delete(topicLevelRecommendation);
-            }
-        } else {
-            if (topicLevelRecommendation.hasRecommendation()) {
-                topicLevelRecommendationService.save(topicLevelRecommendation);
-            }
-        }
-        return topicLevelRecommendation;
-    }
-
 
     public List<TopicLevelRecommendation> getTopicAssessmentRecommendationData(Integer assessmentId, Integer topicId) {
         return topicLevelRecommendationService.findByAssessmentAndTopic(assessmentId, topicId);
@@ -100,18 +83,13 @@ public class TopicService {
     }
 
 
-    public boolean checkTopicRecommendationId(Integer recommendationId) {
-        return topicLevelRecommendationService.existsById(recommendationId);
-    }
-
-
     public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
         return topicLevelRecommendationService.findByAssessment(assessmentId);
     }
 
 
     public String getTopicRecommendationById(Integer identifier) {
-        return topicLevelRecommendationService.findById(identifier).orElseThrow().getRecommendation();
+        return topicLevelRecommendationService.findById(identifier).orElseThrow().getRecommendationText();
     }
 
     public void saveTopicReference(AssessmentTopicReference assessmentTopicReference) {
@@ -136,5 +114,14 @@ public class TopicService {
 
     public List<TopicLevelRecommendation> getTopicRecommendationByAssessmentId(Integer assessmentId) {
         return topicLevelRecommendationService.findByAssessment(assessmentId);
+    }
+
+    public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
+        return topicLevelRecommendationService.updateTopicRecommendation(recommendationRequest);
+    }
+
+    public TopicLevelRecommendation saveTopicRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId) {
+        AssessmentTopic assessmentTopic = getTopic(topicId).orElseThrow();
+        return topicLevelRecommendationService.saveTopicRecommendation(recommendationRequest, assessment, assessmentTopic);
     }
 }

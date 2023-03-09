@@ -21,7 +21,7 @@ public class TopicRatingAndRecommendation {
     private Integer rating;
 
     @JsonProperty("topicLevelRecommendation")
-    private List<TopicLevelRecommendationRequest> topicLevelRecommendationRequest;
+    private List<RecommendationRequest> recommendationRequest;
 
 
 }

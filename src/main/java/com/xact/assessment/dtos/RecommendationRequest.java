@@ -17,9 +17,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class ParameterLevelRecommendationRequest {
+public class RecommendationRequest {
     private Integer recommendationId;
-    private String recommendation;
+    private String recommendationText;
     private RecommendationImpact impact;
     private RecommendationEffort effort;
     private RecommendationDeliveryHorizon deliveryHorizon;

@@ -1,21 +1,16 @@
 package unit.com.xact.assessment.services;
 
 
-import com.xact.assessment.dtos.RecommendationEffort;
-import com.xact.assessment.dtos.TopicLevelRecommendationRequest;
-import com.xact.assessment.dtos.TopicRatingAndRecommendation;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
-import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.*;
-import static com.xact.assessment.dtos.RecommendationEffort.MEDIUM;
+import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static com.xact.assessment.dtos.RecommendationImpact.HIGH;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static com.xact.assessment.models.AssessmentStatus.Active;
@@ -34,6 +29,8 @@ class TopicAndParameterLevelAssessmentServiceTest {
     private ParameterService parameterService;
 
     private TopicService topicService;
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     @BeforeEach
     public void beforeEach() {
@@ -55,11 +52,11 @@ class TopicAndParameterLevelAssessmentServiceTest {
         topicRatingAndRecommendation.setRating(1);
 
 
-        TopicLevelRecommendationRequest topicLevelRecommendationRequest = new TopicLevelRecommendationRequest();
-        topicLevelRecommendationRequest.setRecommendation("some text");
-        topicLevelRecommendationRequest.setDeliveryHorizon(LATER);
-        topicLevelRecommendationRequest.setImpact(HIGH);
-        topicLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        RecommendationRequest recommendationRequest = new RecommendationRequest();
+        recommendationRequest.setRecommendationText("some text");
+        recommendationRequest.setDeliveryHorizon(LATER);
+        recommendationRequest.setImpact(HIGH);
+        recommendationRequest.setEffort(RecommendationEffort.LOW);
 
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(assessmentId);
@@ -73,21 +70,15 @@ class TopicAndParameterLevelAssessmentServiceTest {
         topicLevelRating.setTopicLevelId(topicLevelId);
 
 
-        TopicLevelRecommendation topicLevelRecommendation = mapper.map(topicLevelRecommendationRequest, TopicLevelRecommendation.class);
+        TopicLevelRecommendation topicLevelRecommendation = mapper.map(recommendationRequest, TopicLevelRecommendation.class);
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
         when(topicService.saveRatingAndRecommendation(topicLevelRating)).thenReturn(topicLevelRating);
         TopicLevelRating actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelRating);
 
-        when(topicService.saveTopicLevelRecommendation(topicLevelRecommendation)).thenReturn(topicLevelRecommendation);
-        TopicLevelRecommendation actualResponse1 = topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
-
         assertEquals(topicLevelRating.getRating(), actualResponse.getRating());
         assertEquals(topicLevelRating.getTopicLevelId(), actualResponse.getTopicLevelId());
-        assertEquals(topicLevelRecommendation.getRecommendation(), actualResponse1.getRecommendation());
-        assertEquals(topicLevelRecommendation.getRecommendationEffort(), actualResponse1.getRecommendationEffort());
-
         assertEquals(topicLevelRating.getRating(), actualResponse.getRating());
         assertEquals(topicLevelRating.getTopicLevelId(), actualResponse.getTopicLevelId());
 
@@ -108,13 +99,19 @@ class TopicAndParameterLevelAssessmentServiceTest {
         assessmentTopic.setTopicId(1);
         assessmentTopic.setModule(assessmentModule);
 
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(1,assessment1,assessmentTopic,"recommendation",LOW,MEDIUM,NOW,new Date(),new Date());
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(assessmentTopic);
+        topicLevelRecommendation.setRecommendationText("recommendation");
+        topicLevelRecommendation.setRecommendationId(1);
+        topicLevelRecommendation.setAssessment(assessment1);
+        topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
+        topicLevelRecommendation.setRecommendationImpact(LOW);
+        topicLevelRecommendation.setDeliveryHorizon(LATER);
 
         when(topicService.getTopicRecommendationByAssessmentId(assessment1.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
-       List <TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getTopicRecommendations(assessment1.getAssessmentId());
+        List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getTopicRecommendations(assessment1.getAssessmentId());
 
-       assertEquals(1,topicLevelRecommendationList.size());
+        assertEquals(1, topicLevelRecommendationList.size());
     }
 
     @Test
@@ -136,13 +133,88 @@ class TopicAndParameterLevelAssessmentServiceTest {
         assessmentParameter.setParameterId(1);
         assessmentParameter.setTopic(assessmentTopic1);
 
-        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(1,assessment1,assessmentParameter,"recommendation1",LOW,MEDIUM,NEXT,new Date(),new Date());
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(assessmentParameter);
+        parameterLevelRecommendation.setRecommendationText("recommendation");
+        parameterLevelRecommendation.setRecommendationId(1);
+        parameterLevelRecommendation.setAssessment(assessment1);
+        parameterLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendation.setRecommendationImpact(LOW);
+        parameterLevelRecommendation.setDeliveryHorizon(LATER);
 
         when(parameterService.getParameterRecommendationByAssessmentId(assessment1.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
-        List <ParameterLevelRecommendation> parameterLevelRecommendationList = topicAndParameterLevelAssessmentService.getParameterRecommendations(assessment1.getAssessmentId());
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = topicAndParameterLevelAssessmentService.getParameterRecommendations(assessment1.getAssessmentId());
 
-        assertEquals(1,parameterLevelRecommendationList.size());
+        assertEquals(1, parameterLevelRecommendationList.size());
+    }
+
+    @Test
+    void shouldReturnTopicRecommendationAfterSaved() {
+        RecommendationRequest recommendationRequest = new RecommendationRequest();
+        Assessment assessment = new Assessment();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationText("text");
+
+        when(topicService.saveTopicRecommendation(recommendationRequest, assessment, 1)).thenReturn(topicLevelRecommendation);
+
+        TopicLevelRecommendation topicLevelRecommendation1 = topicAndParameterLevelAssessmentService.saveTopicRecommendation(recommendationRequest, assessment, 1);
+
+        assertEquals("text", topicLevelRecommendation1.getRecommendationText());
+    }
+
+    @Test
+    void shouldReturnRecommendationTextWhenActivityTypeIsGiven() {
+        when(topicService.getTopicRecommendationById(1)).thenReturn("text");
+
+        String text = topicAndParameterLevelAssessmentService.getRecommendationById(1, ActivityType.TOPIC_RECOMMENDATION);
+
+        assertEquals("text", text);
+    }
+
+    @Test
+    void shouldReturnTopicRecommendation() {
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationText("text");
+
+        when(topicService.searchTopicRecommendation(1)).thenReturn(Optional.of(topicLevelRecommendation));
+
+        Optional<TopicLevelRecommendation> topicLevelRecommendation1 = topicAndParameterLevelAssessmentService.searchTopicRecommendation(1);
+
+        assertEquals("text", topicLevelRecommendation1.get().getRecommendationText());
+    }
+
+    @Test
+    void shouldReturnListOfRecommendation() {
+        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationText("text");
+        topicLevelRecommendationList.add(topicLevelRecommendation);
+
+        when(topicService.getTopicAssessmentRecommendationData(1, 1)).thenReturn(topicLevelRecommendationList);
+
+        List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(1, 1);
+
+        assertEquals(1, topicLevelRecommendationList1.size());
+
+    }
+
+    @Test
+    void shouldReturnParameterLevelRecommendation() {
+       RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendationText("text");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(RecommendationDeliveryHorizon.LATER);
+
+        Assessment assessment = new Assessment();
+
+
+        ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest, ParameterLevelRecommendation.class);
+
+        when(topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, 1)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation parameterLevelRecommendation1 = topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, 1);
+
+        assertEquals("text", parameterLevelRecommendation1.getRecommendationText());
     }
 }
 

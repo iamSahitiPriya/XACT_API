@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentParameterRepository;
 import jakarta.inject.Singleton;
@@ -75,10 +76,6 @@ public class ParameterService {
     }
 
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
-        return parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendation);
-    }
-
     public List<ParameterLevelRecommendation> getAssessmentParameterRecommendationData(Integer assessmentId) {
         return parameterLevelRecommendationService.findByAssessment(assessmentId);
     }
@@ -87,20 +84,12 @@ public class ParameterService {
         return parameterLevelRecommendationService.findByAssessmentAndParameter(assessmentId, parameterId);
     }
 
-    public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
-        return parameterLevelRecommendationService.findById(recommendationId);
-    }
-
-    public boolean checkParameterRecommendationId(Integer recommendationId) {
-        return parameterLevelRecommendationService.existsById(recommendationId);
-    }
-
     public void deleteParameterRecommendation(Integer recommendationId) {
         parameterLevelRecommendationService.deleteById(recommendationId);
     }
 
     public String getParameterRecommendationById(Integer identifier) {
-        return parameterLevelRecommendationService.findById(identifier).orElseThrow().getRecommendation();
+        return parameterLevelRecommendationService.findById(identifier).orElseThrow().getRecommendationText();
     }
 
     public void saveParameterReference(AssessmentParameterReference assessmentParameterReference) {
@@ -122,5 +111,14 @@ public class ParameterService {
 
     public List<ParameterLevelRecommendation> getParameterRecommendationByAssessmentId(Integer assessmentId) {
         return parameterLevelRecommendationService.findByAssessment(assessmentId);
+    }
+
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
+        return parameterLevelRecommendationService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+    }
+
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+        AssessmentParameter assessmentParameter = getParameter(parameterId).orElseThrow();
+        return parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, assessmentParameter);
     }
 }

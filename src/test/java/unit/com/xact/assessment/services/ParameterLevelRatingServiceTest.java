@@ -4,10 +4,10 @@
 
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.dtos.ParameterLevelRecommendationRequest;
 import com.xact.assessment.dtos.ParameterRatingAndRecommendation;
 import com.xact.assessment.dtos.RecommendationEffort;
 import com.xact.assessment.dtos.RecommendationImpact;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ParameterLevelRatingRepository;
 import com.xact.assessment.services.ParameterLevelRatingService;
@@ -36,8 +36,8 @@ class ParameterLevelRatingServiceTest {
 
         parameterRatingAndRecommendation.setRating(1);
 
-        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
-        parameterLevelRecommendationRequest.setRecommendation("some text");
+       RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
         parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
@@ -77,9 +77,9 @@ class ParameterLevelRatingServiceTest {
         parameterRatingAndRecommendation.setParameterId(1);
         parameterRatingAndRecommendation.setRating(1);
 
-        ParameterLevelRecommendationRequest parameterLevelRecommendationRequest = new ParameterLevelRecommendationRequest();
+        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationId(1);
-        parameterLevelRecommendationRequest.setRecommendation("some text");
+        parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setDeliveryHorizon(LATER);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.MEDIUM);
         parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);

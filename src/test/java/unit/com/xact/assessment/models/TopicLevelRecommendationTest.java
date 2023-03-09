@@ -26,7 +26,7 @@ class TopicLevelRecommendationTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
         topicLevelRecommendation.setTopic(assessmentTopic);
-        topicLevelRecommendation.setRecommendation("some text");
+        topicLevelRecommendation.setRecommendationText("some text");
         assertEquals(true, topicLevelRecommendation.hasRecommendation());
     }
 

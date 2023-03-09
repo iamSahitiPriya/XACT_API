@@ -223,33 +223,6 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId);
     }
 
-    public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
-        return topicAndParameterLevelAssessmentService.searchParameterRecommendation(recommendationId);
-
-    }
-
-    public void saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
-        topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendation);
-
-    }
-
-    public boolean checkParameterRecommendationId(Integer recommendationId) {
-        return topicAndParameterLevelAssessmentService.checkParameterRecommendationId(recommendationId);
-    }
-
-    public Optional<TopicLevelRecommendation> searchTopicRecommendation(Integer recommendationId) {
-        return topicAndParameterLevelAssessmentService.searchTopicRecommendation(recommendationId);
-
-    }
-
-    public void saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
-        topicAndParameterLevelAssessmentService.saveTopicLevelRecommendation(topicLevelRecommendation);
-    }
-
-    public boolean checkTopicRecommendationId(Integer recommendationId) {
-        return topicAndParameterLevelAssessmentService.checkTopicRecommendationId(recommendationId);
-
-    }
 
     public void deleteRecommendation(Integer recommendationId) {
         topicAndParameterLevelAssessmentService.deleteRecommendation(recommendationId);
@@ -325,6 +298,22 @@ public class AssessmentService {
         return assessmentRepository.findByCompletedStatus(completedDate);
     }
 
+    public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
+        return topicAndParameterLevelAssessmentService.updateTopicRecommendation(recommendationRequest);
+    }
+
+    public TopicLevelRecommendation saveTopicRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId) {
+        return topicAndParameterLevelAssessmentService.saveTopicRecommendation(recommendationRequest, assessment, topicId);
+    }
+
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
+        return topicAndParameterLevelAssessmentService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+    }
+
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+        return topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+    }
+
     public List<Assessment> findInactiveAssessments(Integer duration) {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -duration);
@@ -332,4 +321,5 @@ public class AssessmentService {
         return assessmentRepository.findInactiveAssessments(expiryDate);
 
     }
+
 }

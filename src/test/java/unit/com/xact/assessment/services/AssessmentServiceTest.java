@@ -4,15 +4,13 @@
 
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentRequest;
-import com.xact.assessment.dtos.ModuleRequest;
-import com.xact.assessment.dtos.UserDto;
-import com.xact.assessment.dtos.UserRole;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -35,6 +33,8 @@ class AssessmentServiceTest {
 
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private AccessControlService accessControlService;
+
+    private static final ModelMapper modelMapper = new ModelMapper();
 
 
     @BeforeEach
@@ -532,6 +532,38 @@ class AssessmentServiceTest {
         verify(assessmentRepository).findByCompletedStatus(any(Date.class));
     }
     @Test
+    void shouldReturnTopicRecommendation() {
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setRecommendationText("text");
+        RecommendationRequest recommendationRequest = new RecommendationRequest();
+        Assessment assessment = new Assessment();
+
+        when(topicAndParameterLevelAssessmentService.saveTopicRecommendation(recommendationRequest,assessment,1)).thenReturn(topicLevelRecommendation);
+
+        TopicLevelRecommendation topicLevelRecommendation1 = assessmentService.saveTopicRecommendation(recommendationRequest,assessment,1);
+
+        assertEquals("text", topicLevelRecommendation1.getRecommendationText());
+    }
+
+    @Test
+    void shouldReturnParameterLevelRecommendation() {
+        RecommendationRequest parameterLevelRecommendationRequest=new RecommendationRequest();
+        parameterLevelRecommendationRequest.setRecommendationText("text");
+        parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
+        parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
+        parameterLevelRecommendationRequest.setDeliveryHorizon(RecommendationDeliveryHorizon.LATER);
+
+        Assessment assessment = new Assessment();
+
+
+        ParameterLevelRecommendation parameterLevelRecommendation=modelMapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
+
+        when(assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation parameterLevelRecommendation1=assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1);
+
+        assertEquals("text",parameterLevelRecommendation1.getRecommendationText());
+    }
+    @Test
     void shouldGetInactiveAssessments() {
         Date created = new Date(22 - 10 - 2022);
         Date updated = new Date(22 - 10 - 2022);
@@ -545,7 +577,7 @@ class AssessmentServiceTest {
         List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(15);
 
         verify(assessmentRepository).findInactiveAssessments(any(Date.class));
-        assertEquals(inactiveAssessments.size(),1);
+        assertEquals(1,inactiveAssessments.size());
 
 
     }

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
-import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.data.exceptions.EmptyResultException;

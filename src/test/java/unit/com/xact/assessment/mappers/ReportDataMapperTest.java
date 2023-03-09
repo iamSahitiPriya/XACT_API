@@ -4,12 +4,14 @@
 
 package unit.com.xact.assessment.mappers;
 
-import com.xact.assessment.dtos.*;
+import com.xact.assessment.dtos.Recommendation;
+import com.xact.assessment.dtos.RecommendationDeliveryHorizon;
+import com.xact.assessment.dtos.RecommendationEffort;
+import com.xact.assessment.dtos.RecommendationImpact;
 import com.xact.assessment.mappers.ReportDataMapper;
 import com.xact.assessment.models.*;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +25,7 @@ class ReportDataMapperTest {
 
         TopicLevelRecommendation recommendation = new TopicLevelRecommendation();
         recommendation.setRecommendationId(1);
-        recommendation.setRecommendation("Rec");
+        recommendation.setRecommendationText("Rec");
         recommendation.setDeliveryHorizon(RecommendationDeliveryHorizon.NOW);
         recommendation.setRecommendationEffort(RecommendationEffort.LOW);
         recommendation.setRecommendationImpact(RecommendationImpact.LOW);
@@ -45,7 +47,7 @@ class ReportDataMapperTest {
 
 
         assertEquals(recommendation.getRecommendationId(),recommendationResponse.getRecommendationId());
-        assertEquals(recommendation.getRecommendation(),recommendationResponse.getRecommendation());
+        assertEquals(recommendation.getRecommendationText(),recommendationResponse.getRecommendation());
         assertEquals(RecommendationDeliveryHorizon.NOW,recommendationResponse.getDeliveryHorizon());
         assertEquals(RecommendationImpact.LOW,recommendationResponse.getImpact());
         assertEquals(RecommendationEffort.LOW,recommendationResponse.getEffort());
@@ -61,7 +63,7 @@ class ReportDataMapperTest {
 
         ParameterLevelRecommendation recommendation = new ParameterLevelRecommendation();
         recommendation.setRecommendationId(1);
-        recommendation.setRecommendation("Rec");
+        recommendation.setRecommendationText("Rec");
         recommendation.setDeliveryHorizon(RecommendationDeliveryHorizon.NOW);
         recommendation.setRecommendationEffort(RecommendationEffort.LOW);
         recommendation.setRecommendationImpact(RecommendationImpact.LOW);
@@ -87,7 +89,7 @@ class ReportDataMapperTest {
 
 
         assertEquals(recommendation.getRecommendationId(),recommendationResponse.getRecommendationId());
-        assertEquals(recommendation.getRecommendation(),recommendationResponse.getRecommendation());
+        assertEquals(recommendation.getRecommendationText(),recommendationResponse.getRecommendation());
         assertEquals(RecommendationDeliveryHorizon.NOW,recommendationResponse.getDeliveryHorizon());
         assertEquals(RecommendationImpact.LOW,recommendationResponse.getImpact());
         assertEquals(RecommendationEffort.LOW,recommendationResponse.getEffort());

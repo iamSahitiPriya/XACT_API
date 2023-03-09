@@ -1,5 +1,8 @@
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.RecommendationRequest;
+import com.xact.assessment.models.Assessment;
+import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.models.TopicLevelRecommendation;
 import com.xact.assessment.repositories.TopicLevelRecommendationRepository;
 import jakarta.inject.Singleton;
@@ -15,17 +18,6 @@ public class TopicLevelRecommendationService {
         this.topicLevelRecommendationRepository = topicLevelRecommendationRepository;
     }
 
-    public TopicLevelRecommendation save(TopicLevelRecommendation topicLevelRecommendation) {
-        return topicLevelRecommendationRepository.save(topicLevelRecommendation);
-    }
-
-    public void delete(TopicLevelRecommendation topicLevelRecommendation) {
-        topicLevelRecommendationRepository.delete(topicLevelRecommendation);
-    }
-
-    public TopicLevelRecommendation update(TopicLevelRecommendation topicLevelRecommendation) {
-        return topicLevelRecommendationRepository.update(topicLevelRecommendation);
-    }
 
     public List<TopicLevelRecommendation> findByAssessmentAndTopic(Integer assessmentId, Integer topicId) {
         return topicLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId, topicId);
@@ -46,4 +38,42 @@ public class TopicLevelRecommendationService {
     public boolean existsById(Integer recommendationId) {
         return topicLevelRecommendationRepository.existsById(recommendationId);
     }
+
+    public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
+        TopicLevelRecommendation topicLevelRecommendation = findById(recommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
+        topicLevelRecommendation.setRecommendationId(recommendationRequest.getRecommendationId());
+        setTopicLevelRecommendation(topicLevelRecommendation, recommendationRequest);
+        return updateTopicLevelRecommendation(topicLevelRecommendation);
+    }
+
+    private void setTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation, RecommendationRequest recommendationRequest) {
+        topicLevelRecommendation.setRecommendationText(recommendationRequest.getRecommendationText());
+        topicLevelRecommendation.setRecommendationImpact(recommendationRequest.getImpact());
+        topicLevelRecommendation.setRecommendationEffort(recommendationRequest.getEffort());
+        topicLevelRecommendation.setDeliveryHorizon(recommendationRequest.getDeliveryHorizon());
+    }
+
+    public TopicLevelRecommendation saveTopicRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, AssessmentTopic assessmentTopic) {
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
+        topicLevelRecommendation.setAssessment(assessment);
+        topicLevelRecommendation.setTopic(assessmentTopic);
+        setTopicLevelRecommendation(topicLevelRecommendation, recommendationRequest);
+        return saveTopicLevelRecommendation(topicLevelRecommendation);
+    }
+
+    private TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+        if (topicLevelRecommendation.hasRecommendation()) {
+            topicLevelRecommendationRepository.save(topicLevelRecommendation);
+        }
+        return topicLevelRecommendation;
+    }
+
+    private TopicLevelRecommendation updateTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+        if (topicLevelRecommendation.getRecommendationId() != null) {
+                topicLevelRecommendationRepository.update(topicLevelRecommendation);
+        }
+        return topicLevelRecommendation;
+    }
 }
+
+

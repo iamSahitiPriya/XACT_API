@@ -5,6 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ActivityType;
+import com.xact.assessment.dtos.RecommendationRequest;
 import com.xact.assessment.dtos.UpdateAnswerRequest;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
@@ -16,10 +17,8 @@ import java.util.Optional;
 public class TopicAndParameterLevelAssessmentService {
 
     private final ParameterService parameterService;
-
     private final AnswerService answerService;
     private final TopicService topicService;
-
     private final QuestionService questionService;
 
 
@@ -39,14 +38,6 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterService.saveRatingAndRecommendation(parameterLevelRating);
     }
 
-    public TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
-        return topicService.saveTopicLevelRecommendation(topicLevelRecommendation);
-    }
-
-
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(ParameterLevelRecommendation parameterLevelRecommendation) {
-        return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendation);
-    }
 
     public List<ParameterLevelRating> getParameterAssessmentData(Integer assessmentId) {
         return parameterService.getParameterAssessmentData(assessmentId);
@@ -79,11 +70,6 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
 
-    public boolean checkTopicRecommendationId(Integer recommendationId) {
-        return topicService.checkTopicRecommendationId(recommendationId);
-    }
-
-
     public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
         return topicService.getAssessmentTopicRecommendationData(assessmentId);
     }
@@ -95,14 +81,6 @@ public class TopicAndParameterLevelAssessmentService {
 
     public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId, Integer parameterId) {
         return parameterService.getParameterAssessmentRecommendationData(assessmentId, parameterId);
-    }
-
-    public Optional<ParameterLevelRecommendation> searchParameterRecommendation(Integer recommendationId) {
-        return parameterService.searchParameterRecommendation(recommendationId);
-    }
-
-    public boolean checkParameterRecommendationId(Integer recommendationId) {
-        return parameterService.checkParameterRecommendationId(recommendationId);
     }
 
     public void deleteParameterRecommendation(Integer recommendationId) {
@@ -145,4 +123,22 @@ public class TopicAndParameterLevelAssessmentService {
     public List<ParameterLevelRecommendation> getParameterRecommendations(Integer assessmentId) {
         return parameterService.getParameterRecommendationByAssessmentId(assessmentId);
     }
+
+    public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
+        return topicService.updateTopicRecommendation(recommendationRequest);
+    }
+
+    public TopicLevelRecommendation saveTopicRecommendation(RecommendationRequest recommendationRequest, Assessment assessment, Integer topicId) {
+        return topicService.saveTopicRecommendation(recommendationRequest, assessment, topicId);
+
+    }
+
+    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
+        return parameterService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+    }
+
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+        return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+    }
+
 }

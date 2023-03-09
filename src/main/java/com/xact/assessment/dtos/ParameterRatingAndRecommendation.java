@@ -24,7 +24,7 @@ public class ParameterRatingAndRecommendation {
     private Integer rating;
 
     @JsonProperty("parameterLevelRecommendation")
-    private List<ParameterLevelRecommendationRequest> parameterLevelRecommendationRequest;
+    private List<RecommendationRequest> parameterLevelRecommendationRequest;
 
 
 }

@@ -4,6 +4,7 @@
 
 package com.xact.assessment.mappers;
 
+import com.xact.assessment.dtos.Recommendation;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 
@@ -77,7 +78,7 @@ public class ReportDataMapper {
     public Recommendation mapReportRecommendationResponse(TopicLevelRecommendation recommendation) {
         Recommendation recommendationResponse = new Recommendation();
         recommendationResponse.setRecommendationId(recommendation.getRecommendationId());
-        recommendationResponse.setRecommendation(recommendation.getRecommendation());
+        recommendationResponse.setRecommendation(recommendation.getRecommendationText());
         recommendationResponse.setDeliveryHorizon(recommendation.getDeliveryHorizon());
         recommendationResponse.setImpact(recommendation.getRecommendationImpact());
         recommendationResponse.setEffort(recommendation.getRecommendationEffort());
@@ -94,7 +95,7 @@ public class ReportDataMapper {
     public Recommendation mapReportRecommendationResponse(ParameterLevelRecommendation recommendation) {
         Recommendation recommendationResponse = new Recommendation();
         recommendationResponse.setRecommendationId(recommendation.getRecommendationId());
-        recommendationResponse.setRecommendation(recommendation.getRecommendation());
+        recommendationResponse.setRecommendation(recommendation.getRecommendationText());
         recommendationResponse.setDeliveryHorizon(recommendation.getDeliveryHorizon());
         recommendationResponse.setImpact(recommendation.getRecommendationImpact());
         recommendationResponse.setEffort(recommendation.getRecommendationEffort());

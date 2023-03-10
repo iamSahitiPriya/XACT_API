@@ -23,9 +23,6 @@ public class ParameterLevelRecommendationService {
         return parameterLevelRecommendationRepository.findByAssessment(assessmentId);
     }
 
-    public List<ParameterLevelRecommendation> findByAssessmentAndParameter(Integer assessmentId, Integer parameterId) {
-        return parameterLevelRecommendationRepository.findByAssessmentAndParameter(assessmentId, parameterId);
-    }
 
     public Optional<ParameterLevelRecommendation> findById(Integer recommendationId) {
         return parameterLevelRecommendationRepository.findById(recommendationId);

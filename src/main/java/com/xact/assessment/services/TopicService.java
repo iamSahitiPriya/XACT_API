@@ -43,7 +43,7 @@ public class TopicService {
         return assessmentTopicRepository.findByTopicId(topicId);
     }
 
-    public TopicLevelRating saveRatingAndRecommendation(TopicLevelRating topicLevelRating) {
+    public TopicLevelRating saveTopicRating(TopicLevelRating topicLevelRating) {
 
         if (topicLevelRatingService.existsByID(topicLevelRating)) {
             if (topicLevelRating.getRating() == null) {
@@ -60,17 +60,14 @@ public class TopicService {
     }
 
 
-    public List<TopicLevelRating> getTopicAssessmentData(Integer assessmentId) {
+    public List<TopicLevelRating> getTopicLevelRatings(Integer assessmentId) {
         return topicLevelRatingService.findByAssessment(assessmentId);
     }
 
-    public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
+    public Optional<TopicLevelRating> searchTopicRating(TopicLevelId topicLevelId) {
         return topicLevelRatingService.findById(topicLevelId);
     }
 
-    public List<TopicLevelRecommendation> getTopicAssessmentRecommendationData(Integer assessmentId, Integer topicId) {
-        return topicLevelRecommendationService.findByAssessmentAndTopic(assessmentId, topicId);
-    }
 
 
     public Optional<TopicLevelRecommendation> searchTopicRecommendation(Integer recommendationId) {
@@ -78,12 +75,12 @@ public class TopicService {
     }
 
 
-    public void deleteRecommendation(Integer recommendationId) {
+    public void deleteTopicRecommendation(Integer recommendationId) {
         topicLevelRecommendationService.deleteById(recommendationId);
     }
 
 
-    public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
+    public List<TopicLevelRecommendation> getTopicLevelRecommendations(Integer assessmentId) {
         return topicLevelRecommendationService.findByAssessment(assessmentId);
     }
 

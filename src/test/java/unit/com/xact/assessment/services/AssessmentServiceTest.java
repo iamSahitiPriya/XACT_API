@@ -160,33 +160,33 @@ class AssessmentServiceTest {
         assertEquals(Active, actualAssessment.getAssessmentStatus());
     }
 
-    @Test
-    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
-        List<AssessmentUser> assessmentUsersList = new ArrayList<>();
-
-        Integer assessmentId = 1;
-
-        Assessment assessment = new Assessment();
-        assessment.setAssessmentId(assessmentId);
-        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-
-        UserId userId1 = new UserId("hello@gmail.com", assessment);
-        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
-        assessmentUsersList.add(assessmentUsers1);
-
-        UserId userId2 = new UserId("new@gmail.com", assessment);
-        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
-        assessmentUsersList.add(assessmentUsers2);
-
-        List<String> expectedAssessmentUsersList = new ArrayList<>();
-        for (AssessmentUser eachUser : assessmentUsersList) {
-            expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
-        }
-        when(usersAssessmentsService.getAssessmentFacilitators(assessmentId)).thenReturn(expectedAssessmentUsersList);
-        List<String> actualResponse = assessmentService.getAssessmentFacilitators(assessmentId);
-        assertEquals(expectedAssessmentUsersList, actualResponse);
-
-    }
+//    @Test
+//    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
+//        List<AssessmentUser> assessmentUsersList = new ArrayList<>();
+//
+//        Integer assessmentId = 1;
+//
+//        Assessment assessment = new Assessment();
+//        assessment.setAssessmentId(assessmentId);
+//        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+//
+//        UserId userId1 = new UserId("hello@gmail.com", assessment);
+//        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
+//        assessmentUsersList.add(assessmentUsers1);
+//
+//        UserId userId2 = new UserId("new@gmail.com", assessment);
+//        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
+//        assessmentUsersList.add(assessmentUsers2);
+//
+//        List<String> expectedAssessmentUsersList = new ArrayList<>();
+//        for (AssessmentUser eachUser : assessmentUsersList) {
+//            expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
+//        }
+//        when(usersAssessmentsService.getAssessmentFacilitators(assessmentId)).thenReturn(expectedAssessmentUsersList);
+//        List<String> actualResponse = assessmentService.getAssessmentFacilitators(assessmentId);
+//        assertEquals(expectedAssessmentUsersList, actualResponse);
+//
+//    }
 
     @Test
     void shouldUpdateAssessment() {
@@ -227,7 +227,7 @@ class AssessmentServiceTest {
         assessmentUserSet.remove(assessmentUser1);
         assessmentService.getDeletedUser(assessmentUserSet1, assessmentUserSet);
 
-        assessmentService.updateAssessment(assessment, assessmentUserSet);
+        assessmentService.updateAssessmentAndUsers(assessment, assessmentUserSet);
 
         User user = new User();
         UserInfo userInfo = new UserInfo();
@@ -489,22 +489,6 @@ class AssessmentServiceTest {
 
     }
 
-    @Test
-    void shouldGetFacilitators() {
-        Date created = new Date(22 - 10 - 2022);
-        Date updated = new Date(22 - 10 - 2022);
-
-        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        UserId userId = new UserId("hello@thoughtworks.com", assessment);
-
-        List<String> assessmentUser1 = Collections.singletonList(new String("Answer"));
-
-        when(usersAssessmentsService.getAssessmentFacilitators(assessment.getAssessmentId())).thenReturn(assessmentUser1);
-        assessmentService.getAssessmentFacilitators(assessment.getAssessmentId());
-
-        verify(usersAssessmentsService).getAssessmentFacilitators(assessment.getAssessmentId());
-    }
 
     @Test
     void shouldGetFacilitatorsSet() {
@@ -519,10 +503,10 @@ class AssessmentServiceTest {
         Set<AssessmentUser> assessmentUser1 = new HashSet<>();
         assessmentUser1.add(assessmentUser);
 
-        when(usersAssessmentsService.getAssessmentFacilitatorsSet(assessment)).thenReturn(assessmentUser1);
-        assessmentService.getAssessmentFacilitatorsSet(assessment);
+        when(usersAssessmentsService.getAssessmentFacilitators(assessment)).thenReturn(assessmentUser1);
+        assessmentService.getAssessmentFacilitators(assessment);
 
-        verify(usersAssessmentsService).getAssessmentFacilitatorsSet(assessment);
+        verify(usersAssessmentsService).getAssessmentFacilitators(assessment);
     }
 
     @Test

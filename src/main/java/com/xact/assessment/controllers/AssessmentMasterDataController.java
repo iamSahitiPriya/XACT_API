@@ -43,7 +43,7 @@ public class AssessmentMasterDataController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<CategoryDto>> getMasterData(Authentication authentication) {
         LOGGER.info("Get master data");
-        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getCategories();
+        List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getCategoriesSortedByUpdatedDate();
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(assessmentCategories)) {
             assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapCategory(assessmentCategory)));

@@ -17,9 +17,6 @@ import java.util.List;
 @Repository
 public interface TopicLevelRecommendationRepository extends CrudRepository<TopicLevelRecommendation, Integer> {
 
-    @Executable
-    @Query("SELECT tlr FROM TopicLevelRecommendation tlr WHERE tlr.assessment.assessmentId=:assessmentId and tlr.topic.topicId=:topicId order by tlr.recommendationId")
-    List<TopicLevelRecommendation> findByAssessmentAndTopic(@Parameter("assessmentId") Integer assessmentId,@Parameter("topicId") Integer topicId);
 
     @Executable
     @Query("SELECT tlr FROM TopicLevelRecommendation tlr WHERE tlr.assessment.assessmentId=:assessmentId and tlr.topic.module.category.isActive=true and tlr.topic.module.isActive=true and tlr.topic.isActive=true and tlr.topic.module.moduleId IN(SELECT userModule.module.moduleId  from  UserAssessmentModule userModule where userModule.assessment.assessmentId=:assessmentId) order by tlr.recommendationId desc")

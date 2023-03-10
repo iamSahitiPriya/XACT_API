@@ -80,22 +80,4 @@ class TopicLevelRecommendationServiceTest {
         verify(topicLevelRecommendationRepository).update(any(TopicLevelRecommendation.class));
     }
 
-
-    @Test
-    void getRecommendationsByTopicAndAssessment() {
-        int assessmentId = 1;
-        int topicId = 1;
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(new AssessmentTopic());
-        topicLevelRecommendation.setRecommendationText("recommendation");
-        topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setAssessment(new Assessment());
-        topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
-        topicLevelRecommendation.setRecommendationImpact(LOW);
-        topicLevelRecommendation.setDeliveryHorizon(LATER);
-        when(topicLevelRecommendationService.findByAssessmentAndTopic(assessmentId, topicId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
-
-        topicLevelRecommendationService.findByAssessmentAndTopic(assessmentId, topicId);
-
-        verify(topicLevelRecommendationRepository).findByAssessmentAndTopic(assessmentId, topicId);
-    }
 }

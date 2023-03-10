@@ -19,9 +19,7 @@ public class TopicLevelRecommendationService {
     }
 
 
-    public List<TopicLevelRecommendation> findByAssessmentAndTopic(Integer assessmentId, Integer topicId) {
-        return topicLevelRecommendationRepository.findByAssessmentAndTopic(assessmentId, topicId);
-    }
+
 
     public Optional<TopicLevelRecommendation> findById(Integer recommendationId) {
         return topicLevelRecommendationRepository.findById(recommendationId);

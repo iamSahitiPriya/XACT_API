@@ -15,15 +15,11 @@ import io.micronaut.data.repository.CrudRepository;
 import java.util.List;
 
 @Repository
-public interface AssessmentParameterRepository extends CrudRepository<AssessmentParameter, Integer>{
-    @Executable
-    @Query("SELECT pla FROM AssessmentParameter pla WHERE pla.topic.topicId=:topicId")
-    List<AssessmentParameter> findByTopic(@Parameter("topicId") Integer topicId);
+public interface AssessmentParameterRepository extends CrudRepository<AssessmentParameter, Integer> {
 
     @Executable
     @Query("SELECT parameter FROM AssessmentParameter parameter WHERE parameter.parameterId=:parameterId")
     AssessmentParameter findByParameterId(Integer parameterId);
 
-    List<AssessmentParameter> listOrderByUpdatedAtDesc();
 
 }

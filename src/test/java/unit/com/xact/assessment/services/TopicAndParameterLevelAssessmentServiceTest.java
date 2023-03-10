@@ -74,8 +74,8 @@ class TopicAndParameterLevelAssessmentServiceTest {
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
 
-        when(topicService.saveRatingAndRecommendation(topicLevelRating)).thenReturn(topicLevelRating);
-        TopicLevelRating actualResponse = topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelRating);
+        when(topicService.saveTopicRating(topicLevelRating)).thenReturn(topicLevelRating);
+        TopicLevelRating actualResponse = topicAndParameterLevelAssessmentService.saveTopicRating(topicLevelRating);
 
         assertEquals(topicLevelRating.getRating(), actualResponse.getRating());
         assertEquals(topicLevelRating.getTopicLevelId(), actualResponse.getTopicLevelId());
@@ -183,20 +183,6 @@ class TopicAndParameterLevelAssessmentServiceTest {
         assertEquals("text", topicLevelRecommendation1.get().getRecommendationText());
     }
 
-    @Test
-    void shouldReturnListOfRecommendation() {
-        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation();
-        topicLevelRecommendation.setRecommendationText("text");
-        topicLevelRecommendationList.add(topicLevelRecommendation);
-
-        when(topicService.getTopicAssessmentRecommendationData(1, 1)).thenReturn(topicLevelRecommendationList);
-
-        List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(1, 1);
-
-        assertEquals(1, topicLevelRecommendationList1.size());
-
-    }
 
     @Test
     void shouldReturnParameterLevelRecommendation() {

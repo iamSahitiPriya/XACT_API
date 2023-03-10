@@ -15,9 +15,7 @@ import java.util.List;
 
 @Repository
 public interface ModuleRepository extends CrudRepository<AssessmentModule, Integer> {
-    @Executable
-    @Query("SELECT pla FROM AssessmentModule pla WHERE pla.category.categoryId=:categoryId")
-    List<AssessmentModule> findByCategory(@Parameter("categoryId") Integer categoryId);
+
 
     @Executable
     @Query("SELECT module FROM AssessmentModule module WHERE module.moduleId=:moduleId")

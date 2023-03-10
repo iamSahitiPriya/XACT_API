@@ -104,7 +104,7 @@ public class AdminController {
 
     @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<TopicResponse> createTopics(@Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
+    public HttpResponse<TopicResponse> createTopic(@Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
         LOGGER.info("{}: Create topics - {}", authentication.getName(), assessmentTopicRequest.getTopicName());
         AssessmentTopic assessmentTopic = assessmentMasterDataService.createAssessmentTopics(assessmentTopicRequest);
         TopicResponse topicResponse = mapper.map(assessmentTopic, TopicResponse.class);
@@ -116,7 +116,7 @@ public class AdminController {
 
     @Post(value = "/parameters", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<ParameterResponse> createParameters(@Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
+    public HttpResponse<ParameterResponse> createParameter(@Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
         LOGGER.info("{}: Create parameter - {}", authentication.getName(), assessmentParameterRequest.getParameterName());
 
         AssessmentParameter assessmentParameter = assessmentMasterDataService.createAssessmentParameter(assessmentParameterRequest);
@@ -129,13 +129,13 @@ public class AdminController {
 
     @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<QuestionResponse> createQuestions(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
+    public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
         LOGGER.info("{}: Create questions - {}", authentication.getName(), questionRequest.getQuestionText());
-        Question question = assessmentMasterDataService.createAssessmentQuestions(questionRequest);
-        return getQuestionResponseHttpResponse(question);
+        Question question = assessmentMasterDataService.createAssessmentQuestion(questionRequest);
+        return getQuestionResponse(question);
     }
 
-    private HttpResponse<QuestionResponse> getQuestionResponseHttpResponse(Question question) {
+    private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {
         QuestionResponse questionResponse = mapper.map(question, QuestionResponse.class);
         questionResponse.setCategory(question.getParameter().getTopic().getModule().getCategory().getCategoryId());
         questionResponse.setModule(question.getParameter().getTopic().getModule().getModuleId());
@@ -148,16 +148,16 @@ public class AdminController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopicReferenceDto> createTopicReference(@Body TopicReferencesRequest topicReferencesRequest, Authentication authentication) {
         LOGGER.info("{}: Create topic reference - {}", authentication.getName(), topicReferencesRequest.getReference());
-        AssessmentTopicReference assessmentTopicReference = assessmentMasterDataService.createAssessmentTopicReferences(topicReferencesRequest);
+        AssessmentTopicReference assessmentTopicReference = assessmentMasterDataService.createAssessmentTopicReference(topicReferencesRequest);
         AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
         return HttpResponse.ok(assessmentTopicReferenceDto);
     }
 
     @Post(value = "/parameter-references", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AssessmentParameterReferenceDto> createParameterReferences(@Body ParameterReferencesRequest parameterReferencesRequests, Authentication authentication) {
+    public HttpResponse<AssessmentParameterReferenceDto> createParameterReference(@Body ParameterReferencesRequest parameterReferencesRequests, Authentication authentication) {
         LOGGER.info("{}: Create parameter reference - {}", authentication.getName(), parameterReferencesRequests.getParameter());
-        AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.createAssessmentParameterReferences(parameterReferencesRequests);
+        AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.createAssessmentParameterReference(parameterReferencesRequests);
         AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
         return HttpResponse.ok(assessmentParameterReferenceDto);
     }
@@ -211,7 +211,7 @@ public class AdminController {
     public HttpResponse<QuestionResponse> updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest, Authentication authentication) {
         LOGGER.info("{}: Update question - {}", authentication.getName(), questionRequest.getQuestionText());
         Question question = assessmentMasterDataService.updateQuestion(questionId, questionRequest);
-        return getQuestionResponseHttpResponse(question);
+        return getQuestionResponse(question);
     }
 
     @Put(value = "/topic-references/{referenceId}", produces = MediaType.APPLICATION_JSON)
@@ -227,7 +227,7 @@ public class AdminController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameterReferenceDto> updateParameterReference(@PathVariable("referenceId") Integer referenceId, ParameterReferencesRequest parameterReferencesRequest, Authentication authentication) {
         LOGGER.info("{}: Update parameter-reference - {}", authentication.getName(), parameterReferencesRequest.getReference());
-        AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.updateParameterReferences(referenceId, parameterReferencesRequest);
+        AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.updateParameterReference(referenceId, parameterReferencesRequest);
         AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
         return HttpResponse.ok(assessmentParameterReferenceDto);
 

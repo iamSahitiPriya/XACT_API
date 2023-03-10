@@ -31,7 +31,7 @@ public class ModuleService {
         moduleRepository.update(assessmentModule);
     }
 
-    public Integer getAssessedModule(List<TopicLevelRating> topicLevelRatingList, List<ParameterLevelRating> parameterLevelRatingList){
+    public Integer getAssessedModules(List<TopicLevelRating> topicLevelRatingList, List<ParameterLevelRating> parameterLevelRatingList){
         Set<Integer> assessedModule = new TreeSet<>();
         for (ParameterLevelRating parameterLevelRating : parameterLevelRatingList) {
             assessedModule.add(parameterLevelRating.getParameterLevelId().getParameter().getTopic().getModule().getModuleId());

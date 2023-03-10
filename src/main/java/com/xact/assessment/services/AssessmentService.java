@@ -53,7 +53,7 @@ public class AssessmentService {
         Set<AssessmentUser> assessmentUserSet = getAssessmentUsers(assessmentRequest, user, assessment);
         createAssessment(assessment);
 
-        usersAssessmentsService.createUsersInAssessment(assessmentUserSet);
+        usersAssessmentsService.saveUsersInAssessment(assessmentUserSet);
         assessment.setAssessmentUsers(assessmentUserSet);
 
         return assessment;
@@ -106,8 +106,8 @@ public class AssessmentService {
     }
 
 
-    public Set<AssessmentUser> getAssessmentFacilitatorsSet(Assessment assessment) {
-        return usersAssessmentsService.getAssessmentFacilitatorsSet(assessment);
+    public Set<AssessmentUser> getAssessmentFacilitators(Assessment assessment) {
+        return usersAssessmentsService.getAssessmentFacilitators(assessment);
     }
 
     private Set<String> getUpdatedUsers(Set<AssessmentUser> assessmentUsers, Set<AssessmentUser> assessmentUsersSet) {
@@ -126,9 +126,9 @@ public class AssessmentService {
         return usersAssessmentsService.getAssessment(assessmentId, user);
     }
 
-    public List<String> getAssessmentFacilitators(Integer assessmentId) {
-        return usersAssessmentsService.getAssessmentFacilitators(assessmentId);
-    }
+//    public List<String> getAssessmentFacilitators(Integer assessmentId) {
+//        return usersAssessmentsService.getAssessmentFacilitators(assessmentId);
+//    }
 
     public Assessment finishAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Completed);
@@ -143,7 +143,7 @@ public class AssessmentService {
     }
 
 
-    public void updateAssessment(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
+    public void updateAssessmentAndUsers(Assessment assessment, Set<AssessmentUser> assessmentUsers) {
         usersAssessmentsService.updateUsersInAssessment(assessmentUsers, assessment.getAssessmentId());
         assessment.setAssessmentUsers(assessmentUsers);
         updateAssessment(assessment);
@@ -206,47 +206,47 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.getParameter(parameterId);
     }
 
-    public List<TopicLevelRating> getTopicAssessmentData(Integer assessmentId) {
-        return topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId);
+    public List<TopicLevelRating> getTopicLevelRatings(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessmentId);
     }
 
-    public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
-        return topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId);
+    public List<TopicLevelRecommendation> getTopicLevelRecommendations(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getTopicLevelRecommendations(assessmentId);
     }
 
-    public List<ParameterLevelRating> getParameterAssessmentData(Integer assessmentId) {
-        return topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId);
+    public List<ParameterLevelRating> getParameterLevelRatings(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessmentId);
 
     }
 
-    public List<ParameterLevelRecommendation> getAssessmentParameterRecommendationData(Integer assessmentId) {
-        return topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId);
+    public List<ParameterLevelRecommendation> getParameterLevelRecommendations(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getParameterLevelRecommendations(assessmentId);
     }
 
 
-    public void deleteRecommendation(Integer recommendationId) {
-        topicAndParameterLevelAssessmentService.deleteRecommendation(recommendationId);
+    public void deleteTopicRecommendation(Integer recommendationId) {
+        topicAndParameterLevelAssessmentService.deleteTopicRecommendation(recommendationId);
     }
 
     public void deleteParameterRecommendation(Integer recommendationId) {
         topicAndParameterLevelAssessmentService.deleteParameterRecommendation(recommendationId);
     }
 
-    public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
-        return topicAndParameterLevelAssessmentService.searchTopic(topicLevelId);
+    public Optional<TopicLevelRating> searchTopicRating(TopicLevelId topicLevelId) {
+        return topicAndParameterLevelAssessmentService.searchTopicRating(topicLevelId);
     }
 
-    public void saveRatingAndRecommendation(TopicLevelRating topicLevelRating) {
-        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(topicLevelRating);
+    public void saveTopicRating(TopicLevelRating topicLevelRating) {
+        topicAndParameterLevelAssessmentService.saveTopicRating(topicLevelRating);
     }
 
-    public Optional<ParameterLevelRating> searchParameter(ParameterLevelId parameterLevelId) {
-        return topicAndParameterLevelAssessmentService.searchParameter(parameterLevelId);
+    public Optional<ParameterLevelRating> searchParameterRating(ParameterLevelId parameterLevelId) {
+        return topicAndParameterLevelAssessmentService.searchParameterRating(parameterLevelId);
 
     }
 
-    public void saveRatingAndRecommendation(ParameterLevelRating parameterLevelRating) {
-        topicAndParameterLevelAssessmentService.saveRatingAndRecommendation(parameterLevelRating);
+    public void saveParameterRating(ParameterLevelRating parameterLevelRating) {
+        topicAndParameterLevelAssessmentService.saveParameterRating(parameterLevelRating);
     }
 
 
@@ -255,15 +255,15 @@ public class AssessmentService {
     }
 
     public List<AssessmentCategory> getAllCategories() {
-        return assessmentMasterDataService.getAllCategoriesByDesc();
+        return assessmentMasterDataService.getAllCategories();
     }
 
     public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
         return assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
     }
 
-    public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
-        return usersAssessmentsService.findAllUserQuestion(assessmentId);
+    public List<UserQuestion> getUserQuestions(Integer assessmentId) {
+        return usersAssessmentsService.getUserQuestions(assessmentId);
     }
 
     public UserQuestion saveUserQuestion(Assessment assessment, Integer parameterId, String userQuestion) {

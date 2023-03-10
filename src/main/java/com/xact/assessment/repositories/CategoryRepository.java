@@ -25,11 +25,11 @@ public interface CategoryRepository extends CrudRepository<AssessmentCategory, I
 
     @Executable
     @Query("SELECT category FROM AssessmentCategory category ORDER BY category.updatedAt DESC ")
-    List<AssessmentCategory> findCategories();
+    List<AssessmentCategory> findCategoriesSortedByUpdatedDate();
 
     @Executable
     @Query("SELECT category.categoryName FROM AssessmentCategory category")
-    List<String> getAllCategories();
+    List<String> getCategoryNames();
 
 
 }

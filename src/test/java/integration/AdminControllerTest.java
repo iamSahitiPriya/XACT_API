@@ -86,7 +86,7 @@ class AdminControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
 
-        List<AssessmentCategory> assessmentCategories = categoryRepository.findCategories();
+        List<AssessmentCategory> assessmentCategories = categoryRepository.findCategoriesSortedByUpdatedDate();
         AssessmentCategory assessmentCategory = assessmentCategories.get(0);
 
         assertEquals("Software", assessmentCategories.get(0).getCategoryName());

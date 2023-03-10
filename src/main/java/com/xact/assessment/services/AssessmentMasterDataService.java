@@ -38,8 +38,8 @@ public class AssessmentMasterDataService {
         this.userAssessmentModuleService = userAssessmentModuleService;
     }
 
-    public List<AssessmentCategory> getAllCategoriesByDesc() {
-        return categoryService.getAllCategoriesByDesc();
+    public List<AssessmentCategory> getAllCategories() {
+        return categoryService.getAllCategories();
     }
 
     public AssessmentCategory getCategory(Integer categoryId) {
@@ -88,7 +88,7 @@ public class AssessmentMasterDataService {
     }
 
     private boolean isCategoryUnique(String categoryName) {
-        List<String> categories = categoryService.getAllCategories();
+        List<String> categories = categoryService.getCategoryNames();
         return isUnique(categories, categoryName);
     }
 
@@ -141,14 +141,14 @@ public class AssessmentMasterDataService {
         return isUnique(parameters, parameterName);
     }
 
-    public Question createAssessmentQuestions(QuestionRequest questionRequest) {
+    public Question createAssessmentQuestion(QuestionRequest questionRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
         Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
         questionService.createQuestion(question);
         return question;
     }
 
-    public AssessmentTopicReference createAssessmentTopicReferences(TopicReferencesRequest topicReferencesRequest) {
+    public AssessmentTopicReference createAssessmentTopicReference(TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         if (isTopicRatingUnique(assessmentTopic.getReferences(), topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopic.getReferences(), topicReferencesRequest.getReference())) {
             AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
@@ -172,7 +172,7 @@ public class AssessmentMasterDataService {
         } else return true;
     }
 
-    public AssessmentParameterReference createAssessmentParameterReferences(ParameterReferencesRequest parameterReferencesRequest) {
+    public AssessmentParameterReference createAssessmentParameterReference(ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         if (isParameterRatingUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getReference())) {
             AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference());
@@ -299,7 +299,7 @@ public class AssessmentMasterDataService {
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
-    public AssessmentParameterReference updateParameterReferences(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
+    public AssessmentParameterReference updateParameterReference(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         AssessmentParameterReference assessmentParameterReference = parameterService.getAssessmentParameterReference(referenceId);
         Set<AssessmentParameterReference> assessmentParameterReferences = new HashSet<>(assessmentParameter.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentParameterReference.getReferenceId())).toList());
@@ -318,8 +318,8 @@ public class AssessmentMasterDataService {
         return name.toLowerCase().replaceAll("\\s", "");
     }
 
-    public List<AssessmentCategory> getCategories() {
-        return categoryService.getCategories();
+    public List<AssessmentCategory> getCategoriesSortedByUpdatedDate() {
+        return categoryService.getCategoriesSortedByUpdatedDate();
     }
 
     public void deleteTopicReference(Integer referenceId) {

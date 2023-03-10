@@ -29,35 +29,32 @@ public class TopicAndParameterLevelAssessmentService {
         this.questionService = questionService;
     }
 
-    public TopicLevelRating saveRatingAndRecommendation(TopicLevelRating topicLevelRating) {
-        return topicService.saveRatingAndRecommendation(topicLevelRating);
+    public TopicLevelRating saveTopicRating(TopicLevelRating topicLevelRating) {
+        return topicService.saveTopicRating(topicLevelRating);
     }
 
 
-    public ParameterLevelRating saveRatingAndRecommendation(ParameterLevelRating parameterLevelRating) {
-        return parameterService.saveRatingAndRecommendation(parameterLevelRating);
+    public ParameterLevelRating saveParameterRating(ParameterLevelRating parameterLevelRating) {
+        return parameterService.saveParameterRating(parameterLevelRating);
     }
 
 
-    public List<ParameterLevelRating> getParameterAssessmentData(Integer assessmentId) {
-        return parameterService.getParameterAssessmentData(assessmentId);
+    public List<ParameterLevelRating> getParameterLevelRatings(Integer assessmentId) {
+        return parameterService.getParameterLevelRatings(assessmentId);
     }
 
-    public List<TopicLevelRating> getTopicAssessmentData(Integer assessmentId) {
-        return topicService.getTopicAssessmentData(assessmentId);
-    }
-
-    public List<TopicLevelRecommendation> getTopicAssessmentRecommendationData(Integer assessmentId, Integer topicId) {
-        return topicService.getTopicAssessmentRecommendationData(assessmentId, topicId);
-    }
-
-    public Optional<ParameterLevelRating> searchParameter(ParameterLevelId parameterLevelId) {
-        return parameterService.searchParameter(parameterLevelId);
+    public List<TopicLevelRating> getTopicLevelRatings(Integer assessmentId) {
+        return topicService.getTopicLevelRatings(assessmentId);
     }
 
 
-    public Optional<TopicLevelRating> searchTopic(TopicLevelId topicLevelId) {
-        return topicService.searchTopic(topicLevelId);
+    public Optional<ParameterLevelRating> searchParameterRating(ParameterLevelId parameterLevelId) {
+        return parameterService.searchParameterRating(parameterLevelId);
+    }
+
+
+    public Optional<TopicLevelRating> searchTopicRating(TopicLevelId topicLevelId) {
+        return topicService.searchTopicRating(topicLevelId);
     }
 
     public Optional<TopicLevelRecommendation> searchTopicRecommendation(Integer recommendationId) {
@@ -65,22 +62,18 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
 
-    public void deleteRecommendation(Integer recommendationId) {
-        topicService.deleteRecommendation(recommendationId);
+    public void deleteTopicRecommendation(Integer recommendationId) {
+        topicService.deleteTopicRecommendation(recommendationId);
     }
 
 
-    public List<TopicLevelRecommendation> getAssessmentTopicRecommendationData(Integer assessmentId) {
-        return topicService.getAssessmentTopicRecommendationData(assessmentId);
+    public List<TopicLevelRecommendation> getTopicLevelRecommendations(Integer assessmentId) {
+        return topicService.getTopicLevelRecommendations(assessmentId);
     }
 
 
-    public List<ParameterLevelRecommendation> getAssessmentParameterRecommendationData(Integer assessmentId) {
-        return parameterService.getAssessmentParameterRecommendationData(assessmentId);
-    }
-
-    public List<ParameterLevelRecommendation> getParameterAssessmentRecommendationData(Integer assessmentId, Integer parameterId) {
-        return parameterService.getParameterAssessmentRecommendationData(assessmentId, parameterId);
+    public List<ParameterLevelRecommendation> getParameterLevelRecommendations(Integer assessmentId) {
+        return parameterService.getParameterLevelRecommendations(assessmentId);
     }
 
     public void deleteParameterRecommendation(Integer recommendationId) {

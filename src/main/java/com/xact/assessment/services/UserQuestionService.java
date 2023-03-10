@@ -2,7 +2,6 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentParameter;
-import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.models.UserQuestion;
 import com.xact.assessment.repositories.UserQuestionRepository;
 import jakarta.inject.Singleton;
@@ -34,7 +33,7 @@ public class UserQuestionService {
         return userQuestion;
     }
 
-    public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
+    public List<UserQuestion> getUserQuestions(Integer assessmentId) {
         return userQuestionRepository.findByAssessmentId(assessmentId);
     }
 
@@ -79,8 +78,5 @@ public class UserQuestionService {
         return userQuestionRepository.findById(questionId).orElseThrow().getAnswer();
     }
 
-    public AssessmentTopic getTopicByQuestionId(Integer questionId) {
-        return userQuestionRepository.findById(questionId).orElseThrow().getParameter().getTopic();
-    }
 
 }

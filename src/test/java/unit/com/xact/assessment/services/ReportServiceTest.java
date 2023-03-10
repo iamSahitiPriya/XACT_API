@@ -151,10 +151,10 @@ class ReportServiceTest {
 
         parameterRecommendationMap.put(parameter.getParameterId(), parameterLevelRecommendationList);
 
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
-        when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
-        when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(parameterLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessmentId)).thenReturn(parameterAssessments);
+        when(topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessmentId)).thenReturn(topicAssessments);
+        when(topicAndParameterLevelAssessmentService.getTopicLevelRecommendations(assessmentId)).thenReturn(topicLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterLevelRecommendations(assessmentId)).thenReturn(parameterLevelRecommendationList);
         when(assessmentMasterDataService.getUserAssessmentCategories(assessmentId)).thenReturn(Collections.singletonList(category));
 
         String series1 = "Current Maturity";
@@ -273,10 +273,10 @@ class ReportServiceTest {
 
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
         when(assessmentMasterDataService.getUserAssessmentCategories(assessmentId)).thenReturn(Collections.singletonList(category));
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(parameterAssessments);
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(topicAssessments);
-        when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
-        when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(parameterLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessmentId)).thenReturn(parameterAssessments);
+        when(topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessmentId)).thenReturn(topicAssessments);
+        when(topicAndParameterLevelAssessmentService.getTopicLevelRecommendations(assessmentId)).thenReturn(topicLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterLevelRecommendations(assessmentId)).thenReturn(parameterLevelRecommendationList);
 
         String series1 = "Current Maturity";
         String series2 = "Desired Maturity";
@@ -393,12 +393,10 @@ class ReportServiceTest {
         parameterRecommendationMap.put(parameter.getParameterId(), parameterLevelRecommendationList);
 
         when(assessmentMasterDataService.getUserAssessmentCategories(assessmentId)).thenReturn(Collections.singletonList(category));
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessmentId)).thenReturn(new ArrayList<>());
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessmentId)).thenReturn(new ArrayList<>());
-        when(topicAndParameterLevelAssessmentService.getAssessmentTopicRecommendationData(assessmentId)).thenReturn(topicLevelRecommendationList);
-        when(topicAndParameterLevelAssessmentService.getAssessmentParameterRecommendationData(assessmentId)).thenReturn(parameterLevelRecommendationList);
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentRecommendationData(assessmentId, parameter.getParameterId())).thenReturn(parameterLevelRecommendationList);
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentRecommendationData(assessmentId, topic.getTopicId())).thenReturn(topicLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessmentId)).thenReturn(new ArrayList<>());
+        when(topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessmentId)).thenReturn(new ArrayList<>());
+        when(topicAndParameterLevelAssessmentService.getTopicLevelRecommendations(assessmentId)).thenReturn(topicLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterLevelRecommendations(assessmentId)).thenReturn(parameterLevelRecommendationList);
 
         String series1 = "Current Maturity";
         String series2 = "Desired Maturity";
@@ -485,8 +483,8 @@ class ReportServiceTest {
         topicLevelRatings.add(topicLevelRating);
 
         when(assessmentMasterDataService.getUserAssessmentCategories(assessment.getAssessmentId())).thenReturn(Collections.singletonList(assessmentCategory1));
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(topicLevelRatings);
-        when(assessmentMasterDataService.getAllCategoriesByDesc()).thenReturn(assessmentCategories);
+        when(topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessment.getAssessmentId())).thenReturn(topicLevelRatings);
+        when(assessmentMasterDataService.getAllCategories()).thenReturn(assessmentCategories);
 
         String series1 = "Current Maturity";
         String series2 = "Desired Maturity";
@@ -556,9 +554,9 @@ class ReportServiceTest {
         topicLevelRating.setTopicLevelId(topicLevelId);
         topicLevelRating.setRating(5);
 
-        when(topicAndParameterLevelAssessmentService.getParameterAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelRating));
-        when(topicAndParameterLevelAssessmentService.getTopicAssessmentData(assessment.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelRating));
-        when(assessmentMasterDataService.getAllCategoriesByDesc()).thenReturn(assessmentCategories);
+        when(topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessment.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelRating));
+        when(topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessment.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelRating));
+        when(assessmentMasterDataService.getAllCategories()).thenReturn(assessmentCategories);
         when(assessmentMasterDataService.isModuleSelectedByUser(assessment,assessmentModule)).thenReturn(true);
 
         List<AssessmentCategory> actualAssessmentCategoryList = reportService.generateSunburstData(assessment);
@@ -620,8 +618,8 @@ class ReportServiceTest {
         topicLevelRating.setRating(2);
 
         when(answerService.getAnswers(1)).thenReturn(answers);
-        when(userQuestionService.findAllUserQuestion(1)).thenReturn(questions);
-        when(moduleService.getAssessedModule(Collections.singletonList(topicLevelRating),Collections.singletonList(parameterLevelRating))).thenReturn(1);
+        when(userQuestionService.getUserQuestions(1)).thenReturn(questions);
+        when(moduleService.getAssessedModules(Collections.singletonList(topicLevelRating),Collections.singletonList(parameterLevelRating))).thenReturn(1);
         when(assessmentMasterDataService.getAssessedCategory(Collections.singletonList(topicLevelRating),Collections.singletonList(parameterLevelRating))).thenReturn(1);
 
         SummaryResponse actualResponse = new SummaryResponse();

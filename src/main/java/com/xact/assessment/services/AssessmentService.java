@@ -126,9 +126,6 @@ public class AssessmentService {
         return usersAssessmentsService.getAssessment(assessmentId, user);
     }
 
-//    public List<String> getAssessmentFacilitators(Integer assessmentId) {
-//        return usersAssessmentsService.getAssessmentFacilitators(assessmentId);
-//    }
 
     public Assessment finishAssessment(Assessment assessment) {
         assessment.setAssessmentStatus(Completed);

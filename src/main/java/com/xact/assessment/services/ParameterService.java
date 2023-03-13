@@ -43,9 +43,6 @@ public class ParameterService {
         return (List<AssessmentParameter>) assessmentParameterRepository.findAll();
     }
 
-//    public List<AssessmentParameter> getParameters() {
-//        return assessmentParameterRepository.listOrderByUpdatedAtDesc();
-//    }
 
     public ParameterLevelRating saveParameterRating(ParameterLevelRating parameterLevelRating) {
 

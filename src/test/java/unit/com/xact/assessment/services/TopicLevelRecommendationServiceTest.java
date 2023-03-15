@@ -13,10 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
-import java.util.Collections;
 import java.util.Optional;
 
-import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.NOW;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.mockito.Mockito.*;

@@ -231,7 +231,7 @@ class TopicServiceTest {
 
         when(topicLevelRecommendationService.findByAssessment(1)).thenReturn(topicLevelRecommendationList);
 
-        List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicService.getTopicRecommendationByAssessmentId(1);
+        List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicService.getTopicRecommendations(1);
 
         assertEquals(1,topicLevelRecommendationList1.size());
     }

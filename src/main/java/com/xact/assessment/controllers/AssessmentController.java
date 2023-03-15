@@ -173,11 +173,11 @@ public class AssessmentController {
         List<UserQuestion> userQuestionList = assessmentService.getUserQuestions(assessment.getAssessmentId());
 
         List<TopicLevelRating> topicLevelRatingList = assessmentService.getTopicLevelRatings(assessment.getAssessmentId());
-        List<TopicLevelRecommendation> topicLevelRecommendationList = assessmentService.getTopicLevelRecommendations(assessment.getAssessmentId());
+        List<TopicLevelRecommendation> topicLevelRecommendationList = assessmentService.getTopicRecommendations(assessment.getAssessmentId());
         List<TopicRatingAndRecommendation> topicRecommendationResponses = mergeTopicRatingAndRecommendation(topicLevelRatingList, topicLevelRecommendationList);
         List<ParameterLevelRating> parameterLevelRatingList = assessmentService.getParameterLevelRatings(assessment.getAssessmentId());
 
-        List<ParameterLevelRecommendation> parameterLevelRecommendationList = assessmentService.getParameterLevelRecommendations(assessment.getAssessmentId());
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = assessmentService.getParameterRecommendations(assessment.getAssessmentId());
         List<ParameterRatingAndRecommendation> paramRecommendationResponses = mergeParamRatingAndRecommendation(parameterLevelRatingList, parameterLevelRecommendationList);
 
 
@@ -198,9 +198,9 @@ public class AssessmentController {
         if (assessment.isEditable()) {
             ParameterLevelRecommendation parameterLevelRecommendation;
             if (parameterLevelRecommendationRequest.getRecommendationId() != null) {
-                parameterLevelRecommendation = assessmentService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+                parameterLevelRecommendation = assessmentService.updateParameterRecommendation(parameterLevelRecommendationRequest);
             } else {
-                parameterLevelRecommendation = assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+                parameterLevelRecommendation = assessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
             }
             parameterLevelRecommendationResponse = getParameterLevelRecommendationResponse(user, assessment, parameterLevelRecommendation);
             updateAssessment(assessment);

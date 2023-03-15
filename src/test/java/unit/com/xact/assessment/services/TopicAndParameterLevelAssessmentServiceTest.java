@@ -107,7 +107,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setDeliveryHorizon(LATER);
 
-        when(topicService.getTopicRecommendationByAssessmentId(assessment1.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelRecommendation));
+        when(topicService.getTopicRecommendations(assessment1.getAssessmentId())).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
         List<TopicLevelRecommendation> topicLevelRecommendationList = topicAndParameterLevelAssessmentService.getTopicRecommendations(assessment1.getAssessmentId());
 
@@ -141,7 +141,7 @@ class TopicAndParameterLevelAssessmentServiceTest {
         parameterLevelRecommendation.setRecommendationImpact(LOW);
         parameterLevelRecommendation.setDeliveryHorizon(LATER);
 
-        when(parameterService.getParameterRecommendationByAssessmentId(assessment1.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
+        when(parameterService.getParameterRecommendations(assessment1.getAssessmentId())).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
         List<ParameterLevelRecommendation> parameterLevelRecommendationList = topicAndParameterLevelAssessmentService.getParameterRecommendations(assessment1.getAssessmentId());
 
@@ -197,8 +197,8 @@ class TopicAndParameterLevelAssessmentServiceTest {
 
         ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest, ParameterLevelRecommendation.class);
 
-        when(topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, 1)).thenReturn(parameterLevelRecommendation);
-        ParameterLevelRecommendation parameterLevelRecommendation1 = topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, 1);
+        when(topicAndParameterLevelAssessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, 1)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation parameterLevelRecommendation1 = topicAndParameterLevelAssessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, 1);
 
         assertEquals("text", parameterLevelRecommendation1.getRecommendationText());
     }

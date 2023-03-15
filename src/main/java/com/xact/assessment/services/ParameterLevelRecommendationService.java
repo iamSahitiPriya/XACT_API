@@ -36,7 +36,7 @@ public class ParameterLevelRecommendationService {
         parameterLevelRecommendationRepository.deleteById(recommendationId);
     }
 
-    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
+    public ParameterLevelRecommendation updateParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
         ParameterLevelRecommendation parameterLevelRecommendation = findById(parameterLevelRecommendationRequest.getRecommendationId()).orElse(new ParameterLevelRecommendation());
         parameterLevelRecommendation.setRecommendationId(parameterLevelRecommendationRequest.getRecommendationId());
         setParameterLevelRecommendation(parameterLevelRecommendation, parameterLevelRecommendationRequest);
@@ -57,7 +57,7 @@ public class ParameterLevelRecommendationService {
         parameterLevelRecommendation.setDeliveryHorizon(parameterLevelRecommendationRequest.getDeliveryHorizon());
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, AssessmentParameter assessmentParameter) {
+    public ParameterLevelRecommendation saveParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, AssessmentParameter assessmentParameter) {
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
         parameterLevelRecommendation.setAssessment(assessment);
         parameterLevelRecommendation.setParameter(assessmentParameter);

@@ -204,22 +204,21 @@ public class AssessmentService {
     }
 
     public List<TopicLevelRating> getTopicLevelRatings(Integer assessmentId) {
-        return topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessmentId);
+        return topicAndParameterLevelAssessmentService.getTopicRatings(assessmentId);
     }
 
-    public List<TopicLevelRecommendation> getTopicLevelRecommendations(Integer assessmentId) {
-        return topicAndParameterLevelAssessmentService.getTopicLevelRecommendations(assessmentId);
+    public List<TopicLevelRecommendation> getTopicRecommendations(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getTopicRecommendations(assessmentId);
     }
 
     public List<ParameterLevelRating> getParameterLevelRatings(Integer assessmentId) {
-        return topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessmentId);
+        return topicAndParameterLevelAssessmentService.getParameterRatings(assessmentId);
 
     }
 
-    public List<ParameterLevelRecommendation> getParameterLevelRecommendations(Integer assessmentId) {
-        return topicAndParameterLevelAssessmentService.getParameterLevelRecommendations(assessmentId);
+    public List<ParameterLevelRecommendation> getParameterRecommendations(Integer assessmentId) {
+        return topicAndParameterLevelAssessmentService.getParameterRecommendations(assessmentId);
     }
-
 
     public void deleteTopicRecommendation(Integer recommendationId) {
         topicAndParameterLevelAssessmentService.deleteTopicRecommendation(recommendationId);
@@ -303,12 +302,12 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.saveTopicRecommendation(recommendationRequest, assessment, topicId);
     }
 
-    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
-        return topicAndParameterLevelAssessmentService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+    public ParameterLevelRecommendation updateParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
+        return topicAndParameterLevelAssessmentService.updateParameterRecommendation(parameterLevelRecommendationRequest);
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
-        return topicAndParameterLevelAssessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+    public ParameterLevelRecommendation saveParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+        return topicAndParameterLevelAssessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
     }
 
     public List<Assessment> findInactiveAssessments(Integer duration) {

@@ -80,10 +80,9 @@ public class TopicService {
     }
 
 
-    public List<TopicLevelRecommendation> getTopicLevelRecommendations(Integer assessmentId) {
+    public List<TopicLevelRecommendation> getTopicRecommendations(Integer assessmentId) {
         return topicLevelRecommendationService.findByAssessment(assessmentId);
     }
-
 
     public String getTopicRecommendationById(Integer identifier) {
         return topicLevelRecommendationService.findById(identifier).orElseThrow().getRecommendationText();
@@ -109,9 +108,6 @@ public class TopicService {
     }
 
 
-    public List<TopicLevelRecommendation> getTopicRecommendationByAssessmentId(Integer assessmentId) {
-        return topicLevelRecommendationService.findByAssessment(assessmentId);
-    }
 
     public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
         return topicLevelRecommendationService.updateTopicRecommendation(recommendationRequest);

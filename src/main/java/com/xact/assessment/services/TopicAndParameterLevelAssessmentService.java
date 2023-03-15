@@ -39,11 +39,11 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
 
-    public List<ParameterLevelRating> getParameterLevelRatings(Integer assessmentId) {
+    public List<ParameterLevelRating> getParameterRatings(Integer assessmentId) {
         return parameterService.getParameterLevelRatings(assessmentId);
     }
 
-    public List<TopicLevelRating> getTopicLevelRatings(Integer assessmentId) {
+    public List<TopicLevelRating> getTopicRatings(Integer assessmentId) {
         return topicService.getTopicLevelRatings(assessmentId);
     }
 
@@ -66,15 +66,6 @@ public class TopicAndParameterLevelAssessmentService {
         topicService.deleteTopicRecommendation(recommendationId);
     }
 
-
-    public List<TopicLevelRecommendation> getTopicLevelRecommendations(Integer assessmentId) {
-        return topicService.getTopicLevelRecommendations(assessmentId);
-    }
-
-
-    public List<ParameterLevelRecommendation> getParameterLevelRecommendations(Integer assessmentId) {
-        return parameterService.getParameterLevelRecommendations(assessmentId);
-    }
 
     public void deleteParameterRecommendation(Integer recommendationId) {
         parameterService.deleteParameterRecommendation(recommendationId);
@@ -110,11 +101,12 @@ public class TopicAndParameterLevelAssessmentService {
     }
 
     public List<TopicLevelRecommendation> getTopicRecommendations(Integer assessmentId) {
-        return topicService.getTopicRecommendationByAssessmentId(assessmentId);
+        return topicService.getTopicRecommendations(assessmentId);
     }
 
+
     public List<ParameterLevelRecommendation> getParameterRecommendations(Integer assessmentId) {
-        return parameterService.getParameterRecommendationByAssessmentId(assessmentId);
+        return parameterService.getParameterRecommendations(assessmentId);
     }
 
     public TopicLevelRecommendation updateTopicRecommendation(RecommendationRequest recommendationRequest) {
@@ -126,12 +118,12 @@ public class TopicAndParameterLevelAssessmentService {
 
     }
 
-    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
-        return parameterService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+    public ParameterLevelRecommendation updateParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
+        return parameterService.updateParameterRecommendation(parameterLevelRecommendationRequest);
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
-        return parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+    public ParameterLevelRecommendation saveParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+        return parameterService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
     }
 
 }

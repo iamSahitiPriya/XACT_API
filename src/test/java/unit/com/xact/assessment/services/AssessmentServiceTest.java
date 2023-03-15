@@ -542,8 +542,8 @@ class AssessmentServiceTest {
 
         ParameterLevelRecommendation parameterLevelRecommendation=modelMapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
 
-        when(assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1)).thenReturn(parameterLevelRecommendation);
-        ParameterLevelRecommendation parameterLevelRecommendation1=assessmentService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,1);
+        when(assessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment,1)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation parameterLevelRecommendation1=assessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment,1);
 
         assertEquals("text",parameterLevelRecommendation1.getRecommendationText());
     }

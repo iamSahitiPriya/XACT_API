@@ -73,11 +73,6 @@ public class ParameterService {
     }
 
 
-    public List<ParameterLevelRecommendation> getParameterLevelRecommendations(Integer assessmentId) {
-        return parameterLevelRecommendationService.findByAssessment(assessmentId);
-    }
-
-
     public void deleteParameterRecommendation(Integer recommendationId) {
         parameterLevelRecommendationService.deleteById(recommendationId);
     }
@@ -103,16 +98,16 @@ public class ParameterService {
     }
 
 
-    public List<ParameterLevelRecommendation> getParameterRecommendationByAssessmentId(Integer assessmentId) {
+    public List<ParameterLevelRecommendation> getParameterRecommendations(Integer assessmentId) {
         return parameterLevelRecommendationService.findByAssessment(assessmentId);
     }
 
-    public ParameterLevelRecommendation updateParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
-        return parameterLevelRecommendationService.updateParameterLevelRecommendation(parameterLevelRecommendationRequest);
+    public ParameterLevelRecommendation updateParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest) {
+        return parameterLevelRecommendationService.updateParameterRecommendation(parameterLevelRecommendationRequest);
     }
 
-    public ParameterLevelRecommendation saveParameterLevelRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
+    public ParameterLevelRecommendation saveParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         AssessmentParameter assessmentParameter = getParameter(parameterId).orElseThrow();
-        return parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest, assessment, assessmentParameter);
+        return parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, assessmentParameter);
     }
 }

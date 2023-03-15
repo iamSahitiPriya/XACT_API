@@ -41,7 +41,7 @@ public class TopicLevelRecommendationService {
         TopicLevelRecommendation topicLevelRecommendation = findById(recommendationRequest.getRecommendationId()).orElse(new TopicLevelRecommendation());
         topicLevelRecommendation.setRecommendationId(recommendationRequest.getRecommendationId());
         setTopicLevelRecommendation(topicLevelRecommendation, recommendationRequest);
-        return updateTopicLevelRecommendation(topicLevelRecommendation);
+        return updateTopicRecommendation(topicLevelRecommendation);
     }
 
     private void setTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation, RecommendationRequest recommendationRequest) {
@@ -56,17 +56,17 @@ public class TopicLevelRecommendationService {
         topicLevelRecommendation.setAssessment(assessment);
         topicLevelRecommendation.setTopic(assessmentTopic);
         setTopicLevelRecommendation(topicLevelRecommendation, recommendationRequest);
-        return saveTopicLevelRecommendation(topicLevelRecommendation);
+        return saveTopicRecommendation(topicLevelRecommendation);
     }
 
-    private TopicLevelRecommendation saveTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+    private TopicLevelRecommendation saveTopicRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
         if (topicLevelRecommendation.hasRecommendation()) {
             topicLevelRecommendationRepository.save(topicLevelRecommendation);
         }
         return topicLevelRecommendation;
     }
 
-    private TopicLevelRecommendation updateTopicLevelRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
+    private TopicLevelRecommendation updateTopicRecommendation(TopicLevelRecommendation topicLevelRecommendation) {
         if (topicLevelRecommendation.getRecommendationId() != null) {
                 topicLevelRecommendationRepository.update(topicLevelRecommendation);
         }

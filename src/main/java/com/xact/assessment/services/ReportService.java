@@ -56,10 +56,10 @@ public class ReportService {
         List<UserQuestion> userQuestions = userQuestionService.findByAssessmentAndAnswer(assessmentId);
         assessmentCategoryList = assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         selectedModulesSet = mapSelectedModulesInSet(assessmentCategoryList);
-        List<ParameterLevelRating> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessmentId);
-        List<TopicLevelRating> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessmentId);
-        List<TopicLevelRecommendation> topicLevelRecommendationData = topicAndParameterLevelAssessmentService.getTopicLevelRecommendations(assessmentId);
-        List<ParameterLevelRecommendation> parameterLevelRecommendationData = topicAndParameterLevelAssessmentService.getParameterLevelRecommendations(assessmentId);
+        List<ParameterLevelRating> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterRatings(assessmentId);
+        List<TopicLevelRating> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicRatings(assessmentId);
+        List<TopicLevelRecommendation> topicLevelRecommendationData = topicAndParameterLevelAssessmentService.getTopicRecommendations(assessmentId);
+        List<ParameterLevelRecommendation> parameterLevelRecommendationData = topicAndParameterLevelAssessmentService.getParameterRecommendations(assessmentId);
         Map<Integer, List<TopicLevelRecommendation>> topicLevelRecommendationMap = getTopicWiseRecommendations(topicLevelRecommendationData);
         Map<Integer, List<ParameterLevelRecommendation>> parameterLevelRecommendationMap = getParameterWiseRecommendations(parameterLevelRecommendationData);
         Map<Integer, List<ReportAnswerResponse>> answerParameterListMap = getParameterWiseAnswer(answers, userQuestions);
@@ -101,8 +101,8 @@ public class ReportService {
     }
 
     public List<AssessmentCategory> generateSunburstData(Assessment assessment) {
-        List<ParameterLevelRating> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessment.getAssessmentId());
-        List<TopicLevelRating> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessment.getAssessmentId());
+        List<ParameterLevelRating> parameterAssessmentData = topicAndParameterLevelAssessmentService.getParameterRatings(assessment.getAssessmentId());
+        List<TopicLevelRating> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicRatings(assessment.getAssessmentId());
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
         for (AssessmentCategory assessmentCategory : assessmentCategories) {
             fillInMaturityScore(assessmentCategory, topicAssessmentData, parameterAssessmentData, assessment);
@@ -522,8 +522,8 @@ public class ReportService {
 
     public SummaryResponse getSummary(Integer assessmentId) {
         Integer totalNoOfQuestions = topicAndParameterLevelAssessmentService.getAnswers(assessmentId).size() + userQuestionService.findByAssessmentAndAnswer(assessmentId).size();
-        List<ParameterLevelRating> parameterLevelRatingList = topicAndParameterLevelAssessmentService.getParameterLevelRatings(assessmentId);
-        List<TopicLevelRating> topicLevelRatingList = topicAndParameterLevelAssessmentService.getTopicLevelRatings(assessmentId);
+        List<ParameterLevelRating> parameterLevelRatingList = topicAndParameterLevelAssessmentService.getParameterRatings(assessmentId);
+        List<TopicLevelRating> topicLevelRatingList = topicAndParameterLevelAssessmentService.getTopicRatings(assessmentId);
 
 
         Integer totalModule = moduleService.getAssessedModules(topicLevelRatingList, parameterLevelRatingList);

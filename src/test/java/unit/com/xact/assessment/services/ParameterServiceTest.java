@@ -122,8 +122,8 @@ class ParameterServiceTest {
         when(parameterLevelRatingService.save(parameterLevelRating)).thenReturn(parameterLevelRating);
         ParameterLevelRating actualResponse = parameterService.saveParameterRating(parameterLevelRating);
 
-        when(parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,assessmentParameter)).thenReturn(parameterLevelRecommendation);
-        ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,parameterId);
+        when(parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment,assessmentParameter)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment,parameterId);
 
 
         assertEquals(parameterLevelRating.getRating(), actualResponse.getRating());
@@ -169,7 +169,7 @@ class ParameterServiceTest {
         assessmentParameter.setParameterId(parameterId);
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
-        parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter);
+        parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter);
 
 
         when(parameterLevelRatingService.existsById(parameterLevelRating)).thenReturn(true);
@@ -178,9 +178,9 @@ class ParameterServiceTest {
 
         when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
         when(parameterLevelRecommendationService.existsById(parameterLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
-        when(parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter)).thenReturn(parameterLevelRecommendation);
+        when(parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter)).thenReturn(parameterLevelRecommendation);
 
-        ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,parameterId);
+        ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment1,parameterId);
 
         assertEquals(parameterLevelRating.getRating(), actualResponse.getRating());
         assertEquals(parameterLevelRating.getParameterLevelId(), actualResponse.getParameterLevelId());
@@ -221,7 +221,7 @@ class ParameterServiceTest {
 
         when(parameterLevelRecommendationService.findByAssessment(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
-        List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterService.getParameterLevelRecommendations(assessmentId);
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = parameterService.getParameterRecommendations(assessmentId);
 
         assertEquals(parameterLevelRatingList.get(0).getRating(), parameterLevelRating.getRating());
         assertEquals(parameterLevelRecommendationList.get(0).getRecommendationText(), parameterLevelRecommendation.getRecommendationText());
@@ -281,11 +281,11 @@ class ParameterServiceTest {
         assessmentParameter.setParameterId(parameterId);
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
-        when(parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter)).thenReturn(parameterLevelRecommendation);
+        when(parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter)).thenReturn(parameterLevelRecommendation);
         doNothing().when(parameterLevelRecommendationService).deleteById(parameterLevelRecommendationRequest.getRecommendationId());
 
 
-        parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter);
+        parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter);
         parameterLevelRecommendationService.deleteById(parameterLevelRecommendationRequest.getRecommendationId());
 
         verify(parameterLevelRecommendationService).deleteById(parameterLevelRecommendationRequest.getRecommendationId());
@@ -328,7 +328,7 @@ class ParameterServiceTest {
         assessmentParameter.setParameterId(parameterId);
         parameterLevelRecommendation.setParameter(assessmentParameter);
 
-        parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter);
+        parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter);
 
         when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
         when(parameterLevelRatingService.existsById(parameterLevelRating)).thenReturn(true);
@@ -337,8 +337,8 @@ class ParameterServiceTest {
 
 
         when(parameterLevelRecommendationService.existsById(parameterLevelRecommendationRequest.getRecommendationId())).thenReturn(true);
-        when(parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter)).thenReturn(parameterLevelRecommendation);
-        ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment1,parameterId);
+        when(parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment1,assessmentParameter)).thenReturn(parameterLevelRecommendation);
+        ParameterLevelRecommendation actualResponse1 = parameterService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment1,parameterId);
 
         assertEquals(parameterLevelRating.getRating(), actualResponse.getRating());
         assertEquals(parameterLevelRecommendation.getRecommendationText(), actualResponse1.getRecommendationText());

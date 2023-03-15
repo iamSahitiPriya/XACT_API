@@ -83,4 +83,7 @@ public class UserQuestionService {
         return userQuestionRepository.findById(questionId).orElseThrow().getParameter().getTopic();
     }
 
+    public List<UserQuestion> getUserQuestionsForFinishedAssessment() {
+        return  userQuestionRepository.findByFinishedAssessment();
+    }
 }

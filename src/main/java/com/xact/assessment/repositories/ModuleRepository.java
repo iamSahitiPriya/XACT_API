@@ -23,4 +23,7 @@ public interface ModuleRepository extends CrudRepository<AssessmentModule, Integ
     @Query("SELECT module FROM AssessmentModule module WHERE module.moduleId=:moduleId")
     AssessmentModule findByModuleId(Integer moduleId);
 
+    @Executable
+    @Query("SELECT module FROM AssessmentModule  module WHERE module.author=:userEmail")
+    List<AssessmentModule> findByAuthor(String userEmail);
 }

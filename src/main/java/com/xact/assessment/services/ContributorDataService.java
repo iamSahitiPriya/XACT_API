@@ -13,19 +13,25 @@ public class ContributorDataService {
     private final ContributorDataRepository contributorDataRepository;
     private final ModuleService moduleService;
 
-    public ContributorDataService(ContributorDataRepository contributorDataRepository, ModuleService moduleService) {
+    private final UserQuestionService userQuestionService;
+
+    public ContributorDataService(ContributorDataRepository contributorDataRepository, ModuleService moduleService, UserQuestionService userQuestionService) {
         this.contributorDataRepository = contributorDataRepository;
 
         this.moduleService = moduleService;
+        this.userQuestionService = userQuestionService;
     }
 
     public void save(List<UserQuestion> userQuestionList) {
         for (UserQuestion userQuestion : userQuestionList) {
-            ContributorData contributorData = new ContributorData();
-            contributorData.setQuestion(userQuestion.getQuestion());
-            contributorData.setParameter(userQuestion.getParameter());
-            contributorDataRepository.save(contributorData);
-
+            if (!userQuestion.isContributionStatus()) {
+                ContributorData contributorData = new ContributorData();
+                contributorData.setQuestion(userQuestion.getQuestion());
+                contributorData.setParameter(userQuestion.getParameter());
+                contributorDataRepository.save(contributorData);
+                userQuestion.setContributionStatus(true);
+               userQuestionService.updateUserQuestion(userQuestion);
+            }
         }
     }
 
@@ -33,7 +39,6 @@ public class ContributorDataService {
     public ContributorDataResponse getContributorQuestions(String userEmail) {
         List<AssessmentModule> assessmentModules = moduleService.getModuleByAuthor(userEmail);
         List<ContributorData> contributorDataList = contributorDataRepository.findByAuthor(userEmail);
-
         ContributorDataResponse contributorDataResponse = new ContributorDataResponse();
         List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(contributorDataList, assessmentModules);
         contributorDataResponse.setContributorModuleData(contributorModuleDataList);

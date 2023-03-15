@@ -84,6 +84,11 @@ public class UserQuestionService {
     }
 
     public List<UserQuestion> getUserQuestionsForFinishedAssessment() {
-        return  userQuestionRepository.findByFinishedAssessment();
+        return userQuestionRepository.findByFinishedAssessment();
+    }
+
+
+    public void updateUserQuestion(UserQuestion userQuestion) {
+        userQuestionRepository.update(userQuestion);
     }
 }

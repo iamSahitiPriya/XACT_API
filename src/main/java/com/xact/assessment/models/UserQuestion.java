@@ -55,6 +55,10 @@ public class UserQuestion {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+    @NotNull
+    @Column(name = "contribution_status")
+    private boolean contributionStatus;
+
     public boolean hasQuestion() {
         return question != null && !question.isBlank();
     }

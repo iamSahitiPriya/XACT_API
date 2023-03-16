@@ -9,9 +9,7 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.QuestionRepository;
 import jakarta.inject.Singleton;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.xact.assessment.dtos.ContributorRole.Author;
 
@@ -63,15 +61,44 @@ public class QuestionService {
         }
     }
 
-    public ContributorDataResponse getContributorQuestions(String userEmail) {
+    public List<ContributorDataResponse> getContributorQuestions(String userEmail) {
+        List<ContributorDataResponse> contributorDataResponseList=new ArrayList<>();
         List<AssessmentModule> authorAssessmentModules = moduleContributorService.getModuleByRole(userEmail,Author);
-
         List<Question> questionList = (List<Question>) questionRepository.findAll();
-        ContributorDataResponse contributorDataResponse = new ContributorDataResponse();
-        List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(questionList, authorAssessmentModules);
-        contributorDataResponse.setContributorModuleData(contributorModuleDataList);
 
-        return contributorDataResponse;
+        ContributorDataResponse authorDataResponse=new ContributorDataResponse();
+        authorDataResponse.setContributorRole(Author);
+        List<ContributorCategoryData> contributorCategoryDataList=getContributorCategoryData(questionList,authorAssessmentModules);
+        authorDataResponse.setContributorCategoryDataList(contributorCategoryDataList);
+
+          contributorDataResponseList.add(authorDataResponse);
+
+//        ContributorCategoryData contributorCategoryDataResponse = new ContributorCategoryData();
+
+//        contributorDataResponse.setContributorModuleData(contributorModuleDataList);
+
+        return contributorDataResponseList;
+    }
+
+    private List<ContributorCategoryData> getContributorCategoryData(List<Question> questionList, List<AssessmentModule> authorAssessmentModules) {
+        List<ContributorCategoryData> contributorCategoryDataList=new ArrayList<>();
+        HashMap<AssessmentCategory,List<AssessmentModule>> categoryListHashMap=new HashMap<>();
+        for(AssessmentModule assessmentModule:authorAssessmentModules){
+            if(categoryListHashMap.containsKey(assessmentModule.getCategory())){
+                categoryListHashMap.get(assessmentModule.getCategory()).add(assessmentModule);
+            }
+            else{
+                categoryListHashMap.put(assessmentModule.getCategory(), Collections.singletonList(assessmentModule)) ;
+            }
+        }
+        categoryListHashMap.forEach((key,value)->{
+            ContributorCategoryData contributorCategoryData=new ContributorCategoryData();
+            contributorCategoryData.setCategoryName(key.getCategoryName());
+            List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(questionList, value);
+            contributorCategoryData.setContributorModuleData(contributorModuleDataList);
+            contributorCategoryDataList.add(contributorCategoryData);
+        });
+        return contributorCategoryDataList;
     }
 
 

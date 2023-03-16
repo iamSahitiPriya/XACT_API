@@ -1,8 +1,9 @@
 package com.xact.assessment.controllers;
 
 
-import com.xact.assessment.dtos.ContributorDataResponse;
+import com.xact.assessment.dtos.ContributorCategoryData;
 
+import com.xact.assessment.dtos.ContributorDataResponse;
 import com.xact.assessment.services.QuestionService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Controller("/v1")
 public class ContributorController {
@@ -30,9 +32,9 @@ public class ContributorController {
     @Get(value = "/author/questions", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @Transactional
-    public HttpResponse<ContributorDataResponse> getContributorQuestions(Authentication authentication) {
+    public HttpResponse<List<ContributorDataResponse>> getContributorQuestions(Authentication authentication) {
         LOGGER.info("Get all questions");
-        ContributorDataResponse contributorDataResponse = questionService.getContributorQuestions(authentication.getName());
+        List<ContributorDataResponse> contributorDataResponse = questionService.getContributorQuestions(authentication.getName());
 
         return HttpResponse.ok(contributorDataResponse);
 

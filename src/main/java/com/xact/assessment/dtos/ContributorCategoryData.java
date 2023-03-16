@@ -1,5 +1,6 @@
 package com.xact.assessment.dtos;
 
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.List;
 @Getter
 @EqualsAndHashCode
 @Setter
-public class ContributorDataResponse {
-    private ContributorRole contributorRole;
-    private List<ContributorCategoryData> contributorCategoryDataList;
+public class ContributorCategoryData {
+    private String categoryName;
+    private List<ContributorModuleData> contributorModuleData;
 }

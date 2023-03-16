@@ -2,7 +2,8 @@ package com.xact.assessment.controllers;
 
 
 import com.xact.assessment.dtos.ContributorDataResponse;
-import com.xact.assessment.services.ContributorDataService;
+
+import com.xact.assessment.services.QuestionService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -20,10 +21,10 @@ public class ContributorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentController.class);
 
-    private final ContributorDataService contributorDataService;
+    private final QuestionService questionService;
 
-    public ContributorController(ContributorDataService contributorDataService) {
-        this.contributorDataService = contributorDataService;
+    public ContributorController(QuestionService questionService) {
+        this.questionService = questionService;
     }
 
     @Get(value = "/author/questions", produces = MediaType.APPLICATION_JSON)
@@ -31,7 +32,7 @@ public class ContributorController {
     @Transactional
     public HttpResponse<ContributorDataResponse> getContributorQuestions(Authentication authentication) {
         LOGGER.info("Get all questions");
-        ContributorDataResponse contributorDataResponse = contributorDataService.getContributorQuestions(authentication.getName());
+        ContributorDataResponse contributorDataResponse = questionService.getContributorQuestions(authentication.getName());
 
         return HttpResponse.ok(contributorDataResponse);
 

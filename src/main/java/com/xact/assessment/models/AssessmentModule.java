@@ -62,8 +62,6 @@ public class AssessmentModule implements Serializable {
     @Column(name = "comments")
     private String comments;
 
-    @Column(name = "author")
-    private String author;
 
     public boolean getIsActive() {
         return isActive;

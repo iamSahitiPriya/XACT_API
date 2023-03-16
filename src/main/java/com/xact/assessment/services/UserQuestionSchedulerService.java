@@ -11,20 +11,21 @@ import java.util.List;
 @Singleton
 public class UserQuestionSchedulerService {
     private final UserQuestionService userQuestionService;
-    private final ContributorDataService contributorDataService;
+
+    private final QuestionService questionService;
     private static final Logger LOGGER = LoggerFactory.getLogger(CleanupSchedulerService.class);
 
 
 
-    public UserQuestionSchedulerService(UserQuestionService userQuestionService, ContributorDataService contributorDataService) {
+    public UserQuestionSchedulerService(UserQuestionService userQuestionService, QuestionService questionService) {
         this.userQuestionService = userQuestionService;
-        this.contributorDataService = contributorDataService;
+        this.questionService = questionService;
     }
 
     @Scheduled(fixedDelay = "10s")
     public void saveUserQuestionForCompletedAssessment(){
         LOGGER.info("Saving user questions in contributors data table");
         List<UserQuestion> userQuestionList = userQuestionService.getUserQuestionsForFinishedAssessment();
-        contributorDataService.save(userQuestionList);
+        questionService.save(userQuestionList);
     }
 }

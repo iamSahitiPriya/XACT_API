@@ -18,7 +18,7 @@ class QuestionServiceTest {
     @BeforeEach
     public void beforeEach() {
         questionRepository = mock(QuestionRepository.class);
-        questionService = new QuestionService(questionRepository);
+        questionService = new QuestionService(questionRepository, userQuestionService, moduleService, moduleContributorService);
 
     }
 

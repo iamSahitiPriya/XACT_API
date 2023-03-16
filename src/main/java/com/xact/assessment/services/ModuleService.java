@@ -22,17 +22,20 @@ public class ModuleService {
     public ModuleService(ModuleRepository moduleRepository) {
         this.moduleRepository = moduleRepository;
     }
-    public AssessmentModule getModule(Integer moduleId){
+
+    public AssessmentModule getModule(Integer moduleId) {
         return moduleRepository.findByModuleId(moduleId);
     }
-    public void createModule(AssessmentModule assessmentModule){
+
+    public void createModule(AssessmentModule assessmentModule) {
         moduleRepository.save(assessmentModule);
     }
-    public void updateModule(AssessmentModule assessmentModule){
+
+    public void updateModule(AssessmentModule assessmentModule) {
         moduleRepository.update(assessmentModule);
     }
 
-    public Integer getAssessedModule(List<TopicLevelRating> topicLevelRatingList, List<ParameterLevelRating> parameterLevelRatingList){
+    public Integer getAssessedModule(List<TopicLevelRating> topicLevelRatingList, List<ParameterLevelRating> parameterLevelRatingList) {
         Set<Integer> assessedModule = new TreeSet<>();
         for (ParameterLevelRating parameterLevelRating : parameterLevelRatingList) {
             assessedModule.add(parameterLevelRating.getParameterLevelId().getParameter().getTopic().getModule().getModuleId());
@@ -46,8 +49,5 @@ public class ModuleService {
     }
 
 
-    public List<AssessmentModule> getModuleByAuthor(String userEmail) {
-        return moduleRepository.findByAuthor(userEmail);
-    }
 }
 

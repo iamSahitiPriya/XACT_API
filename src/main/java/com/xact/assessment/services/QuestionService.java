@@ -11,8 +11,6 @@ import jakarta.inject.Singleton;
 
 import java.util.*;
 
-import static com.xact.assessment.dtos.ContributorRole.Author;
-
 @Singleton
 public class QuestionService {
     private final QuestionRepository questionRepository;
@@ -61,44 +59,51 @@ public class QuestionService {
         }
     }
 
-    public List<ContributorDataResponse> getContributorQuestions(String userEmail) {
-        List<ContributorDataResponse> contributorDataResponseList=new ArrayList<>();
-        List<AssessmentModule> authorAssessmentModules = moduleContributorService.getModuleByRole(userEmail,Author);
-        List<Question> questionList = (List<Question>) questionRepository.findAll();
+    public ContributorDataResponse getContributorQuestions(ContributorRole contributorRole, String userEmail) {
+        List<AssessmentModule> authorAssessmentModules = moduleContributorService.getModuleByRole(userEmail, contributorRole);
 
-        ContributorDataResponse authorDataResponse=new ContributorDataResponse();
-        authorDataResponse.setContributorRole(Author);
-        List<ContributorCategoryData> contributorCategoryDataList=getContributorCategoryData(questionList,authorAssessmentModules);
-        authorDataResponse.setContributorCategoryDataList(contributorCategoryDataList);
+        List<Question> questionList = getContributorQuestions(contributorRole);
 
-          contributorDataResponseList.add(authorDataResponse);
+        ContributorDataResponse contributorDataResponse = new ContributorDataResponse();
+        List<ContributorCategoryData> contributorCategoryDataList = getContributorCategoryData(questionList, authorAssessmentModules);
+        contributorDataResponse.setContributorCategoryDataList(contributorCategoryDataList);
 
-//        ContributorCategoryData contributorCategoryDataResponse = new ContributorCategoryData();
+        return contributorDataResponse;
+    }
 
-//        contributorDataResponse.setContributorModuleData(contributorModuleDataList);
-
-        return contributorDataResponseList;
+    private List<Question> getContributorQuestions(ContributorRole contributorRole) {
+        List<Question> questionList;
+        if (contributorRole.equals(ContributorRole.Author)) {
+            questionList = questionRepository.getAuthorQuestions();
+        } else {
+            questionList = questionRepository.getReviewerQuestions();
+        }
+        return questionList;
     }
 
     private List<ContributorCategoryData> getContributorCategoryData(List<Question> questionList, List<AssessmentModule> authorAssessmentModules) {
-        List<ContributorCategoryData> contributorCategoryDataList=new ArrayList<>();
-        HashMap<AssessmentCategory,List<AssessmentModule>> categoryListHashMap=new HashMap<>();
-        for(AssessmentModule assessmentModule:authorAssessmentModules){
-            if(categoryListHashMap.containsKey(assessmentModule.getCategory())){
-                categoryListHashMap.get(assessmentModule.getCategory()).add(assessmentModule);
-            }
-            else{
-                categoryListHashMap.put(assessmentModule.getCategory(), Collections.singletonList(assessmentModule)) ;
-            }
-        }
-        categoryListHashMap.forEach((key,value)->{
-            ContributorCategoryData contributorCategoryData=new ContributorCategoryData();
+        List<ContributorCategoryData> contributorCategoryDataList = new ArrayList<>();
+        HashMap<AssessmentCategory, List<AssessmentModule>> categoryListHashMap = getMappedCategoryModules(authorAssessmentModules);
+        categoryListHashMap.forEach((key, value) -> {
+            ContributorCategoryData contributorCategoryData = new ContributorCategoryData();
             contributorCategoryData.setCategoryName(key.getCategoryName());
             List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(questionList, value);
             contributorCategoryData.setContributorModuleData(contributorModuleDataList);
             contributorCategoryDataList.add(contributorCategoryData);
         });
         return contributorCategoryDataList;
+    }
+
+    private HashMap<AssessmentCategory, List<AssessmentModule>> getMappedCategoryModules(List<AssessmentModule> authorAssessmentModules) {
+        HashMap<AssessmentCategory, List<AssessmentModule>> categoryListHashMap = new HashMap<>();
+        for (AssessmentModule assessmentModule : authorAssessmentModules) {
+            if (categoryListHashMap.containsKey(assessmentModule.getCategory())) {
+                categoryListHashMap.get(assessmentModule.getCategory()).add(assessmentModule);
+            } else {
+                categoryListHashMap.put(assessmentModule.getCategory(), Collections.singletonList(assessmentModule));
+            }
+        }
+        return categoryListHashMap;
     }
 
 
@@ -135,6 +140,7 @@ public class QuestionService {
     }
 
     private void setContributorQuestionData(List<Question> questionList, List<ContributorParameterData> contributorParameterDataList, AssessmentParameter assessmentParameter, ContributorParameterData contributorParameterData) {
+
         List<ContributorQuestionData> contributorQuestionDataList = new ArrayList<>();
         for (Question question : questionList) {
             if (question.getParameter().equals(assessmentParameter)) {

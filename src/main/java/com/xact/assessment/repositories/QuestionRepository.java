@@ -15,4 +15,12 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
+
+    @Executable
+    @Query("SELECT question from Question question WHERE NOT question.questionStatus = 'Published'")
+    List<Question> getAuthorQuestions();
+
+    @Executable
+    @Query("SELECT question from Question question WHERE (NOT question.questionStatus = 'Published') and (NOT question.questionStatus = 'Idle')")
+    List<Question> getReviewerQuestions();
 }

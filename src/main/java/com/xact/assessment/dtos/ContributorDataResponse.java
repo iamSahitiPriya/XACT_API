@@ -12,6 +12,5 @@ import java.util.List;
 @EqualsAndHashCode
 @Setter
 public class ContributorDataResponse {
-    private ContributorRole contributorRole;
     private List<ContributorCategoryData> contributorCategoryDataList;
 }

@@ -47,11 +47,8 @@ public class Question implements Serializable {
     @Enumerated(EnumType.STRING)
     private ContributorQuestionStatus questionStatus;
 
-    @Column(name = "author_comments")
-    private String authorComments;
-
-    @Column(name = "reviewer_comments")
-    private String reviewerComments;
+    @Column(name = "comments")
+    private String comments;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

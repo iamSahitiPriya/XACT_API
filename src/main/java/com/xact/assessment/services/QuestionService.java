@@ -157,8 +157,7 @@ public class QuestionService {
         contributorQuestionData.setQuestionId(question.getQuestionId());
         contributorQuestionData.setQuestion(question.getQuestionText());
         contributorQuestionData.setContributorQuestionStatus(question.getQuestionStatus());
-        contributorQuestionData.setAuthorComments(question.getAuthorComments());
-        contributorQuestionData.setReviewerComments(question.getReviewerComments());
+        contributorQuestionData.setAuthorComments(question.getComments());
     }
 
 }

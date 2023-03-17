@@ -13,7 +13,6 @@ import lombok.Setter;
 public class ContributorQuestionData {
     private Integer questionId;
     private String question;
-    private String authorComments;
-    private String reviewerComments;
+    private String comments;
     private ContributorQuestionStatus contributorQuestionStatus;
 }

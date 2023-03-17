@@ -57,6 +57,15 @@ public class AssessmentMasterDataService {
                     assessmentModule.setTopics(assessmentModule.getActiveTopics());
                     for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
                         assessmentTopic.setParameters(assessmentTopic.getActiveParameters());
+                        for(AssessmentParameter assessmentParameter : assessmentTopic.getParameters()){
+                            Set<Question> questionList = new HashSet<>();
+                            for(Question question : assessmentParameter.getQuestions()){
+                                if(question.getQuestionStatus() == ContributorQuestionStatus.Published){
+                                    questionList.add(question);
+                                }
+                            }
+                            assessmentParameter.setQuestions(questionList);
+                        }
                     }
                     categorySet.add(category);
                 }

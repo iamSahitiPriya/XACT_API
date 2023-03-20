@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static com.xact.assessment.dtos.ContributorQuestionStatus.Published;
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -447,6 +448,9 @@ class AssessmentMasterDataServiceTest {
         assessmentParameter.setParameterName("parameterName");
         assessmentParameter.setActive(true);
         assessmentParameter.setTopic(assessmentTopic);
+        Question question=new Question();
+        question.setQuestionStatus(Published);
+        assessmentParameter.setQuestions(Collections.singleton(question));
         Set<AssessmentParameter> validParameters = Collections.singleton(assessmentParameter);
         module.setTopics(validTopics);
         assessmentTopic.setParameters(validParameters);
@@ -481,10 +485,13 @@ class AssessmentMasterDataServiceTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic(1, "topicName", assessmentModule1, true, "");
         Set<AssessmentTopic> validTopics = Collections.singleton(assessmentTopic);
         AssessmentParameter assessmentParameter = new AssessmentParameter();
+        Question question=new Question();
+        question.setQuestionStatus(Published);
         assessmentParameter.setParameterId(1);
         assessmentParameter.setParameterName("parameterName");
         assessmentParameter.setActive(true);
         assessmentParameter.setTopic(assessmentTopic);
+        assessmentParameter.setQuestions(Collections.singleton(question));
         Set<AssessmentParameter> validParameters = Collections.singleton(assessmentParameter);
         assessmentModule1.setTopics(validTopics);
         assessmentTopic.setParameters(validParameters);

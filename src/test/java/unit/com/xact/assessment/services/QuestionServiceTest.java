@@ -197,4 +197,24 @@ class QuestionServiceTest {
         return expectedResponse;
     }
 
+    @Test
+    void shouldSaveUserQuestions() {
+        UserQuestion userQuestion=new UserQuestion();
+        userQuestion.setContributionStatus(false);
+
+        questionService.save(Collections.singletonList(userQuestion));
+        verify(userQuestionService).updateUserQuestion(userQuestion);
+    }
+
+    @Test
+    void shouldGetAllQuestions() {
+        Question question=new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question");
+        List<Question> questionList=new ArrayList<>();
+        questionList.add(question);
+        when(questionRepository.findAll()).thenReturn(questionList);
+        List<Question> questionListResponse=questionService.getAllQuestion();
+        assertEquals(questionListResponse,questionList);
+    }
 }

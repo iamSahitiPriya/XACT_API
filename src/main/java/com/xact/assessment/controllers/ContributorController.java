@@ -1,19 +1,20 @@
 package com.xact.assessment.controllers;
 
 
-import com.xact.assessment.dtos.ContributorCategoryData;
+import com.xact.assessment.dtos.*;
 
-import com.xact.assessment.dtos.ContributorDataResponse;
-import com.xact.assessment.dtos.ContributorRole;
+import com.xact.assessment.models.Question;
 import com.xact.assessment.services.QuestionService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Patch;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +37,21 @@ public class ContributorController {
     @Transactional
     public HttpResponse<ContributorDataResponse> getContributorQuestions(@PathVariable ContributorRole role, Authentication authentication) {
         LOGGER.info("Get all questions");
-        ContributorDataResponse contributorDataResponse = questionService.getContributorQuestions(role,authentication.getName());
+        ContributorDataResponse contributorDataResponse = questionService.getContributorQuestions(role, authentication.getName());
 
         return HttpResponse.ok(contributorDataResponse);
 
     }
+
+    @Patch(value = "/{moduleId}/questions/{status}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<Question> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @PathVariable ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
+        LOGGER.info("Get all questions");
+        questionService.updateContributorQuestionsStatus(moduleId,status, questionStatusUpdateRequest, authentication.getName());
+
+        return HttpResponse.ok();
+
+    }
+
 
 }

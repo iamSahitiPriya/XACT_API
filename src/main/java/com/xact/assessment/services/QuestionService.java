@@ -160,4 +160,39 @@ public class QuestionService {
         contributorQuestionData.setComments(question.getComments());
     }
 
+    public void updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
+        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && status == ContributorQuestionStatus.Sent_For_Review) {
+            updateAuthorQuestionsStatus(status, questionStatusUpdateRequest);
+        } else if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Reviewer && (status == ContributorQuestionStatus.Requested_For_Change || status == ContributorQuestionStatus.Approved || status == ContributorQuestionStatus.Rejected)) {
+            updateReviewerQuestionsStatus(status, questionStatusUpdateRequest);
+        }
+
+    }
+
+    private void updateReviewerQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest) {
+        for (Integer questionId : questionStatusUpdateRequest.getQuestionId()) {
+            Question question = questionRepository.findById(questionId).orElseThrow();
+            if (question.getQuestionStatus() == ContributorQuestionStatus.Sent_For_Review) {
+                updateQuestionStatus(status, questionStatusUpdateRequest, question);
+            }
+
+        }
+    }
+
+
+    private void updateAuthorQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest) {
+        for (Integer questionId : questionStatusUpdateRequest.getQuestionId()) {
+            Question question = questionRepository.findById(questionId).orElseThrow();
+            if (question.getQuestionStatus() == ContributorQuestionStatus.Idle) {
+                updateQuestionStatus(status, questionStatusUpdateRequest, question);
+            }
+        }
+    }
+
+    private void updateQuestionStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Question question) {
+        question.setQuestionStatus(status);
+        question.setComments(questionStatusUpdateRequest.getComments());
+        questionRepository.update(question);
+    }
+
 }

@@ -18,4 +18,8 @@ public class ModuleContributorService {
     public List<AssessmentModule> getModuleByRole(String userEmail, ContributorRole contributorRole) {
         return moduleContributorRepository.findByRole(userEmail,contributorRole);
     }
+
+    public ContributorRole getRole(Integer moduleId, String userEmail) {
+        return moduleContributorRepository.findRole(moduleId,userEmail);
+    }
 }

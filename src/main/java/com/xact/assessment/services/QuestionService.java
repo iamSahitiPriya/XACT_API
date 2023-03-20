@@ -11,6 +11,8 @@ import jakarta.inject.Singleton;
 
 import java.util.*;
 
+import static com.xact.assessment.dtos.ContributorQuestionStatus.Published;
+
 @Singleton
 public class QuestionService {
     private final QuestionRepository questionRepository;
@@ -195,4 +197,12 @@ public class QuestionService {
         questionRepository.update(question);
     }
 
+    public void deleteQuestion(Integer questionId, String userEmail) {
+        Question question = questionRepository.findById(questionId).orElseThrow();
+        Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
+        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && question.getQuestionStatus() != Published) {
+            questionRepository.delete(question);
+        }
+
+    }
 }

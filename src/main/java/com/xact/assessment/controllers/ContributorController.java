@@ -7,10 +7,7 @@ import com.xact.assessment.models.Question;
 import com.xact.assessment.services.QuestionService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Patch;
-import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -46,8 +43,18 @@ public class ContributorController {
     @Patch(value = "/{moduleId}/questions/{status}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @PathVariable ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
-        LOGGER.info("Get all questions");
-        questionService.updateContributorQuestionsStatus(moduleId,status, questionStatusUpdateRequest, authentication.getName());
+        LOGGER.info("update question status");
+        questionService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, authentication.getName());
+
+        return HttpResponse.ok();
+
+    }
+
+    @Delete(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<Question> deleteQuestion(@PathVariable Integer questionId, Authentication authentication) {
+        LOGGER.info("delete question");
+        questionService.deleteQuestion(questionId, authentication.getName());
 
         return HttpResponse.ok();
 

@@ -4,7 +4,6 @@ import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.QuestionRepository;
 import com.xact.assessment.services.ModuleContributorService;
-import com.xact.assessment.services.ModuleService;
 import com.xact.assessment.services.QuestionService;
 import com.xact.assessment.services.UserQuestionService;
 import org.junit.jupiter.api.BeforeEach;
@@ -104,15 +103,15 @@ class QuestionServiceTest {
         when(moduleContributorService.getModuleByRole("email@thoughtworks.com", ContributorRole.Author)).thenReturn(Collections.singletonList(assessmentModule));
         when(questionRepository.getAuthorQuestions()).thenReturn(Collections.singletonList(question));
 
-        ContributorDataResponse actualContributorDataResponse = questionService.getContributorQuestions(ContributorRole.Author,"email@thoughtworks.com");
+        ContributorResponse actualContributorResponse = questionService.getContributorQuestions(ContributorRole.Author,"email@thoughtworks.com");
 
-        ContributorDataResponse expectedResponse = getAuthorExpectedResponse();
+        ContributorResponse expectedResponse = getAuthorExpectedResponse();
 
-        assertEquals(expectedResponse,actualContributorDataResponse);
+        assertEquals(expectedResponse, actualContributorResponse);
     }
 
-    private ContributorDataResponse getAuthorExpectedResponse() {
-        ContributorDataResponse expectedResponse = new ContributorDataResponse();
+    private ContributorResponse getAuthorExpectedResponse() {
+        ContributorResponse expectedResponse = new ContributorResponse();
         ContributorCategoryData contributorCategoryData  = new ContributorCategoryData();
         contributorCategoryData.setCategoryName("Category");
         ContributorModuleData contributorModuleData = new ContributorModuleData();
@@ -124,12 +123,12 @@ class QuestionServiceTest {
         ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
         contributorQuestionData.setQuestionId(1);
         contributorQuestionData.setQuestion("Question?");
-        contributorQuestionData.setContributorQuestionStatus(ContributorQuestionStatus.Idle);
-        contributorParameterData.setContributorQuestionDataList(Collections.singletonList(contributorQuestionData));
-        contributorTopicData.setContributorParameterDataList(Collections.singletonList(contributorParameterData));
-        contributorModuleData.setContributorTopicDataList(Collections.singletonList(contributorTopicData));
-        contributorCategoryData.setContributorModuleData(Collections.singletonList(contributorModuleData));
-        expectedResponse.setContributorCategoryDataList(Collections.singletonList(contributorCategoryData));
+        contributorQuestionData.setStatus(ContributorQuestionStatus.Idle);
+        contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
+        contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
+        contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
+        contributorCategoryData.setModules(Collections.singletonList(contributorModuleData));
+        expectedResponse.setCategories(Collections.singletonList(contributorCategoryData));
         return expectedResponse;
     }
 
@@ -168,15 +167,15 @@ class QuestionServiceTest {
         when(moduleContributorService.getModuleByRole("email@thoughtworks.com", ContributorRole.Reviewer)).thenReturn(Collections.singletonList(assessmentModule));
         when(questionRepository.getReviewerQuestions()).thenReturn(Collections.singletonList(question));
 
-        ContributorDataResponse actualContributorDataResponse = questionService.getContributorQuestions(ContributorRole.Reviewer,"email@thoughtworks.com");
+        ContributorResponse actualContributorResponse = questionService.getContributorQuestions(ContributorRole.Reviewer,"email@thoughtworks.com");
 
-        ContributorDataResponse expectedResponse = getReviewerExpectedResponse();
+        ContributorResponse expectedResponse = getReviewerExpectedResponse();
 
-        assertEquals(expectedResponse,actualContributorDataResponse);
+        assertEquals(expectedResponse, actualContributorResponse);
     }
 
-    private ContributorDataResponse getReviewerExpectedResponse() {
-        ContributorDataResponse expectedResponse = new ContributorDataResponse();
+    private ContributorResponse getReviewerExpectedResponse() {
+        ContributorResponse expectedResponse = new ContributorResponse();
         ContributorCategoryData contributorCategoryData  = new ContributorCategoryData();
         contributorCategoryData.setCategoryName("Category");
         ContributorModuleData contributorModuleData = new ContributorModuleData();
@@ -188,12 +187,12 @@ class QuestionServiceTest {
         ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
         contributorQuestionData.setQuestionId(1);
         contributorQuestionData.setQuestion("Question?");
-        contributorQuestionData.setContributorQuestionStatus(ContributorQuestionStatus.Approved);
-        contributorParameterData.setContributorQuestionDataList(Collections.singletonList(contributorQuestionData));
-        contributorTopicData.setContributorParameterDataList(Collections.singletonList(contributorParameterData));
-        contributorModuleData.setContributorTopicDataList(Collections.singletonList(contributorTopicData));
-        contributorCategoryData.setContributorModuleData(Collections.singletonList(contributorModuleData));
-        expectedResponse.setContributorCategoryDataList(Collections.singletonList(contributorCategoryData));
+        contributorQuestionData.setStatus(ContributorQuestionStatus.Approved);
+        contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
+        contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
+        contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
+        contributorCategoryData.setModules(Collections.singletonList(contributorModuleData));
+        expectedResponse.setCategories(Collections.singletonList(contributorCategoryData));
         return expectedResponse;
     }
 

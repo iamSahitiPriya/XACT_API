@@ -61,16 +61,16 @@ public class QuestionService {
         }
     }
 
-    public ContributorDataResponse getContributorQuestions(ContributorRole contributorRole, String userEmail) {
+    public ContributorResponse getContributorQuestions(ContributorRole contributorRole, String userEmail) {
         List<AssessmentModule> authorAssessmentModules = moduleContributorService.getModuleByRole(userEmail, contributorRole);
 
         List<Question> questionList = getContributorQuestions(contributorRole);
 
-        ContributorDataResponse contributorDataResponse = new ContributorDataResponse();
+        ContributorResponse contributorResponse = new ContributorResponse();
         List<ContributorCategoryData> contributorCategoryDataList = getContributorCategoryData(questionList, authorAssessmentModules);
-        contributorDataResponse.setContributorCategoryDataList(contributorCategoryDataList);
+        contributorResponse.setCategories(contributorCategoryDataList);
 
-        return contributorDataResponse;
+        return contributorResponse;
     }
 
     private List<Question> getContributorQuestions(ContributorRole contributorRole) {
@@ -90,7 +90,7 @@ public class QuestionService {
             ContributorCategoryData contributorCategoryData = new ContributorCategoryData();
             contributorCategoryData.setCategoryName(key.getCategoryName());
             List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(questionList, value);
-            contributorCategoryData.setContributorModuleData(contributorModuleDataList);
+            contributorCategoryData.setModules(contributorModuleDataList);
             contributorCategoryDataList.add(contributorCategoryData);
         });
         return contributorCategoryDataList;
@@ -127,7 +127,7 @@ public class QuestionService {
             contributorTopicData.setTopicName(assessmentTopic.getTopicName());
             setContributorParameterData(questionList, assessmentTopic, contributorTopicData);
             contributorTopicDataList.add(contributorTopicData);
-            contributorModuleData.setContributorTopicDataList(contributorTopicDataList);
+            contributorModuleData.setTopics(contributorTopicDataList);
         }
     }
 
@@ -137,7 +137,7 @@ public class QuestionService {
             ContributorParameterData contributorParameterData = new ContributorParameterData();
             contributorParameterData.setParameterName(assessmentParameter.getParameterName());
             setContributorQuestionData(questionList, contributorParameterDataList, assessmentParameter, contributorParameterData);
-            contributorTopicData.setContributorParameterDataList(contributorParameterDataList);
+            contributorTopicData.setParameters(contributorParameterDataList);
         }
     }
 
@@ -150,7 +150,7 @@ public class QuestionService {
                 setContributorQuestionData(question, contributorQuestionData);
                 contributorQuestionDataList.add(contributorQuestionData);
             }
-            contributorParameterData.setContributorQuestionDataList(contributorQuestionDataList);
+            contributorParameterData.setQuestions(contributorQuestionDataList);
         }
         contributorParameterDataList.add(contributorParameterData);
     }
@@ -158,7 +158,7 @@ public class QuestionService {
     private void setContributorQuestionData(Question question, ContributorQuestionData contributorQuestionData) {
         contributorQuestionData.setQuestionId(question.getQuestionId());
         contributorQuestionData.setQuestion(question.getQuestionText());
-        contributorQuestionData.setContributorQuestionStatus(question.getQuestionStatus());
+        contributorQuestionData.setStatus(question.getQuestionStatus());
         contributorQuestionData.setComments(question.getComments());
     }
 

@@ -26,7 +26,7 @@ class ContributorControllerTest {
     @Test
     void shouldGetContributorQuestions() {
 
-        ContributorDataResponse contributorDataResponse = new ContributorDataResponse();
+        ContributorResponse contributorResponse = new ContributorResponse();
         ContributorCategoryData contributorCategoryData = new ContributorCategoryData();
         contributorCategoryData.setCategoryName("Category");
         ContributorModuleData contributorModuleData = new ContributorModuleData();
@@ -38,16 +38,16 @@ class ContributorControllerTest {
         ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
         contributorQuestionData.setQuestionId(1);
         contributorQuestionData.setQuestion("Question?");
-        contributorQuestionData.setContributorQuestionStatus(ContributorQuestionStatus.Idle);
-        contributorParameterData.setContributorQuestionDataList(Collections.singletonList(contributorQuestionData));
-        contributorTopicData.setContributorParameterDataList(Collections.singletonList(contributorParameterData));
-        contributorModuleData.setContributorTopicDataList(Collections.singletonList(contributorTopicData));
-        contributorCategoryData.setContributorModuleData(Collections.singletonList(contributorModuleData));
-        contributorDataResponse.setContributorCategoryDataList(Collections.singletonList(contributorCategoryData));
+        contributorQuestionData.setStatus(ContributorQuestionStatus.Idle);
+        contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
+        contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
+        contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
+        contributorCategoryData.setModules(Collections.singletonList(contributorModuleData));
+        contributorResponse.setCategories(Collections.singletonList(contributorCategoryData));
 
-        when(questionService.getContributorQuestions(Author,"abc@thoughtworks.com")).thenReturn(contributorDataResponse);
+        when(questionService.getContributorQuestions(Author,"abc@thoughtworks.com")).thenReturn(contributorResponse);
 
-        HttpResponse<ContributorDataResponse> actualResponse = contributorController.getContributorQuestions(Author,authentication);
+        HttpResponse<ContributorResponse> actualResponse = contributorController.getContributorQuestions(Author,authentication);
 
         Assertions.assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
 

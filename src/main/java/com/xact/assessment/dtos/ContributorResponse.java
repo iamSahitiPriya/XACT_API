@@ -11,6 +11,6 @@ import java.util.List;
 @Getter
 @EqualsAndHashCode
 @Setter
-public class ContributorDataResponse {
-    private List<ContributorCategoryData> contributorCategoryDataList;
+public class ContributorResponse {
+    private List<ContributorCategoryData> categories;
 }

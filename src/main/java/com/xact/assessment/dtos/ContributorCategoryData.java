@@ -14,5 +14,5 @@ import java.util.List;
 @Setter
 public class ContributorCategoryData {
     private String categoryName;
-    private List<ContributorModuleData> contributorModuleData;
+    private List<ContributorModuleData> modules;
 }

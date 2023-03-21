@@ -14,5 +14,5 @@ public class ContributorQuestionData {
     private Integer questionId;
     private String question;
     private String comments;
-    private ContributorQuestionStatus contributorQuestionStatus;
+    private ContributorQuestionStatus status;
 }

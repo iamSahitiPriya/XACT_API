@@ -13,5 +13,5 @@ import java.util.List;
 @Setter
 public class ContributorTopicData {
     private String topicName;
-    private List<ContributorParameterData> contributorParameterDataList;
+    private List<ContributorParameterData> parameters;
 }

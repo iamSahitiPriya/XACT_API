@@ -12,6 +12,6 @@ import java.util.List;
 @EqualsAndHashCode
 @Setter
 public class ContributorParameterData {
-    private List<ContributorQuestionData> contributorQuestionDataList;
+    private List<ContributorQuestionData> questions;
     private String parameterName;
 }

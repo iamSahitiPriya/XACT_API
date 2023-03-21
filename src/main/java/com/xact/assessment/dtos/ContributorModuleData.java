@@ -13,5 +13,5 @@ import java.util.List;
 @Setter
 public class ContributorModuleData {
     private String moduleName;
-    private List<ContributorTopicData> contributorTopicDataList;
+    private List<ContributorTopicData> topics;
 }

@@ -30,17 +30,19 @@ public class AssessmentService {
     private final AssessmentMasterDataService assessmentMasterDataService;
 
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
+    private final ModuleContributorService moduleContributorService;
 
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService) {
+    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ModuleContributorService moduleContributorService) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.accessControlService = accessControlService;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
+        this.moduleContributorService = moduleContributorService;
     }
 
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
@@ -322,4 +324,7 @@ public class AssessmentService {
 
     }
 
+    public List<ContributorRole> getContributorRoles(String userEmail) {
+        return moduleContributorService.getContributorRolesByEmail(userEmail);
+    }
 }

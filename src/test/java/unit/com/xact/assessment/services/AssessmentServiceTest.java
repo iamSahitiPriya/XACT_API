@@ -44,7 +44,7 @@ class AssessmentServiceTest {
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
         accessControlService = mock(AccessControlService.class);
-        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, moduleContributorService);
     }
 
     @Test

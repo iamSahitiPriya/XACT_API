@@ -4,6 +4,7 @@
 
 package com.xact.assessment.controllers;
 
+import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentService;
@@ -18,6 +19,8 @@ import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller("/v1/users")
@@ -34,10 +37,14 @@ public class UserController {
 
     @Get(value = "/roles")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Optional<AccessControlRoles>> getRole(Authentication authentication) {
+    public HttpResponse<List<AccessControlRoles>> getRole(Authentication authentication) {
+        List<AccessControlRoles> roles = new ArrayList<>();
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         Optional<AccessControlRoles> accessControlRoles = assessmentService.getUserRole(loggedInUser.getUserEmail());
-        return HttpResponse.ok(accessControlRoles);
+        roles.add(accessControlRoles.get());
+        List<ContributorRole> contributorRoles = assessmentService.getContributorRoles(loggedInUser.getUserEmail());
+        contributorRoles.stream().forEach(contributorRole -> roles.add(AccessControlRoles.valueOf(contributorRole.toString())));
+        return HttpResponse.ok(roles);
     }
 
     @Get(value = "/login")

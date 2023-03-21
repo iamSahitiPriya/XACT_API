@@ -60,8 +60,10 @@ notification:
   feedback:
     initialDelay: "1m"
     delay : "1d"
+    durationInDays: 29
   inactive:
     fixedDelay: "1d"
+    durationInDays: 15
 
 cleanup:
   initialDelay: "1m"

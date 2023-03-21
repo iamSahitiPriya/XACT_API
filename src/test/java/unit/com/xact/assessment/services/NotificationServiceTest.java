@@ -323,7 +323,6 @@ class NotificationServiceTest {
         users.add(assessmentUser1.getUserId().getUserEmail());
 
         Notification notification = new Notification(1, NotificationType.INACTIVE_V1, email, "{\"assessment_name\":\"hello\",\"created_at\":\"17-Feb-3923 12:00 am IST\",\"assessment_id\":\"1\",\"organisation_name\":\"IT Consultant\"}", NotificationStatus.N, 0, new Date(), updatedDate);
-        System.out.println(assessment.getCreatedAt());
         doNothing().when(notificationRepository).delete(notification);
         when(notificationRepository.save(notification)).thenReturn(notification);
 

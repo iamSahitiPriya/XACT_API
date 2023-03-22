@@ -45,7 +45,7 @@ class ContributorControllerTest {
         contributorCategoryData.setModules(Collections.singletonList(contributorModuleData));
         contributorResponse.setCategories(Collections.singletonList(contributorCategoryData));
 
-        when(questionService.getContributorQuestions(Author,"abc@thoughtworks.com")).thenReturn(contributorResponse);
+        when(questionService.getContributorResponse(Author,"abc@thoughtworks.com")).thenReturn(contributorResponse);
 
         HttpResponse<ContributorResponse> actualResponse = contributorController.getContributorQuestions(Author,authentication);
 

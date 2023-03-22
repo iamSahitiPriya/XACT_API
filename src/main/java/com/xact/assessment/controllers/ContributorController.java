@@ -34,7 +34,7 @@ public class ContributorController {
     @Transactional
     public HttpResponse<ContributorResponse> getContributorQuestions(@QueryValue ContributorRole role, Authentication authentication) {
         LOGGER.info("Get all questions");
-        ContributorResponse contributorResponse = questionService.getContributorQuestions(role,authentication.getName());
+        ContributorResponse contributorResponse = questionService.getContributorResponse(role,authentication.getName());
 
         return HttpResponse.ok(contributorResponse);
 

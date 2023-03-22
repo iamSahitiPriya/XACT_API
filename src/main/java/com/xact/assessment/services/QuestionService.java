@@ -62,21 +62,14 @@ public class QuestionService {
         }
     }
 
-    public ContributorResponse getContributorQuestions(ContributorRole contributorRole, String userEmail) {
-        List<AssessmentModule> authorAssessmentModules = moduleContributorService.getModuleByRole(userEmail, contributorRole);
-        HashMap<String, List<ContributorModuleData>> categoryListHashMap = new HashMap<>();
-        for (AssessmentModule assessmentModule : authorAssessmentModules) {
-            List<Question> parameterLevelQuestions = getContributorQuestions(contributorRole, assessmentModule.getModuleId());
-            ContributorModuleData contributorModuleData = getContributorModuleData(parameterLevelQuestions, assessmentModule);
-            if (categoryListHashMap.containsKey(assessmentModule.getCategory().getCategoryName())) {
-                List<ContributorModuleData> contributorModuleDataList = categoryListHashMap.get(assessmentModule.getCategory().getCategoryName());
-                contributorModuleDataList.add(contributorModuleData);
-            } else {
-                List<ContributorModuleData> moduleList = new ArrayList<>();
-                moduleList.add(contributorModuleData);
-                categoryListHashMap.put(assessmentModule.getCategory().getCategoryName(), moduleList);
-            }
-        }
+    public ContributorResponse getContributorResponse(ContributorRole contributorRole, String userEmail) {
+        List<AssessmentModule> assessmentModules = moduleContributorService.getModuleByRole(userEmail, contributorRole);
+        HashMap<String, List<ContributorModuleData>> categoryListHashMap = createCategoryHashMap(contributorRole, assessmentModules);
+        ContributorResponse contributorResponse = generateFromCategoryHashMap(categoryListHashMap);
+        return contributorResponse;
+    }
+
+    private ContributorResponse generateFromCategoryHashMap(HashMap<String, List<ContributorModuleData>> categoryListHashMap) {
         ContributorResponse contributorResponse = new ContributorResponse();
         List<ContributorCategoryData> contributorCategoryDataList = new ArrayList<>();
 
@@ -87,8 +80,24 @@ public class QuestionService {
             contributorCategoryDataList.add(contributorCategoryData);
         });
         contributorResponse.setCategories(contributorCategoryDataList);
-
         return contributorResponse;
+    }
+
+    private HashMap<String, List<ContributorModuleData>> createCategoryHashMap(ContributorRole contributorRole, List<AssessmentModule> assessmentModules) {
+        HashMap<String, List<ContributorModuleData>> categoryListHashMap = new HashMap<>();
+        for (AssessmentModule assessmentModule : assessmentModules) {
+            List<Question> parameterQuestions = getContributorQuestions(contributorRole, assessmentModule.getModuleId());
+            ContributorModuleData contributorModuleData = getContributorModuleData(parameterQuestions, assessmentModule);
+            if (categoryListHashMap.containsKey(assessmentModule.getCategory().getCategoryName())) {
+                List<ContributorModuleData> contributorModuleDataList = categoryListHashMap.get(assessmentModule.getCategory().getCategoryName());
+                contributorModuleDataList.add(contributorModuleData);
+            } else {
+                List<ContributorModuleData> moduleList = new ArrayList<>();
+                moduleList.add(contributorModuleData);
+                categoryListHashMap.put(assessmentModule.getCategory().getCategoryName(), moduleList);
+            }
+        }
+        return categoryListHashMap;
     }
 
     private List<Question> getContributorQuestions(ContributorRole contributorRole, Integer moduleId) {
@@ -104,16 +113,16 @@ public class QuestionService {
 
     private ContributorModuleData getContributorModuleData(List<Question> questionList, AssessmentModule assessmentModule) {
         ContributorModuleData contributorModuleData = new ContributorModuleData();
-        List<ContributorTopicData> contributorTopicDataList = setContributorTopicData(questionList, assessmentModule, contributorModuleData);
+        List<ContributorTopicData> contributorTopicDataList = getContributorTopicData(questionList, assessmentModule);
         if (!contributorTopicDataList.isEmpty()) {
             contributorModuleData.setModuleName(assessmentModule.getModuleName());
-            setContributorTopicData(questionList, assessmentModule, contributorModuleData);
+            contributorModuleData.setTopics(contributorTopicDataList);
         }
 
         return contributorModuleData;
     }
 
-    private List<ContributorTopicData> setContributorTopicData(List<Question> questionList, AssessmentModule assessmentModule, ContributorModuleData contributorModuleData) {
+    private List<ContributorTopicData> getContributorTopicData(List<Question> questionList, AssessmentModule assessmentModule) {
         List<ContributorTopicData> contributorTopicDataList = new ArrayList<>();
         for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
             ContributorTopicData contributorTopicData = new ContributorTopicData();
@@ -121,7 +130,6 @@ public class QuestionService {
             if (!contributorParameterDataList.isEmpty()) {
                 contributorTopicData.setTopicName(assessmentTopic.getTopicName());
                 contributorTopicDataList.add(contributorTopicData);
-                contributorModuleData.setTopics(contributorTopicDataList);
             }
         }
         return contributorTopicDataList;
@@ -130,14 +138,14 @@ public class QuestionService {
     private List<ContributorParameterData> setContributorParameterData(List<Question> questionList, AssessmentTopic assessmentTopic, ContributorTopicData contributorTopicData) {
         List<ContributorParameterData> contributorParameterDataList = new ArrayList<>();
         for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
-            List<Question> parameterLevelQuestions;
-            parameterLevelQuestions = questionList.stream().filter(question ->
+            List<Question> parameterQuestions;
+            parameterQuestions = questionList.stream().filter(question ->
                     Objects.equals(question.getParameter().getParameterId(), assessmentParameter.getParameterId())
             ).collect(Collectors.toList());
-            if (!parameterLevelQuestions.isEmpty()) {
+            if (!parameterQuestions.isEmpty()) {
                 ContributorParameterData contributorParameterData = new ContributorParameterData();
                 contributorParameterData.setParameterName(assessmentParameter.getParameterName());
-                setContributorQuestionData(parameterLevelQuestions, contributorParameterDataList, assessmentParameter, contributorParameterData);
+                setContributorQuestionData(parameterQuestions, contributorParameterDataList, assessmentParameter, contributorParameterData);
                 contributorTopicData.setParameters(contributorParameterDataList);
             }
         }

@@ -30,12 +30,12 @@ class AssessmentServiceTest {
 
     private AssessmentService assessmentService;
 
+    private ModuleContributorService moduleContributorService;
 
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private AccessControlService accessControlService;
 
     private static final ModelMapper modelMapper = new ModelMapper();
-
 
     @BeforeEach
     public void beforeEach() {
@@ -44,7 +44,8 @@ class AssessmentServiceTest {
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
         accessControlService = mock(AccessControlService.class);
-        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, moduleContributorService);
+        moduleContributorService = mock(ModuleContributorService.class);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService,moduleContributorService);
     }
 
     @Test

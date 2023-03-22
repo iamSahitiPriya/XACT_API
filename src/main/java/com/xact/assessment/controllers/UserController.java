@@ -41,7 +41,7 @@ public class UserController {
         List<AccessControlRoles> roles = new ArrayList<>();
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         Optional<AccessControlRoles> accessControlRoles = assessmentService.getUserRole(loggedInUser.getUserEmail());
-        roles.add(accessControlRoles.get());
+        accessControlRoles.ifPresent(roles::add);
         List<ContributorRole> contributorRoles = assessmentService.getContributorRoles(loggedInUser.getUserEmail());
         contributorRoles.stream().forEach(contributorRole -> roles.add(AccessControlRoles.valueOf(contributorRole.toString())));
         return HttpResponse.ok(roles);

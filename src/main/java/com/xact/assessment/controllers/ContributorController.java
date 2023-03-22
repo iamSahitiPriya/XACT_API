@@ -60,5 +60,14 @@ public class ContributorController {
 
     }
 
+    @Patch(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<Question> updateQuestion(@PathVariable Integer questionId,String questionText, Authentication authentication) {
+        LOGGER.info("Update question: {}",questionId);
+        questionService.updateContributorQuestion(questionId,questionText,authentication.getName());
+        return HttpResponse.ok();
+
+    }
+
 
 }

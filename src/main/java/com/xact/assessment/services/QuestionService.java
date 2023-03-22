@@ -12,6 +12,7 @@ import jakarta.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.xact.assessment.dtos.ContributorQuestionStatus.Idle;
 import static com.xact.assessment.dtos.ContributorQuestionStatus.Published;
 
 @Singleton
@@ -215,5 +216,14 @@ public class QuestionService {
             questionRepository.delete(question);
         }
 
+    }
+
+    public void updateContributorQuestion(Integer questionId, String questionText,String userEmail) {
+        Question question = questionRepository.findById(questionId).orElseThrow();
+        question.setQuestionText(questionText);
+        Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
+        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && question.getQuestionStatus() == Idle) {
+            updateQuestion(question);
+        }
     }
 }

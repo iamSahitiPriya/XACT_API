@@ -216,4 +216,31 @@ class QuestionServiceTest {
         List<Question> questionListResponse=questionService.getAllQuestion();
         assertEquals(questionListResponse,questionList);
     }
+
+    @Test
+    void shouldUpdateContributorQuestion() {
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setModule(assessmentModule);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question=new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question");
+        question.setQuestionStatus(ContributorQuestionStatus.Idle);
+        question.setParameter(assessmentParameter);
+        when(questionRepository.findById(1)).thenReturn(Optional.of(question));
+        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(ContributorRole.Author);
+        questionService.updateContributorQuestion(1,"editedQuestion?","hello@thoughtworks.com");
+
+        String expectedQuestionText = "editedQuestion?";
+        String actualQuestionText = question.getQuestionText();
+
+        assertEquals(expectedQuestionText,actualQuestionText);
+
+    }
 }

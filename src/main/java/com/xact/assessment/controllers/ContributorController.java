@@ -26,11 +26,10 @@ public class ContributorController {
 
     private final QuestionService questionService;
 
-    private final ModuleContributorService moduleContributorService;
 
-    public ContributorController(QuestionService questionService, ModuleContributorService moduleContributorService) {
+    public ContributorController(QuestionService questionService) {
         this.questionService = questionService;
-        this.moduleContributorService = moduleContributorService;
+
     }
 
     @Get(value = "/contributor/questions{?role}", produces = MediaType.APPLICATION_JSON)
@@ -48,13 +47,7 @@ public class ContributorController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @PathVariable ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
         LOGGER.info("update question status");
-        ContributorRole contributorRole = moduleContributorService.getRole(moduleId, authentication.getName());
-        if (contributorRole == ContributorRole.Author) {
-            questionService.updateContributorQuestionsStatus(questionStatusUpdateRequest, status);
-        } else if (contributorRole == ContributorRole.Reviewer) {
-            questionService.updateContributorQuestionsStatus(questionStatusUpdateRequest, status);
-
-        }
+        questionService.updateContributorQuestionsStatus(moduleId,status,questionStatusUpdateRequest,authentication.getName());
 
         return HttpResponse.ok();
 
@@ -75,6 +68,7 @@ public class ContributorController {
     public HttpResponse<Question> updateQuestion(@PathVariable Integer questionId, String questionText, Authentication authentication) {
         LOGGER.info("Update question: {}", questionId);
         questionService.updateContributorQuestion(questionId, questionText, authentication.getName());
+
         return HttpResponse.ok();
 
     }

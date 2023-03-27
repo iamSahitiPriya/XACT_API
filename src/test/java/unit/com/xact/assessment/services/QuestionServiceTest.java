@@ -94,7 +94,7 @@ class QuestionServiceTest {
         assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
         Question question = new Question();
         question.setQuestionId(1);
-        question.setQuestionStatus(ContributorQuestionStatus.Idle);
+        question.setQuestionStatus(ContributorQuestionStatus.Draft);
         question.setQuestionText("Question?");
         question.setParameter(assessmentParameter);
 
@@ -123,7 +123,7 @@ class QuestionServiceTest {
         ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
         contributorQuestionData.setQuestionId(1);
         contributorQuestionData.setQuestion("Question?");
-        contributorQuestionData.setStatus(ContributorQuestionStatus.Idle);
+        contributorQuestionData.setStatus(ContributorQuestionStatus.Draft);
         contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
         contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
         contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
@@ -158,7 +158,7 @@ class QuestionServiceTest {
         assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
         Question question = new Question();
         question.setQuestionId(1);
-        question.setQuestionStatus(ContributorQuestionStatus.Approved);
+        question.setQuestionStatus(ContributorQuestionStatus.Published);
         question.setQuestionText("Question?");
         question.setParameter(assessmentParameter);
 
@@ -187,7 +187,7 @@ class QuestionServiceTest {
         ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
         contributorQuestionData.setQuestionId(1);
         contributorQuestionData.setQuestion("Question?");
-        contributorQuestionData.setStatus(ContributorQuestionStatus.Approved);
+        contributorQuestionData.setStatus(ContributorQuestionStatus.Published);
         contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
         contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
         contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
@@ -218,6 +218,30 @@ class QuestionServiceTest {
     }
 
     @Test
+    void shouldDeleteContributorQuestion() {
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setModule(assessmentModule);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question");
+        question.setQuestionStatus(ContributorQuestionStatus.Draft);
+        question.setParameter(assessmentParameter);
+        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(ContributorRole.Author);
+        when(questionRepository.findById(1)).thenReturn(Optional.of(question));
+
+        questionService.deleteQuestion(1,"hello@thoughtworks.com");
+        verify(questionRepository).delete(question);
+
+
+    }
+    @Test
     void shouldUpdateContributorQuestion() {
         AssessmentModule assessmentModule = new AssessmentModule();
         assessmentModule.setModuleId(1);
@@ -231,7 +255,7 @@ class QuestionServiceTest {
         Question question=new Question();
         question.setQuestionId(1);
         question.setQuestionText("question");
-        question.setQuestionStatus(ContributorQuestionStatus.Idle);
+        question.setQuestionStatus(ContributorQuestionStatus.Draft);
         question.setParameter(assessmentParameter);
         when(questionRepository.findById(1)).thenReturn(Optional.of(question));
         when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(ContributorRole.Author);

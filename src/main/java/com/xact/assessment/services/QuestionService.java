@@ -54,7 +54,7 @@ public class QuestionService {
                 Question question = new Question();
                 question.setQuestionText(userQuestion.getQuestion());
                 question.setParameter(userQuestion.getParameter());
-                question.setQuestionStatus(ContributorQuestionStatus.Idle);
+                question.setQuestionStatus(ContributorQuestionStatus.Draft);
                 createQuestion(question);
                 userQuestion.setContributionStatus(true);
                 userQuestionService.updateUserQuestion(userQuestion);
@@ -194,44 +194,27 @@ public class QuestionService {
     }
 
     public void updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
-        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author) {
-            updateAuthorQuestionsStatus(questionStatusUpdateRequest);
-        } else if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Reviewer && isStatusAllowed(status)) {
-
-            updateReviewerQuestionsStatus(status, questionStatusUpdateRequest);
+        ContributorRole contributorRole = moduleContributorService.getRole(moduleId, userEmail);
+        if(contributorRole == ContributorRole.Author ){
+            updateContributorQuestion(Sent_For_Review, questionStatusUpdateRequest,ContributorRole.Author);
+        } else if (contributorRole == ContributorRole.Reviewer && contributorRole.isStatusValidForReviewer(status) ) {
+            updateContributorQuestion(status,questionStatusUpdateRequest,ContributorRole.Reviewer);
         }
 
     }
 
-    private boolean isStatusAllowed(ContributorQuestionStatus status) {
-        return status == ContributorQuestionStatus.Requested_For_Change || status == ContributorQuestionStatus.Approved || status == ContributorQuestionStatus.Rejected;
-    }
-
-    private void updateReviewerQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest) {
-        for (Integer questionId : questionStatusUpdateRequest.getQuestionId()) {
-            Question question = questionRepository.findById(questionId).orElseThrow();
-            if (question.getQuestionStatus() == ContributorQuestionStatus.Sent_For_Review) {
-                updateQuestionStatus(status, questionStatusUpdateRequest, question);
-            }
-
+    private void updateContributorQuestion(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest,ContributorRole role) {
+        for (Integer questionId: questionStatusUpdateRequest.getQuestionId()) {
+           Question question = questionRepository.findById(questionId).orElseThrow();
+           if(Objects.equals(status.getInitialState(), question.getQuestionStatus().toString())){
+               question.setComments(questionStatusUpdateRequest.getComments());
+               question.setQuestionStatus(status);
+               updateQuestion(question);
+           }
         }
     }
 
 
-    private void updateAuthorQuestionsStatus(QuestionStatusUpdateRequest questionStatusUpdateRequest) {
-        for (Integer questionId : questionStatusUpdateRequest.getQuestionId()) {
-            Question question = questionRepository.findById(questionId).orElseThrow();
-            if (question.getQuestionStatus() == ContributorQuestionStatus.Idle) {
-                updateQuestionStatus(Sent_For_Review, questionStatusUpdateRequest, question);
-            }
-        }
-    }
-
-    private void updateQuestionStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Question question) {
-        question.setQuestionStatus(status);
-        question.setComments(questionStatusUpdateRequest.getComments());
-        questionRepository.update(question);
-    }
 
     public void deleteQuestion(Integer questionId, String userEmail) {
         Question question = questionRepository.findById(questionId).orElseThrow();
@@ -246,7 +229,7 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow();
         question.setQuestionText(questionText);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
-        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && question.getQuestionStatus() == Idle) {
+        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && question.getQuestionStatus() == Draft) {
             updateQuestion(question);
         }
     }

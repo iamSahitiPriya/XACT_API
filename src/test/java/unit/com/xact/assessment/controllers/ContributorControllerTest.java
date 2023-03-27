@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class ContributorControllerTest {
 
     private final QuestionService questionService = mock(QuestionService.class);
-    private final ContributorController contributorController = new ContributorController(questionService, moduleContributorService);
+    private final ContributorController contributorController = new ContributorController(questionService);
 
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
@@ -38,7 +38,7 @@ class ContributorControllerTest {
         ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
         contributorQuestionData.setQuestionId(1);
         contributorQuestionData.setQuestion("Question?");
-        contributorQuestionData.setStatus(ContributorQuestionStatus.Idle);
+        contributorQuestionData.setStatus(ContributorQuestionStatus.Draft);
         contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
         contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
         contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));

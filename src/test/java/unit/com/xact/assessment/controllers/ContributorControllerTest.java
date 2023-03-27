@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 class ContributorControllerTest {
 
     private final QuestionService questionService = mock(QuestionService.class);
-    private final ContributorController contributorController = new ContributorController(questionService);
+    private final ContributorController contributorController = new ContributorController(questionService, moduleContributorService);
 
     private final Authentication authentication = Mockito.mock(Authentication.class);
 

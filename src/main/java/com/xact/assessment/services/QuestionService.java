@@ -12,8 +12,7 @@ import jakarta.inject.Singleton;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.xact.assessment.dtos.ContributorQuestionStatus.Idle;
-import static com.xact.assessment.dtos.ContributorQuestionStatus.Published;
+import static com.xact.assessment.dtos.ContributorQuestionStatus.*;
 
 @Singleton
 public class QuestionService {
@@ -195,12 +194,17 @@ public class QuestionService {
     }
 
     public void updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
-        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && status == ContributorQuestionStatus.Sent_For_Review) {
-            updateAuthorQuestionsStatus(status, questionStatusUpdateRequest);
-        } else if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Reviewer && (status == ContributorQuestionStatus.Requested_For_Change || status == ContributorQuestionStatus.Approved || status == ContributorQuestionStatus.Rejected)) {
+        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author) {
+            updateAuthorQuestionsStatus(questionStatusUpdateRequest);
+        } else if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Reviewer && isStatusAllowed(status)) {
+
             updateReviewerQuestionsStatus(status, questionStatusUpdateRequest);
         }
 
+    }
+
+    private boolean isStatusAllowed(ContributorQuestionStatus status) {
+        return status == ContributorQuestionStatus.Requested_For_Change || status == ContributorQuestionStatus.Approved || status == ContributorQuestionStatus.Rejected;
     }
 
     private void updateReviewerQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest) {
@@ -214,11 +218,11 @@ public class QuestionService {
     }
 
 
-    private void updateAuthorQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest) {
+    private void updateAuthorQuestionsStatus(QuestionStatusUpdateRequest questionStatusUpdateRequest) {
         for (Integer questionId : questionStatusUpdateRequest.getQuestionId()) {
             Question question = questionRepository.findById(questionId).orElseThrow();
             if (question.getQuestionStatus() == ContributorQuestionStatus.Idle) {
-                updateQuestionStatus(status, questionStatusUpdateRequest, question);
+                updateQuestionStatus(Sent_For_Review, questionStatusUpdateRequest, question);
             }
         }
     }
@@ -246,4 +250,6 @@ public class QuestionService {
             updateQuestion(question);
         }
     }
+
+
 }

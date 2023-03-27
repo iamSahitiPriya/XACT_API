@@ -6,6 +6,7 @@ import com.xact.assessment.dtos.ContributorQuestionStatus;
 import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.dtos.QuestionStatusUpdateRequest;
 import com.xact.assessment.models.Question;
+import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.QuestionService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -25,8 +26,11 @@ public class ContributorController {
 
     private final QuestionService questionService;
 
-    public ContributorController(QuestionService questionService) {
+    private final ModuleContributorService moduleContributorService;
+
+    public ContributorController(QuestionService questionService, ModuleContributorService moduleContributorService) {
         this.questionService = questionService;
+        this.moduleContributorService = moduleContributorService;
     }
 
     @Get(value = "/contributor/questions{?role}", produces = MediaType.APPLICATION_JSON)
@@ -34,7 +38,7 @@ public class ContributorController {
     @Transactional
     public HttpResponse<ContributorResponse> getContributorQuestions(@QueryValue ContributorRole role, Authentication authentication) {
         LOGGER.info("Get all questions");
-        ContributorResponse contributorResponse = questionService.getContributorResponse(role,authentication.getName());
+        ContributorResponse contributorResponse = questionService.getContributorResponse(role, authentication.getName());
 
         return HttpResponse.ok(contributorResponse);
 
@@ -44,7 +48,13 @@ public class ContributorController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @PathVariable ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
         LOGGER.info("update question status");
-        questionService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, authentication.getName());
+        ContributorRole contributorRole = moduleContributorService.getRole(moduleId, authentication.getName());
+        if (contributorRole == ContributorRole.Author) {
+            questionService.updateContributorQuestionsStatus(questionStatusUpdateRequest, status);
+        } else if (contributorRole == ContributorRole.Reviewer) {
+            questionService.updateContributorQuestionsStatus(questionStatusUpdateRequest, status);
+
+        }
 
         return HttpResponse.ok();
 
@@ -62,9 +72,9 @@ public class ContributorController {
 
     @Patch(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Question> updateQuestion(@PathVariable Integer questionId,String questionText, Authentication authentication) {
-        LOGGER.info("Update question: {}",questionId);
-        questionService.updateContributorQuestion(questionId,questionText,authentication.getName());
+    public HttpResponse<Question> updateQuestion(@PathVariable Integer questionId, String questionText, Authentication authentication) {
+        LOGGER.info("Update question: {}", questionId);
+        questionService.updateContributorQuestion(questionId, questionText, authentication.getName());
         return HttpResponse.ok();
 
     }

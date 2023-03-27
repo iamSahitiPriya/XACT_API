@@ -5,6 +5,7 @@
 package unit.com.xact.assessment.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.dtos.NotificationResponse;
@@ -23,11 +24,13 @@ class NotificationSchedulerServiceTest {
     private final AssessmentService assessmentService;
     private final NotificationService notificationService;
     private final NotificationSchedulerService notificationSchedulerService;
+    private final FeedbackNotificationConfig feedbackNotificationConfig;
 
-    public NotificationSchedulerServiceTest() {
+    public NotificationSchedulerServiceTest( ){
+        feedbackNotificationConfig = mock(FeedbackNotificationConfig.class);
         assessmentService = mock(AssessmentService.class);
         notificationService = mock(NotificationService.class);
-        notificationSchedulerService = new NotificationSchedulerService(notificationService, assessmentService);
+        notificationSchedulerService = new NotificationSchedulerService(notificationService, assessmentService, this.feedbackNotificationConfig);
 
 
     }

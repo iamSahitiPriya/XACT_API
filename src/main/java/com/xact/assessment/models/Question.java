@@ -19,6 +19,9 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashSet;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -64,4 +67,28 @@ public class Question implements Serializable {
         this.questionText = questionText;
         this.parameter = parameter;
     }
+
+    public boolean isNextStateAllowed(ContributorQuestionStatus upcomingStatus) {
+        return getLifeCycleMap().get(this.questionStatus).contains(upcomingStatus);
+    }
+
+    private EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> getLifeCycleMap() {
+        EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> lifeCycleMap  = new EnumMap<>(ContributorQuestionStatus.class);
+        Set<ContributorQuestionStatus> nextState = new HashSet<>();
+        nextState.add(ContributorQuestionStatus.Sent_For_Review);
+        lifeCycleMap.put(ContributorQuestionStatus.Draft, nextState);
+
+        lifeCycleMap.put(ContributorQuestionStatus.Requested_For_Change, nextState);
+
+        nextState.clear();
+        nextState.add(ContributorQuestionStatus.Requested_For_Change);
+        nextState.add(ContributorQuestionStatus.Published);
+        nextState.add(ContributorQuestionStatus.Rejected);
+        lifeCycleMap.put(ContributorQuestionStatus.Sent_For_Review, nextState);
+
+        return lifeCycleMap;
+
+    }
+
+
 }

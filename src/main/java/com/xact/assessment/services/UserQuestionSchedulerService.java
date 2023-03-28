@@ -22,9 +22,9 @@ public class UserQuestionSchedulerService {
         this.questionService = questionService;
     }
 
-    @Scheduled(fixedDelay = "10s")
+    @Scheduled(fixedDelay = "${question.delay}")
     public void saveUserQuestionForCompletedAssessment(){
-        LOGGER.info("Saving user questions in contributors data table");
+        LOGGER.info("Saving user questions in master table...");
         List<UserQuestion> userQuestionList = userQuestionService.getUserQuestionsForFinishedAssessment();
         questionService.save(userQuestionList);
     }

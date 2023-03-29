@@ -19,6 +19,7 @@ public class QuestionDto implements Comparable<QuestionDto> {
     private Integer questionId;
     private String questionText;
     private Integer parameter;
+    private ContributorQuestionStatus questionStatus;
 
     @Override
     public int compareTo(QuestionDto currentQuestion) {

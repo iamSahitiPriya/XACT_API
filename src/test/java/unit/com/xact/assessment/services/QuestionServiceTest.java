@@ -6,6 +6,7 @@ import com.xact.assessment.repositories.QuestionRepository;
 import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.QuestionService;
 import com.xact.assessment.services.UserQuestionService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.xact.assessment.dtos.ContributorQuestionStatus.Published;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
@@ -105,20 +107,21 @@ class QuestionServiceTest {
 
         ContributorResponse actualContributorResponse = questionService.getContributorResponse(ContributorRole.Author,"email@thoughtworks.com");
 
-        ContributorResponse expectedResponse = getAuthorExpectedResponse();
+        ContributorResponse expectedResponse = getExpectedResponse();
 
         assertEquals(expectedResponse, actualContributorResponse);
     }
 
-    private ContributorResponse getAuthorExpectedResponse() {
+    private ContributorResponse getExpectedResponse() {
         ContributorResponse expectedResponse = new ContributorResponse();
-        ContributorCategoryData contributorCategoryData  = new ContributorCategoryData();
-        contributorCategoryData.setCategoryName("Category");
         ContributorModuleData contributorModuleData = new ContributorModuleData();
         contributorModuleData.setModuleName("Module");
+        contributorModuleData.setCategoryName("Category");
+        contributorModuleData.setModuleId(1);
         ContributorTopicData contributorTopicData = new ContributorTopicData();
         contributorTopicData.setTopicName("Topic");
         ContributorParameterData contributorParameterData = new ContributorParameterData();
+        contributorParameterData.setParameterId(1);
         contributorParameterData.setParameterName("Parameter");
         ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
         contributorQuestionData.setQuestionId(1);
@@ -127,8 +130,7 @@ class QuestionServiceTest {
         contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
         contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
         contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
-        contributorCategoryData.setModules(Collections.singletonList(contributorModuleData));
-        expectedResponse.setCategories(Collections.singletonList(contributorCategoryData));
+        expectedResponse.setContributorModuleData(Collections.singletonList(contributorModuleData));
         return expectedResponse;
     }
 
@@ -158,7 +160,7 @@ class QuestionServiceTest {
         assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
         Question question = new Question();
         question.setQuestionId(1);
-        question.setQuestionStatus(ContributorQuestionStatus.Published);
+        question.setQuestionStatus(Published);
         question.setQuestionText("Question?");
         question.setParameter(assessmentParameter);
 
@@ -169,32 +171,12 @@ class QuestionServiceTest {
 
         ContributorResponse actualContributorResponse = questionService.getContributorResponse(ContributorRole.Reviewer,"email@thoughtworks.com");
 
-        ContributorResponse expectedResponse = getReviewerExpectedResponse();
+        ContributorResponse expectedResponse = getExpectedResponse();
+        expectedResponse.getContributorModuleData().get(0).getTopics().get(0).getParameters().get(0).getQuestions().get(0).setStatus(Published);
 
         assertEquals(expectedResponse, actualContributorResponse);
     }
 
-    private ContributorResponse getReviewerExpectedResponse() {
-        ContributorResponse expectedResponse = new ContributorResponse();
-        ContributorCategoryData contributorCategoryData  = new ContributorCategoryData();
-        contributorCategoryData.setCategoryName("Category");
-        ContributorModuleData contributorModuleData = new ContributorModuleData();
-        contributorModuleData.setModuleName("Module");
-        ContributorTopicData contributorTopicData = new ContributorTopicData();
-        contributorTopicData.setTopicName("Topic");
-        ContributorParameterData contributorParameterData = new ContributorParameterData();
-        contributorParameterData.setParameterName("Parameter");
-        ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
-        contributorQuestionData.setQuestionId(1);
-        contributorQuestionData.setQuestion("Question?");
-        contributorQuestionData.setStatus(ContributorQuestionStatus.Published);
-        contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
-        contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
-        contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
-        contributorCategoryData.setModules(Collections.singletonList(contributorModuleData));
-        expectedResponse.setCategories(Collections.singletonList(contributorCategoryData));
-        return expectedResponse;
-    }
 
     @Test
     void shouldSaveUserQuestions() {
@@ -265,6 +247,52 @@ class QuestionServiceTest {
         String actualQuestionText = question.getQuestionText();
 
         assertEquals(expectedQuestionText,actualQuestionText);
+
+    }
+
+    @Test
+    void shouldUpdateContributorQuestionStatus() {
+        AssessmentModule assessmentModule=new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        String userEmail="smss@thoughtworks.com";
+        Question question=new Question();
+        question.setQuestionId(1);
+        question.setQuestionStatus(ContributorQuestionStatus.Draft);
+        QuestionStatusUpdateRequest questionStatusUpdateRequest=new QuestionStatusUpdateRequest();
+        questionStatusUpdateRequest.setQuestionId(Collections.singletonList(question.getQuestionId()));
+        questionStatusUpdateRequest.setComments("comments");
+
+        when(moduleContributorService.getRole(assessmentModule.getModuleId(),userEmail)).thenReturn(ContributorRole.Author);
+        when(questionRepository.findById(question.getQuestionId())).thenReturn(Optional.of(question));
+
+        QuestionStatusUpdateResponse actualResponse = questionService.updateContributorQuestionsStatus(assessmentModule.getModuleId(),ContributorQuestionStatus.Sent_For_Review,questionStatusUpdateRequest,userEmail);
+
+        Assertions.assertEquals(ContributorQuestionStatus.Sent_For_Review,actualResponse.getStatus());
+
+    }
+
+    @Test
+    void shouldUpdateContributorQuestionForReviewer() {
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setModule(assessmentModule);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question=new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question");
+        question.setQuestionStatus(ContributorQuestionStatus.Draft);
+        question.setParameter(assessmentParameter);
+        when(questionRepository.findById(1)).thenReturn(Optional.of(question));
+        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(ContributorRole.Reviewer);
+        questionService.updateContributorQuestion(1,"editedQuestion?","hello@thoughtworks.com");
+
+
+        assertEquals(Published,question.getQuestionStatus());
 
     }
 }

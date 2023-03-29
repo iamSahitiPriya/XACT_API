@@ -100,6 +100,7 @@ public class QuestionService {
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         ContributorRole contributorRole = moduleContributorService.getRole(moduleId, userEmail);
         if (contributorRole == ContributorRole.Author && question.getQuestionStatus() == Draft) {
+            System.out.println("role here as author");
             updateQuestion(question);
         } else if (contributorRole == ContributorRole.Reviewer) {
             question.setQuestionStatus(Published);

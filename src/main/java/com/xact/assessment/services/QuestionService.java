@@ -68,30 +68,57 @@ public class QuestionService {
     public ContributorResponse getContributorResponse(ContributorRole contributorRole, String userEmail) {
         List<AssessmentModule> assessmentModules = moduleContributorService.getModuleByRole(userEmail, contributorRole);
         ContributorResponse contributorResponse = new ContributorResponse();
-        List<ContributorCategoryData> contributorCategoryDataList = getContributorCategoryDataResponse(contributorRole, assessmentModules);
-        contributorResponse.setCategories(contributorCategoryDataList);
+        List<ContributorModuleData> contributorModuleDataList = getContributorModuleDataList(contributorRole, assessmentModules);
+        contributorResponse.setContributorModuleData(contributorModuleDataList);
         return contributorResponse;
     }
 
-    private List<ContributorCategoryData> getContributorCategoryDataResponse(ContributorRole contributorRole, List<AssessmentModule> assessmentModules) {
-        List<ContributorCategoryData> contributorCategoryDataList = new ArrayList<>();
+
+    public QuestionStatusUpdateResponse updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
+        ContributorRole contributorRole = moduleContributorService.getRole(moduleId, userEmail);
+        QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
+        if (contributorRole.isStatusValid(status)) {
+            questionStatusUpdateResponse = updateContributorQuestion(status, questionStatusUpdateRequest);
+        }
+
+        return questionStatusUpdateResponse;
+    }
+
+
+    public void deleteQuestion(Integer questionId, String userEmail) {
+        Question question = questionRepository.findById(questionId).orElseThrow();
+        Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
+        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && question.getQuestionStatus() != Published) {
+            questionRepository.delete(question);
+        }
+
+    }
+
+    public void updateContributorQuestion(Integer questionId, String questionText, String userEmail) {
+        Question question = questionRepository.findById(questionId).orElseThrow();
+        question.setQuestionText(questionText);
+        Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
+        ContributorRole contributorRole = moduleContributorService.getRole(moduleId, userEmail);
+        if (contributorRole == ContributorRole.Author && question.getQuestionStatus() == Draft) {
+            updateQuestion(question);
+        } else if (contributorRole == ContributorRole.Reviewer) {
+            question.setQuestionStatus(Published);
+            updateQuestion(question);
+        }
+    }
+
+    private List<ContributorModuleData> getContributorModuleDataList(ContributorRole contributorRole, List<AssessmentModule> assessmentModules) {
+        List<ContributorModuleData> contributorModuleDataList = new ArrayList<>();
         for (AssessmentModule assessmentModule : assessmentModules) {
-            ContributorCategoryData contributorCategoryData = new ContributorCategoryData();
             List<Question> contributorQuestions = getContributorQuestions(contributorRole, assessmentModule.getModuleId());
             ContributorModuleData contributorModuleData = getContributorModuleData(contributorQuestions, assessmentModule);
             if (!contributorModuleData.getTopics().isEmpty()) {
-                Integer categoryIndex = contributorCategoryDataList.stream().map(ContributorCategoryData::getCategoryName).toList().indexOf(assessmentModule.getCategory());
-                if (categoryIndex != -1) {
-                    contributorCategoryDataList.get(categoryIndex).getModules().add(contributorModuleData);
-                } else {
-                    contributorCategoryData.setModules(Collections.singletonList(contributorModuleData));
-                    contributorCategoryData.setCategoryName(assessmentModule.getCategory().getCategoryName());
-                    contributorCategoryDataList.add(contributorCategoryData);
-                }
+                contributorModuleDataList.add(contributorModuleData);
             }
         }
-        return contributorCategoryDataList;
+        return contributorModuleDataList;
     }
+
 
     private List<Question> getContributorQuestions(ContributorRole contributorRole, Integer moduleId) {
         List<Question> questionList;
@@ -105,7 +132,9 @@ public class QuestionService {
 
     private ContributorModuleData getContributorModuleData(List<Question> questionList, AssessmentModule assessmentModule) {
         ContributorModuleData contributorModuleData = new ContributorModuleData();
+        contributorModuleData.setModuleId(assessmentModule.getModuleId());
         contributorModuleData.setModuleName(assessmentModule.getModuleName());
+        contributorModuleData.setCategoryName(assessmentModule.getCategory().getCategoryName());
         List<ContributorTopicData> contributorTopicDataList = new ArrayList<>();
         for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
             ContributorTopicData contributorTopicData = getContributorTopicData(questionList, assessmentTopic);
@@ -134,13 +163,15 @@ public class QuestionService {
 
     private ContributorParameterData getContributorParameterData(List<Question> questionList, AssessmentParameter assessmentParameter) {
         ContributorParameterData contributorParameterData = new ContributorParameterData();
+        contributorParameterData.setParameterId(assessmentParameter.getParameterId());
         contributorParameterData.setParameterName(assessmentParameter.getParameterName());
         List<ContributorQuestionData> contributorQuestionDataList = new ArrayList<>();
         for (Question question : questionList) {
             ContributorQuestionData contributorQuestionData = modelMapper.map(question, ContributorQuestionData.class);
             contributorQuestionDataList.add(contributorQuestionData);
+            contributorParameterData.setQuestions(contributorQuestionDataList);
         }
-        contributorParameterData.setQuestions(contributorQuestionDataList);
+
         return contributorParameterData;
     }
 
@@ -151,39 +182,6 @@ public class QuestionService {
         ).collect(Collectors.toList());
     }
 
-
-    public QuestionStatusUpdateResponse updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
-        ContributorRole contributorRole = moduleContributorService.getRole(moduleId, userEmail);
-        QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
-        if (contributorRole.isStatusValid(status)) {
-            questionStatusUpdateResponse = updateContributorQuestion(status, questionStatusUpdateRequest);
-        }
-
-        return questionStatusUpdateResponse;
-    }
-
-
-    public void deleteQuestion(Integer questionId, String userEmail) {
-        Question question = questionRepository.findById(questionId).orElseThrow();
-        Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
-        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && question.getQuestionStatus() != Published) {
-            questionRepository.delete(question);
-        }
-
-    }
-
-    public void updateContributorQuestion(Integer questionId, String questionText, String userEmail) {
-        Question question = questionRepository.findById(questionId).orElseThrow();
-        question.setQuestionText(questionText);
-        Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
-        ContributorRole contributorRole=moduleContributorService.getRole(moduleId, userEmail);
-        if (contributorRole== ContributorRole.Author && question.getQuestionStatus() == Draft) {
-            updateQuestion(question);
-        }else if(contributorRole== ContributorRole.Reviewer){
-            question.setQuestionStatus(Published);
-            updateQuestion(question);
-        }
-    }
 
     private QuestionStatusUpdateResponse updateContributorQuestion(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest) {
         QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
@@ -201,3 +199,4 @@ public class QuestionService {
         return questionStatusUpdateResponse;
     }
 }
+

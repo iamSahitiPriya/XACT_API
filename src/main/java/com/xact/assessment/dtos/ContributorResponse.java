@@ -12,5 +12,5 @@ import java.util.List;
 @EqualsAndHashCode
 @Setter
 public class ContributorResponse {
-    private List<ContributorCategoryData> categories;
+    private List<ContributorModuleData> contributorModuleData;
 }

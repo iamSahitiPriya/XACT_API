@@ -6,6 +6,7 @@ package com.xact.assessment.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nimbusds.jose.util.JSONObjectUtils;
 import com.xact.assessment.dtos.ContributorQuestionStatus;
 import io.micronaut.core.annotation.Introspected;
 import lombok.EqualsAndHashCode;
@@ -73,18 +74,21 @@ public class Question implements Serializable {
     }
 
     private EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> getLifeCycleMap() {
-        EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> lifeCycleMap  = new EnumMap<>(ContributorQuestionStatus.class);
-        Set<ContributorQuestionStatus> nextState = new HashSet<>();
-        nextState.add(ContributorQuestionStatus.Sent_For_Review);
-        lifeCycleMap.put(ContributorQuestionStatus.Draft, nextState);
+        EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> lifeCycleMap = new EnumMap<>(ContributorQuestionStatus.class);
 
-        lifeCycleMap.put(ContributorQuestionStatus.Requested_For_Change, nextState);
+        Set<ContributorQuestionStatus> draftNextState = new HashSet<>();
+        draftNextState.add(ContributorQuestionStatus.Sent_For_Review);
+        lifeCycleMap.put(ContributorQuestionStatus.Draft, draftNextState);
 
-        nextState.clear();
-        nextState.add(ContributorQuestionStatus.Requested_For_Change);
-        nextState.add(ContributorQuestionStatus.Published);
-        nextState.add(ContributorQuestionStatus.Rejected);
-        lifeCycleMap.put(ContributorQuestionStatus.Sent_For_Review, nextState);
+        Set<ContributorQuestionStatus> requestForChangeNextState = new HashSet<>();
+        requestForChangeNextState.add(ContributorQuestionStatus.Sent_For_Review);
+        lifeCycleMap.put(ContributorQuestionStatus.Requested_For_Change, requestForChangeNextState);
+
+        Set<ContributorQuestionStatus> sentForReviewNextState = new HashSet<>();
+        sentForReviewNextState.add(ContributorQuestionStatus.Requested_For_Change);
+        sentForReviewNextState.add(ContributorQuestionStatus.Published);
+        sentForReviewNextState.add(ContributorQuestionStatus.Rejected);
+        lifeCycleMap.put(ContributorQuestionStatus.Sent_For_Review, sentForReviewNextState);
 
         return lifeCycleMap;
 

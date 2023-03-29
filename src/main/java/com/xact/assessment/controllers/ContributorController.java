@@ -1,10 +1,7 @@
 package com.xact.assessment.controllers;
 
 
-import com.xact.assessment.dtos.ContributorResponse;
-import com.xact.assessment.dtos.ContributorQuestionStatus;
-import com.xact.assessment.dtos.ContributorRole;
-import com.xact.assessment.dtos.QuestionStatusUpdateRequest;
+import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Question;
 import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.QuestionService;
@@ -45,11 +42,11 @@ public class ContributorController {
 
     @Patch(value = "/{moduleId}/questions/{status}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Question> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @PathVariable ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
+    public HttpResponse<QuestionStatusUpdateResponse> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @PathVariable ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
         LOGGER.info("update question status");
-        questionService.updateContributorQuestionsStatus(moduleId,status,questionStatusUpdateRequest,authentication.getName());
+        QuestionStatusUpdateResponse questionStatusUpdateResponse=questionService.updateContributorQuestionsStatus(moduleId,status,questionStatusUpdateRequest,authentication.getName());
 
-        return HttpResponse.ok();
+        return HttpResponse.ok(questionStatusUpdateResponse);
 
     }
 

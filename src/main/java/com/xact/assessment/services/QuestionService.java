@@ -152,12 +152,14 @@ public class QuestionService {
     }
 
 
-    public void updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
+    public QuestionStatusUpdateResponse updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
         ContributorRole contributorRole = moduleContributorService.getRole(moduleId, userEmail);
-        if(contributorRole.isStatusValid(status)){
-            updateContributorQuestion(status,questionStatusUpdateRequest);
+        QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
+        if (contributorRole.isStatusValid(status)) {
+            questionStatusUpdateResponse = updateContributorQuestion(status, questionStatusUpdateRequest);
         }
 
+        return questionStatusUpdateResponse;
     }
 
 
@@ -174,19 +176,28 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow();
         question.setQuestionText(questionText);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
-        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && question.getQuestionStatus() == Draft) {
+        ContributorRole contributorRole=moduleContributorService.getRole(moduleId, userEmail);
+        if (contributorRole== ContributorRole.Author && question.getQuestionStatus() == Draft) {
+            updateQuestion(question);
+        }else if(contributorRole== ContributorRole.Reviewer){
+            question.setQuestionStatus(Published);
             updateQuestion(question);
         }
     }
 
-    private void updateContributorQuestion(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest) {
-        for (Integer questionId: questionStatusUpdateRequest.getQuestionId()) {
+    private QuestionStatusUpdateResponse updateContributorQuestion(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest) {
+        QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
+        questionStatusUpdateResponse.setQuestionId(questionStatusUpdateRequest.getQuestionId());
+        for (Integer questionId : questionStatusUpdateRequest.getQuestionId()) {
             Question question = questionRepository.findById(questionId).orElseThrow();
-            if(question.isNextStateAllowed(status)){
+            if (question.isNextStateAllowed(status)) {
                 question.setComments(questionStatusUpdateRequest.getComments());
                 question.setQuestionStatus(status);
                 updateQuestion(question);
+                questionStatusUpdateResponse.setStatus(question.getQuestionStatus());
+                questionStatusUpdateResponse.setComments(question.getComments());
             }
         }
+        return questionStatusUpdateResponse;
     }
 }

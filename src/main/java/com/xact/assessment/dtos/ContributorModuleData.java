@@ -15,5 +15,6 @@ public class ContributorModuleData {
     private Integer moduleId;
     private String moduleName;
     private String categoryName;
+    private Integer categoryId;
     private List<ContributorTopicData> topics;
 }

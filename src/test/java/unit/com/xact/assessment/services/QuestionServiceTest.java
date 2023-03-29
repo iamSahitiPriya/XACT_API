@@ -117,8 +117,10 @@ class QuestionServiceTest {
         ContributorModuleData contributorModuleData = new ContributorModuleData();
         contributorModuleData.setModuleName("Module");
         contributorModuleData.setCategoryName("Category");
+        contributorModuleData.setCategoryId(1);
         contributorModuleData.setModuleId(1);
         ContributorTopicData contributorTopicData = new ContributorTopicData();
+        contributorTopicData.setTopicId(1);
         contributorTopicData.setTopicName("Topic");
         ContributorParameterData contributorParameterData = new ContributorParameterData();
         contributorParameterData.setParameterId(1);

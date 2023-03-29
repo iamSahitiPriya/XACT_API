@@ -136,6 +136,7 @@ public class QuestionService {
         contributorModuleData.setModuleId(assessmentModule.getModuleId());
         contributorModuleData.setModuleName(assessmentModule.getModuleName());
         contributorModuleData.setCategoryName(assessmentModule.getCategory().getCategoryName());
+        contributorModuleData.setCategoryId(assessmentModule.getCategory().getCategoryId());
         List<ContributorTopicData> contributorTopicDataList = new ArrayList<>();
         for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
             ContributorTopicData contributorTopicData = getContributorTopicData(questionList, assessmentTopic);
@@ -149,6 +150,7 @@ public class QuestionService {
 
     private ContributorTopicData getContributorTopicData(List<Question> questionList, AssessmentTopic assessmentTopic) {
         ContributorTopicData contributorTopicData = new ContributorTopicData();
+        contributorTopicData.setTopicId(assessmentTopic.getTopicId());
         contributorTopicData.setTopicName(assessmentTopic.getTopicName());
         List<ContributorParameterData> contributorParameterDataList = new ArrayList<>();
         for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {

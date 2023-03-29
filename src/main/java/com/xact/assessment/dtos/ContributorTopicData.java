@@ -12,6 +12,7 @@ import java.util.List;
 @EqualsAndHashCode
 @Setter
 public class ContributorTopicData {
+    private Integer topicId;
     private String topicName;
     private List<ContributorParameterData> parameters;
 }

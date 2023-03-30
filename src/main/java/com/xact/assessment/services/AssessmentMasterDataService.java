@@ -150,10 +150,10 @@ public class AssessmentMasterDataService {
         return isUnique(parameters, parameterName);
     }
 
-    public Question createAssessmentQuestions(QuestionRequest questionRequest) {
+    public Question createAssessmentQuestions(String userEmail,QuestionRequest questionRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
         Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
-        questionService.createQuestion(question);
+        questionService.createQuestion(userEmail,question);
         return question;
     }
 

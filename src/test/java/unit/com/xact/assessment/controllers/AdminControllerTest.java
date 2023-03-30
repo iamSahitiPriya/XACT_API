@@ -99,7 +99,10 @@ class AdminControllerTest {
         AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
         Question question = new Question("Text", parameter);
 
-        when(assessmentMasterDataService.createAssessmentQuestions(questionRequest)).thenReturn(question);
+        question.setQuestionStatus(ContributorQuestionStatus.Published);
+
+
+        when(assessmentMasterDataService.createAssessmentQuestions(authentication.getName(),questionRequest)).thenReturn(question);
         HttpResponse<QuestionResponse> actualResponse = adminController.createQuestions(questionRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }

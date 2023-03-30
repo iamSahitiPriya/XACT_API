@@ -6,6 +6,7 @@ import com.xact.assessment.repositories.ModuleContributorRepository;
 import jakarta.inject.Singleton;
 
 import java.util.List;
+import java.util.Optional;
 
 @Singleton
 public class ModuleContributorService {
@@ -23,7 +24,7 @@ public class ModuleContributorService {
         return moduleContributorRepository.findRolesByEmail(userEmail);
     }
 
-    public ContributorRole getRole(Integer moduleId, String userEmail) {
+    public Optional<ContributorRole> getRole(Integer moduleId, String userEmail) {
         return moduleContributorRepository.findRole(moduleId,userEmail);
     }
 }

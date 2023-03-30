@@ -16,9 +16,6 @@ import lombok.Setter;
 @Introspected
 public class QuestionRequest {
     @JsonProperty
-    private Integer questionId;
-
-    @JsonProperty
     private String questionText;
 
     @JsonProperty

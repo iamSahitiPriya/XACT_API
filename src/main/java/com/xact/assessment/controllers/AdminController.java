@@ -130,7 +130,7 @@ public class AdminController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<QuestionResponse> createQuestions(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
         LOGGER.info("Admin: Create questions");
-        Question question = assessmentMasterDataService.createAssessmentQuestions(questionRequest);
+        Question question = assessmentMasterDataService.createAssessmentQuestions(authentication.getName(),questionRequest);
         return getQuestionResponseHttpResponse(question);
     }
 

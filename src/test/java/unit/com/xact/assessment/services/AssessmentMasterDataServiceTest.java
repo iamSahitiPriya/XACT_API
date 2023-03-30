@@ -150,7 +150,6 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldCreateQuestion() {
         QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionId(1);
         questionRequest.setQuestionText("hello");
         questionRequest.setParameter(1);
 
@@ -161,8 +160,8 @@ class AssessmentMasterDataServiceTest {
         when(questionService.getAllQuestion()).thenReturn(questions);
         when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
-        assessmentMasterDataService.createAssessmentQuestions(questionRequest);
-        verify(questionService).createQuestion(question);
+        assessmentMasterDataService.createAssessmentQuestions("hello@thoughtworks.com",questionRequest);
+        verify(questionService).createQuestion("hello@thoughtworks.com",question);
     }
 
     @Test
@@ -367,7 +366,6 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldUpdateQuestions() {
         QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionId(1);
         questionRequest.setQuestionText("hello");
         questionRequest.setParameter(1);
 

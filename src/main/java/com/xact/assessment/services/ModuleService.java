@@ -4,7 +4,6 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentModule;
 import com.xact.assessment.models.ParameterLevelRating;
 import com.xact.assessment.models.TopicLevelRating;

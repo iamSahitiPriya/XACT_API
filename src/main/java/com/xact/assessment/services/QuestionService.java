@@ -10,10 +10,16 @@ import com.xact.assessment.repositories.QuestionRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.xact.assessment.dtos.ContributorQuestionStatus.*;
+import static com.xact.assessment.dtos.ContributorQuestionStatus.Draft;
+import static com.xact.assessment.dtos.ContributorQuestionStatus.Published;
+import static com.xact.assessment.dtos.ContributorRole.Author;
+import static com.xact.assessment.dtos.ContributorRole.Reviewer;
 
 @Singleton
 public class QuestionService {
@@ -35,7 +41,19 @@ public class QuestionService {
         return questionRepository.findById(questionId);
     }
 
-    public void createQuestion(Question question) {
+    public  void createQuestion(String userEmail,Question question){
+        Optional<ContributorRole> contributorRole = moduleContributorService.getRole(question.getParameter().getTopic().getModule().getModuleId(),userEmail);
+        if(contributorRole.isPresent() && contributorRole.get() == Author){
+            question.setQuestionStatus(Draft);
+        }
+        else {
+            question.setQuestionStatus(Published);
+        }
+        saveQuestion(question);
+    }
+
+
+    private void saveQuestion(Question question) {
         questionRepository.save(question);
     }
 
@@ -58,7 +76,7 @@ public class QuestionService {
                 question.setQuestionText(userQuestion.getQuestion());
                 question.setParameter(userQuestion.getParameter());
                 question.setQuestionStatus(ContributorQuestionStatus.Draft);
-                createQuestion(question);
+                saveQuestion(question);
                 userQuestion.setContributionStatus(true);
                 userQuestionService.updateUserQuestion(userQuestion);
             }
@@ -75,9 +93,9 @@ public class QuestionService {
 
 
     public QuestionStatusUpdateResponse updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
-        ContributorRole contributorRole = moduleContributorService.getRole(moduleId, userEmail);
+        Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
         QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
-        if (contributorRole.isStatusValid(status)) {
+        if (contributorRole.isPresent() && contributorRole.get().isStatusValid(status)) {
             questionStatusUpdateResponse = updateContributorQuestion(status, questionStatusUpdateRequest);
         }
 
@@ -88,7 +106,8 @@ public class QuestionService {
     public void deleteQuestion(Integer questionId, String userEmail) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
-        if (moduleContributorService.getRole(moduleId, userEmail) == ContributorRole.Author && question.getQuestionStatus() != Published) {
+        Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
+        if (contributorRole.isPresent() && contributorRole.get() == Author && question.getQuestionStatus() != Published) {
             questionRepository.delete(question);
         }
 
@@ -98,11 +117,10 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow();
         question.setQuestionText(questionText);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
-        ContributorRole contributorRole = moduleContributorService.getRole(moduleId, userEmail);
-        if (contributorRole == ContributorRole.Author && question.getQuestionStatus() == Draft) {
-            System.out.println("role here as author");
+        Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
+        if (contributorRole.isPresent() && contributorRole.get() == Author && question.getQuestionStatus() == Draft) {
             updateQuestion(question);
-        } else if (contributorRole == ContributorRole.Reviewer) {
+        } else if (contributorRole.isPresent() && contributorRole.get() == Reviewer) {
             question.setQuestionStatus(Published);
             updateQuestion(question);
         }
@@ -123,7 +141,7 @@ public class QuestionService {
 
     private List<Question> getContributorQuestions(ContributorRole contributorRole, Integer moduleId) {
         List<Question> questionList;
-        if (contributorRole.equals(ContributorRole.Author)) {
+        if (contributorRole.equals(Author)) {
             questionList = questionRepository.getAuthorQuestions(moduleId);
         } else {
             questionList = questionRepository.getReviewerQuestions(moduleId);

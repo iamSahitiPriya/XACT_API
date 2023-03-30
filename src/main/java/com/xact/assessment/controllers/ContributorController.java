@@ -3,7 +3,6 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Question;
-import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.QuestionService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -37,8 +36,8 @@ public class ContributorController {
         ContributorResponse contributorResponse = questionService.getContributorResponse(role, authentication.getName());
 
         return HttpResponse.ok(contributorResponse);
-
     }
+
 
     @Patch(value = "/{moduleId}/questions/{status}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)

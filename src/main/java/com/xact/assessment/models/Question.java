@@ -6,7 +6,6 @@ package com.xact.assessment.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.nimbusds.jose.util.JSONObjectUtils;
 import com.xact.assessment.dtos.ContributorQuestionStatus;
 import io.micronaut.core.annotation.Introspected;
 import lombok.EqualsAndHashCode;

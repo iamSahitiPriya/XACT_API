@@ -73,8 +73,8 @@ notification:
   inactive:
     fixedDelay: "1d"
 
-question:
-  delay : "1d"
+userQuestion:
+  fixedDelay : "1d"
 
 cleanup:
   initialDelay: "1m"

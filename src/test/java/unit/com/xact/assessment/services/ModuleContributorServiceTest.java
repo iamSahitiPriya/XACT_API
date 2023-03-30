@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -43,7 +44,7 @@ class ModuleContributorServiceTest {
         assessmentModule.setModuleName("module");
         String userEmail="smss@thoughtworks.com";
 
-        when(moduleContributorRepository.findRole(assessmentModule.getModuleId(),userEmail)).thenReturn(ContributorRole.Author);
+        when(moduleContributorRepository.findRole(assessmentModule.getModuleId(),userEmail)).thenReturn(Optional.of(ContributorRole.Author));
 
         moduleContributorService.getRole(assessmentModule.getModuleId(),userEmail);
 

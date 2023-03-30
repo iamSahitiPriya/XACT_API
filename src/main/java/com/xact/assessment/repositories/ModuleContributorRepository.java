@@ -10,6 +10,7 @@ import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ModuleContributorRepository extends CrudRepository<ModuleContributor, ContributorId> {
@@ -23,6 +24,6 @@ public interface ModuleContributorRepository extends CrudRepository<ModuleContri
 
     @Executable
     @Query("Select moduleContributor.contributorRole FROM ModuleContributor moduleContributor where moduleContributor.contributorId.module.moduleId=:moduleId and moduleContributor.contributorId.userEmail=:userEmail")
-    ContributorRole findRole(Integer moduleId, String userEmail);
+    Optional<ContributorRole> findRole(Integer moduleId, String userEmail);
 
 }

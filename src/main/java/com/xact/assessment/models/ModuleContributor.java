@@ -1,6 +1,5 @@
 package com.xact.assessment.models;
 
-import com.xact.assessment.dtos.ContributorQuestionStatus;
 import com.xact.assessment.dtos.ContributorRole;
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Getter

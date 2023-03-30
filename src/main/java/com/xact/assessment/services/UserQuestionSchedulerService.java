@@ -22,7 +22,7 @@ public class UserQuestionSchedulerService {
         this.questionService = questionService;
     }
 
-    @Scheduled(fixedDelay = "${question.delay}")
+    @Scheduled(fixedDelay = "${userQuestion.fixedDelay}")
     public void saveUserQuestionForCompletedAssessment(){
         LOGGER.info("Saving user questions in master table...");
         List<UserQuestion> userQuestionList = userQuestionService.getUserQuestionsForFinishedAssessment();

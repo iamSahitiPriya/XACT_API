@@ -16,8 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.xact.assessment.dtos.ContributorQuestionStatus.Draft;
-import static com.xact.assessment.dtos.ContributorQuestionStatus.Published;
+import static com.xact.assessment.dtos.ContributorQuestionStatus.*;
 import static com.xact.assessment.dtos.ContributorRole.Author;
 import static com.xact.assessment.dtos.ContributorRole.Reviewer;
 
@@ -118,7 +117,7 @@ public class QuestionService {
         question.setQuestionText(questionText);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
-        if (contributorRole.isPresent() && contributorRole.get() == Author && question.getQuestionStatus() == Draft) {
+        if (contributorRole.isPresent() && contributorRole.get() == Author && (question.getQuestionStatus() == Draft || question.getQuestionStatus() == Requested_For_Change)) {
             updateQuestion(question);
         } else if (contributorRole.isPresent() && contributorRole.get() == Reviewer) {
             question.setQuestionStatus(Published);
@@ -209,7 +208,7 @@ public class QuestionService {
         questionStatusUpdateResponse.setQuestionId(questionStatusUpdateRequest.getQuestionId());
         for (Integer questionId : questionStatusUpdateRequest.getQuestionId()) {
             Question question = questionRepository.findById(questionId).orElseThrow();
-            if (question.isNextStateAllowed(status)) {
+            if (question.isNextStatusAllowed(status)) {
                 question.setComments(questionStatusUpdateRequest.getComments());
                 question.setQuestionStatus(status);
                 updateQuestion(question);

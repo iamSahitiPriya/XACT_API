@@ -68,8 +68,8 @@ public class Question implements Serializable {
         this.parameter = parameter;
     }
 
-    public boolean isNextStateAllowed(ContributorQuestionStatus upcomingStatus) {
-        return getLifeCycleMap().get(this.questionStatus).contains(upcomingStatus);
+    public boolean isNextStatusAllowed(ContributorQuestionStatus nextStatus) {
+        return getLifeCycleMap().get(this.questionStatus).contains(nextStatus);
     }
 
     private EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> getLifeCycleMap() {

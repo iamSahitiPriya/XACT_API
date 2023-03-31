@@ -52,7 +52,7 @@ class ContributorControllerTest {
 
     @AfterEach
     public void afterEach() {
-//        questionRepository.deleteAll();
+        questionRepository.deleteAll();
         moduleContributorRepository.deleteAll();
         entityManager.flush();
     }

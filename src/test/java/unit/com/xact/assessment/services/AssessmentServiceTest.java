@@ -4,6 +4,7 @@
 
 package unit.com.xact.assessment.services;
 
+import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
@@ -26,16 +27,16 @@ class AssessmentServiceTest {
     private UsersAssessmentsService usersAssessmentsService;
     private AssessmentRepository assessmentRepository;
     private AssessmentMasterDataService assessmentMasterDataService;
-
-
     private AssessmentService assessmentService;
 
     private ModuleContributorService moduleContributorService;
 
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private AccessControlService accessControlService;
+    private FeedbackNotificationConfig feedbackNotificationConfig;
 
     private static final ModelMapper modelMapper = new ModelMapper();
+
 
     @BeforeEach
     public void beforeEach() {
@@ -45,7 +46,9 @@ class AssessmentServiceTest {
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
         accessControlService = mock(AccessControlService.class);
         moduleContributorService = mock(ModuleContributorService.class);
-        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService,moduleContributorService);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService,moduleContributorService,feedbackNotificationConfig);
+        feedbackNotificationConfig = mock(FeedbackNotificationConfig.class);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, moduleContributorService,feedbackNotificationConfig);
     }
 
     @Test

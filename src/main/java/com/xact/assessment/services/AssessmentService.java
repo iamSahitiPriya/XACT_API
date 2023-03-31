@@ -4,6 +4,7 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
@@ -22,27 +23,26 @@ import static com.xact.assessment.models.AssessmentStatus.Completed;
 @Singleton
 public class AssessmentService {
 
-    public static final int FEEDBACK_DURATION = 29;
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
     private final AccessControlService accessControlService;
-
     private final AssessmentMasterDataService assessmentMasterDataService;
-
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final ModuleContributorService moduleContributorService;
+    private final FeedbackNotificationConfig feedbackNotificationConfig;
 
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ModuleContributorService moduleContributorService) {
+    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ModuleContributorService moduleContributorService,FeedbackNotificationConfig feedbackNotificationConfig) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.accessControlService = accessControlService;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.moduleContributorService = moduleContributorService;
+        this.feedbackNotificationConfig = feedbackNotificationConfig;
     }
 
     public Assessment createAssessment(AssessmentRequest assessmentRequest, User user) {
@@ -295,7 +295,7 @@ public class AssessmentService {
 
     public List<Assessment> getFinishedAssessments() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -FEEDBACK_DURATION);
+        calendar.add(Calendar.DAY_OF_YEAR, - feedbackNotificationConfig.getDurationInDays());
         Date completedDate = calendar.getTime();
         return assessmentRepository.findByCompletedStatus(completedDate);
     }

@@ -2,7 +2,7 @@ package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.ContributorController;
 import com.xact.assessment.dtos.*;
-import com.xact.assessment.models.Question;
+import com.xact.assessment.models.*;
 import com.xact.assessment.services.QuestionService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -51,44 +51,54 @@ class ContributorControllerTest {
 
     @Test
     void shouldUpdateContributorQuestionStatus() {
-        Integer questionId =1;
-        QuestionStatusUpdateRequest questionStatusUpdateRequest=new QuestionStatusUpdateRequest();
+        Integer questionId = 1;
+        QuestionStatusUpdateRequest questionStatusUpdateRequest = new QuestionStatusUpdateRequest();
         questionStatusUpdateRequest.setQuestionId(Collections.singletonList(questionId));
         questionStatusUpdateRequest.setComments("comments");
-        QuestionStatusUpdateResponse questionStatusUpdateResponse=new QuestionStatusUpdateResponse();
+        QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
         questionStatusUpdateResponse.setQuestionId(questionStatusUpdateRequest.getQuestionId());
         questionStatusUpdateResponse.setStatus(ContributorQuestionStatus.Sent_For_Review);
         questionStatusUpdateResponse.setComments("comments");
 
-        when(questionService.updateContributorQuestionsStatus(1,ContributorQuestionStatus.Sent_For_Review,questionStatusUpdateRequest,"abc@thoughtworks.com")).thenReturn(questionStatusUpdateResponse);
+        when(questionService.updateContributorQuestionsStatus(1, ContributorQuestionStatus.Sent_For_Review, questionStatusUpdateRequest, "abc@thoughtworks.com")).thenReturn(questionStatusUpdateResponse);
 
-        HttpResponse<QuestionStatusUpdateResponse> actualResponse=contributorController.updateContributorQuestionsStatus(1,ContributorQuestionStatus.Sent_For_Review,questionStatusUpdateRequest,authentication);
+        HttpResponse<QuestionStatusUpdateResponse> actualResponse = contributorController.updateContributorQuestionsStatus(1, ContributorQuestionStatus.Sent_For_Review, questionStatusUpdateRequest, authentication);
 
-        Assertions.assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+        Assertions.assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
     @Test
     void shouldDeleteQuestion() {
-        Integer questionId=1;
+        Integer questionId = 1;
 
-        doNothing().when(questionService).deleteQuestion(questionId,"abc@thoughtworks.com");
+        doNothing().when(questionService).deleteQuestion(questionId, "abc@thoughtworks.com");
 
-        HttpResponse<Question> actualResponse=contributorController.deleteQuestion(questionId,authentication);
+        HttpResponse<Question> actualResponse = contributorController.deleteQuestion(questionId, authentication);
 
-        Assertions.assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+        Assertions.assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
     }
 
     @Test
     void shouldUpdateQuestionText() {
-        Integer questionId=1;
-        String questionText="new question";
+        Integer questionId = 1;
+        String questionText = "new question";
 
-        doNothing().when(questionService).updateContributorQuestion(questionId,questionText,"abc@thoughtworks.com");
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = new Question();
+        question.setQuestionId(questionId);
+        question.setQuestionText(questionText);
+        question.setParameter(parameter);
 
-        HttpResponse<Question> actualResponse=contributorController.updateQuestion(questionId,questionText,authentication);
 
-        Assertions.assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+        when(questionService.updateContributorQuestion(questionId, questionText, authentication.getName())).thenReturn(question);
+
+        HttpResponse<QuestionDto> actualResponse = contributorController.updateQuestion(questionId, questionText, authentication);
+
+        Assertions.assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
     }
 }

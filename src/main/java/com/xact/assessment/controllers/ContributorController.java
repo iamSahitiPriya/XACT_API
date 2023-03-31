@@ -64,13 +64,13 @@ public class ContributorController {
     public HttpResponse<QuestionDto> updateQuestion(@PathVariable Integer questionId,@Body String questionText, Authentication authentication) {
         LOGGER.info("Update question: {}", questionId);
            Question question = questionService.updateContributorQuestion(questionId, questionText, authentication.getName());
-           QuestionDto response = new QuestionDto();
-           response.setParameter(question.getParameter().getParameterId());
-           response.setQuestionText(question.getQuestionText());
-           response.setQuestionId(question.getQuestionId());
-           response.setStatus(question.getQuestionStatus());
+           QuestionDto questionResponse = new QuestionDto();
+           questionResponse.setParameter(question.getParameter().getParameterId());
+           questionResponse.setQuestionText(question.getQuestionText());
+           questionResponse.setQuestionId(question.getQuestionId());
+           questionResponse.setStatus(question.getQuestionStatus());
 
-        return HttpResponse.ok(response);
+        return HttpResponse.ok(questionResponse);
 
     }
 

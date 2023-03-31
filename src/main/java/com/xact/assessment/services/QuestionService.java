@@ -56,8 +56,8 @@ public class QuestionService {
         questionRepository.save(question);
     }
 
-    public void updateQuestion(Question question) {
-        questionRepository.update(question);
+    public Question updateQuestion(Question question) {
+        return questionRepository.update(question);
     }
 
     public List<Question> getAllQuestion() {
@@ -112,17 +112,18 @@ public class QuestionService {
 
     }
 
-    public void updateContributorQuestion(Integer questionId, String questionText, String userEmail) {
+    public Question updateContributorQuestion(Integer questionId, String questionText, String userEmail) {
         Question question = questionRepository.findById(questionId).orElseThrow();
         question.setQuestionText(questionText);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
         if (contributorRole.isPresent() && contributorRole.get() == Author && (question.getQuestionStatus() == Draft || question.getQuestionStatus() == Requested_For_Change)) {
-            updateQuestion(question);
+            question = updateQuestion(question);
         } else if (contributorRole.isPresent() && contributorRole.get() == Reviewer) {
             question.setQuestionStatus(Published);
-            updateQuestion(question);
+            question = updateQuestion(question);
         }
+        return question;
     }
 
     private List<ContributorModuleData> getContributorModuleDataList(ContributorRole contributorRole, List<AssessmentModule> assessmentModules) {

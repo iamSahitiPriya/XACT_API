@@ -16,4 +16,5 @@ public class QuestionResponse {
     private Integer topic;
     private Integer questionId;
     private String questionText;
+    private ContributorQuestionStatus status;
 }

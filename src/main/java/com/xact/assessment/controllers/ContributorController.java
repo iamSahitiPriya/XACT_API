@@ -61,11 +61,16 @@ public class ContributorController {
 
     @Patch(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Question> updateQuestion(@PathVariable Integer questionId,@Body String questionText, Authentication authentication) {
+    public HttpResponse<QuestionDto> updateQuestion(@PathVariable Integer questionId,@Body String questionText, Authentication authentication) {
         LOGGER.info("Update question: {}", questionId);
-        questionService.updateContributorQuestion(questionId, questionText, authentication.getName());
+           Question question = questionService.updateContributorQuestion(questionId, questionText, authentication.getName());
+           QuestionDto response = new QuestionDto();
+           response.setParameter(question.getParameter().getParameterId());
+           response.setQuestionText(question.getQuestionText());
+           response.setQuestionId(question.getQuestionId());
+           response.setStatus(question.getQuestionStatus());
 
-        return HttpResponse.ok();
+        return HttpResponse.ok(response);
 
     }
 

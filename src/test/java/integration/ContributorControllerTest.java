@@ -77,10 +77,6 @@ class ContributorControllerTest {
         String actualResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/contributor/questions?role=Author").bearerAuth("anything"), String.class);
         Assertions.assertEquals(expectedResponse, actualResponse);
 
-//        var saveResponse = client.toBlocking().exchange(HttpRequest.GET("/v1/contributor/questions?role=Author").bearerAuth("anything"));
-//        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus();
-
-
     }
 
     @Test

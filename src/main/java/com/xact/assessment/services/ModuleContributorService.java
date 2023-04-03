@@ -17,7 +17,7 @@ public class ModuleContributorService {
     }
 
     public List<AssessmentModule> getModuleByRole(String userEmail, ContributorRole contributorRole) {
-        return moduleContributorRepository.findByRole(userEmail,contributorRole);
+        return moduleContributorRepository.findByRole(userEmail, contributorRole);
     }
 
     public List<ContributorRole> getContributorRolesByEmail(String userEmail) {
@@ -25,6 +25,6 @@ public class ModuleContributorService {
     }
 
     public Optional<ContributorRole> getRole(Integer moduleId, String userEmail) {
-        return moduleContributorRepository.findRole(moduleId,userEmail);
+        return moduleContributorRepository.findRole(moduleId, userEmail);
     }
 }

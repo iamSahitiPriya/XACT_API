@@ -43,7 +43,7 @@ public class ContributorController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<QuestionStatusUpdateResponse> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @PathVariable ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
         LOGGER.info("update question status");
-        QuestionStatusUpdateResponse questionStatusUpdateResponse=questionService.updateContributorQuestionsStatus(moduleId,status,questionStatusUpdateRequest,authentication.getName());
+        QuestionStatusUpdateResponse questionStatusUpdateResponse = questionService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, authentication.getName());
 
         return HttpResponse.ok(questionStatusUpdateResponse);
 
@@ -61,14 +61,14 @@ public class ContributorController {
 
     @Patch(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<QuestionDto> updateQuestion(@PathVariable Integer questionId,@Body String questionText, Authentication authentication) {
+    public HttpResponse<QuestionDto> updateQuestion(@PathVariable Integer questionId, @Body String questionText, Authentication authentication) {
         LOGGER.info("Update question: {}", questionId);
-           Question question = questionService.updateContributorQuestion(questionId, questionText, authentication.getName());
-           QuestionDto questionResponse = new QuestionDto();
-           questionResponse.setParameter(question.getParameter().getParameterId());
-           questionResponse.setQuestionText(question.getQuestionText());
-           questionResponse.setQuestionId(question.getQuestionId());
-           questionResponse.setStatus(question.getQuestionStatus());
+        Question question = questionService.updateContributorQuestion(questionId, questionText, authentication.getName());
+        QuestionDto questionResponse = new QuestionDto();
+        questionResponse.setParameter(question.getParameter().getParameterId());
+        questionResponse.setQuestionText(question.getQuestionText());
+        questionResponse.setQuestionId(question.getQuestionId());
+        questionResponse.setStatus(question.getQuestionStatus());
 
         return HttpResponse.ok(questionResponse);
 

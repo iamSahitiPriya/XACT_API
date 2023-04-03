@@ -40,12 +40,11 @@ public class QuestionService {
         return questionRepository.findById(questionId);
     }
 
-    public  void createQuestion(String userEmail,Question question){
-        Optional<ContributorRole> contributorRole = moduleContributorService.getRole(question.getParameter().getTopic().getModule().getModuleId(),userEmail);
-        if(contributorRole.isPresent() && contributorRole.get() == Author){
+    public void createQuestion(String userEmail, Question question) {
+        Optional<ContributorRole> contributorRole = moduleContributorService.getRole(question.getParameter().getTopic().getModule().getModuleId(), userEmail);
+        if (contributorRole.isPresent() && contributorRole.get() == Author) {
             question.setQuestionStatus(Draft);
-        }
-        else {
+        } else {
             question.setQuestionStatus(Published);
         }
         saveQuestion(question);

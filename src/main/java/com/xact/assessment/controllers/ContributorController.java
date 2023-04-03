@@ -18,7 +18,7 @@ import javax.transaction.Transactional;
 @Controller("/v1")
 public class ContributorController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContributorController.class);
 
     private final QuestionService questionService;
 

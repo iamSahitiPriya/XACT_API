@@ -199,7 +199,7 @@ public class QuestionService {
     private List<Question> getFilteredParameterQuestions(List<Question> questionList, AssessmentParameter assessmentParameter) {
         return questionList.stream().filter(question ->
                 Objects.equals(question.getParameter().getParameterId(), assessmentParameter.getParameterId())
-        ).collect(Collectors.toList());
+        ).toList();
     }
 
 

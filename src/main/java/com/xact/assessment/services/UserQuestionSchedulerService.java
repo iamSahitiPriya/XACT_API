@@ -13,7 +13,7 @@ public class UserQuestionSchedulerService {
     private final UserQuestionService userQuestionService;
 
     private final QuestionService questionService;
-    private static final Logger LOGGER = LoggerFactory.getLogger(CleanupSchedulerService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserQuestionSchedulerService.class);
 
 
 

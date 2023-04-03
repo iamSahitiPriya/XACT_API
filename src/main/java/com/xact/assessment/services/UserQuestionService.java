@@ -2,7 +2,6 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentParameter;
-import com.xact.assessment.models.AssessmentTopic;
 import com.xact.assessment.models.UserQuestion;
 import com.xact.assessment.repositories.UserQuestionRepository;
 import jakarta.inject.Singleton;

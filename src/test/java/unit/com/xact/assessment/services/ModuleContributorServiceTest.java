@@ -30,11 +30,11 @@ class ModuleContributorServiceTest {
         assessmentModule.setModuleId(1);
         assessmentModule.setModuleName("module");
 
-        when(moduleContributorRepository.findByRole("smss@thoughtworks.com", ContributorRole.Author)).thenReturn(Collections.singletonList(assessmentModule));
+        when(moduleContributorRepository.findByRole("smss@thoughtworks.com", ContributorRole.AUTHOR)).thenReturn(Collections.singletonList(assessmentModule));
 
-        moduleContributorService.getModuleByRole("smss@thoughtworks.com",ContributorRole.Author);
+        moduleContributorService.getModuleByRole("smss@thoughtworks.com",ContributorRole.AUTHOR);
 
-        verify(moduleContributorRepository).findByRole("smss@thoughtworks.com",ContributorRole.Author);
+        verify(moduleContributorRepository).findByRole("smss@thoughtworks.com",ContributorRole.AUTHOR);
     }
 
     @Test
@@ -44,7 +44,7 @@ class ModuleContributorServiceTest {
         assessmentModule.setModuleName("module");
         String userEmail="smss@thoughtworks.com";
 
-        when(moduleContributorRepository.findRole(assessmentModule.getModuleId(),userEmail)).thenReturn(Optional.of(ContributorRole.Author));
+        when(moduleContributorRepository.findRole(assessmentModule.getModuleId(),userEmail)).thenReturn(Optional.of(ContributorRole.AUTHOR));
 
         moduleContributorService.getRole(assessmentModule.getModuleId(),userEmail);
 

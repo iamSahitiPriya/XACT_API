@@ -16,8 +16,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static com.xact.assessment.dtos.ContributorQuestionStatus.*;
-import static com.xact.assessment.dtos.ContributorRole.Author;
-import static com.xact.assessment.dtos.ContributorRole.Reviewer;
+import static com.xact.assessment.dtos.ContributorRole.AUTHOR;
+import static com.xact.assessment.dtos.ContributorRole.REVIEWER;
 
 @Singleton
 public class QuestionService {
@@ -41,7 +41,7 @@ public class QuestionService {
 
     public void createQuestion(String userEmail, Question question) {
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(question.getParameter().getTopic().getModule().getModuleId(), userEmail);
-        if (contributorRole.isPresent() && contributorRole.get() == Author) {
+        if (contributorRole.isPresent() && contributorRole.get() == AUTHOR) {
             question.setQuestionStatus(DRAFT);
         } else {
             question.setQuestionStatus(PUBLISHED);
@@ -83,7 +83,7 @@ public class QuestionService {
     public ContributorResponse getContributorResponse(ContributorRole contributorRole, String userEmail) {
         List<AssessmentModule> assessmentModules = moduleContributorService.getModuleByRole(userEmail, contributorRole);
         ContributorResponse contributorResponse = new ContributorResponse();
-        List<ContributorModuleData> contributorModuleDataList = getContributorModuleDataList(contributorRole, assessmentModules);
+        List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(contributorRole, assessmentModules);
         contributorResponse.setContributorModuleData(contributorModuleDataList);
         return contributorResponse;
     }
@@ -104,7 +104,7 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow();
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
-        if (contributorRole.isPresent() && contributorRole.get() == Author && question.getQuestionStatus() != PUBLISHED) {
+        if (contributorRole.isPresent() && contributorRole.get() == AUTHOR && question.getQuestionStatus() != PUBLISHED) {
             questionRepository.delete(question);
         }
 
@@ -115,16 +115,20 @@ public class QuestionService {
         question.setQuestionText(questionText);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
-        if (contributorRole.isPresent() && contributorRole.get() == Author && (question.getQuestionStatus() == DRAFT || question.getQuestionStatus() == REQUESTED_FOR_CHANGE)) {
+        if (contributorRole.isPresent() && contributorRole.get() == AUTHOR && isUpdateAllowed(question)) {
             question = updateQuestion(question);
-        } else if (contributorRole.isPresent() && contributorRole.get() == Reviewer) {
+        } else if (contributorRole.isPresent() && contributorRole.get() == REVIEWER) {
             question.setQuestionStatus(PUBLISHED);
             question = updateQuestion(question);
         }
         return question;
     }
 
-    private List<ContributorModuleData> getContributorModuleDataList(ContributorRole contributorRole, List<AssessmentModule> assessmentModules) {
+    private boolean isUpdateAllowed(Question question) {
+        return question.getQuestionStatus() == DRAFT || question.getQuestionStatus() == REQUESTED_FOR_CHANGE;
+    }
+
+    private List<ContributorModuleData> getContributorModuleData(ContributorRole contributorRole, List<AssessmentModule> assessmentModules) {
         List<ContributorModuleData> contributorModuleDataList = new ArrayList<>();
         for (AssessmentModule assessmentModule : assessmentModules) {
             List<Question> contributorQuestions = getContributorQuestions(contributorRole, assessmentModule.getModuleId());
@@ -139,7 +143,7 @@ public class QuestionService {
 
     private List<Question> getContributorQuestions(ContributorRole contributorRole, Integer moduleId) {
         List<Question> questionList;
-        if (contributorRole.equals(Author)) {
+        if (contributorRole.equals(AUTHOR)) {
             questionList = questionRepository.getAuthorQuestions(moduleId);
         } else {
             questionList = questionRepository.getReviewerQuestions(moduleId);
@@ -170,7 +174,7 @@ public class QuestionService {
         contributorTopicData.setTopicName(assessmentTopic.getTopicName());
         List<ContributorParameterData> contributorParameterDataList = new ArrayList<>();
         for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
-            List<Question> parameterQuestions = getFilteredParameterQuestions(questionList, assessmentParameter);
+            List<Question> parameterQuestions = filterParameterQuestions(questionList, assessmentParameter);
             if (!parameterQuestions.isEmpty()) {
                 ContributorParameterData contributorParameterData = getContributorParameterData(parameterQuestions, assessmentParameter);
                 contributorParameterDataList.add(contributorParameterData);
@@ -195,7 +199,7 @@ public class QuestionService {
     }
 
 
-    private List<Question> getFilteredParameterQuestions(List<Question> questionList, AssessmentParameter assessmentParameter) {
+    private List<Question> filterParameterQuestions(List<Question> questionList, AssessmentParameter assessmentParameter) {
         return questionList.stream().filter(question ->
                 Objects.equals(question.getParameter().getParameterId(), assessmentParameter.getParameterId())
         ).toList();

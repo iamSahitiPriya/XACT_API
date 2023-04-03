@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
 
-@Controller("/v1")
+@Controller("/v1/contributor")
 public class ContributorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContributorController.class);
@@ -28,7 +28,7 @@ public class ContributorController {
 
     }
 
-    @Get(value = "/contributor/questions{?role}", produces = MediaType.APPLICATION_JSON)
+    @Get(value = "/questions{?role}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     @Transactional
     public HttpResponse<ContributorResponse> getContributorQuestions(@QueryValue ContributorRole role, Authentication authentication) {
@@ -52,7 +52,7 @@ public class ContributorController {
     @Delete(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> deleteQuestion(@PathVariable Integer questionId, Authentication authentication) {
-        LOGGER.info("delete question");
+        LOGGER.info("delete question: {}",questionId);
         questionService.deleteQuestion(questionId, authentication.getName());
 
         return HttpResponse.ok();

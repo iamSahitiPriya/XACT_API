@@ -1,7 +1,7 @@
 create table tbl_module_contributors (
                                 module int references tbm_assessment_module(module_id),
                                 user_email varchar(50) NOT NULL ,
-                                role varchar(50) check ( role='Author' or role='Reviewer') NOT NULL ,
+                                role varchar(50) check ( role='AUTHOR' or role='REVIEWER') NOT NULL ,
                                 primary key (module,user_email)
 );
 

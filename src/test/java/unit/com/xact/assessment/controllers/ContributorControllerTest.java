@@ -12,7 +12,7 @@ import org.mockito.Mockito;
 
 import java.util.Collections;
 
-import static com.xact.assessment.dtos.ContributorRole.Author;
+import static com.xact.assessment.dtos.ContributorRole.AUTHOR;
 import static org.mockito.Mockito.*;
 
 class ContributorControllerTest {
@@ -41,9 +41,9 @@ class ContributorControllerTest {
         contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
         contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
 
-        when(questionService.getContributorResponse(Author, "abc@thoughtworks.com")).thenReturn(contributorResponse);
+        when(questionService.getContributorResponse(AUTHOR, "abc@thoughtworks.com")).thenReturn(contributorResponse);
 
-        HttpResponse<ContributorResponse> actualResponse = contributorController.getContributorQuestions(Author, authentication);
+        HttpResponse<ContributorResponse> actualResponse = contributorController.getContributorQuestions(AUTHOR, authentication);
 
         Assertions.assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 

@@ -61,7 +61,7 @@ class ContributorControllerTest {
     void shouldGetContributorQuestionResponse() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         ContributorId contributorId = new ContributorId(assessmentModule, "dummy@test.com");
-        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.Author);
+        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.AUTHOR);
         moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
@@ -83,13 +83,13 @@ class ContributorControllerTest {
     void shouldUpdateContributorQuestionStatus() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         ContributorId contributorId = new ContributorId(assessmentModule, "dummy@test.com");
-        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.Author);
+        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.AUTHOR);
         moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
         question.setQuestionText("new user question");
         question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
-        question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().collect(Collectors.toList()).get(0));
+        question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().toList().get(0));
 
         questionRepository.save(question);
         entityManager.getTransaction().commit();
@@ -102,7 +102,7 @@ class ContributorControllerTest {
                 "}";
 
         String expectedResponse = "{\"questionId\":[" + question.getQuestionId() + "],\"comments\":\"comments\",\"status\":\"SENT_FOR_REVIEW\"}";
-        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/1/questions/SENT_FOR_REVIEW", dataRequest).bearerAuth("anything"), String.class);
+        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/contributor/1/questions/SENT_FOR_REVIEW", dataRequest).bearerAuth("anything"), String.class);
 
         Assertions.assertEquals(expectedResponse, actualResponse);
     }
@@ -111,20 +111,20 @@ class ContributorControllerTest {
     void shouldDeleteContributorQuestion() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         ContributorId contributorId = new ContributorId(assessmentModule, "dummy@test.com");
-        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.Author);
+        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.AUTHOR);
         moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
         question.setQuestionText("new user question");
         question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
-        question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().collect(Collectors.toList()).get(0));
+        question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().toList().get(0));
 
         questionRepository.save(question);
         entityManager.getTransaction().commit();
         entityManager.clear();
         entityManager.close();
 
-        var actualResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/question/" + question.getQuestionId()).bearerAuth("anything"));
+        var actualResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/contributor/question/" + question.getQuestionId()).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
@@ -133,7 +133,7 @@ class ContributorControllerTest {
     void shouldUpdateContributorQuestion() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         ContributorId contributorId = new ContributorId(assessmentModule, "dummy@test.com");
-        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.Author);
+        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.AUTHOR);
         moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
@@ -148,7 +148,7 @@ class ContributorControllerTest {
 
 
         String expectedResponse = "{\"questionId\":" + question.getQuestionId() + ",\"questionText\":\"new question text\",\"parameter\":" + question.getParameter().getParameterId() + ",\"status\":\"DRAFT\"}";
-        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/question/" + question.getQuestionId(), "new question text").bearerAuth("anything"), String.class);
+        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/contributor/question/" + question.getQuestionId(), "new question text").bearerAuth("anything"), String.class);
 
 
         Assertions.assertEquals(expectedResponse, actualResponse);

@@ -66,14 +66,14 @@ class ContributorControllerTest {
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
         question.setQuestionText("new user question");
-        question.setQuestionStatus(ContributorQuestionStatus.Draft);
-        question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().collect(Collectors.toList()).get(0));
+        question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
+        question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().toList().get(0));
 
         questionRepository.save(question);
         entityManager.getTransaction().commit();
 
 
-        String expectedResponse = "{\"contributorModuleData\":[{\"moduleId\":1,\"moduleName\":\"Architecture Quality\",\"categoryName\":\"Software engineering\",\"categoryId\":1,\"topics\":[{\"topicId\":" + question.getParameter().getTopic().getTopicId() + ",\"topicName\":" + "\"" + question.getParameter().getTopic().getTopicName() + "\"" + ",\"parameters\":[{\"parameterId\":" + question.getParameter().getParameterId() + ",\"parameterName\":" + "\"" + question.getParameter().getParameterName() + "\"" + ",\"questions\":[{\"questionId\":" + question.getQuestionId() + ",\"question\":\"new user question\",\"status\":\"Draft\"}]}]}]}]}";
+        String expectedResponse = "{\"contributorModuleData\":[{\"moduleId\":1,\"moduleName\":\"Architecture Quality\",\"categoryName\":\"Software engineering\",\"categoryId\":1,\"topics\":[{\"topicId\":" + question.getParameter().getTopic().getTopicId() + ",\"topicName\":" + "\"" + question.getParameter().getTopic().getTopicName() + "\"" + ",\"parameters\":[{\"parameterId\":" + question.getParameter().getParameterId() + ",\"parameterName\":" + "\"" + question.getParameter().getParameterName() + "\"" + ",\"questions\":[{\"questionId\":" + question.getQuestionId() + ",\"question\":\"new user question\",\"status\":\"DRAFT\"}]}]}]}]}";
         String actualResponse = client.toBlocking().retrieve(HttpRequest.GET("/v1/contributor/questions?role=Author").bearerAuth("anything"), String.class);
         Assertions.assertEquals(expectedResponse, actualResponse);
 
@@ -88,7 +88,7 @@ class ContributorControllerTest {
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
         question.setQuestionText("new user question");
-        question.setQuestionStatus(ContributorQuestionStatus.Draft);
+        question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
         question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().collect(Collectors.toList()).get(0));
 
         questionRepository.save(question);
@@ -101,8 +101,8 @@ class ContributorControllerTest {
                 "    \"comments\":\"comments\"\n" +
                 "}";
 
-        String expectedResponse = "{\"questionId\":[" + question.getQuestionId() + "],\"comments\":\"comments\",\"status\":\"Sent_For_Review\"}";
-        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/1/questions/Sent_For_Review", dataRequest).bearerAuth("anything"), String.class);
+        String expectedResponse = "{\"questionId\":[" + question.getQuestionId() + "],\"comments\":\"comments\",\"status\":\"SENT_FOR_REVIEW\"}";
+        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/1/questions/SENT_FOR_REVIEW", dataRequest).bearerAuth("anything"), String.class);
 
         Assertions.assertEquals(expectedResponse, actualResponse);
     }
@@ -116,7 +116,7 @@ class ContributorControllerTest {
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
         question.setQuestionText("new user question");
-        question.setQuestionStatus(ContributorQuestionStatus.Draft);
+        question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
         question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().collect(Collectors.toList()).get(0));
 
         questionRepository.save(question);
@@ -138,8 +138,8 @@ class ContributorControllerTest {
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
         question.setQuestionText("new user question");
-        question.setQuestionStatus(ContributorQuestionStatus.Draft);
-        question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().collect(Collectors.toList()).get(0));
+        question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
+        question.setParameter(assessmentModule.getTopics().stream().toList().get(0).getParameters().stream().toList().get(0));
 
         questionRepository.save(question);
         entityManager.getTransaction().commit();
@@ -147,7 +147,7 @@ class ContributorControllerTest {
         entityManager.close();
 
 
-        String expectedResponse = "{\"questionId\":" + question.getQuestionId() + ",\"questionText\":\"new question text\",\"parameter\":" + question.getParameter().getParameterId() + ",\"status\":\"Draft\"}";
+        String expectedResponse = "{\"questionId\":" + question.getQuestionId() + ",\"questionText\":\"new question text\",\"parameter\":" + question.getParameter().getParameterId() + ",\"status\":\"DRAFT\"}";
         String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/question/" + question.getQuestionId(), "new question text").bearerAuth("anything"), String.class);
 
 

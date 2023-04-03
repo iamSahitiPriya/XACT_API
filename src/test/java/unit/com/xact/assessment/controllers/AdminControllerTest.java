@@ -99,7 +99,7 @@ class AdminControllerTest {
         AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
         Question question = new Question("Text", parameter);
 
-        question.setQuestionStatus(ContributorQuestionStatus.Published);
+        question.setQuestionStatus(ContributorQuestionStatus.PUBLISHED);
 
 
         when(assessmentMasterDataService.createAssessmentQuestions(authentication.getName(),questionRequest)).thenReturn(question);

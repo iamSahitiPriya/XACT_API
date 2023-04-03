@@ -36,7 +36,7 @@ class ContributorControllerTest {
         ContributorQuestionData contributorQuestionData = new ContributorQuestionData();
         contributorQuestionData.setQuestionId(1);
         contributorQuestionData.setQuestion("Question?");
-        contributorQuestionData.setStatus(ContributorQuestionStatus.Draft);
+        contributorQuestionData.setStatus(ContributorQuestionStatus.DRAFT);
         contributorParameterData.setQuestions(Collections.singletonList(contributorQuestionData));
         contributorTopicData.setParameters(Collections.singletonList(contributorParameterData));
         contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
@@ -57,12 +57,12 @@ class ContributorControllerTest {
         questionStatusUpdateRequest.setComments("comments");
         QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
         questionStatusUpdateResponse.setQuestionId(questionStatusUpdateRequest.getQuestionId());
-        questionStatusUpdateResponse.setStatus(ContributorQuestionStatus.Sent_For_Review);
+        questionStatusUpdateResponse.setStatus(ContributorQuestionStatus.SENT_FOR_REVIEW);
         questionStatusUpdateResponse.setComments("comments");
 
-        when(questionService.updateContributorQuestionsStatus(1, ContributorQuestionStatus.Sent_For_Review, questionStatusUpdateRequest, "abc@thoughtworks.com")).thenReturn(questionStatusUpdateResponse);
+        when(questionService.updateContributorQuestionsStatus(1, ContributorQuestionStatus.SENT_FOR_REVIEW, questionStatusUpdateRequest, "abc@thoughtworks.com")).thenReturn(questionStatusUpdateResponse);
 
-        HttpResponse<QuestionStatusUpdateResponse> actualResponse = contributorController.updateContributorQuestionsStatus(1, ContributorQuestionStatus.Sent_For_Review, questionStatusUpdateRequest, authentication);
+        HttpResponse<QuestionStatusUpdateResponse> actualResponse = contributorController.updateContributorQuestionsStatus(1, ContributorQuestionStatus.SENT_FOR_REVIEW, questionStatusUpdateRequest, authentication);
 
         Assertions.assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }

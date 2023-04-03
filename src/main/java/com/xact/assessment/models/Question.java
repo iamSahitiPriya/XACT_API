@@ -76,18 +76,18 @@ public class Question implements Serializable {
         EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> lifeCycleMap = new EnumMap<>(ContributorQuestionStatus.class);
 
         Set<ContributorQuestionStatus> draftNextState = new HashSet<>();
-        draftNextState.add(ContributorQuestionStatus.Sent_For_Review);
-        lifeCycleMap.put(ContributorQuestionStatus.Draft, draftNextState);
+        draftNextState.add(ContributorQuestionStatus.SENT_FOR_REVIEW);
+        lifeCycleMap.put(ContributorQuestionStatus.DRAFT, draftNextState);
 
         Set<ContributorQuestionStatus> requestForChangeNextState = new HashSet<>();
-        requestForChangeNextState.add(ContributorQuestionStatus.Sent_For_Review);
-        lifeCycleMap.put(ContributorQuestionStatus.Requested_For_Change, requestForChangeNextState);
+        requestForChangeNextState.add(ContributorQuestionStatus.SENT_FOR_REVIEW);
+        lifeCycleMap.put(ContributorQuestionStatus.REQUESTED_FOR_CHANGE, requestForChangeNextState);
 
         Set<ContributorQuestionStatus> sentForReviewNextState = new HashSet<>();
-        sentForReviewNextState.add(ContributorQuestionStatus.Requested_For_Change);
-        sentForReviewNextState.add(ContributorQuestionStatus.Published);
-        sentForReviewNextState.add(ContributorQuestionStatus.Rejected);
-        lifeCycleMap.put(ContributorQuestionStatus.Sent_For_Review, sentForReviewNextState);
+        sentForReviewNextState.add(ContributorQuestionStatus.REQUESTED_FOR_CHANGE);
+        sentForReviewNextState.add(ContributorQuestionStatus.PUBLISHED);
+        sentForReviewNextState.add(ContributorQuestionStatus.REJECTED);
+        lifeCycleMap.put(ContributorQuestionStatus.SENT_FOR_REVIEW, sentForReviewNextState);
 
         return lifeCycleMap;
 

@@ -60,7 +60,7 @@ public class AssessmentMasterDataService {
                         for(AssessmentParameter assessmentParameter : assessmentTopic.getParameters()){
                             Set<Question> questionList = new HashSet<>();
                             for(Question question : assessmentParameter.getQuestions()){
-                                if(question.getQuestionStatus() == ContributorQuestionStatus.Published){
+                                if(question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED){
                                     questionList.add(question);
                                 }
                             }

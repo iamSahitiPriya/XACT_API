@@ -6,7 +6,7 @@ create table tbl_module_contributors (
 );
 
 Alter table tbm_assessment_question add column
-    question_status varchar(20)  DEFAULT 'Published' CHECK(question_status='Sent_For_Review' OR question_status='Rejected' OR question_status='Requested_For_Change' OR question_status='Draft' OR question_status='Published'),
+    question_status varchar(20)  DEFAULT 'PUBLISHED' CHECK(question_status='SENT_FOR_REVIEW' OR question_status='REJECTED' OR question_status='REQUESTED_FOR_CHANGE' OR question_status='DRAFT' OR question_status='PUBLISHED'),
     add column  comments text ,
     add column created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     add column updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;

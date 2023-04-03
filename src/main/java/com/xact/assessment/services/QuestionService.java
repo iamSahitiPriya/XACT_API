@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.xact.assessment.dtos.ContributorQuestionStatus.*;
 import static com.xact.assessment.dtos.ContributorRole.Author;
@@ -43,9 +42,9 @@ public class QuestionService {
     public void createQuestion(String userEmail, Question question) {
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(question.getParameter().getTopic().getModule().getModuleId(), userEmail);
         if (contributorRole.isPresent() && contributorRole.get() == Author) {
-            question.setQuestionStatus(Draft);
+            question.setQuestionStatus(DRAFT);
         } else {
-            question.setQuestionStatus(Published);
+            question.setQuestionStatus(PUBLISHED);
         }
         saveQuestion(question);
     }
@@ -73,7 +72,7 @@ public class QuestionService {
                 Question question = new Question();
                 question.setQuestionText(userQuestion.getQuestion());
                 question.setParameter(userQuestion.getParameter());
-                question.setQuestionStatus(ContributorQuestionStatus.Draft);
+                question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
                 saveQuestion(question);
                 userQuestion.setContributionStatus(true);
                 userQuestionService.updateUserQuestion(userQuestion);
@@ -105,7 +104,7 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow();
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
-        if (contributorRole.isPresent() && contributorRole.get() == Author && question.getQuestionStatus() != Published) {
+        if (contributorRole.isPresent() && contributorRole.get() == Author && question.getQuestionStatus() != PUBLISHED) {
             questionRepository.delete(question);
         }
 
@@ -116,10 +115,10 @@ public class QuestionService {
         question.setQuestionText(questionText);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(moduleId, userEmail);
-        if (contributorRole.isPresent() && contributorRole.get() == Author && (question.getQuestionStatus() == Draft || question.getQuestionStatus() == Requested_For_Change)) {
+        if (contributorRole.isPresent() && contributorRole.get() == Author && (question.getQuestionStatus() == DRAFT || question.getQuestionStatus() == REQUESTED_FOR_CHANGE)) {
             question = updateQuestion(question);
         } else if (contributorRole.isPresent() && contributorRole.get() == Reviewer) {
-            question.setQuestionStatus(Published);
+            question.setQuestionStatus(PUBLISHED);
             question = updateQuestion(question);
         }
         return question;

@@ -1,6 +1,7 @@
 package com.xact.assessment.controllers;
 
 
+import com.xact.assessment.annotations.ContributorAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Question;
 import com.xact.assessment.services.QuestionService;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
 
+@ContributorAuth
 @Controller("/v1/contributor")
 public class ContributorController {
 
@@ -39,9 +41,9 @@ public class ContributorController {
     }
 
 
-    @Patch(value = "/{moduleId}/questions/{status}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/module/{moduleId}/questions{?status}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<QuestionStatusUpdateResponse> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @PathVariable ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
+    public HttpResponse<QuestionStatusUpdateResponse> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @QueryValue ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
         LOGGER.info("update question status");
         QuestionStatusUpdateResponse questionStatusUpdateResponse = questionService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, authentication.getName());
 

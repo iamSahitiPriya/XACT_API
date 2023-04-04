@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ContributorControllerTest {
     @Inject
     @Client("/")
-    HttpClient client; //
+    HttpClient client;
 
 
     @Inject
@@ -102,7 +102,7 @@ class ContributorControllerTest {
                 "}";
 
         String expectedResponse = "{\"questionId\":[" + question.getQuestionId() + "],\"comments\":\"comments\",\"status\":\"SENT_FOR_REVIEW\"}";
-        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/contributor/1/questions/SENT_FOR_REVIEW", dataRequest).bearerAuth("anything"), String.class);
+        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/contributor/module/1/questions?status=SENT_FOR_REVIEW", dataRequest).bearerAuth("anything"), String.class);
 
         Assertions.assertEquals(expectedResponse, actualResponse);
     }

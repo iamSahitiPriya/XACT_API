@@ -68,12 +68,13 @@ public class Question implements Serializable {
         this.parameter = parameter;
     }
 
-    public boolean isNextStatusAllowed(ContributorQuestionStatus nextStatus) {
-        return getLifeCycleMap().get(this.questionStatus).contains(nextStatus);
-    }
 
-    private EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> getLifeCycleMap() {
-        EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> lifeCycleMap = new EnumMap<>(ContributorQuestionStatus.class);
+    @Transient
+    static
+    EnumMap<ContributorQuestionStatus, Set<ContributorQuestionStatus>> lifeCycleMap = new EnumMap<>(ContributorQuestionStatus.class);
+
+
+    static {
 
         Set<ContributorQuestionStatus> draftNextState = new HashSet<>();
         draftNextState.add(ContributorQuestionStatus.SENT_FOR_REVIEW);
@@ -89,8 +90,10 @@ public class Question implements Serializable {
         sentForReviewNextState.add(ContributorQuestionStatus.REJECTED);
         lifeCycleMap.put(ContributorQuestionStatus.SENT_FOR_REVIEW, sentForReviewNextState);
 
-        return lifeCycleMap;
+    }
 
+    public boolean isNextStatusAllowed(ContributorQuestionStatus nextStatus) {
+        return lifeCycleMap.get(this.questionStatus).contains(nextStatus);
     }
 
 

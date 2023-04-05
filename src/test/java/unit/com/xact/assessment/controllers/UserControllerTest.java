@@ -6,7 +6,6 @@ import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;

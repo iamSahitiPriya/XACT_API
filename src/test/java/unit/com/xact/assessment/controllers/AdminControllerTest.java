@@ -66,7 +66,7 @@ class AdminControllerTest {
         assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
 
         when(assessmentMasterDataService.createAssessmentTopics(topicRequest)).thenReturn(assessmentTopic);
-        HttpResponse<TopicResponse> actualResponse = adminController.createTopics(topicRequest, authentication);
+        HttpResponse<TopicResponse> actualResponse = adminController.createTopic(topicRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
@@ -83,7 +83,7 @@ class AdminControllerTest {
         AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
         when(assessmentMasterDataService.createAssessmentParameter(parameterRequest)).thenReturn(assessmentParameter);
 
-        HttpResponse<ParameterResponse> actualResponse = adminController.createParameters(parameterRequest, authentication);
+        HttpResponse<ParameterResponse> actualResponse = adminController.createParameter(parameterRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -103,7 +103,7 @@ class AdminControllerTest {
 
 
         when(assessmentMasterDataService.createAssessmentQuestions(authentication.getName(),questionRequest)).thenReturn(question);
-        HttpResponse<QuestionResponse> actualResponse = adminController.createQuestions(questionRequest, authentication);
+        HttpResponse<QuestionResponse> actualResponse = adminController.createQuestion(questionRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -114,7 +114,7 @@ class AdminControllerTest {
         referencesRequest.setRating(Rating.FIVE);
         referencesRequest.setTopic(1);
 
-        when(assessmentMasterDataService.createAssessmentTopicReferences(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(assessmentMasterDataService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
 
         HttpResponse<AssessmentTopicReferenceDto> actualResponse = adminController.createTopicReference(referencesRequest, authentication);
         assertEquals(actualResponse.getStatus(), HttpResponse.ok().getStatus());
@@ -127,9 +127,9 @@ class AdminControllerTest {
         referencesRequest.setRating(Rating.FIVE);
         referencesRequest.setParameter(1);
 
-        when(assessmentMasterDataService.createAssessmentParameterReferences(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
+        when(assessmentMasterDataService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
 
-        HttpResponse<AssessmentParameterReferenceDto> actualResponse = adminController.createParameterReferences(referencesRequest, authentication);
+        HttpResponse<AssessmentParameterReferenceDto> actualResponse = adminController.createParameterReference(referencesRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -243,7 +243,7 @@ class AdminControllerTest {
         AssessmentParameterReference parameterReference = new AssessmentParameterReference();
         parameterReference.setReference("Hello");
 
-        when(assessmentMasterDataService.updateParameterReferences(referenceId,referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
+        when(assessmentMasterDataService.updateParameterReference(referenceId,referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
         HttpResponse actualResponse = adminController.updateParameterReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());

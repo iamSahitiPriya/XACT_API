@@ -25,7 +25,7 @@ public class UserQuestionSchedulerService {
     @Scheduled(fixedDelay = "${userQuestion.fixedDelay}")
     public void saveUserQuestionForCompletedAssessment(){
         LOGGER.info("Saving user questions in master table...");
-        List<UserQuestion> userQuestionList = userQuestionService.getUserQuestionsForFinishedAssessment();
+        List<UserQuestion> userQuestionList = userQuestionService.getUserQuestionsOfFinishedAssessment();
         questionService.save(userQuestionList);
     }
 }

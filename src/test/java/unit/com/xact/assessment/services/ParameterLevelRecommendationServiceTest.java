@@ -44,7 +44,7 @@ class ParameterLevelRecommendationServiceTest {
         ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
         when(parameterLevelRecommendationRepository.save(parameterLevelRecommendation)).thenReturn(parameterLevelRecommendation);
 
-        parameterLevelRecommendationService.saveParameterLevelRecommendation(parameterLevelRecommendationRequest,assessment,assessmentParameter);
+        parameterLevelRecommendationService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment,assessmentParameter);
 
         verify(parameterLevelRecommendationRepository).save(any(ParameterLevelRecommendation.class));
 

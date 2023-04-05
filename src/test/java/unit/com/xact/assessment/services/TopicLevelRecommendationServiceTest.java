@@ -13,10 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 
-import java.util.Collections;
 import java.util.Optional;
 
-import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.LATER;
 import static com.xact.assessment.dtos.RecommendationDeliveryHorizon.NOW;
 import static com.xact.assessment.dtos.RecommendationImpact.LOW;
 import static org.mockito.Mockito.*;
@@ -80,22 +78,4 @@ class TopicLevelRecommendationServiceTest {
         verify(topicLevelRecommendationRepository).update(any(TopicLevelRecommendation.class));
     }
 
-
-    @Test
-    void getRecommendationsByTopicAndAssessment() {
-        int assessmentId = 1;
-        int topicId = 1;
-        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(new AssessmentTopic());
-        topicLevelRecommendation.setRecommendationText("recommendation");
-        topicLevelRecommendation.setRecommendationId(1);
-        topicLevelRecommendation.setAssessment(new Assessment());
-        topicLevelRecommendation.setRecommendationEffort(RecommendationEffort.LOW);
-        topicLevelRecommendation.setRecommendationImpact(LOW);
-        topicLevelRecommendation.setDeliveryHorizon(LATER);
-        when(topicLevelRecommendationService.findByAssessmentAndTopic(assessmentId, topicId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
-
-        topicLevelRecommendationService.findByAssessmentAndTopic(assessmentId, topicId);
-
-        verify(topicLevelRecommendationRepository).findByAssessmentAndTopic(assessmentId, topicId);
-    }
 }

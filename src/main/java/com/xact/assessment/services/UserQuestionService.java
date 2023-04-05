@@ -33,7 +33,7 @@ public class UserQuestionService {
         return userQuestion;
     }
 
-    public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
+    public List<UserQuestion> getUserQuestions(Integer assessmentId) {
         return userQuestionRepository.findByAssessmentId(assessmentId);
     }
 
@@ -78,7 +78,7 @@ public class UserQuestionService {
         return userQuestionRepository.findById(questionId).orElseThrow().getAnswer();
     }
 
-    public List<UserQuestion> getUserQuestionsForFinishedAssessment() {
+    public List<UserQuestion> getUserQuestionsOfFinishedAssessment() {
         return userQuestionRepository.findByFinishedAssessment();
     }
 

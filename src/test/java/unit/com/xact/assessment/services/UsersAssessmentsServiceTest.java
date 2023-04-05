@@ -74,7 +74,7 @@ class UsersAssessmentsServiceTest {
         users.add(assessmentUser);
 
         when(usersAssessmentsRepository.saveAll(users)).thenReturn(users);
-        usersAssessmentsService.createUsersInAssessment(users);
+        usersAssessmentsService.saveUsersInAssessment(users);
 
         verify(usersAssessmentsRepository).saveAll(users);
     }
@@ -297,27 +297,6 @@ class UsersAssessmentsServiceTest {
     }
 
     @Test
-    void shouldGetFacilitators() {
-        Date created = new Date(22 - 10 - 2022);
-        Date updated = new Date(22 - 10 - 2022);
-
-        Organisation organisation = new Organisation(1, "Thoughtworks", "IT", "Consultant", 10);
-        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        UserId userId = new UserId("hello@thoughtworks.com", assessment);
-        AssessmentUser assessmentUser = new AssessmentUser(userId, AssessmentRole.Owner);
-
-        List<AssessmentUser> assessmentUser1 = new ArrayList<>();
-        assessmentUser1.add(assessmentUser);
-
-        when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUser1);
-
-        usersAssessmentsService.getAssessmentFacilitators(assessment.getAssessmentId());
-
-        verify(usersAssessmentsRepository).findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
-
-
-    }
-    @Test
     void shouldGetFacilitatorsSet() {
         Date created = new Date(22 - 10 - 2022);
         Date updated = new Date(22 - 10 - 2022);
@@ -332,7 +311,7 @@ class UsersAssessmentsServiceTest {
 
         when(usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator)).thenReturn(assessmentUser1);
 
-        usersAssessmentsService.getAssessmentFacilitatorsSet(assessment);
+        usersAssessmentsService.getAssessmentFacilitators(assessment);
 
         verify(usersAssessmentsRepository).findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
 

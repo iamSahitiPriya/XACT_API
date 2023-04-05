@@ -39,11 +39,11 @@ public class UsersAssessmentsService {
 
     }
 
-    public void createUsersInAssessment(Set<AssessmentUser> assessmentUsers) {
+    public void saveUsersInAssessment(Set<AssessmentUser> assessmentUsers) {
         usersAssessmentsRepository.saveAll(assessmentUsers);
     }
 
-    public Set<AssessmentUser> getAssessmentFacilitatorsSet(Assessment assessment) {
+    public Set<AssessmentUser> getAssessmentFacilitators(Assessment assessment) {
         List<AssessmentUser> assessmentFacilitators = usersAssessmentsRepository.findUserByAssessmentId(assessment.getAssessmentId(), AssessmentRole.Facilitator);
         return new HashSet<>(assessmentFacilitators);
     }
@@ -53,14 +53,6 @@ public class UsersAssessmentsService {
         return assessmentUser.getUserId().getAssessment();
     }
 
-    public List<String> getAssessmentFacilitators(Integer assessmentId) {
-        List<AssessmentUser> assessmentUsers = usersAssessmentsRepository.findUserByAssessmentId(assessmentId, AssessmentRole.Facilitator);
-        List<String> assessmentUsers1 = new ArrayList<>();
-        for (AssessmentUser eachUser : assessmentUsers) {
-            assessmentUsers1.add(eachUser.getUserId().getUserEmail());
-        }
-        return assessmentUsers1;
-    }
 
     public void saveAssessmentModules(List<ModuleRequest> moduleRequests, Assessment assessment) {
         for (ModuleRequest moduleRequest1 : moduleRequests) {
@@ -75,8 +67,8 @@ public class UsersAssessmentsService {
     }
 
 
-    public List<UserQuestion> findAllUserQuestion(Integer assessmentId) {
-        return userQuestionService.findAllUserQuestion(assessmentId);
+    public List<UserQuestion> getUserQuestions(Integer assessmentId) {
+        return userQuestionService.getUserQuestions(assessmentId);
     }
 
     public UserQuestion saveUserQuestion(Assessment assessment, Integer parameterId, String userQuestion) {

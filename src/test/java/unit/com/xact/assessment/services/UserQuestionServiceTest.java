@@ -130,7 +130,7 @@ class UserQuestionServiceTest {
 
         when(userQuestionRepository.findByAssessmentId(1)).thenReturn(Collections.singletonList(userQuestion));
 
-        List<UserQuestion> userQuestionList= userQuestionService.findAllUserQuestion(assessment.getAssessmentId());
+        List<UserQuestion> userQuestionList= userQuestionService.getUserQuestions(assessment.getAssessmentId());
 
         assertEquals(1,userQuestionList.size());
 

@@ -121,8 +121,7 @@ class TopicServiceTest {
         List<TopicLevelRecommendation> topicLevelRecommendationList = Collections.singletonList(topicLevelRecommendation);
         when(topicLevelRatingService.existsByID(topicLevelRating1)).thenReturn(true);
         when(topicLevelRatingService.save(topicLevelRating1)).thenReturn(topicLevelRating1);
-        TopicLevelRating actualResponse = topicService.saveRatingAndRecommendation(topicLevelRating1);
-        when(topicService.getTopicAssessmentRecommendationData(assessmentId1,topicId)).thenReturn(topicLevelRecommendationList);
+        TopicLevelRating actualResponse = topicService.saveTopicRating(topicLevelRating1);
         when(topicLevelRecommendationService.existsById(1)).thenReturn(true);
 
 
@@ -164,7 +163,7 @@ class TopicServiceTest {
         topicLevelRecommendation.setRecommendationText(null);
 
         when(topicLevelRatingService.existsByID(topicLevelRating1)).thenReturn(true);
-        topicService.saveRatingAndRecommendation(topicLevelRating1);
+        topicService.saveTopicRating(topicLevelRating1);
 
         verify(topicLevelRatingService).delete(topicLevelRating1);
     }
@@ -232,7 +231,7 @@ class TopicServiceTest {
 
         when(topicLevelRecommendationService.findByAssessment(1)).thenReturn(topicLevelRecommendationList);
 
-        List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicService.getTopicRecommendationByAssessmentId(1);
+        List<TopicLevelRecommendation> topicLevelRecommendationList1 = topicService.getTopicRecommendations(1);
 
         assertEquals(1,topicLevelRecommendationList1.size());
     }

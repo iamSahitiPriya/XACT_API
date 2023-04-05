@@ -24,12 +24,12 @@ public class CategoryService {
         categoryRepository.save(assessmentCategory);
     }
 
-    public List<AssessmentCategory> getAllCategoriesByDesc() {
+    public List<AssessmentCategory> getAllCategories() {
         return categoryRepository.findAll();
     }
 
-    public List<String> getAllCategories() {
-        return categoryRepository.getAllCategories();
+    public List<String> getCategoryNames() {
+        return categoryRepository.getCategoryNames();
     }
 
     public AssessmentCategory findCategoryById(AssessmentModuleRequest assessmentModuleRequest) {
@@ -40,7 +40,7 @@ public class CategoryService {
         categoryRepository.update(assessmentCategory);
     }
 
-    public List<AssessmentCategory> getCategories() {
-        return categoryRepository.findCategories();
+    public List<AssessmentCategory> getCategoriesSortedByUpdatedDate() {
+        return categoryRepository.findCategoriesSortedByUpdatedDate();
     }
 }

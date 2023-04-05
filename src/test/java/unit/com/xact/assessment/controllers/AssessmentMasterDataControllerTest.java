@@ -52,7 +52,7 @@ class AssessmentMasterDataControllerTest {
         categories.add(assessmentCategory);
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         assessmentCategoriesResponse.add(categoryDto);
-        when(assessmentMasterDataService.getCategories()).thenReturn(categories);
+        when(assessmentMasterDataService.getCategoriesSortedByUpdatedDate()).thenReturn(categories);
 
         HttpResponse<List<CategoryDto>> actualResponse = assessmentMasterDataController.getMasterData(authentication);
 

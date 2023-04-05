@@ -30,7 +30,7 @@ public class QuestionService {
         questionRepository.update(question);
     }
 
-    public List<Question> getAllQuestion() {
+    public List<Question> getAllQuestions() {
         return (List<Question>) questionRepository.findAll();
     }
 

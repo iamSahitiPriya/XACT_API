@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.exceptions;
 
 import io.micronaut.context.annotation.Requires;

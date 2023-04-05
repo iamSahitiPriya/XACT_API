@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AdminController;

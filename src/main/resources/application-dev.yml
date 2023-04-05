@@ -69,9 +69,11 @@ email:
 notification:
   feedback:
     initialDelay: "1m"
-    delay : "1d"
+    delay: "1d"
+    durationInDays: 1
   inactive:
     fixedDelay: "1d"
+    durationInDays: 1
 
 cleanup:
   initialDelay: "1m"

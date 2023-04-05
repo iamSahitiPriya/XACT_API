@@ -52,7 +52,8 @@ email:
   endpoint: "/notification/messages"
   delay: "30s"
   notificationEnabled : true
-  maskEmail : false
+  maskEmail : true
+  defaultEmail: "shashank.mishra@thoughtworks.com,jathin.meduri@thoughtworks.com"
   fromEmail: "project-xact@thoughtworks.net"
   name: "X-ACT Support"
 
@@ -60,8 +61,10 @@ notification:
   feedback:
     initialDelay: "1m"
     delay : "1d"
+    durationInDays: 29
   inactive:
     fixedDelay: "1d"
+    durationInDays: 15
 
 cleanup:
   initialDelay: "1m"

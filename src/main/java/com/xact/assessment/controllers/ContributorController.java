@@ -44,7 +44,7 @@ public class ContributorController {
     @Patch(value = "/module/{moduleId}/questions{?status}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<QuestionStatusUpdateResponse> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @QueryValue ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
-        LOGGER.info("update question status");
+        LOGGER.info("Update question status");
         QuestionStatusUpdateResponse questionStatusUpdateResponse = questionService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, authentication.getName());
 
         return HttpResponse.ok(questionStatusUpdateResponse);
@@ -54,7 +54,7 @@ public class ContributorController {
     @Delete(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> deleteQuestion(@PathVariable Integer questionId, Authentication authentication) {
-        LOGGER.info("delete question: {}",questionId);
+        LOGGER.info("Delete question: {}", questionId);
         questionService.deleteQuestion(questionId, authentication.getName());
 
         return HttpResponse.ok();

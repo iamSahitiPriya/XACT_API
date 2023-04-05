@@ -16,7 +16,7 @@ public class ModuleContributorService {
         this.moduleContributorRepository = moduleContributorRepository;
     }
 
-    public List<AssessmentModule> getModuleByRole(String userEmail, ContributorRole contributorRole) {
+    public List<AssessmentModule> getModulesByRole(String userEmail, ContributorRole contributorRole) {
         return moduleContributorRepository.findByRole(userEmail, contributorRole);
     }
 

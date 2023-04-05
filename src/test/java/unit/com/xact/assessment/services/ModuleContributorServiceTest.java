@@ -32,7 +32,7 @@ class ModuleContributorServiceTest {
 
         when(moduleContributorRepository.findByRole("smss@thoughtworks.com", ContributorRole.AUTHOR)).thenReturn(Collections.singletonList(assessmentModule));
 
-        moduleContributorService.getModuleByRole("smss@thoughtworks.com",ContributorRole.AUTHOR);
+        moduleContributorService.getModulesByRole("smss@thoughtworks.com",ContributorRole.AUTHOR);
 
         verify(moduleContributorRepository).findByRole("smss@thoughtworks.com",ContributorRole.AUTHOR);
     }

@@ -81,7 +81,7 @@ public class QuestionService {
     }
 
     public ContributorResponse getContributorResponse(ContributorRole contributorRole, String userEmail) {
-        List<AssessmentModule> assessmentModules = moduleContributorService.getModuleByRole(userEmail, contributorRole);
+        List<AssessmentModule> assessmentModules = moduleContributorService.getModulesByRole(userEmail, contributorRole);
         ContributorResponse contributorResponse = new ContributorResponse();
         List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(contributorRole, assessmentModules);
         contributorResponse.setContributorModuleData(contributorModuleDataList);
@@ -174,7 +174,7 @@ public class QuestionService {
         contributorTopicData.setTopicName(assessmentTopic.getTopicName());
         List<ContributorParameterData> contributorParameterDataList = new ArrayList<>();
         for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
-            List<Question> parameterQuestions = filterParameterQuestions(questionList, assessmentParameter);
+            List<Question> parameterQuestions = getQuestionsByParameter(questionList, assessmentParameter);
             if (!parameterQuestions.isEmpty()) {
                 ContributorParameterData contributorParameterData = getContributorParameterData(parameterQuestions, assessmentParameter);
                 contributorParameterDataList.add(contributorParameterData);
@@ -199,7 +199,7 @@ public class QuestionService {
     }
 
 
-    private List<Question> filterParameterQuestions(List<Question> questionList, AssessmentParameter assessmentParameter) {
+    private List<Question> getQuestionsByParameter(List<Question> questionList, AssessmentParameter assessmentParameter) {
         return questionList.stream().filter(question ->
                 Objects.equals(question.getParameter().getParameterId(), assessmentParameter.getParameterId())
         ).toList();

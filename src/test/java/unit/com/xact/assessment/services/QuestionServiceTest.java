@@ -125,7 +125,7 @@ class QuestionServiceTest {
 
         assessmentParameter.setQuestions(Collections.singleton(question));
 
-        when(moduleContributorService.getModuleByRole("email@thoughtworks.com", ContributorRole.AUTHOR)).thenReturn(Collections.singletonList(assessmentModule));
+        when(moduleContributorService.getModulesByRole("email@thoughtworks.com", ContributorRole.AUTHOR)).thenReturn(Collections.singletonList(assessmentModule));
         when(questionRepository.getAuthorQuestions(assessmentModule.getModuleId())).thenReturn(Collections.singletonList(question));
 
         ContributorResponse actualContributorResponse = questionService.getContributorResponse(ContributorRole.AUTHOR,"email@thoughtworks.com");
@@ -191,7 +191,7 @@ class QuestionServiceTest {
 
         assessmentParameter.setQuestions(Collections.singleton(question));
 
-        when(moduleContributorService.getModuleByRole("email@thoughtworks.com", ContributorRole.REVIEWER)).thenReturn(Collections.singletonList(assessmentModule));
+        when(moduleContributorService.getModulesByRole("email@thoughtworks.com", ContributorRole.REVIEWER)).thenReturn(Collections.singletonList(assessmentModule));
         when(questionRepository.getReviewerQuestions(assessmentModule.getModuleId())).thenReturn(Collections.singletonList(question));
 
         ContributorResponse actualContributorResponse = questionService.getContributorResponse(ContributorRole.REVIEWER,"email@thoughtworks.com");

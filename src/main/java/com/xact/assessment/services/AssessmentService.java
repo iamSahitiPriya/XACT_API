@@ -28,20 +28,18 @@ public class AssessmentService {
     private final AccessControlService accessControlService;
     private final AssessmentMasterDataService assessmentMasterDataService;
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
-    private final ModuleContributorService moduleContributorService;
     private final FeedbackNotificationConfig feedbackNotificationConfig;
 
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, ModuleContributorService moduleContributorService,FeedbackNotificationConfig feedbackNotificationConfig) {
+    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService,FeedbackNotificationConfig feedbackNotificationConfig) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.accessControlService = accessControlService;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
-        this.moduleContributorService = moduleContributorService;
         this.feedbackNotificationConfig = feedbackNotificationConfig;
     }
 
@@ -322,9 +320,5 @@ public class AssessmentService {
         Date expiryDate = calendar.getTime();
         return assessmentRepository.findInactiveAssessments(expiryDate);
 
-    }
-
-    public List<ContributorRole> getContributorRoles(String userEmail) {
-        return moduleContributorService.getContributorRolesByEmail(userEmail);
     }
 }

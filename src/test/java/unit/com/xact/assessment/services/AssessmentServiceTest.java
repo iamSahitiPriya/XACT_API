@@ -28,9 +28,6 @@ class AssessmentServiceTest {
     private AssessmentRepository assessmentRepository;
     private AssessmentMasterDataService assessmentMasterDataService;
     private AssessmentService assessmentService;
-
-    private ModuleContributorService moduleContributorService;
-
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private AccessControlService accessControlService;
     private FeedbackNotificationConfig feedbackNotificationConfig;
@@ -45,10 +42,8 @@ class AssessmentServiceTest {
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
         accessControlService = mock(AccessControlService.class);
-        moduleContributorService = mock(ModuleContributorService.class);
-        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService,moduleContributorService,feedbackNotificationConfig);
         feedbackNotificationConfig = mock(FeedbackNotificationConfig.class);
-        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, moduleContributorService,feedbackNotificationConfig);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, feedbackNotificationConfig);
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.xact.assessment.dtos.UserInfoDto;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
 import com.xact.assessment.repositories.UserRepository;
+import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,8 @@ class UserAuthServiceTest {
     private Authentication authentication = mock(Authentication.class);
     private UserInfoClient userInfoClient = mock(UserInfoClient.class);
     private UserRepository userRepository = mock(UserRepository.class);
-    private UserAuthService userAuthService = new UserAuthService(userInfoClient, userRepository);
+    private ModuleContributorService moduleContributorService = mock(ModuleContributorService.class);
+    private UserAuthService userAuthService = new UserAuthService(userInfoClient, userRepository, moduleContributorService);
 
 
     @Test

@@ -106,7 +106,7 @@ class AdminControllerTest {
         question.setQuestionStatus(ContributorQuestionStatus.PUBLISHED);
 
 
-        when(assessmentMasterDataService.createAssessmentQuestions(authentication.getName(),questionRequest)).thenReturn(question);
+        when(assessmentMasterDataService.createAssessmentQuestion(authentication.getName(),questionRequest)).thenReturn(question);
         HttpResponse<QuestionResponse> actualResponse = adminController.createQuestion(questionRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }

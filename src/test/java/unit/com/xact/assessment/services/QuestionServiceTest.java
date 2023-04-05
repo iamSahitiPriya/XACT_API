@@ -224,7 +224,7 @@ class QuestionServiceTest {
         List<Question> questionList=new ArrayList<>();
         questionList.add(question);
         when(questionRepository.findAll()).thenReturn(questionList);
-        List<Question> questionListResponse=questionService.getAllQuestion();
+        List<Question> questionListResponse=questionService.getAllQuestions();
         assertEquals(questionListResponse,questionList);
     }
 

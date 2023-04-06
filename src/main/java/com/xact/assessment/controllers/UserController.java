@@ -1,9 +1,10 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.controllers;
 
+import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentService;
@@ -18,7 +19,10 @@ import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller("/v1/users")
 public class UserController {
@@ -34,10 +38,14 @@ public class UserController {
 
     @Get(value = "/roles")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<Optional<AccessControlRoles>> getRole(Authentication authentication) {
+    public HttpResponse<List<AccessControlRoles>> getRole(Authentication authentication) {
+        List<AccessControlRoles> roles = new ArrayList<>();
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         Optional<AccessControlRoles> accessControlRoles = assessmentService.getUserRole(loggedInUser.getUserEmail());
-        return HttpResponse.ok(accessControlRoles);
+        accessControlRoles.ifPresent(roles::add);
+        Set<ContributorRole> contributorRoles = userAuthService.getContributorRoles(loggedInUser.getUserEmail());
+        contributorRoles.stream().forEach(contributorRole -> roles.add(AccessControlRoles.valueOf(contributorRole.toString())));
+        return HttpResponse.ok(roles);
     }
 
     @Get(value = "/login")

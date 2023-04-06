@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.dtos;
 
 import lombok.EqualsAndHashCode;
@@ -16,4 +20,5 @@ public class QuestionResponse {
     private Integer topic;
     private Integer questionId;
     private String questionText;
+    private ContributorQuestionStatus status;
 }

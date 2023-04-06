@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AdminController;
@@ -5,6 +9,7 @@ import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
@@ -23,9 +28,11 @@ class AdminControllerTest {
     AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
 
     AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
+
+    UserAuthService userAuthService=Mockito.mock(UserAuthService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
-    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService);
+    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService, userAuthService);
 
     @Test
     void createAssessmentCategory() {
@@ -92,6 +99,11 @@ class AdminControllerTest {
         QuestionRequest questionRequest = new QuestionRequest();
         questionRequest.setQuestionText("Test");
         questionRequest.setParameter(1);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
 
         AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
         AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
@@ -99,7 +111,11 @@ class AdminControllerTest {
         AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
         Question question = new Question("Text", parameter);
 
-        when(assessmentMasterDataService.createAssessmentQuestion(questionRequest)).thenReturn(question);
+        question.setQuestionStatus(ContributorQuestionStatus.PUBLISHED);
+
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
+        when(assessmentMasterDataService.createAssessmentQuestion(userEmail,questionRequest)).thenReturn(question);
+
         HttpResponse<QuestionResponse> actualResponse = adminController.createQuestion(questionRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }

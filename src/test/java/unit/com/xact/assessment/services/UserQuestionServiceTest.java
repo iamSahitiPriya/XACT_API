@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.models.*;
@@ -59,7 +63,7 @@ class UserQuestionServiceTest {
         userQuestion.setAnswer("answer");
         when(userQuestionRepository.save(userQuestion)).thenReturn(userQuestion);
         userQuestionService.saveUserQuestion(userQuestion);
-        UserQuestion expectedUserQuestion = new UserQuestion(1, assessment, assessmentParameter, "new question ?", "answer", created1, updated1);
+        UserQuestion expectedUserQuestion = new UserQuestion(1, assessment, assessmentParameter, "new question ?", "answer", created1, updated1,false);
 
         assertEquals(expectedUserQuestion.getQuestion(), userQuestion.getQuestion());
     }
@@ -103,7 +107,7 @@ class UserQuestionServiceTest {
         userQuestion1.setAnswer("answer");
         when(userQuestionRepository.save(userQuestion1)).thenReturn(userQuestion1);
         userQuestionService.saveUserQuestion(userQuestion1);
-        UserQuestion expectedUserQuestion = new UserQuestion(1, assessment, assessmentParameter, "update?", "answer", created1, updated1);
+        UserQuestion expectedUserQuestion = new UserQuestion(1, assessment, assessmentParameter, "update?", "answer", created1, updated1,false);
 
         assertEquals(expectedUserQuestion.getQuestion(), userQuestion1.getQuestion());
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.config;
 
 import io.micronaut.context.annotation.ConfigurationProperties;

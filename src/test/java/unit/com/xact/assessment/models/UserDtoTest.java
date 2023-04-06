@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package unit.com.xact.assessment.models;

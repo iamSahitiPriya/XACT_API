@@ -1,6 +1,11 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.UserController;
+import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
@@ -11,6 +16,8 @@ import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -34,8 +41,9 @@ class UserControllerTest {
 
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         when(assessmentService.getUserRole(userEmail)).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
+        when(userAuthService.getContributorRoles(userEmail)).thenReturn(Collections.singleton(ContributorRole.valueOf("AUTHOR")));
 
-        HttpResponse<Optional<AccessControlRoles>> accessControlRolesHttpResponse = userController.getRole(authentication);
+        HttpResponse<List<AccessControlRoles>> accessControlRolesHttpResponse = userController.getRole(authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), accessControlRolesHttpResponse.getStatus());
 

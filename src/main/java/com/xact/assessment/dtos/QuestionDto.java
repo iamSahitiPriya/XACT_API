@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.dtos;
@@ -19,6 +19,7 @@ public class QuestionDto implements Comparable<QuestionDto> {
     private Integer questionId;
     private String questionText;
     private Integer parameter;
+    private ContributorQuestionStatus status;
 
     @Override
     public int compareTo(QuestionDto currentQuestion) {

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package unit.com.xact.assessment.services;
@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static com.xact.assessment.dtos.ContributorQuestionStatus.PUBLISHED;
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -149,7 +150,6 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldCreateQuestion() {
         QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionId(1);
         questionRequest.setQuestionText("hello");
         questionRequest.setParameter(1);
 
@@ -160,8 +160,8 @@ class AssessmentMasterDataServiceTest {
         when(questionService.getAllQuestions()).thenReturn(questions);
         when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
-        assessmentMasterDataService.createAssessmentQuestion(questionRequest);
-        verify(questionService).createQuestion(question);
+        assessmentMasterDataService.createAssessmentQuestion("hello@thoughtworks.com",questionRequest);
+        verify(questionService).createQuestion("hello@thoughtworks.com",question);
     }
 
     @Test
@@ -366,7 +366,6 @@ class AssessmentMasterDataServiceTest {
     @Test
     void shouldUpdateQuestions() {
         QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionId(1);
         questionRequest.setQuestionText("hello");
         questionRequest.setParameter(1);
 
@@ -447,6 +446,9 @@ class AssessmentMasterDataServiceTest {
         assessmentParameter.setParameterName("parameterName");
         assessmentParameter.setActive(true);
         assessmentParameter.setTopic(assessmentTopic);
+        Question question=new Question();
+        question.setQuestionStatus(PUBLISHED);
+        assessmentParameter.setQuestions(Collections.singleton(question));
         Set<AssessmentParameter> validParameters = Collections.singleton(assessmentParameter);
         module.setTopics(validTopics);
         assessmentTopic.setParameters(validParameters);
@@ -481,10 +483,13 @@ class AssessmentMasterDataServiceTest {
         AssessmentTopic assessmentTopic = new AssessmentTopic(1, "topicName", assessmentModule1, true, "");
         Set<AssessmentTopic> validTopics = Collections.singleton(assessmentTopic);
         AssessmentParameter assessmentParameter = new AssessmentParameter();
+        Question question=new Question();
+        question.setQuestionStatus(PUBLISHED);
         assessmentParameter.setParameterId(1);
         assessmentParameter.setParameterName("parameterName");
         assessmentParameter.setActive(true);
         assessmentParameter.setTopic(assessmentTopic);
+        assessmentParameter.setQuestions(Collections.singleton(question));
         Set<AssessmentParameter> validParameters = Collections.singleton(assessmentParameter);
         assessmentModule1.setTopics(validTopics);
         assessmentTopic.setParameters(validParameters);

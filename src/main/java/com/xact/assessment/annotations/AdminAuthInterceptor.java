@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.annotations;
@@ -36,7 +36,7 @@ public class AdminAuthInterceptor implements MethodInterceptor<Authentication, O
                 Authentication authentication = (Authentication) value;
                 User loggedInUser = userAuthService.getCurrentUser(authentication);
                 Optional<AccessControlRoles> accessControlRoles = assessmentService.getUserRole(loggedInUser.getUserEmail());
-                if (!(accessControlRoles.isPresent() && accessControlRoles.get() == AccessControlRoles.Admin)) {
+                if (!(accessControlRoles.isPresent() && (accessControlRoles.get() == AccessControlRoles.Admin || accessControlRoles.get() == AccessControlRoles.AUTHOR))) {
                     throw new UnauthorisedUserException("User not Authorised");
                 }
             }

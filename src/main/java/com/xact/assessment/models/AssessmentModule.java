@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.models;
@@ -61,6 +61,7 @@ public class AssessmentModule implements Serializable {
 
     @Column(name = "comments")
     private String comments;
+
 
     public boolean getIsActive() {
         return isActive;

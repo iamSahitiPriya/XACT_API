@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.services;
@@ -21,13 +21,16 @@ public class ModuleService {
     public ModuleService(ModuleRepository moduleRepository) {
         this.moduleRepository = moduleRepository;
     }
-    public AssessmentModule getModule(Integer moduleId){
+
+    public AssessmentModule getModule(Integer moduleId) {
         return moduleRepository.findByModuleId(moduleId);
     }
-    public void createModule(AssessmentModule assessmentModule){
+
+    public void createModule(AssessmentModule assessmentModule) {
         moduleRepository.save(assessmentModule);
     }
-    public void updateModule(AssessmentModule assessmentModule){
+
+    public void updateModule(AssessmentModule assessmentModule) {
         moduleRepository.update(assessmentModule);
     }
 

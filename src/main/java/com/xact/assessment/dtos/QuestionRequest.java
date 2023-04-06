@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.dtos;
@@ -15,9 +15,6 @@ import lombok.Setter;
 @Setter
 @Introspected
 public class QuestionRequest {
-    @JsonProperty
-    private Integer questionId;
-
     @JsonProperty
     private String questionText;
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.services;
@@ -57,6 +57,15 @@ public class AssessmentMasterDataService {
                     assessmentModule.setTopics(assessmentModule.getActiveTopics());
                     for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
                         assessmentTopic.setParameters(assessmentTopic.getActiveParameters());
+                        for(AssessmentParameter assessmentParameter : assessmentTopic.getParameters()){
+                            Set<Question> questionList = new HashSet<>();
+                            for(Question question : assessmentParameter.getQuestions()){
+                                if(question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED){
+                                    questionList.add(question);
+                                }
+                            }
+                            assessmentParameter.setQuestions(questionList);
+                        }
                     }
                     categorySet.add(category);
                 }
@@ -141,10 +150,10 @@ public class AssessmentMasterDataService {
         return isUnique(parameters, parameterName);
     }
 
-    public Question createAssessmentQuestion(QuestionRequest questionRequest) {
+    public Question createAssessmentQuestion(String userEmail,QuestionRequest questionRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
         Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
-        questionService.createQuestion(question);
+        questionService.createQuestion(userEmail,question);
         return question;
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.repositories;
@@ -17,5 +17,6 @@ public interface ModuleRepository extends CrudRepository<AssessmentModule, Integ
     @Executable
     @Query("SELECT module FROM AssessmentModule module WHERE module.moduleId=:moduleId")
     AssessmentModule findByModuleId(Integer moduleId);
+
 
 }

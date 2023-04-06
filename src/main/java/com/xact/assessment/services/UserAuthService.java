@@ -1,10 +1,11 @@
 /*
- *  Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
 package com.xact.assessment.services;
 
 import com.xact.assessment.client.UserInfoClient;
+import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.dtos.UserInfoDto;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
@@ -29,12 +30,14 @@ public class UserAuthService {
 
     private final UserInfoClient userInfoClient;
     private final UserRepository userRepository;
+    private final ModuleContributorService moduleContributorService;
     public static final String ACTIVE = "Active";
 
 
-    public UserAuthService(UserInfoClient userInfoClient, UserRepository userRepository) {
+    public UserAuthService(UserInfoClient userInfoClient, UserRepository userRepository, ModuleContributorService moduleContributorService) {
         this.userInfoClient = userInfoClient;
         this.userRepository = userRepository;
+        this.moduleContributorService = moduleContributorService;
     }
 
 
@@ -63,5 +66,9 @@ public class UserAuthService {
 
     public List<UserInfo> getLoggedInUsers(Set<String> users) {
         return userRepository.findByUsers(users);
+    }
+
+    public Set<ContributorRole> getContributorRoles(String userEmail) {
+        return moduleContributorService.getContributorRolesByEmail(userEmail);
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
+ */
+
 package com.xact.assessment.services;
 
 import com.xact.assessment.models.Assessment;
@@ -78,5 +82,12 @@ public class UserQuestionService {
         return userQuestionRepository.findById(questionId).orElseThrow().getAnswer();
     }
 
+    public List<UserQuestion> getUserQuestionsOfFinishedAssessment() {
+        return userQuestionRepository.findByFinishedAssessment();
+    }
 
+
+    public void updateUserQuestion(UserQuestion userQuestion) {
+        userQuestionRepository.update(userQuestion);
+    }
 }

@@ -13,6 +13,10 @@ import com.xact.assessment.repositories.ModuleContributorRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
+import javax.persistence.PersistenceException;
+
+import org.hibernate.exception.ConstraintViolationException;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -43,12 +47,18 @@ public class ModuleContributorService {
     }
 
     public ModuleContributor saveContributor(Integer moduleId, ContributorDto contributorDto) {
-        ContributorId contributorId=new ContributorId();
+        ContributorId contributorId = new ContributorId();
         contributorId.setModule(moduleService.getModule(moduleId));
         contributorId.setUserEmail(contributorDto.getUserEmail());
-        ModuleContributor moduleContributor=new ModuleContributor();
-        moduleContributor.setContributorId(contributorId);
-        moduleContributor.setContributorRole(contributorDto.getRole());
-        return moduleContributorRepository.save(moduleContributor);
+        ModuleContributor moduleContributor = new ModuleContributor();
+
+        if (!moduleContributorRepository.existsById(contributorId)) {
+            moduleContributor.setContributorId(contributorId);
+            moduleContributor.setContributorRole(contributorDto.getRole());
+            moduleContributorRepository.save(moduleContributor);
+
+        }
+        return moduleContributor;
     }
+
 }

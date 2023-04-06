@@ -277,7 +277,7 @@ public class AdminController {
     @Post(value = "/modules/{moduleId}/contributors")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ContributorDto> saveModuleContributor(@PathVariable("moduleId") Integer moduleId, ContributorDto contributorDto, Authentication authentication) {
-        LOGGER.info(" Save Contributors For {} module", moduleId);
+        LOGGER.info("Save Contributor For {} module by {}", moduleId, authentication.getName());
         ContributorDto contributorResponse = adminService.saveContributor(moduleId, contributorDto);
         return HttpResponse.ok(contributorResponse);
 

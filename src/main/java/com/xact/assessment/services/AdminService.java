@@ -20,8 +20,10 @@ public class AdminService {
     public ContributorDto saveContributor(Integer moduleId, ContributorDto contributorDto) {
         ModuleContributor moduleContributor = moduleContributorService.saveContributor(moduleId, contributorDto);
         ContributorDto contributorResponse = new ContributorDto();
-        contributorResponse.setUserEmail(moduleContributor.getContributorId().getUserEmail());
-        contributorResponse.setRole(moduleContributor.getContributorRole());
+        if (moduleContributor.getContributorId() != null) {
+            contributorResponse.setUserEmail(moduleContributor.getContributorId().getUserEmail());
+            contributorResponse.setRole(moduleContributor.getContributorRole());
+        }
         return contributorResponse;
     }
 }

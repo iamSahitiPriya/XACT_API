@@ -68,7 +68,7 @@ public class UserAuthService {
         return userRepository.findByUsers(users);
     }
 
-    public List<ContributorRole> getContributorRoles(String userEmail) {
+    public Set<ContributorRole> getContributorRoles(String userEmail) {
         return moduleContributorService.getContributorRolesByEmail(userEmail);
     }
 }

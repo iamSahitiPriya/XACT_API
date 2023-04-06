@@ -9,6 +9,7 @@ import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -77,10 +78,13 @@ public class AdminController {
     private final AssessmentMasterDataService assessmentMasterDataService;
 
     private final AssessmentService assessmentService;
+    private final UserAuthService userAuthService;
 
-    public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService) {
+
+    public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, UserAuthService userAuthService) {
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.assessmentService = assessmentService;
+        this.userAuthService = userAuthService;
     }
 
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
@@ -130,8 +134,9 @@ public class AdminController {
     @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
-        LOGGER.info("{}: Create questions - {}", authentication.getName(), questionRequest.getQuestionText());
-        Question question = assessmentMasterDataService.createAssessmentQuestion(authentication.getName(),questionRequest);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        LOGGER.info("{}: Create questions - {}", loggedInUser.getUserEmail(), questionRequest.getQuestionText());
+        Question question = assessmentMasterDataService.createAssessmentQuestion(loggedInUser.getUserEmail(),questionRequest);
         return getQuestionResponse(question);
     }
 

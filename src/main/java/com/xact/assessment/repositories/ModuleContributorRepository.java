@@ -15,6 +15,7 @@ import io.micronaut.data.repository.CrudRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface ModuleContributorRepository extends CrudRepository<ModuleContributor, ContributorId> {
@@ -24,7 +25,7 @@ public interface ModuleContributorRepository extends CrudRepository<ModuleContri
 
     @Executable
     @Query("SELECT contributor.contributorRole FROM ModuleContributor contributor WHERE contributor.contributorId.userEmail=:userEmail")
-    List<ContributorRole> findRolesByEmail(String userEmail);
+    Set<ContributorRole> findRolesByEmail(String userEmail);
 
     @Executable
     @Query("Select moduleContributor.contributorRole FROM ModuleContributor moduleContributor where moduleContributor.contributorId.module.moduleId=:moduleId and moduleContributor.contributorId.userEmail=:userEmail")

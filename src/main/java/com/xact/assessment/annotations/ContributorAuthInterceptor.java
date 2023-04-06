@@ -14,6 +14,7 @@ import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Singleton;
 
 import java.util.List;
+import java.util.Set;
 
 @Singleton
 @InterceptorBean(ContributorAuth.class)
@@ -29,7 +30,7 @@ public class ContributorAuthInterceptor implements MethodInterceptor<Authenticat
         context.getParameterValueMap().forEach((name, value) -> {
             if (name.equals("authentication")) {
                 Authentication authentication = (Authentication) value;
-                List<ContributorRole> contributorRoles = moduleContributorService.getContributorRolesByEmail(authentication.getName());
+                Set<ContributorRole> contributorRoles = moduleContributorService.getContributorRolesByEmail(authentication.getName());
                 if (!(contributorRoles.contains(ContributorRole.AUTHOR) || contributorRoles.contains(ContributorRole.REVIEWER))) {
                     throw new UnauthorisedUserException("User not Authorised");
                 }

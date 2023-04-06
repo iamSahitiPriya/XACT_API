@@ -41,7 +41,7 @@ class UserControllerTest {
 
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
         when(assessmentService.getUserRole(userEmail)).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
-        when(userAuthService.getContributorRoles(userEmail)).thenReturn(Collections.singletonList(ContributorRole.valueOf("AUTHOR")));
+        when(userAuthService.getContributorRoles(userEmail)).thenReturn(Collections.singleton(ContributorRole.valueOf("AUTHOR")));
 
         HttpResponse<List<AccessControlRoles>> accessControlRolesHttpResponse = userController.getRole(authentication);
 

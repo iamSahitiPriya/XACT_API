@@ -11,6 +11,7 @@ import jakarta.inject.Singleton;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Singleton
 public class ModuleContributorService {
@@ -24,7 +25,7 @@ public class ModuleContributorService {
         return moduleContributorRepository.findByRole(userEmail, contributorRole);
     }
 
-    public List<ContributorRole> getContributorRolesByEmail(String userEmail) {
+    public Set<ContributorRole> getContributorRolesByEmail(String userEmail) {
         return moduleContributorRepository.findRolesByEmail(userEmail);
     }
 

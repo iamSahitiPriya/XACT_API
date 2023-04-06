@@ -105,7 +105,7 @@ class ContributorControllerTest {
                 "}";
 
         String expectedResponse = "{\"questionId\":[" + question.getQuestionId() + "],\"comments\":\"comments\",\"status\":\"SENT_FOR_REVIEW\"}";
-        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/contributor/module/1/questions?status=SENT_FOR_REVIEW", dataRequest).bearerAuth("anything"), String.class);
+        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/contributor/modules/1/questions?status=SENT_FOR_REVIEW", dataRequest).bearerAuth("anything"), String.class);
 
         Assertions.assertEquals(expectedResponse, actualResponse);
     }
@@ -127,7 +127,7 @@ class ContributorControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        var actualResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/contributor/question/" + question.getQuestionId()).bearerAuth("anything"));
+        var actualResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/contributor/questions/" + question.getQuestionId()).bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
@@ -151,7 +151,7 @@ class ContributorControllerTest {
 
 
         String expectedResponse = "{\"questionId\":" + question.getQuestionId() + ",\"questionText\":\"new question text\",\"parameter\":" + question.getParameter().getParameterId() + ",\"status\":\"DRAFT\"}";
-        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/contributor/question/" + question.getQuestionId(), "new question text").bearerAuth("anything"), String.class);
+        String actualResponse = client.toBlocking().retrieve(HttpRequest.PATCH("/v1/contributor/questions/" + question.getQuestionId(), "new question text").bearerAuth("anything"), String.class);
 
 
         Assertions.assertEquals(expectedResponse, actualResponse);

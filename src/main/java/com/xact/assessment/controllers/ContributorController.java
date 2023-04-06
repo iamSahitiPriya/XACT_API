@@ -8,7 +8,9 @@ package com.xact.assessment.controllers;
 import com.xact.assessment.annotations.ContributorAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Question;
+import com.xact.assessment.models.User;
 import com.xact.assessment.services.QuestionService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.*;
@@ -27,11 +29,13 @@ public class ContributorController {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContributorController.class);
 
     private final QuestionService questionService;
+    private final UserAuthService userAuthService;
 
 
-    public ContributorController(QuestionService questionService) {
+    public ContributorController(QuestionService questionService, UserAuthService userAuthService) {
         this.questionService = questionService;
 
+        this.userAuthService = userAuthService;
     }
 
     @Get(value = "/questions{?role}", produces = MediaType.APPLICATION_JSON)
@@ -39,37 +43,41 @@ public class ContributorController {
     @Transactional
     public HttpResponse<ContributorResponse> getContributorQuestions(@QueryValue ContributorRole role, Authentication authentication) {
         LOGGER.info("Get all questions");
-        ContributorResponse contributorResponse = questionService.getContributorResponse(role, authentication.getName());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        ContributorResponse contributorResponse = questionService.getContributorResponse(role, loggedInUser.getUserEmail());
 
         return HttpResponse.ok(contributorResponse);
     }
 
 
-    @Patch(value = "/module/{moduleId}/questions{?status}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/modules/{moduleId}/questions{?status}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<QuestionStatusUpdateResponse> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @QueryValue ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
         LOGGER.info("Update question status");
-        QuestionStatusUpdateResponse questionStatusUpdateResponse = questionService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, authentication.getName());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        QuestionStatusUpdateResponse questionStatusUpdateResponse = questionService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, loggedInUser.getUserEmail());
 
         return HttpResponse.ok(questionStatusUpdateResponse);
 
     }
 
-    @Delete(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Delete(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Question> deleteQuestion(@PathVariable Integer questionId, Authentication authentication) {
         LOGGER.info("Delete question: {}", questionId);
-        questionService.deleteQuestion(questionId, authentication.getName());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        questionService.deleteQuestion(questionId, loggedInUser.getUserEmail());
 
         return HttpResponse.ok();
 
     }
 
-    @Patch(value = "/question/{questionId}", produces = MediaType.APPLICATION_JSON)
+    @Patch(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<QuestionDto> updateQuestion(@PathVariable Integer questionId, @Body String questionText, Authentication authentication) {
         LOGGER.info("Update question: {}", questionId);
-        Question question = questionService.updateContributorQuestion(questionId, questionText, authentication.getName());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        Question question = questionService.updateContributorQuestion(questionId, questionText, loggedInUser.getUserEmail());
         QuestionDto questionResponse = new QuestionDto();
         questionResponse.setParameter(question.getParameter().getParameterId());
         questionResponse.setQuestionText(question.getQuestionText());

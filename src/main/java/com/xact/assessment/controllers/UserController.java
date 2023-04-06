@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller("/v1/users")
 public class UserController {
@@ -42,7 +43,7 @@ public class UserController {
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         Optional<AccessControlRoles> accessControlRoles = assessmentService.getUserRole(loggedInUser.getUserEmail());
         accessControlRoles.ifPresent(roles::add);
-        List<ContributorRole> contributorRoles = userAuthService.getContributorRoles(loggedInUser.getUserEmail());
+        Set<ContributorRole> contributorRoles = userAuthService.getContributorRoles(loggedInUser.getUserEmail());
         contributorRoles.stream().forEach(contributorRole -> roles.add(AccessControlRoles.valueOf(contributorRole.toString())));
         return HttpResponse.ok(roles);
     }

@@ -7,6 +7,7 @@ package com.xact.assessment.controllers;
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
+import com.xact.assessment.services.AdminService;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
@@ -80,11 +81,15 @@ public class AdminController {
     private final AssessmentService assessmentService;
     private final UserAuthService userAuthService;
 
+    private final AdminService adminService;
 
-    public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, UserAuthService userAuthService) {
+
+    public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, UserAuthService userAuthService, AdminService adminService) {
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.assessmentService = assessmentService;
         this.userAuthService = userAuthService;
+
+        this.adminService = adminService;
     }
 
     @Post(value = "/categories", produces = MediaType.APPLICATION_JSON)
@@ -136,7 +141,7 @@ public class AdminController {
     public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         LOGGER.info("{}: Create questions - {}", loggedInUser.getUserEmail(), questionRequest.getQuestionText());
-        Question question = assessmentMasterDataService.createAssessmentQuestion(loggedInUser.getUserEmail(),questionRequest);
+        Question question = assessmentMasterDataService.createAssessmentQuestion(loggedInUser.getUserEmail(), questionRequest);
         return getQuestionResponse(question);
     }
 
@@ -268,9 +273,18 @@ public class AdminController {
         return HttpResponse.ok(adminAssessmentResponse);
     }
 
+
+    @Post(value = "/modules/{moduleId}/contributors")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<ContributorDto> saveModuleContributor(@PathVariable("moduleId") Integer moduleId, ContributorDto contributorDto, Authentication authentication) {
+        LOGGER.info(" Save Contributors For {} module", moduleId);
+        ContributorDto contributorResponse = adminService.saveContributor(moduleId, contributorDto);
+        return HttpResponse.ok(contributorResponse);
+
+    }
+
     private AssessmentCategory getCategory(Integer categoryId) {
         return assessmentMasterDataService.getCategory(categoryId);
     }
-
 
 }

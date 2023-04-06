@@ -7,6 +7,7 @@ package unit.com.xact.assessment.controllers;
 import com.xact.assessment.controllers.AdminController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
+import com.xact.assessment.services.AdminService;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
@@ -32,7 +33,8 @@ class AdminControllerTest {
     UserAuthService userAuthService=Mockito.mock(UserAuthService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
-    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService, userAuthService);
+     AdminService adminService=Mockito.mock(AdminService.class);
+    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService, userAuthService,adminService);
 
     @Test
     void createAssessmentCategory() {
@@ -358,5 +360,19 @@ class AdminControllerTest {
         HttpResponse actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void shouldSaveContributorsForModule() {
+        Integer moduleId=1;
+        ContributorDto contributorDto = new ContributorDto();
+        contributorDto.setUserEmail("abc@thoughtworks.com");
+        contributorDto.setRole(ContributorRole.AUTHOR);
+
+        when(adminService.saveContributor(moduleId,contributorDto)).thenReturn(contributorDto);
+
+        HttpResponse<ContributorDto> actualResponse=adminController.saveModuleContributor(moduleId,contributorDto,authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
     }
 }

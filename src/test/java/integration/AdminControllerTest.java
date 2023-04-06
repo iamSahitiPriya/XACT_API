@@ -4,6 +4,8 @@
 
 package integration;
 
+import com.xact.assessment.dtos.ContributorDto;
+import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
 import com.xact.assessment.utils.ResourceFileUtil;
@@ -25,6 +27,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 @MicronautTest
 class AdminControllerTest {
@@ -59,6 +63,9 @@ class AdminControllerTest {
 
     @Inject
     AccessControlRepository accessControlRepository;
+
+    @Inject
+    ModuleContributorRepository moduleContributorRepository;
 
     @Inject
     EntityManager entityManager;
@@ -476,7 +483,7 @@ class AdminControllerTest {
         assessmentTopic.setModule(assessmentModule);
         assessmentTopic.setActive(true);
 
-        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic,Rating.FIVE,"New Reference");
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, Rating.FIVE, "New Reference");
 
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
@@ -497,7 +504,7 @@ class AdminControllerTest {
 
         Set<AssessmentTopicReference> assessmentTopicReferences = assessmentTopicRepository.findByTopicId(assessmentTopic.getTopicId()).getReferences();
 
-        assertEquals(0,assessmentTopicReferences.size());
+        assertEquals(0, assessmentTopicReferences.size());
 
         entityManager.getTransaction().begin();
 
@@ -528,7 +535,7 @@ class AdminControllerTest {
         assessmentParameter.setTopic(assessmentTopic);
         assessmentParameter.setActive(true);
 
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter,Rating.FIVE,"New Reference");
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, Rating.FIVE, "New Reference");
 
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));
@@ -552,7 +559,7 @@ class AdminControllerTest {
 
         Set<AssessmentParameterReference> assessmentParameterReferences = assessmentParameterRepository.findByParameterId(assessmentParameter.getParameterId()).getReferences();
 
-        assertEquals(0,assessmentParameterReferences.size());
+        assertEquals(0, assessmentParameterReferences.size());
 
         entityManager.getTransaction().begin();
 
@@ -562,5 +569,26 @@ class AdminControllerTest {
         categoryRepository.deleteById(assessmentCategory.getCategoryId());
 
         entityManager.getTransaction().commit();
+    }
+
+    @Test
+    void shouldSaveModuleContributor() {
+        Integer moduleId = 1;
+        ContributorDto contributorDto = new ContributorDto();
+        contributorDto.setUserEmail("abc@thoughtworks.com");
+        contributorDto.setRole(ContributorRole.AUTHOR);
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(moduleId);
+        ModuleContributor moduleContributor = new ModuleContributor();
+        ContributorId contributorId = new ContributorId();
+        contributorId.setModule(assessmentModule);
+        contributorId.setUserEmail(contributorDto.getUserEmail());
+        moduleContributor.setContributorId(contributorId);
+        moduleContributor.setContributorRole(contributorDto.getRole());
+
+        String expectedResponse="{\"userEmail\":\"abc@thoughtworks.com\",\"role\":\"AUTHOR\"}";
+        String actualResponse = client.toBlocking().retrieve(HttpRequest.POST("/v1/admin/modules/" + moduleId + "/contributors", contributorDto).bearerAuth("anything"), String.class);
+
+        assertEquals(actualResponse,expectedResponse);
     }
 }

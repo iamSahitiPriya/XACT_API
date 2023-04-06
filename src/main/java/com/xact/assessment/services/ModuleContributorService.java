@@ -4,10 +4,14 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.ContributorDto;
 import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AssessmentModule;
+import com.xact.assessment.models.ContributorId;
+import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.repositories.ModuleContributorRepository;
 import jakarta.inject.Singleton;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +20,14 @@ import java.util.Set;
 @Singleton
 public class ModuleContributorService {
     private final ModuleContributorRepository moduleContributorRepository;
+    private final ModuleService moduleService;
 
-    public ModuleContributorService(ModuleContributorRepository moduleContributorRepository) {
+    private static final ModelMapper mapper = new ModelMapper();
+
+
+    public ModuleContributorService(ModuleContributorRepository moduleContributorRepository, ModuleService moduleService) {
         this.moduleContributorRepository = moduleContributorRepository;
+        this.moduleService = moduleService;
     }
 
     public List<AssessmentModule> getModulesByRole(String userEmail, ContributorRole contributorRole) {
@@ -31,5 +40,15 @@ public class ModuleContributorService {
 
     public Optional<ContributorRole> getRole(Integer moduleId, String userEmail) {
         return moduleContributorRepository.findRole(moduleId, userEmail);
+    }
+
+    public ModuleContributor saveContributor(Integer moduleId, ContributorDto contributorDto) {
+        ContributorId contributorId=new ContributorId();
+        contributorId.setModule(moduleService.getModule(moduleId));
+        contributorId.setUserEmail(contributorDto.getUserEmail());
+        ModuleContributor moduleContributor=new ModuleContributor();
+        moduleContributor.setContributorId(contributorId);
+        moduleContributor.setContributorRole(contributorDto.getRole());
+        return moduleContributorRepository.save(moduleContributor);
     }
 }

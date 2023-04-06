@@ -29,20 +29,6 @@ public class NotificationSchedulerService {
         this.assessmentService = assessmentService;
         this.feedbackNotificationConfig = feedbackNotificationConfig;
     }
-
-    @Scheduled(fixedDelay = "${notification.inactive.fixedDelay}")
-    public void saveInactiveAssessmentNotification() throws JsonProcessingException {
-        LOGGER.info("Sending email for Inactive assessment ...");
-        List<Notification> inactiveNotifications = notificationService.getNotificationBy(NotificationType.INACTIVE_V1);
-        List<Assessment> inactiveAssessments = assessmentService.findInactiveAssessments(feedbackNotificationConfig.getDurationInDays());
-        if (!inactiveAssessments.isEmpty()) {
-            for (Assessment inactiveAssessment : inactiveAssessments) {
-                notificationService.setNotificationForInactiveAssessment(inactiveAssessment, inactiveNotifications);
-
-            }
-        }
-    }
-
     @Scheduled(initialDelay = "${notification.feedback.initialDelay}", fixedDelay = "${notification.feedback.delay}")
     public void saveFeedbackNotificationForFinishedAssessments() {
         LOGGER.info("Sending email for feedback ...");

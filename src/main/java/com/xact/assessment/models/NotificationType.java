@@ -11,7 +11,6 @@ public enum NotificationType {
     REOPENED_V1("v1_notification_for_reopen_assessment.vm", "Assessment reopened"),
     DELETE_USER_V1("v1_notification_for_delete_user.vm","You have been removed from assessment"),
     DELETE_ASSESSMENT_V1("v1_notification_for_delete_assessment.vm","Assessment Deleted"),
-    INACTIVE_V1("v1_notification_for_inactive_assessment.vm", "Action Required: Continue on your Assessment"),
     FEEDBACK_V1("v1_notification_for_feedback.vm", "Feedback for Thoughtworks X-Act");
 
 

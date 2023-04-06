@@ -13,10 +13,6 @@ import com.xact.assessment.repositories.ModuleContributorRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
-import javax.persistence.PersistenceException;
-
-import org.hibernate.exception.ConstraintViolationException;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;

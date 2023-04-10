@@ -15,6 +15,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.mockito.Mockito.when;
 
 class AdminServiceTest {
@@ -39,9 +42,9 @@ class AdminServiceTest {
         moduleContributor.setContributorRole(contributorDto.getRole());
 
         when(moduleContributorService.saveContributor(moduleId, contributorDto)).thenReturn(moduleContributor);
-        ContributorDto actualResponse = adminService.saveContributor(moduleId, contributorDto);
+        List<ContributorDto> actualResponse = adminService.saveContributor(moduleId, Collections.singletonList(contributorDto));
 
-        Assertions.assertEquals(actualResponse.getRole(), contributorDto.getRole());
+        Assertions.assertEquals(actualResponse.get(0).getRole(), contributorDto.getRole());
 
     }
 }

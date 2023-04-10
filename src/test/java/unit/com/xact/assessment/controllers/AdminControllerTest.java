@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -369,10 +370,10 @@ class AdminControllerTest {
         contributorDto.setUserEmail("abc@thoughtworks.com");
         contributorDto.setRole(ContributorRole.AUTHOR);
 
-        when(adminService.saveContributor(moduleId,contributorDto)).thenReturn(contributorDto);
+        when(adminService.saveContributor(moduleId, Collections.singletonList(contributorDto))).thenReturn(Collections.singletonList(contributorDto));
 
-        HttpResponse<ContributorDto> actualResponse=adminController.saveModuleContributor(moduleId,contributorDto,authentication);
+        HttpResponse actualResponse= adminController.saveModuleContributor(moduleId, Collections.singletonList(contributorDto),authentication);
 
-        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
+        assertEquals(HttpResponse.created(Collections.singletonList(contributorDto)).getStatus(),actualResponse.getStatus());
     }
 }

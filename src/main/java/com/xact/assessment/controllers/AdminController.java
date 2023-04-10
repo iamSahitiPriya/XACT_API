@@ -6,6 +6,7 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
 import com.xact.assessment.services.AssessmentMasterDataService;
@@ -26,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Introspected
 @AdminAuth
@@ -276,10 +279,14 @@ public class AdminController {
 
     @Post(value = "/modules/{moduleId}/contributors")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<ContributorDto> saveModuleContributor(@PathVariable("moduleId") Integer moduleId, ContributorDto contributorDto, Authentication authentication) {
+    public HttpResponse saveModuleContributor(@PathVariable("moduleId") Integer moduleId, @Body List<ContributorDto> contributors, Authentication authentication) {
         LOGGER.info("Save Contributor For {} module by {}", moduleId, authentication.getName());
-        ContributorDto contributorResponse = adminService.saveContributor(moduleId, contributorDto);
-        return HttpResponse.ok(contributorResponse);
+        try {
+            List<ContributorDto> contributorResponse = adminService.saveContributor(moduleId, contributors);
+            return HttpResponse.created(contributorResponse);
+        } catch (UnauthorisedUserException e) {
+            return HttpResponse.badRequest(e.getMessage());
+        }
 
     }
 

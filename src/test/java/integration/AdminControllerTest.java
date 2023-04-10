@@ -584,8 +584,8 @@ class AdminControllerTest {
         moduleContributor.setContributorId(contributorId);
         moduleContributor.setContributorRole(contributorDto.getRole());
 
-        String expectedResponse="{\"userEmail\":\"abc@thoughtworks.com\",\"role\":\"AUTHOR\"}";
-        String actualResponse = client.toBlocking().retrieve(HttpRequest.POST("/v1/admin/modules/" + moduleId + "/contributors", contributorDto).bearerAuth("anything"), String.class);
+        String expectedResponse="[{\"userEmail\":\"abc@thoughtworks.com\",\"role\":\"AUTHOR\"}]";
+        String actualResponse = client.toBlocking().retrieve(HttpRequest.POST("/v1/admin/modules/" + moduleId + "/contributors", Collections.singletonList(contributorDto)).bearerAuth("anything"), String.class);
 
         assertEquals(actualResponse,expectedResponse);
     }

@@ -48,13 +48,14 @@ public class ModuleContributorService {
         contributorId.setUserEmail(contributorDto.getUserEmail());
         ModuleContributor moduleContributor = new ModuleContributor();
 
-        if (!moduleContributorRepository.existsById(contributorId)) {
-            moduleContributor.setContributorId(contributorId);
-            moduleContributor.setContributorRole(contributorDto.getRole());
-            moduleContributorRepository.save(moduleContributor);
-
-        }
+        moduleContributor.setContributorId(contributorId);
+        moduleContributor.setContributorRole(contributorDto.getRole());
+        moduleContributorRepository.deleteAll();
+        moduleContributorRepository.save(moduleContributor);
         return moduleContributor;
+    }
+    public boolean isAlreadyAContributor(List<ContributorDto> contributors, ContributorDto contributor) {
+        return contributors.stream().filter(eachContributor -> eachContributor.getUserEmail().equals(contributor.getUserEmail())).count() > 1;
     }
 
 }

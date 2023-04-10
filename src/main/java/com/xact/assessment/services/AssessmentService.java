@@ -34,7 +34,7 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService,FeedbackNotificationConfig feedbackNotificationConfig) {
+    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, FeedbackNotificationConfig feedbackNotificationConfig) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
         this.accessControlService = accessControlService;
@@ -289,7 +289,7 @@ public class AssessmentService {
 
     public List<Assessment> getFinishedAssessments() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, - feedbackNotificationConfig.getDurationInDays());
+        calendar.add(Calendar.DAY_OF_YEAR, -feedbackNotificationConfig.getDurationInDays());
         Date completedDate = calendar.getTime();
         return assessmentRepository.findByCompletedStatus(completedDate);
     }
@@ -308,13 +308,5 @@ public class AssessmentService {
 
     public ParameterLevelRecommendation saveParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         return topicAndParameterLevelAssessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
-    }
-
-    public List<Assessment> findInactiveAssessments(Integer duration) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -duration);
-        Date expiryDate = calendar.getTime();
-        return assessmentRepository.findInactiveAssessments(expiryDate);
-
     }
 }

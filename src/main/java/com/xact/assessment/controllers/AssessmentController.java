@@ -139,7 +139,7 @@ public class AssessmentController {
         Assessment openedAssessment = assessmentService.reopenAssessment(assessment);
         AssessmentResponse assessmentResponse = assessmentMapper.map(openedAssessment);
 
-        CompletableFuture.supplyAsync(() -> notificationService.setNotificationForReopenAssessment(assessment));
+        //CompletableFuture.supplyAsync(() -> notificationService.setNotificationForReopenAssessment(assessment));
 
         return HttpResponse.ok(assessmentResponse);
     }

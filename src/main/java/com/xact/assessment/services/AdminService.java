@@ -26,6 +26,7 @@ public class AdminService {
 
     public List<ContributorDto> saveContributor(Integer moduleId, List<ContributorDto> contributors) {
         List<ContributorDto> contributorResponse = new ArrayList<>();
+        moduleContributorService.clearAll();
         for (ContributorDto contributor : contributors) {
             if (isEmailValid(contributor.getUserEmail()) && (!moduleContributorService.isAlreadyAContributor(contributors, contributor))) {
                 ContributorDto response = new ContributorDto();

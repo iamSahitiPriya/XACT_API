@@ -26,11 +26,14 @@ public class ModuleContributor implements Serializable {
 
     @EmbeddedId
     @AttributeOverride(name = "module", column = @Column(name = "module_id"))
-    @AttributeOverride(name = "user_name", column = @Column(name = "user_name"))
+    @AttributeOverride(name = "userEmail", column = @Column(name = "user_email"))
     public ContributorId contributorId;
 
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     private ContributorRole contributorRole;
+
+    @Column(name = "user_email", nullable = false, insertable = false, updatable = false)
+    private String userEmail;
 
 }

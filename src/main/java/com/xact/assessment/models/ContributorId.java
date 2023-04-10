@@ -6,10 +6,7 @@ package com.xact.assessment.models;
 
 import lombok.*;
 
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
@@ -21,9 +18,8 @@ import java.io.Serializable;
 public class ContributorId  implements Serializable {
     @ManyToOne
     @MapsId
-    @JoinColumn(name = "module")
+    @JoinColumn(name = "module", referencedColumnName = "module_id")
     private AssessmentModule module;
-
 
     private String userEmail;
 }

@@ -50,10 +50,14 @@ public class ModuleContributorService {
 
         moduleContributor.setContributorId(contributorId);
         moduleContributor.setContributorRole(contributorDto.getRole());
-        moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         return moduleContributor;
     }
+
+    public void clearAll() {
+        moduleContributorRepository.deleteAll();
+    }
+
     public boolean isAlreadyAContributor(List<ContributorDto> contributors, ContributorDto contributor) {
         return contributors.stream().filter(eachContributor -> eachContributor.getUserEmail().equals(contributor.getUserEmail())).count() > 1;
     }

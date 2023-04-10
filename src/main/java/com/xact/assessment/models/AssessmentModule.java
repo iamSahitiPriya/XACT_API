@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -44,6 +45,10 @@ public class AssessmentModule implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "module")
     @ElementCollection()
     private Set<AssessmentTopic> topics;
+
+    @OneToMany(mappedBy = "contributorId.module", fetch = FetchType.LAZY)
+    @ElementCollection()
+    private Set<ModuleContributor> contributors;
 
     @NotNull
     @Column(name = "is_active")

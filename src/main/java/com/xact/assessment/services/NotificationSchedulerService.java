@@ -22,20 +22,19 @@ public class NotificationSchedulerService {
     private final NotificationService notificationService;
     private static final Logger LOGGER = LoggerFactory.getLogger(NotificationSchedulerService.class);
     private final AssessmentService assessmentService;
-    private final FeedbackNotificationConfig feedbackNotificationConfig;
 
-    public NotificationSchedulerService(NotificationService notificationService, AssessmentService assessmentService, FeedbackNotificationConfig feedbackNotificationConfig) {
+    public NotificationSchedulerService(NotificationService notificationService, AssessmentService assessmentService) {
         this.notificationService = notificationService;
         this.assessmentService = assessmentService;
-        this.feedbackNotificationConfig = feedbackNotificationConfig;
     }
+
     @Scheduled(initialDelay = "${notification.feedback.initialDelay}", fixedDelay = "${notification.feedback.delay}")
     public void saveFeedbackNotificationForFinishedAssessments() {
         LOGGER.info("Sending email for feedback ...");
         List<Assessment> finishedAssessments = assessmentService.getFinishedAssessments();
         List<Notification> notifications = notificationService.findByType(NotificationType.FEEDBACK_V1);
         finishedAssessments.forEach(finishedAssessment ->
-            notificationService.saveFeedbackNotificationForFinishedAssessments(finishedAssessment,notifications)
+                notificationService.saveFeedbackNotificationForFinishedAssessments(finishedAssessment, notifications)
         );
     }
 }

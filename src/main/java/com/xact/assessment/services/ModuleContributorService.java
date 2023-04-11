@@ -11,8 +11,8 @@ import com.xact.assessment.models.ContributorId;
 import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.repositories.ModuleContributorRepository;
 import jakarta.inject.Singleton;
-import org.modelmapper.ModelMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,7 +22,7 @@ public class ModuleContributorService {
     private final ModuleContributorRepository moduleContributorRepository;
     private final ModuleService moduleService;
 
-    private static final ModelMapper mapper = new ModelMapper();
+    public static final String EMAIL_PATTERN = "^(.+)@thoughtworks\\.com$";
 
 
     public ModuleContributorService(ModuleContributorRepository moduleContributorRepository, ModuleService moduleService) {
@@ -42,24 +42,25 @@ public class ModuleContributorService {
         return moduleContributorRepository.findRole(moduleId, userEmail);
     }
 
-    public ModuleContributor saveContributor(Integer moduleId, ContributorDto contributorDto) {
+    public void saveContributors(Integer moduleId, List<ContributorDto> contributors) {
+        List<ModuleContributor> moduleContributors = new ArrayList<>();
+        for (ContributorDto contributor : contributors) {
+            ModuleContributor moduleContributor = getModuleContributor(moduleId, contributor);
+            moduleContributors.add(moduleContributor);
+        }
+        moduleContributorRepository.deleteAll();
+        moduleContributorRepository.saveAll(moduleContributors);
+    }
+
+
+    private ModuleContributor getModuleContributor(Integer moduleId, ContributorDto contributorDto) {
         ContributorId contributorId = new ContributorId();
         contributorId.setModule(moduleService.getModule(moduleId));
         contributorId.setUserEmail(contributorDto.getUserEmail());
         ModuleContributor moduleContributor = new ModuleContributor();
-
         moduleContributor.setContributorId(contributorId);
         moduleContributor.setContributorRole(contributorDto.getRole());
-        moduleContributorRepository.save(moduleContributor);
         return moduleContributor;
-    }
-
-    public void clearAll() {
-        moduleContributorRepository.deleteAll();
-    }
-
-    public boolean isAlreadyAContributor(List<ContributorDto> contributors, ContributorDto contributor) {
-        return contributors.stream().filter(eachContributor -> eachContributor.getUserEmail().equals(contributor.getUserEmail())).count() > 1;
     }
 
 }

@@ -23,8 +23,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AdminControllerTest {
     AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
@@ -366,14 +365,16 @@ class AdminControllerTest {
     @Test
     void shouldSaveContributorsForModule() {
         Integer moduleId=1;
+        ContributorRequest contributorRequest=new ContributorRequest();
         ContributorDto contributorDto = new ContributorDto();
         contributorDto.setUserEmail("abc@thoughtworks.com");
         contributorDto.setRole(ContributorRole.AUTHOR);
+        contributorRequest.setContributors(Collections.singletonList(contributorDto));
 
-        when(adminService.saveContributor(moduleId, Collections.singletonList(contributorDto))).thenReturn(Collections.singletonList(contributorDto));
+        doNothing().when(adminService).saveContributors(moduleId, contributorRequest.getContributors());
 
-        HttpResponse actualResponse= adminController.saveModuleContributor(moduleId, Collections.singletonList(contributorDto),authentication);
+        HttpResponse<ContributorDto> actualResponse= adminController.saveModuleContributor(moduleId, contributorRequest,authentication);
 
-        assertEquals(HttpResponse.created(Collections.singletonList(contributorDto)).getStatus(),actualResponse.getStatus());
+        assertEquals(HttpResponse.ok().getStatus(),actualResponse.getStatus());
     }
 }

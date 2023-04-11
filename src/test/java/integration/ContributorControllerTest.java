@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.persistence.EntityManager;
 
+import static com.xact.assessment.dtos.ContributorRole.AUTHOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @MicronautTest
@@ -64,7 +65,7 @@ class ContributorControllerTest {
     void shouldGetContributorQuestionResponse() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         ContributorId contributorId = new ContributorId(assessmentModule, "dummy@test.com");
-        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.AUTHOR);
+        ModuleContributor moduleContributor = ModuleContributor.builder().contributorId(contributorId).contributorRole(AUTHOR).build();
         moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
@@ -86,7 +87,7 @@ class ContributorControllerTest {
     void shouldUpdateContributorQuestionStatus() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         ContributorId contributorId = new ContributorId(assessmentModule, "dummy@test.com");
-        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.AUTHOR);
+        ModuleContributor moduleContributor = ModuleContributor.builder().contributorId(contributorId).contributorRole(AUTHOR).build();
         moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
@@ -114,7 +115,7 @@ class ContributorControllerTest {
     void shouldDeleteContributorQuestion() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         ContributorId contributorId = new ContributorId(assessmentModule, "dummy@test.com");
-        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.AUTHOR);
+        ModuleContributor moduleContributor = ModuleContributor.builder().contributorId(contributorId).contributorRole(AUTHOR).build();
         moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();
@@ -136,7 +137,7 @@ class ContributorControllerTest {
     void shouldUpdateContributorQuestion() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         ContributorId contributorId = new ContributorId(assessmentModule, "dummy@test.com");
-        ModuleContributor moduleContributor = new ModuleContributor(contributorId, ContributorRole.AUTHOR);
+        ModuleContributor moduleContributor = ModuleContributor.builder().contributorId(contributorId).contributorRole(AUTHOR).build();
         moduleContributorRepository.deleteAll();
         moduleContributorRepository.save(moduleContributor);
         Question question = new Question();

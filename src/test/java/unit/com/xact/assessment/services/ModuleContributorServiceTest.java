@@ -16,7 +16,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -71,18 +73,15 @@ class ModuleContributorServiceTest {
         contributorDto.setRole(ContributorRole.AUTHOR);
         AssessmentModule assessmentModule = new AssessmentModule();
         assessmentModule.setModuleId(moduleId);
-        ModuleContributor moduleContributor = new ModuleContributor();
         ContributorId contributorId = new ContributorId();
         contributorId.setModule(assessmentModule);
         contributorId.setUserEmail(contributorDto.getUserEmail());
-        moduleContributor.setContributorId(contributorId);
-        moduleContributor.setContributorRole(contributorDto.getRole());
 
-        when(moduleContributorRepository.save(any(ModuleContributor.class))).thenReturn(moduleContributor);
+        when(moduleContributorRepository.saveAll(any())).thenReturn(any());
         when(moduleService.getModule(moduleId)).thenReturn(assessmentModule);
 
-        ModuleContributor actualResponse = moduleContributorService.saveContributor(moduleId, contributorDto);
+        moduleContributorService.saveContributors(moduleId, Collections.singletonList(contributorDto));
 
-        Assertions.assertEquals(moduleContributor.getContributorRole(),actualResponse.getContributorRole());
+        verify(moduleContributorRepository).saveAll(any());
     }
 }

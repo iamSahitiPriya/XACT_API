@@ -6,10 +6,7 @@ package com.xact.assessment.models;
 
 import com.xact.assessment.dtos.ContributorRole;
 import io.micronaut.core.annotation.Introspected;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -18,7 +15,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@Builder
 @Introspected
 @Entity
 @Table(name = "tbl_module_contributors")

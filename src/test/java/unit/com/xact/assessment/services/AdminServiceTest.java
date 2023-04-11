@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AdminServiceTest {
 
@@ -34,17 +34,14 @@ class AdminServiceTest {
         contributorDto.setRole(ContributorRole.AUTHOR);
         AssessmentModule assessmentModule = new AssessmentModule();
         assessmentModule.setModuleId(moduleId);
-        ModuleContributor moduleContributor = new ModuleContributor();
         ContributorId contributorId = new ContributorId();
         contributorId.setModule(assessmentModule);
         contributorId.setUserEmail(contributorDto.getUserEmail());
-        moduleContributor.setContributorId(contributorId);
-        moduleContributor.setContributorRole(contributorDto.getRole());
 
-        when(moduleContributorService.saveContributor(moduleId, contributorDto)).thenReturn(moduleContributor);
-        List<ContributorDto> actualResponse = adminService.saveContributor(moduleId, Collections.singletonList(contributorDto));
+        doNothing().when(moduleContributorService).saveContributors(moduleId, Collections.singletonList(contributorDto));
+        adminService.saveContributors(moduleId, Collections.singletonList(contributorDto));
 
-        Assertions.assertEquals(actualResponse.get(0).getRole(), contributorDto.getRole());
+        verify(moduleContributorService).saveContributors(moduleId, Collections.singletonList(contributorDto));
 
     }
 }

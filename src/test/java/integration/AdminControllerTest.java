@@ -5,6 +5,7 @@
 package integration;
 
 import com.xact.assessment.dtos.ContributorDto;
+import com.xact.assessment.dtos.ContributorRequest;
 import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.*;
@@ -583,10 +584,11 @@ class AdminControllerTest {
         contributorId.setUserEmail(contributorDto.getUserEmail());
         moduleContributor.setContributorId(contributorId);
         moduleContributor.setContributorRole(contributorDto.getRole());
+        ContributorRequest contributorRequest=new ContributorRequest();
+        contributorRequest.setContributors(Collections.singletonList(contributorDto));
 
-        String expectedResponse="[{\"userEmail\":\"abc@thoughtworks.com\",\"role\":\"AUTHOR\"}]";
-        String actualResponse = client.toBlocking().retrieve(HttpRequest.POST("/v1/admin/modules/" + moduleId + "/contributors", Collections.singletonList(contributorDto)).bearerAuth("anything"), String.class);
+        HttpResponse<ContributorDto> actualResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/modules/" + moduleId + "/contributors",contributorRequest ).bearerAuth("anything"));
 
-        assertEquals(actualResponse,expectedResponse);
+        assertEquals(actualResponse.getStatus(),HttpResponse.ok().getStatus());
     }
 }

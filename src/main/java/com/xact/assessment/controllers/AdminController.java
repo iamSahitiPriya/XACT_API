@@ -6,12 +6,12 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
-import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
+import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -27,9 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Introspected
 @AdminAuth
@@ -85,6 +83,9 @@ public class AdminController {
     private final UserAuthService userAuthService;
 
     private final AdminService adminService;
+
+    @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
+    private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
 
     public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, UserAuthService userAuthService, AdminService adminService) {
@@ -279,15 +280,11 @@ public class AdminController {
 
     @Post(value = "/modules/{moduleId}/contributors")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse saveModuleContributor(@PathVariable("moduleId") Integer moduleId, @Body List<ContributorDto> contributors, Authentication authentication) {
+    public HttpResponse<ContributorDto> saveModuleContributor(@PathVariable("moduleId") Integer moduleId,@Valid @Body ContributorRequest contributorRequest, Authentication authentication) {
         LOGGER.info("Save Contributor For {} module by {}", moduleId, authentication.getName());
-        try {
-            List<ContributorDto> contributorResponse = adminService.saveContributor(moduleId, contributors);
-            return HttpResponse.created(contributorResponse);
-        } catch (UnauthorisedUserException e) {
-            return HttpResponse.badRequest(e.getMessage());
-        }
-
+         contributorRequest.validate(emailPattern);
+         adminService.saveContributors(moduleId, contributorRequest.getContributors());
+        return HttpResponse.ok();
     }
 
     private AssessmentCategory getCategory(Integer categoryId) {

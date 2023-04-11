@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "topics")
+@EqualsAndHashCode(exclude = {"topics","contributors"})
 @Introspected
 @Entity
 @Table(name = "tbm_assessment_module")
@@ -46,7 +46,7 @@ public class AssessmentModule implements Serializable {
     @ElementCollection()
     private Set<AssessmentTopic> topics;
 
-    @OneToMany(mappedBy = "contributorId.module", fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contributorId.module")
     @ElementCollection()
     private Set<ModuleContributor> contributors;
 

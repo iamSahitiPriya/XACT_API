@@ -34,7 +34,7 @@ public class GlobalErrorResponseProcessor implements ErrorResponseProcessor<Json
         LOGGER.error("URI: {}", errorContext.getRequest().getUri());
 
         if (errorContext.getRequest().getMethod() == HttpMethod.HEAD) {
-            return (MutableHttpResponse<JsonError>) response;
+            return HttpResponse.status(response.status());
         }
         JsonError error;
         if (!errorContext.hasErrors()) {

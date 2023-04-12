@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Introspected
-@EqualsAndHashCode
 @Entity
 @Table(name = "tbl_assessment_topic_recommendation")
 public class TopicLevelRecommendation extends Recommendation {

@@ -30,7 +30,9 @@ class AssessmentMasterDataServiceTest {
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
     private final UserAssessmentModuleService userAssessmentModuleService = mock(UserAssessmentModuleService.class);
     private final ModuleService moduleService1 = new ModuleService(moduleRepository);
-    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryService, moduleService, questionService, parameterService, topicService, userAssessmentModuleService);
+    private final AccessControlService accessControlService = mock(AccessControlService.class);
+    private final ModuleContributorService moduleContributorService = mock(ModuleContributorService.class);
+    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryService, moduleService, questionService, parameterService, topicService, userAssessmentModuleService, accessControlService, moduleContributorService);
 
     @Test
     void getAllCategories() {

@@ -7,7 +7,9 @@ package unit.com.xact.assessment.controllers;
 import com.xact.assessment.controllers.AssessmentMasterDataController;
 import com.xact.assessment.dtos.CategoryDto;
 import com.xact.assessment.models.AssessmentCategory;
+import com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
@@ -25,13 +27,15 @@ class AssessmentMasterDataControllerTest {
     AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
 
     private final Authentication authentication = Mockito.mock(Authentication.class);
-    AssessmentMasterDataController assessmentMasterDataController = new AssessmentMasterDataController(assessmentMasterDataService);
+    private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
+    AssessmentMasterDataController assessmentMasterDataController = new AssessmentMasterDataController(assessmentMasterDataService, userAuthService);
 
 
     @Test
     void shouldGetCategories() {
         Date created = new Date(2022 - 11 - 14);
         Date updated = new Date(2022 - 11 - 24);
+        User user = new User();
 
         AssessmentCategory assessmentCategory=new AssessmentCategory();
         assessmentCategory.setCategoryId(1);
@@ -52,7 +56,8 @@ class AssessmentMasterDataControllerTest {
         categories.add(assessmentCategory);
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         assessmentCategoriesResponse.add(categoryDto);
-        when(assessmentMasterDataService.getCategoriesSortedByUpdatedDate()).thenReturn(categories);
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
+        when(assessmentMasterDataService.getMasterDataByRole(user)).thenReturn(assessmentCategoriesResponse);
 
         HttpResponse<List<CategoryDto>> actualResponse = assessmentMasterDataController.getMasterData(authentication);
 

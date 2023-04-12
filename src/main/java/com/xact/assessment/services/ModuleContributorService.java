@@ -6,6 +6,7 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AssessmentModule;
+import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.repositories.ModuleContributorRepository;
 import jakarta.inject.Singleton;
 
@@ -25,7 +26,7 @@ public class ModuleContributorService {
         return moduleContributorRepository.findByRole(userEmail, contributorRole);
     }
 
-    public Set<ContributorRole> getContributorRolesByEmail(String userEmail) {
+    public Set<ModuleContributor> getContributorRolesByEmail(String userEmail) {
         return moduleContributorRepository.findRolesByEmail(userEmail);
     }
 

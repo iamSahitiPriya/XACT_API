@@ -6,6 +6,7 @@ package com.xact.assessment.annotations;
 
 import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.exceptions.UnauthorisedUserException;
+import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.services.ModuleContributorService;
 import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInterceptor;
@@ -29,8 +30,8 @@ public class ContributorAuthInterceptor implements MethodInterceptor<Authenticat
         context.getParameterValueMap().forEach((name, value) -> {
             if (name.equals("authentication")) {
                 Authentication authentication = (Authentication) value;
-                Set<ContributorRole> contributorRoles = moduleContributorService.getContributorRolesByEmail(authentication.getName());
-                if (!(contributorRoles.contains(ContributorRole.AUTHOR) || contributorRoles.contains(ContributorRole.REVIEWER))) {
+                Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorRolesByEmail(authentication.getName());
+                if (contributorRoles.stream().noneMatch(contributor -> (contributor.getContributorRole() == ContributorRole.AUTHOR ) || contributor.getContributorRole() == ContributorRole.REVIEWER)) {
                     throw new UnauthorisedUserException("User not Authorised");
                 }
             }

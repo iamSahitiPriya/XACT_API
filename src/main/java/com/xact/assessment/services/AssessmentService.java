@@ -150,13 +150,6 @@ public class AssessmentService {
         assessment.setUpdatedAt(new Date());
         assessmentRepository.update(assessment);
     }
-
-
-    public Optional<AccessControlRoles> getUserRole(String email) {
-        return accessControlService.getAccessControlRolesByEmail(email);
-    }
-
-
     public List<Assessment> getTotalAssessments(String startDate, String endDate) throws ParseException {
         DateFormat simpleDateFormat = new SimpleDateFormat(DATE_PATTERN);
         Date startDateTime = simpleDateFormat.parse(startDate);

@@ -4,8 +4,6 @@
 
 package com.xact.assessment.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationType;

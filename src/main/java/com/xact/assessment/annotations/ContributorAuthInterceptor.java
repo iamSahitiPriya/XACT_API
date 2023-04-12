@@ -13,7 +13,6 @@ import io.micronaut.aop.MethodInvocationContext;
 import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Singleton;
 
-import java.util.List;
 import java.util.Set;
 
 @Singleton

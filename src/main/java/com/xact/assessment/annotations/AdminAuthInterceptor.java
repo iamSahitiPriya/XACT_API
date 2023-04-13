@@ -6,6 +6,7 @@ package com.xact.assessment.annotations;
 
 import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.AccessControlRoles;
+import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
 import com.xact.assessment.services.AccessControlService;
 import com.xact.assessment.services.AssessmentService;
@@ -17,6 +18,7 @@ import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Singleton;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Singleton
 @InterceptorBean(AdminAuth.class)
@@ -39,7 +41,8 @@ public class AdminAuthInterceptor implements MethodInterceptor<Authentication, O
                 Authentication authentication = (Authentication) value;
                 User loggedInUser = userAuthService.getCurrentUser(authentication);
                 Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
-                if (!(accessControlRoles.isPresent() && (accessControlRoles.get() == AccessControlRoles.Admin || accessControlRoles.get() == AccessControlRoles.AUTHOR))) {
+                Optional<AccessControlRoles> contributorRoles = userAuthService.getAccessRole(loggedInUser.getUserEmail());
+                if (!((accessControlRoles.isPresent() && accessControlRoles.get() == AccessControlRoles.Admin) || ( contributorRoles.isPresent() && contributorRoles.get() == AccessControlRoles.AUTHOR ))) {
                     throw new UnauthorisedUserException("User not Authorised");
                 }
             }

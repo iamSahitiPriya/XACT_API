@@ -22,13 +22,11 @@ class NotificationSchedulerServiceTest {
     private final AssessmentService assessmentService;
     private final NotificationService notificationService;
     private final NotificationSchedulerService notificationSchedulerService;
-    private final FeedbackNotificationConfig feedbackNotificationConfig;
 
     public NotificationSchedulerServiceTest( ){
-        feedbackNotificationConfig = mock(FeedbackNotificationConfig.class);
         assessmentService = mock(AssessmentService.class);
         notificationService = mock(NotificationService.class);
-        notificationSchedulerService = new NotificationSchedulerService(notificationService, assessmentService, this.feedbackNotificationConfig);
+        notificationSchedulerService = new NotificationSchedulerService(notificationService, assessmentService);
 
 
     }

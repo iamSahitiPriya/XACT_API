@@ -86,7 +86,6 @@ pipeline {
         }
         stage('Archive & Cleanup') {
                 steps {
-                    archiveArtifacts artifacts: 'build/classes/**/**/META-INF/swagger/thoughtworks-x-act-api-1.1.0.yml', fingerprint: true
                     archiveArtifacts artifacts: 'build/dependencyUpdates/report.txt', fingerprint: true
                     publishHTML (target : [allowMissing: false,
                                            alwaysLinkToLastBuild: true,

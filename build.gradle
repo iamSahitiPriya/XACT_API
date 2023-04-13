@@ -30,11 +30,10 @@ dependencies {
     implementation 'org.apache.velocity:velocity-engine-core:2.3'
     implementation 'org.apache.velocity.tools:velocity-tools-generic:3.1'
     implementation 'io.projectreactor:reactor-core:3.5.1'
-    compileOnly "io.micronaut:micronaut-aop:3.7.4"
+    compileOnly "io.micronaut:micronaut-aop"
     compileOnly "org.projectlombok:lombok:1.18.24"
     compileOnly "com.google.code.findbugs:jsr305"
     annotationProcessor "org.projectlombok:lombok:1.18.24"
-    annotationProcessor "io.micronaut.openapi:micronaut-openapi:4.8.0"
 
     compileOnly("io.swagger.core.v3:swagger-annotations")
     implementation("io.micronaut:micronaut-inject")

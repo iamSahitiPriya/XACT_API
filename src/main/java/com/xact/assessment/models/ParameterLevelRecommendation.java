@@ -19,7 +19,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Introspected
-@EqualsAndHashCode
 @Entity
 @Table(name = "tbl_assessment_parameter_recommendation")
 public class ParameterLevelRecommendation extends Recommendation {

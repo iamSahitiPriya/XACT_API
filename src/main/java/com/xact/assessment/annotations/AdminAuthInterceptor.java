@@ -4,6 +4,7 @@
 
 package com.xact.assessment.annotations;
 
+import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.ModuleContributor;
@@ -41,8 +42,8 @@ public class AdminAuthInterceptor implements MethodInterceptor<Authentication, O
                 Authentication authentication = (Authentication) value;
                 User loggedInUser = userAuthService.getCurrentUser(authentication);
                 Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
-                Optional<AccessControlRoles> contributorRoles = userAuthService.getAccessRole(loggedInUser.getUserEmail());
-                if (!((accessControlRoles.isPresent() && accessControlRoles.get() == AccessControlRoles.Admin) || ( contributorRoles.isPresent() && contributorRoles.get() == AccessControlRoles.AUTHOR ))) {
+                Set<ModuleContributor> contributorRoles = userAuthService.getContributorRoles(loggedInUser.getUserEmail());
+                if (contributorRoles.stream().noneMatch(contributor -> contributor.getContributorRole() == ContributorRole.AUTHOR || contributor.getContributorRole() == ContributorRole.REVIEWER) || (accessControlRoles.isPresent() && accessControlRoles.get() != AccessControlRoles.Admin)) {
                     throw new UnauthorisedUserException("User not Authorised");
                 }
             }

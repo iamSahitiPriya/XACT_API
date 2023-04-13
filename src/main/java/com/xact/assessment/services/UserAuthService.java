@@ -5,9 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.client.UserInfoClient;
-import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.dtos.UserInfoDto;
-import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
@@ -18,9 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Access;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.xact.assessment.constants.AppConstants.EMAIL;
@@ -76,11 +72,4 @@ public class UserAuthService {
         return moduleContributorService.getContributorRolesByEmail(userEmail);
     }
 
-    public Optional<AccessControlRoles> getAccessRole(String userEmail) {
-        for (ModuleContributor moduleContributor: moduleContributorService.getContributorRolesByEmail(userEmail)) {
-            if(moduleContributor.getContributorRole() == ContributorRole.AUTHOR)
-                return Optional.of(AccessControlRoles.AUTHOR);
-        }
-        return null;
-    }
 }

@@ -31,4 +31,7 @@ public interface ModuleContributorRepository extends CrudRepository<ModuleContri
     @Query("Select moduleContributor.contributorRole FROM ModuleContributor moduleContributor where moduleContributor.contributorId.module.moduleId=:moduleId and moduleContributor.contributorId.userEmail=:userEmail")
     Optional<ContributorRole> findRole(Integer moduleId, String userEmail);
 
+    @Executable
+    @Query("delete  FROM ModuleContributor moduleContributor where moduleContributor.contributorId.module.moduleId=:moduleId")
+    void deleteByModule(Integer moduleId);
 }

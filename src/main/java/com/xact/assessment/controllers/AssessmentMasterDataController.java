@@ -14,6 +14,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -40,12 +41,12 @@ public class AssessmentMasterDataController {
         this.userAuthService = userAuthService;
     }
 
-    @Get(value = "/categories", produces = MediaType.APPLICATION_JSON)
+    @Get(value = "/categories{?role}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<CategoryDto>> getMasterData(Authentication authentication) {
+    public HttpResponse<List<CategoryDto>> getMasterData(Authentication authentication, @QueryValue String role) {
         LOGGER.info("Get master data");
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        List<CategoryDto> assessmentCategories = assessmentMasterDataService.getMasterDataByRole(loggedInUser);
+        List<CategoryDto> assessmentCategories = assessmentMasterDataService.getMasterDataByRole(loggedInUser,role);
         return HttpResponse.ok(assessmentCategories);
     }
 }

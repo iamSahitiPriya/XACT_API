@@ -364,11 +364,11 @@ public class AssessmentMasterDataService {
     }
 
 
-    public List<CategoryDto> getMasterDataByRole(User loggedInUser) {
+    public List<CategoryDto> getMasterDataByRole(User loggedInUser,String role) {
         Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
         Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorRolesByEmail(loggedInUser.getUserEmail());
 
-        if (accessControlRoles.isPresent())
+        if (accessControlRoles.isPresent() && accessControlRoles.get().toString().equalsIgnoreCase(role))
             return getAdminMasterData(accessControlRoles);
         else
             return getContributorMasterData(contributorRoles);

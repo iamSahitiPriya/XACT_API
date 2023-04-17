@@ -6,8 +6,8 @@ package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AssessmentMasterDataController;
 import com.xact.assessment.dtos.CategoryDto;
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.User;
+import com.xact.assessment.dtos.ContributorRole;
+import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static com.xact.assessment.models.AccessControlRoles.Admin;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -57,9 +58,9 @@ class AssessmentMasterDataControllerTest {
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         assessmentCategoriesResponse.add(categoryDto);
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        when(assessmentMasterDataService.getMasterDataByRole(user)).thenReturn(assessmentCategoriesResponse);
+        when(assessmentMasterDataService.getMasterDataByRole(user, String.valueOf(Admin))).thenReturn(assessmentCategoriesResponse);
 
-        HttpResponse<List<CategoryDto>> actualResponse = assessmentMasterDataController.getMasterData(authentication);
+        HttpResponse<List<CategoryDto>> actualResponse = assessmentMasterDataController.getMasterData(authentication,Admin.toString());
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         assertEquals("category",actualResponse.body().get(0).getCategoryName());

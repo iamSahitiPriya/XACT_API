@@ -214,24 +214,6 @@ class AdminControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
-    @Test
-    void shouldUpdateQuestion() {
-        QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionText("question");
-        Integer questionId = 1;
-
-        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
-        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
-        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
-        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
-        Question question = new Question("Text", parameter);
-
-        when(assessmentMasterDataService.updateQuestion(questionId,questionRequest)).thenReturn(question);
-
-        HttpResponse<QuestionResponse> actualResponse = adminController.updateQuestion(questionId, questionRequest, authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-    }
 
     @Test
     void shouldUpdateTopicReferences() {

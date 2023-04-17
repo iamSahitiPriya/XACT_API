@@ -14,7 +14,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static com.xact.assessment.dtos.ContributorQuestionStatus.DRAFT;
 import static com.xact.assessment.dtos.ContributorQuestionStatus.PUBLISHED;
+import static com.xact.assessment.models.AccessControlRoles.AUTHOR;
+import static com.xact.assessment.models.AccessControlRoles.Admin;
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,7 +51,104 @@ class AssessmentMasterDataServiceTest {
 
         verify(categoryService).getAllCategories();
     }
+    @Test
+    void shouldGetContributorMasterData() {
+        User user = new User();
+        user.setUserId("hello@thoughtworks.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("hello@thoughtworks.com");
+        user.setUserInfo(userInfo);
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryId(1);
+        category.setCategoryName("Category");
 
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setCategory(category);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic");
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter");
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question");
+        question.setQuestionStatus(DRAFT);
+        question.setParameter(assessmentParameter);
+
+        assessmentParameter.setQuestions(Collections.singleton(question));
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        category.setModules(Collections.singleton(assessmentModule));
+
+        ModuleContributor moduleContributor = new ModuleContributor();
+        ContributorId contributorId = new ContributorId();
+        contributorId.setModule(assessmentModule);
+        contributorId.setUserEmail("hello@thoughtworks.com");
+        moduleContributor.setContributorId(contributorId);
+        moduleContributor.setContributorRole(ContributorRole.AUTHOR);
+
+        when(moduleContributorService.getContributorRolesByEmail("hello@thoughtworks.com")).thenReturn(Collections.singleton(moduleContributor));
+        when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
+
+        List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user,AUTHOR.toString());
+        assertEquals(1,categoryDtoList.size());
+
+    }
+
+    @Test
+    void shouldGetAdminMasterData() {
+        User user = new User();
+        user.setUserId("hello@thoughtworks.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("hello@thoughtworks.com");
+        user.setUserInfo(userInfo);
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryId(1);
+        category.setCategoryName("Category");
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setCategory(category);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic");
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter");
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question");
+        question.setQuestionStatus(PUBLISHED);
+        question.setParameter(assessmentParameter);
+
+        assessmentParameter.setQuestions(Collections.singleton(question));
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        category.setModules(Collections.singleton(assessmentModule));
+
+        ModuleContributor moduleContributor = new ModuleContributor();
+        when(moduleContributorService.getContributorRolesByEmail("hello@thoughtworks.com")).thenReturn(Collections.singleton(moduleContributor));
+        when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
+        when(categoryService.getCategoriesSortedByUpdatedDate()).thenReturn(Collections.singletonList(category));
+
+        List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user,Admin.toString());
+        assertEquals(1,categoryDtoList.size());
+
+    }
     @Test
     void shouldCreateCategory() {
         AssessmentCategoryRequest categoryRequest = new AssessmentCategoryRequest();

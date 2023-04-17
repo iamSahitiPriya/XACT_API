@@ -106,6 +106,51 @@ class ContributorControllerTest {
     }
 
     @Test
+    void shouldSaveQuestion(){
+        QuestionRequest questionRequest = new QuestionRequest();
+        questionRequest.setQuestionText("question?");
+        questionRequest.setParameter(1);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
+
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryId(1);
+        category.setCategoryName("Category");
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setCategory(category);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic");
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter");
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question?");
+        question.setParameter(assessmentParameter);
+
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
+
+        when(assessmentMasterDataService.createAssessmentQuestion(userEmail,questionRequest)).thenReturn(question);
+
+        HttpResponse<QuestionResponse> actualQuestionResponse = contributorController.createQuestion(questionRequest,authentication);
+        Assertions.assertEquals(HttpResponse.ok().getStatus(), actualQuestionResponse.getStatus());
+
+
+    }
+
+    @Test
     void shouldUpdateQuestionText() {
         Integer questionId = 1;
         String questionText = "new question";

@@ -40,13 +40,12 @@ public class QuestionService {
     }
 
     public void createQuestion(String userEmail, Question question) {
+
         Optional<ContributorRole> contributorRole = moduleContributorService.getRole(question.getParameter().getTopic().getModule().getModuleId(), userEmail);
         if (contributorRole.isPresent() && contributorRole.get() == AUTHOR) {
             question.setQuestionStatus(DRAFT);
-        } else {
-            question.setQuestionStatus(PUBLISHED);
+            saveQuestion(question);
         }
-        saveQuestion(question);
     }
 
 

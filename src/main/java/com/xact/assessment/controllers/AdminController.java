@@ -131,23 +131,23 @@ public class AdminController {
         return HttpResponse.ok(parameterResponse);
     }
 
-    @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
-        User loggedInUser = userAuthService.getCurrentUser(authentication);
-        LOGGER.info("{}: Create questions - {}", loggedInUser.getUserEmail(), questionRequest.getQuestionText());
-        Question question = assessmentMasterDataService.createAssessmentQuestion(loggedInUser.getUserEmail(),questionRequest);
-        return getQuestionResponse(question);
-    }
+//    @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
+//    @Secured(SecurityRule.IS_AUTHENTICATED)
+//    public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
+//        User loggedInUser = userAuthService.getCurrentUser(authentication);
+//        LOGGER.info("{}: Create questions - {}", loggedInUser.getUserEmail(), questionRequest.getQuestionText());
+//        Question question = assessmentMasterDataService.createAssessmentQuestion(loggedInUser.getUserEmail(),questionRequest);
+//        return getQuestionResponse(question);
+//    }
 
-    private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {
-        QuestionResponse questionResponse = mapper.map(question, QuestionResponse.class);
-        questionResponse.setCategory(question.getParameter().getTopic().getModule().getCategory().getCategoryId());
-        questionResponse.setModule(question.getParameter().getTopic().getModule().getModuleId());
-        questionResponse.setTopic(question.getParameter().getTopic().getTopicId());
-        questionResponse.setParameterId(question.getParameter().getParameterId());
-        return HttpResponse.ok(questionResponse);
-    }
+//    private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {
+//        QuestionResponse questionResponse = mapper.map(question, QuestionResponse.class);
+//        questionResponse.setCategory(question.getParameter().getTopic().getModule().getCategory().getCategoryId());
+//        questionResponse.setModule(question.getParameter().getTopic().getModule().getModuleId());
+//        questionResponse.setTopic(question.getParameter().getTopic().getTopicId());
+//        questionResponse.setParameterId(question.getParameter().getParameterId());
+//        return HttpResponse.ok(questionResponse);
+//    }
 
     @Post(value = "/topic-references", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -211,13 +211,13 @@ public class AdminController {
         return HttpResponse.ok(parameterResponse);
     }
 
-    @Put(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<QuestionResponse> updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest, Authentication authentication) {
-        LOGGER.info("{}: Update question - {}", authentication.getName(), questionRequest.getQuestionText());
-        Question question = assessmentMasterDataService.updateQuestion(questionId, questionRequest);
-        return getQuestionResponse(question);
-    }
+//    @Put(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
+//    @Secured(SecurityRule.IS_AUTHENTICATED)
+//    public HttpResponse<QuestionResponse> updateQuestion(@PathVariable("questionId") Integer questionId, QuestionRequest questionRequest, Authentication authentication) {
+//        LOGGER.info("{}: Update question - {}", authentication.getName(), questionRequest.getQuestionText());
+//        Question question = assessmentMasterDataService.updateQuestion(questionId, questionRequest);
+//        return getQuestionResponse(question);
+//    }
 
     @Put(value = "/topic-references/{referenceId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)

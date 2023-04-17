@@ -7,6 +7,7 @@ package unit.com.xact.assessment.controllers;
 import com.xact.assessment.controllers.ContributorController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
+import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.QuestionService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
@@ -25,7 +26,8 @@ class ContributorControllerTest {
     private final QuestionService questionService = mock(QuestionService.class);
 
     private final UserAuthService userAuthService=mock(UserAuthService.class);
-    private final ContributorController contributorController = new ContributorController(questionService, userAuthService);
+    private final AssessmentMasterDataService assessmentMasterDataService = mock(AssessmentMasterDataService.class);
+    private final ContributorController contributorController = new ContributorController(questionService, userAuthService, assessmentMasterDataService);
 
     private final Authentication authentication = Mockito.mock(Authentication.class);
 

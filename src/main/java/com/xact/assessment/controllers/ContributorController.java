@@ -9,6 +9,7 @@ import com.xact.assessment.annotations.ContributorAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Question;
 import com.xact.assessment.models.User;
+import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.QuestionService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
@@ -17,25 +18,29 @@ import io.micronaut.http.annotation.*;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 @ContributorAuth
 @Controller("/v1/contributor")
 public class ContributorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContributorController.class);
+    private static final ModelMapper mapper = new ModelMapper();
 
     private final QuestionService questionService;
     private final UserAuthService userAuthService;
+    private final AssessmentMasterDataService assessmentMasterDataService;
 
 
-    public ContributorController(QuestionService questionService, UserAuthService userAuthService) {
+    public ContributorController(QuestionService questionService, UserAuthService userAuthService, AssessmentMasterDataService assessmentMasterDataService) {
         this.questionService = questionService;
-
         this.userAuthService = userAuthService;
+        this.assessmentMasterDataService = assessmentMasterDataService;
     }
 
     @Get(value = "/questions{?role}", produces = MediaType.APPLICATION_JSON)
@@ -47,6 +52,24 @@ public class ContributorController {
         ContributorResponse contributorResponse = questionService.getContributorResponse(role, loggedInUser.getUserEmail());
 
         return HttpResponse.ok(contributorResponse);
+    }
+
+    @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        LOGGER.info("{}: Create questions - {}", loggedInUser.getUserEmail(), questionRequest.getQuestionText());
+        Question question = assessmentMasterDataService.createAssessmentQuestion(loggedInUser.getUserEmail(),questionRequest);
+        return getQuestionResponse(question);
+    }
+
+    private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {
+        QuestionResponse questionResponse = mapper.map(question, QuestionResponse.class);
+        questionResponse.setCategory(question.getParameter().getTopic().getModule().getCategory().getCategoryId());
+        questionResponse.setModule(question.getParameter().getTopic().getModule().getModuleId());
+        questionResponse.setTopic(question.getParameter().getTopic().getTopicId());
+        questionResponse.setParameterId(question.getParameter().getParameterId());
+        return HttpResponse.ok(questionResponse);
     }
 
 

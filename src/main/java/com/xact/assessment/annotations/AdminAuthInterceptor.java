@@ -42,8 +42,7 @@ public class AdminAuthInterceptor implements MethodInterceptor<Authentication, O
                 Authentication authentication = (Authentication) value;
                 User loggedInUser = userAuthService.getCurrentUser(authentication);
                 Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
-                Set<ModuleContributor> contributorRoles = userAuthService.getContributorRoles(loggedInUser.getUserEmail());
-                if (contributorRoles.stream().noneMatch(contributor -> contributor.getContributorRole() == ContributorRole.AUTHOR || contributor.getContributorRole() == ContributorRole.REVIEWER) || (accessControlRoles.isPresent() && accessControlRoles.get() != AccessControlRoles.Admin)) {
+                if (!(accessControlRoles.isPresent() && accessControlRoles.get() == AccessControlRoles.Admin)) {
                     throw new UnauthorisedUserException("User not Authorised");
                 }
             }

@@ -83,19 +83,52 @@ class AssessmentMasterDataServiceTest {
         question.setQuestionStatus(DRAFT);
         question.setParameter(assessmentParameter);
 
+        AssessmentModule assessmentModule1 = new AssessmentModule();
+        assessmentModule1.setModuleId(2);
+        assessmentModule1.setModuleName("Module 2");
+        assessmentModule1.setCategory(category);
+
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        assessmentTopic1.setTopicName("Topic");
+        assessmentTopic1.setModule(assessmentModule1);
+
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter();
+        assessmentParameter1.setParameterId(2);
+        assessmentParameter1.setParameterName("Parameter");
+        assessmentParameter1.setTopic(assessmentTopic1);
+
+        Question question1 = new Question();
+        question1.setQuestionId(2);
+        question1.setQuestionText("question1");
+        question1.setQuestionStatus(PUBLISHED);
+        question1.setParameter(assessmentParameter1);
+
         assessmentParameter.setQuestions(Collections.singleton(question));
         assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));
-        category.setModules(Collections.singleton(assessmentModule));
 
-        ModuleContributor moduleContributor = new ModuleContributor();
-        ContributorId contributorId = new ContributorId();
-        contributorId.setModule(assessmentModule);
-        contributorId.setUserEmail("hello@thoughtworks.com");
-        moduleContributor.setContributorId(contributorId);
-        moduleContributor.setContributorRole(ContributorRole.AUTHOR);
+        assessmentParameter1.setQuestions(Collections.singleton(question1));
+        assessmentTopic1.setParameters(Collections.singleton(assessmentParameter1));
+        assessmentModule1.setTopics(Collections.singleton(assessmentTopic1));
 
-        when(moduleContributorService.getContributorRolesByEmail("hello@thoughtworks.com")).thenReturn(Collections.singleton(moduleContributor));
+        category.setModules(Set.of(assessmentModule, assessmentModule1));
+
+        ModuleContributor moduleContributor1 = new ModuleContributor();
+        ContributorId contributorId1 = new ContributorId();
+        contributorId1.setModule(assessmentModule);
+        contributorId1.setUserEmail("hello@thoughtworks.com");
+        moduleContributor1.setContributorId(contributorId1);
+        moduleContributor1.setContributorRole(ContributorRole.AUTHOR);
+
+        ModuleContributor moduleContributor2 = new ModuleContributor();
+        ContributorId contributorId2 = new ContributorId();
+        contributorId2.setModule(assessmentModule1);
+        contributorId2.setUserEmail("hello@thoughtworks.com");
+        moduleContributor2.setContributorId(contributorId2);
+        moduleContributor2.setContributorRole(ContributorRole.REVIEWER);
+
+        when(moduleContributorService.getContributorRolesByEmail("hello@thoughtworks.com")).thenReturn(Set.of(moduleContributor1, moduleContributor2));
         when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
 
         List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user,AUTHOR.toString());

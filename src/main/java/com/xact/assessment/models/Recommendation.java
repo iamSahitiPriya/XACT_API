@@ -19,7 +19,6 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @MappedSuperclass
 public class Recommendation {
     @Id

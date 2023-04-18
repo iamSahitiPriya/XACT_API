@@ -5,7 +5,6 @@
 package com.xact.assessment.controllers;
 
 import com.xact.assessment.dtos.CategoryDto;
-import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.UserAuthService;

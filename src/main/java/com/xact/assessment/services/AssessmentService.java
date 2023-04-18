@@ -25,7 +25,6 @@ public class AssessmentService {
 
     private final UsersAssessmentsService usersAssessmentsService;
     private final AssessmentRepository assessmentRepository;
-    private final AccessControlService accessControlService;
     private final AssessmentMasterDataService assessmentMasterDataService;
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final FeedbackNotificationConfig feedbackNotificationConfig;
@@ -34,10 +33,9 @@ public class AssessmentService {
 
     ModelMapper mapper = new ModelMapper();
 
-    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AccessControlService accessControlService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, FeedbackNotificationConfig feedbackNotificationConfig) {
+    public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, FeedbackNotificationConfig feedbackNotificationConfig) {
         this.usersAssessmentsService = usersAssessmentsService;
         this.assessmentRepository = assessmentRepository;
-        this.accessControlService = accessControlService;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.topicAndParameterLevelAssessmentService = topicAndParameterLevelAssessmentService;
         this.feedbackNotificationConfig = feedbackNotificationConfig;

@@ -379,8 +379,8 @@ public class AssessmentMasterDataService {
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         Map<AssessmentCategory, List<ModuleContributor>> contributorCategories = groupContributorCategoriesByModules(contributorRoles);
 
-        for (AssessmentCategory assessmentCategory: contributorCategories.keySet()){
-            CategoryDto categoryDto = getContributorCategories(assessmentCategory,contributorCategories.get(assessmentCategory));
+        for (Map.Entry<AssessmentCategory, List<ModuleContributor>> entry : contributorCategories.entrySet()) {
+            CategoryDto categoryDto = getContributorCategories(entry.getKey(), contributorCategories.get(entry.getKey()));
             assessmentCategoriesResponse.add(categoryDto);
 
         }
@@ -431,7 +431,7 @@ public class AssessmentMasterDataService {
         CategoryDto categoryDto = masterDataMapper.mapCategory(assessmentCategory);
         SortedSet<AssessmentModuleDto> modules = new TreeSet<>();
         for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
-            setModule(assessmentModule, accessControlRoles.get(), modules);
+            accessControlRoles.ifPresent(controlRoles -> setModule(assessmentModule, controlRoles, modules));
         }
         categoryDto.setModules(modules);
         return categoryDto;
@@ -476,15 +476,10 @@ public class AssessmentMasterDataService {
 
     private void addQuestionByRole(AccessControlRoles role, SortedSet<QuestionDto> questions, Question question) {
         QuestionDto questionDto = masterDataMapper.mapQuestion(question);
-        if (role == AccessControlRoles.AUTHOR)
-            questions.add(questionDto);
-        else if (role == AccessControlRoles.REVIEWER && (question.getQuestionStatus() != ContributorQuestionStatus.DRAFT))
-            questions.add(questionDto);
-        else if (role == AccessControlRoles.Admin && question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED)
+        if (role == AccessControlRoles.AUTHOR ||
+                (role == AccessControlRoles.REVIEWER && (question.getQuestionStatus() != ContributorQuestionStatus.DRAFT)) ||
+                (role == AccessControlRoles.Admin && question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED))
             questions.add(questionDto);
     }
-
-
-
 }
 

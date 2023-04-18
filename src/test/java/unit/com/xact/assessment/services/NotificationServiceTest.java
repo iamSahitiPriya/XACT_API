@@ -4,18 +4,19 @@
 
 package unit.com.xact.assessment.services;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.config.EmailConfig;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.NotificationRepository;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.UserAuthService;
-import io.micronaut.data.exceptions.EmptyResultException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.mockito.Mockito.*;
 

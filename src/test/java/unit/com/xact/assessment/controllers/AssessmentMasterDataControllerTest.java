@@ -6,8 +6,8 @@ package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AssessmentMasterDataController;
 import com.xact.assessment.dtos.CategoryDto;
-import com.xact.assessment.dtos.ContributorRole;
-import com.xact.assessment.models.*;
+import com.xact.assessment.models.AssessmentCategory;
+import com.xact.assessment.models.User;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;

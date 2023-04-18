@@ -4,13 +4,10 @@
 
 package com.xact.assessment.annotations;
 
-import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.AccessControlRoles;
-import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
 import com.xact.assessment.services.AccessControlService;
-import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.aop.InterceptorBean;
 import io.micronaut.aop.MethodInterceptor;
@@ -19,18 +16,15 @@ import io.micronaut.security.authentication.Authentication;
 import jakarta.inject.Singleton;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Singleton
 @InterceptorBean(AdminAuth.class)
 public class AdminAuthInterceptor implements MethodInterceptor<Authentication, Object> {
     private final UserAuthService userAuthService;
-    private final AssessmentService assessmentService;
     private final AccessControlService accessControlService;
 
-    public AdminAuthInterceptor(UserAuthService userAuthService, AssessmentService assessmentService, AccessControlService accessControlService) {
+    public AdminAuthInterceptor(UserAuthService userAuthService, AccessControlService accessControlService) {
         this.userAuthService = userAuthService;
-        this.assessmentService = assessmentService;
         this.accessControlService = accessControlService;
     }
 

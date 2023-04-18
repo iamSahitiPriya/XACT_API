@@ -6,13 +6,11 @@ package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.UserController;
 import com.xact.assessment.dtos.ContributorRole;
-import com.xact.assessment.dtos.ParameterReferencesRequest;
 import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
 import com.xact.assessment.services.AccessControlService;
-import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -20,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 

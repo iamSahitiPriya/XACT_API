@@ -30,14 +30,11 @@ import java.util.List;
 public class AssessmentMasterDataController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataController.class);
 
-
-    private final MasterDataMapper masterDataMapper = new MasterDataMapper();
     private final AssessmentMasterDataService assessmentMasterDataService;
     private final UserAuthService userAuthService;
 
     public AssessmentMasterDataController(AssessmentMasterDataService assessmentMasterDataService, UserAuthService userAuthService) {
         this.assessmentMasterDataService = assessmentMasterDataService;
-
         this.userAuthService = userAuthService;
     }
 

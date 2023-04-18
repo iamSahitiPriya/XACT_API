@@ -25,14 +25,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AdminControllerTest {
+
     AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
-
     AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
-
-    UserAuthService userAuthService=Mockito.mock(UserAuthService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
-    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService, userAuthService);
+    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService);
 
     @Test
     void createAssessmentCategory() {

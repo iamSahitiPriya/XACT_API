@@ -29,7 +29,6 @@ class AssessmentServiceTest {
     private AssessmentMasterDataService assessmentMasterDataService;
     private AssessmentService assessmentService;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
-    private AccessControlService accessControlService;
     private FeedbackNotificationConfig feedbackNotificationConfig;
 
     private static final ModelMapper modelMapper = new ModelMapper();
@@ -41,9 +40,8 @@ class AssessmentServiceTest {
         assessmentRepository = mock(AssessmentRepository.class);
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
-        accessControlService = mock(AccessControlService.class);
         feedbackNotificationConfig = mock(FeedbackNotificationConfig.class);
-        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, feedbackNotificationConfig);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, feedbackNotificationConfig);
     }
 
     @Test

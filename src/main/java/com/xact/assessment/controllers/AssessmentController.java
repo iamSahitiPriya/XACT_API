@@ -46,16 +46,11 @@ public class AssessmentController {
 
 
     private final AssessmentMapper assessmentMapper = new AssessmentMapper();
-    private final MasterDataMapper masterDataMapper = new MasterDataMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
 
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
-
-    @Inject
-
-
-    private static final ModelMapper modelMapper = new ModelMapper();
 
 
     public AssessmentController(UserAuthService userAuthService, AssessmentService assessmentService, ActivityLogService activityLogService, NotificationService notificationService) {
@@ -72,16 +67,7 @@ public class AssessmentController {
     public HttpResponse<List<AssessmentResponse>> getAssessments(Authentication authentication) {
         LOGGER.info("Get all assessments");
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        List<Assessment> assessments = assessmentService.findAssessments(loggedInUser.getUserEmail());
-        List<AssessmentResponse> assessmentResponses = new ArrayList<>();
-        if (Objects.nonNull(assessments))
-            assessments.forEach(assessment ->
-            {
-                AssessmentResponse assessmentResponse = assessmentMapper.map(assessment);
-                assessmentResponse.setAssessmentDescription(assessment.getAssessmentDescription());
-                assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwnerEmail()));
-                assessmentResponses.add(assessmentResponse);
-            });
+        List<AssessmentResponse> assessmentResponses = assessmentService.getAssessments(loggedInUser.getUserEmail());
         return HttpResponse.ok(assessmentResponses);
     }
 
@@ -106,22 +92,16 @@ public class AssessmentController {
         assessmentRequest.validate(emailPattern);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
-            assessment.setAssessmentName(assessmentRequest.getAssessmentName());
-            assessment.getOrganisation().setOrganisationName(assessmentRequest.getOrganisationName());
-            assessment.getOrganisation().setDomain(assessmentRequest.getDomain());
-            assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
-            assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
-            assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
-            assessment.setAssessmentDescription(assessmentRequest.getAssessmentDescription());
+           assessment = assessmentService.setAssessment(assessment,assessmentRequest);
             Set<AssessmentUser> newUsers = assessmentService.getAssessmentUsers(assessmentRequest, loggedInUser, assessment);
             Set<AssessmentUser> existingUser = assessmentService.getAssessmentFacilitators(assessment);
 
             Set<String> newlyAddedUsers = assessmentService.getNewlyAddedUser(existingUser, newUsers);
             Set<String> deletedUsers = assessmentService.getDeletedUser(existingUser, newUsers);
 
-            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(assessment, newlyAddedUsers));
-            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForDeleteUser(assessment, deletedUsers));
-
+            Assessment finalAssessment = assessment;
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForAddUser(finalAssessment, newlyAddedUsers));
+            CompletableFuture.supplyAsync(() -> notificationService.setNotificationForDeleteUser(finalAssessment, deletedUsers));
 
             assessmentService.updateAssessmentAndUsers(assessment, newUsers);
         }
@@ -167,21 +147,7 @@ public class AssessmentController {
         LOGGER.info("Get assessment : {}", assessmentId);
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-
-        List<Answer> answerResponse = assessmentService.getAnswers(assessment.getAssessmentId());
-
-        List<UserQuestion> userQuestionList = assessmentService.getUserQuestions(assessment.getAssessmentId());
-
-        List<TopicLevelRating> topicLevelRatingList = assessmentService.getTopicLevelRatings(assessment.getAssessmentId());
-        List<TopicLevelRecommendation> topicLevelRecommendationList = assessmentService.getTopicRecommendations(assessment.getAssessmentId());
-        List<TopicRatingAndRecommendation> topicRecommendationResponses = mergeTopicRatingAndRecommendation(topicLevelRatingList, topicLevelRecommendationList);
-        List<ParameterLevelRating> parameterLevelRatingList = assessmentService.getParameterLevelRatings(assessment.getAssessmentId());
-
-        List<ParameterLevelRecommendation> parameterLevelRecommendationList = assessmentService.getParameterRecommendations(assessment.getAssessmentId());
-        List<ParameterRatingAndRecommendation> paramRecommendationResponses = mergeParamRatingAndRecommendation(parameterLevelRatingList, parameterLevelRecommendationList);
-
-
-        AssessmentResponse assessmentResponse = assessmentMapper.map(assessment, answerResponse, userQuestionList, topicRecommendationResponses, paramRecommendationResponses);
+        AssessmentResponse assessmentResponse = assessmentService.getAssessmentResponse(assessment);
         assessmentResponse.setOwner(loggedInUser.getUserEmail().equals(assessment.getOwnerEmail()));
 
         return HttpResponse.ok(assessmentResponse);
@@ -264,13 +230,7 @@ public class AssessmentController {
         LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, topicId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
-            AssessmentTopic assessmentTopic = assessmentService.getTopic(topicId).orElseThrow();
-            TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
-            TopicLevelRating topicLevelRating = assessmentService.searchTopicRating(topicLevelId).orElse(new TopicLevelRating());
-            topicLevelRating.setTopicLevelId(topicLevelId);
-            Integer topicRating = rating != null ? Integer.valueOf(rating) : null;
-            topicLevelRating.setRating(topicRating);
-            assessmentService.saveTopicRating(topicLevelRating);
+            assessmentService.saveTopicRating(topicId,assessment,rating);
             updateAssessment(assessment);
         }
         return HttpResponse.ok();
@@ -282,13 +242,7 @@ public class AssessmentController {
         LOGGER.info("Update individual parameter maturity rating. assessment: {}, parameter: {}", assessmentId, parameterId);
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
         if (assessment.isEditable()) {
-            AssessmentParameter assessmentParameter = assessmentService.getParameter(parameterId).orElseThrow();
-            ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
-            ParameterLevelRating parameterLevelRating = assessmentService.searchParameterRating(parameterLevelId).orElse(new ParameterLevelRating());
-            parameterLevelRating.setParameterLevelId(parameterLevelId);
-            Integer parameterRating = rating != null ? Integer.valueOf(rating) : null;
-            parameterLevelRating.setRating(parameterRating);
-            assessmentService.saveParameterRating(parameterLevelRating);
+            assessmentService.saveParameterRating(parameterId,assessment,rating);
             updateAssessment(assessment);
         }
         return HttpResponse.ok();
@@ -334,18 +288,9 @@ public class AssessmentController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<UserAssessmentResponse> getCategories(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get all category & assessment master data");
-        List<AssessmentCategory> assessmentCategories = assessmentService.getAllCategories();
-        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(assessmentCategories)) {
-            assessmentCategories.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
-        }
+        List<AssessmentCategoryDto> assessmentCategoriesResponse = assessmentService.getAllCategories();
+        List<AssessmentCategoryDto> userAssessmentCategoriesResponse =  assessmentService.getUserAssessmentCategories(assessmentId);
 
-        List<AssessmentCategory> userAssessmentCategories = assessmentService.getUserAssessmentCategories(assessmentId);
-        List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(userAssessmentCategories)) {
-            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
-
-        }
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
         userAssessmentCategoriesResponse.sort(null);
         userAssessmentResponse.setAssessmentCategories(assessmentCategoriesResponse);
@@ -359,11 +304,7 @@ public class AssessmentController {
     @Transactional
     public HttpResponse<UserAssessmentResponse> getSelectedCategories(@PathVariable("assessmentId") Integer assessmentId) {
         LOGGER.info("Get selected categories only");
-        List<AssessmentCategory> userAssessmentCategories = assessmentService.getUserAssessmentCategories(assessmentId);
-        List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
-        if (Objects.nonNull(userAssessmentCategories)) {
-            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapAssessmentCategory(assessmentCategory)));
-        }
+        List<AssessmentCategoryDto> userAssessmentCategoriesResponse  = assessmentService.getUserAssessmentCategories(assessmentId);
         UserAssessmentResponse userAssessmentResponse = new UserAssessmentResponse();
         userAssessmentCategoriesResponse.sort(null);
         userAssessmentResponse.setUserAssessmentCategories(userAssessmentCategoriesResponse);
@@ -377,12 +318,11 @@ public class AssessmentController {
         LOGGER.info("Save individual user added questions. assessment: {}, parameter:{}", assessmentId, parameterId);
 
         Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
-        UserQuestion savedQuestion = new UserQuestion();
+        UserQuestionResponse userQuestionResponse = new UserQuestionResponse();
         if (assessment.isEditable()) {
-            savedQuestion = assessmentService.saveUserQuestion(assessment, parameterId, userQuestion);
+            userQuestionResponse = assessmentService.saveUserQuestion(assessment, parameterId, userQuestion);
             updateAssessment(assessment);
         }
-        UserQuestionResponse userQuestionResponse = modelMapper.map(savedQuestion, UserQuestionResponse.class);
         return HttpResponse.ok(userQuestionResponse);
     }
 
@@ -440,86 +380,6 @@ public class AssessmentController {
     }
 
 
-    private List<ParameterRatingAndRecommendation> mergeParamRatingAndRecommendation(List<ParameterLevelRating> parameterLevelRatingList, List<ParameterLevelRecommendation> parameterLevelRecommendationList) {
-        List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponse = new ArrayList<>();
-        Set<Integer> processedParams = new HashSet<>();
-
-        for (ParameterLevelRating paramLevelAssessment : parameterLevelRatingList) {
-            Integer parameterId = paramLevelAssessment.getParameterLevelId().getParameter().getParameterId();
-            processedParams.add(parameterId);
-            ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
-            parameterRatingAndRecommendation.setParameterId(parameterId);
-            parameterRatingAndRecommendation.setRating(paramLevelAssessment.getRating());
-            parameterRatingAndRecommendation.setParameterLevelRecommendationRequest(getParameterRecommendation(parameterLevelRecommendationList, parameterId));
-            parameterRatingAndRecommendationsResponse.add(parameterRatingAndRecommendation);
-        }
-
-        Set<Integer> parameterIds = parameterLevelRecommendationList.stream()
-                .map(paramLevelRecommendation -> paramLevelRecommendation.getParameter().getParameterId())
-                .collect(toSet());
-
-        for (Integer paramId : parameterIds) {
-            if (!processedParams.contains(paramId)) {
-                processedParams.add(paramId);
-                ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
-
-                parameterRatingAndRecommendation.setParameterId(paramId);
-                parameterRatingAndRecommendation.setParameterLevelRecommendationRequest(getParameterRecommendation(parameterLevelRecommendationList, paramId));
-                parameterRatingAndRecommendationsResponse.add(parameterRatingAndRecommendation);
-            }
-        }
-        return parameterRatingAndRecommendationsResponse;
-    }
-
-    private List<TopicRatingAndRecommendation> mergeTopicRatingAndRecommendation(List<TopicLevelRating> topicLevelRatingList, List<TopicLevelRecommendation> topicLevelRecommendationList) {
-        List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponse = new ArrayList<>();
-        Set<Integer> processedTopics = new HashSet<>();
-
-        for (TopicLevelRating topicLevelRating : topicLevelRatingList) {
-            Integer topicId = topicLevelRating.getTopicLevelId().getTopic().getTopicId();
-            processedTopics.add(topicId);
-            TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
-            topicRatingAndRecommendation.setTopicId(topicId);
-            topicRatingAndRecommendation.setRating(topicLevelRating.getRating());
-            topicRatingAndRecommendation.setRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
-            topicRatingAndRecommendationsResponse.add(topicRatingAndRecommendation);
-        }
-
-        Set<Integer> topicIds = topicLevelRecommendationList.stream()
-                .map(topicLevelRecommendation -> topicLevelRecommendation.getTopic().getTopicId())
-                .collect(toSet());
-
-        for (Integer topicId : topicIds) {
-            if (!processedTopics.contains(topicId)) {
-                processedTopics.add(topicId);
-                TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
-                topicRatingAndRecommendation.setTopicId(topicId);
-                topicRatingAndRecommendation.setRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
-                topicRatingAndRecommendationsResponse.add(topicRatingAndRecommendation);
-            }
-        }
-        return topicRatingAndRecommendationsResponse;
-    }
-
-    private List<RecommendationRequest> getTopicRecommendation(List<TopicLevelRecommendation> topicLevelRecommendationList, Integer topicId) {
-        List<RecommendationRequest> recommendationRequests = new ArrayList<>();
-        List<TopicLevelRecommendation> matchingList = topicLevelRecommendationList.stream().filter(topicLevelRecommendation -> topicId.equals(topicLevelRecommendation.getTopic().getTopicId())).toList();
-        for (TopicLevelRecommendation topicLevelRecommendation : matchingList) {
-            RecommendationRequest recommendationRequest = modelMapper.map(topicLevelRecommendation, RecommendationRequest.class);
-            recommendationRequests.add(recommendationRequest);
-        }
-        return recommendationRequests;
-    }
-
-    private List<RecommendationRequest> getParameterRecommendation(List<ParameterLevelRecommendation> parameterLevelRecommendationList, Integer parameterId) {
-        List<RecommendationRequest> parameterLevelRecommendationRequests = new ArrayList<>();
-        List<ParameterLevelRecommendation> matchingList = parameterLevelRecommendationList.stream().filter(parameterLevelRecommendation -> parameterId.equals(parameterLevelRecommendation.getParameter().getParameterId())).toList();
-        for (ParameterLevelRecommendation parameterLevelRecommendation : matchingList) {
-            RecommendationRequest parameterLevelRecommendationRequest = modelMapper.map(parameterLevelRecommendation, RecommendationRequest.class);
-            parameterLevelRecommendationRequests.add(parameterLevelRecommendationRequest);
-        }
-        return parameterLevelRecommendationRequests;
-    }
 
     private void updateAssessment(Assessment assessment) {
         LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());

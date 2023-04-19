@@ -6,6 +6,8 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.mappers.AssessmentMapper;
+import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
 import jakarta.inject.Singleton;
@@ -18,6 +20,7 @@ import java.util.*;
 
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static com.xact.assessment.models.AssessmentStatus.Completed;
+import static java.util.stream.Collectors.toSet;
 
 
 @Singleton
@@ -28,6 +31,10 @@ public class AssessmentService {
     private final AssessmentMasterDataService assessmentMasterDataService;
     private final TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
     private final FeedbackNotificationConfig feedbackNotificationConfig;
+    private final AssessmentMapper assessmentMapper = new AssessmentMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
+
+    private final MasterDataMapper masterDataMapper = new MasterDataMapper();
 
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
@@ -223,7 +230,13 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.searchTopicRating(topicLevelId);
     }
 
-    public void saveTopicRating(TopicLevelRating topicLevelRating) {
+    public void saveTopicRating(Integer topicId, Assessment assessment,String rating ) {
+        AssessmentTopic assessmentTopic = getTopic(topicId).orElseThrow();
+        TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
+        TopicLevelRating topicLevelRating = searchTopicRating(topicLevelId).orElse(new TopicLevelRating());
+        topicLevelRating.setTopicLevelId(topicLevelId);
+        Integer topicRating = rating != null ? Integer.valueOf(rating) : null;
+        topicLevelRating.setRating(topicRating);
         topicAndParameterLevelAssessmentService.saveTopicRating(topicLevelRating);
     }
 
@@ -232,7 +245,13 @@ public class AssessmentService {
 
     }
 
-    public void saveParameterRating(ParameterLevelRating parameterLevelRating) {
+    public void saveParameterRating(Integer parameterId, Assessment assessment, String rating) {
+        AssessmentParameter assessmentParameter = getParameter(parameterId).orElseThrow();
+        ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
+        ParameterLevelRating parameterLevelRating =searchParameterRating(parameterLevelId).orElse(new ParameterLevelRating());
+        parameterLevelRating.setParameterLevelId(parameterLevelId);
+        Integer parameterRating = rating != null ? Integer.valueOf(rating) : null;
+        parameterLevelRating.setRating(parameterRating);
         topicAndParameterLevelAssessmentService.saveParameterRating(parameterLevelRating);
     }
 
@@ -241,20 +260,33 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.getTopicByQuestionId(questionId);
     }
 
-    public List<AssessmentCategory> getAllCategories() {
-        return assessmentMasterDataService.getAllCategories();
+    public List<AssessmentCategoryDto> getAllCategories() {
+        List<AssessmentCategory> assessmentCategoryList =  assessmentMasterDataService.getAllCategories();
+        List<AssessmentCategoryDto> assessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(assessmentCategoryList)) {
+            assessmentCategoryList.forEach(assessmentCategory -> assessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
+        }
+        return assessmentCategoriesResponse;
     }
 
-    public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
-        return assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+    public List<AssessmentCategoryDto> getUserAssessmentCategories(Integer assessmentId) {
+        List<AssessmentCategory> userAssessmentCategories =  assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
+        List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
+        if (Objects.nonNull(userAssessmentCategories)) {
+            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
+
+        }
+        return userAssessmentCategoriesResponse;
     }
 
     public List<UserQuestion> getUserQuestions(Integer assessmentId) {
         return usersAssessmentsService.getUserQuestions(assessmentId);
     }
 
-    public UserQuestion saveUserQuestion(Assessment assessment, Integer parameterId, String userQuestion) {
-        return usersAssessmentsService.saveUserQuestion(assessment, parameterId, userQuestion);
+    public UserQuestionResponse saveUserQuestion(Assessment assessment, Integer parameterId, String userQuestion) {
+        UserQuestion savedQuestion = usersAssessmentsService.saveUserQuestion(assessment, parameterId, userQuestion);
+        return modelMapper.map(savedQuestion, UserQuestionResponse.class);
+
     }
 
     public void saveUserAnswer(Integer questionId, String answer) {
@@ -299,5 +331,131 @@ public class AssessmentService {
 
     public ParameterLevelRecommendation saveParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         return topicAndParameterLevelAssessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+    }
+
+    public AssessmentResponse getAssessmentResponse(Assessment assessment) {
+
+        List<Answer> answerResponse = getAnswers(assessment.getAssessmentId());
+
+        List<UserQuestion> userQuestionList = getUserQuestions(assessment.getAssessmentId());
+
+        List<TopicLevelRating> topicLevelRatingList = getTopicLevelRatings(assessment.getAssessmentId());
+        List<TopicLevelRecommendation> topicLevelRecommendationList = getTopicRecommendations(assessment.getAssessmentId());
+        List<TopicRatingAndRecommendation> topicRecommendationResponses = mergeTopicRatingAndRecommendation(topicLevelRatingList, topicLevelRecommendationList);
+        List<ParameterLevelRating> parameterLevelRatingList = getParameterLevelRatings(assessment.getAssessmentId());
+
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = getParameterRecommendations(assessment.getAssessmentId());
+        List<ParameterRatingAndRecommendation> paramRecommendationResponses = mergeParamRatingAndRecommendation(parameterLevelRatingList, parameterLevelRecommendationList);
+
+
+        return assessmentMapper.map(assessment, answerResponse, userQuestionList, topicRecommendationResponses, paramRecommendationResponses);
+    }
+
+    private List<ParameterRatingAndRecommendation> mergeParamRatingAndRecommendation(List<ParameterLevelRating> parameterLevelRatingList, List<ParameterLevelRecommendation> parameterLevelRecommendationList) {
+        List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationsResponse = new ArrayList<>();
+        Set<Integer> processedParams = new HashSet<>();
+
+        for (ParameterLevelRating paramLevelAssessment : parameterLevelRatingList) {
+            Integer parameterId = paramLevelAssessment.getParameterLevelId().getParameter().getParameterId();
+            processedParams.add(parameterId);
+            ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+            parameterRatingAndRecommendation.setParameterId(parameterId);
+            parameterRatingAndRecommendation.setRating(paramLevelAssessment.getRating());
+            parameterRatingAndRecommendation.setParameterLevelRecommendationRequest(getParameterRecommendation(parameterLevelRecommendationList, parameterId));
+            parameterRatingAndRecommendationsResponse.add(parameterRatingAndRecommendation);
+        }
+
+        Set<Integer> parameterIds = parameterLevelRecommendationList.stream()
+                .map(paramLevelRecommendation -> paramLevelRecommendation.getParameter().getParameterId())
+                .collect(toSet());
+
+        for (Integer paramId : parameterIds) {
+            if (!processedParams.contains(paramId)) {
+                processedParams.add(paramId);
+                ParameterRatingAndRecommendation parameterRatingAndRecommendation = new ParameterRatingAndRecommendation();
+
+                parameterRatingAndRecommendation.setParameterId(paramId);
+                parameterRatingAndRecommendation.setParameterLevelRecommendationRequest(getParameterRecommendation(parameterLevelRecommendationList, paramId));
+                parameterRatingAndRecommendationsResponse.add(parameterRatingAndRecommendation);
+            }
+        }
+        return parameterRatingAndRecommendationsResponse;
+    }
+
+    private List<TopicRatingAndRecommendation> mergeTopicRatingAndRecommendation(List<TopicLevelRating> topicLevelRatingList, List<TopicLevelRecommendation> topicLevelRecommendationList) {
+        List<TopicRatingAndRecommendation> topicRatingAndRecommendationsResponse = new ArrayList<>();
+        Set<Integer> processedTopics = new HashSet<>();
+
+        for (TopicLevelRating topicLevelRating : topicLevelRatingList) {
+            Integer topicId = topicLevelRating.getTopicLevelId().getTopic().getTopicId();
+            processedTopics.add(topicId);
+            TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+            topicRatingAndRecommendation.setTopicId(topicId);
+            topicRatingAndRecommendation.setRating(topicLevelRating.getRating());
+            topicRatingAndRecommendation.setRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
+            topicRatingAndRecommendationsResponse.add(topicRatingAndRecommendation);
+        }
+
+        Set<Integer> topicIds = topicLevelRecommendationList.stream()
+                .map(topicLevelRecommendation -> topicLevelRecommendation.getTopic().getTopicId())
+                .collect(toSet());
+
+        for (Integer topicId : topicIds) {
+            if (!processedTopics.contains(topicId)) {
+                processedTopics.add(topicId);
+                TopicRatingAndRecommendation topicRatingAndRecommendation = new TopicRatingAndRecommendation();
+                topicRatingAndRecommendation.setTopicId(topicId);
+                topicRatingAndRecommendation.setRecommendationRequest(getTopicRecommendation(topicLevelRecommendationList, topicId));
+                topicRatingAndRecommendationsResponse.add(topicRatingAndRecommendation);
+            }
+        }
+        return topicRatingAndRecommendationsResponse;
+    }
+
+
+    private List<RecommendationRequest> getTopicRecommendation(List<TopicLevelRecommendation> topicLevelRecommendationList, Integer topicId) {
+        List<RecommendationRequest> recommendationRequests = new ArrayList<>();
+        List<TopicLevelRecommendation> matchingList = topicLevelRecommendationList.stream().filter(topicLevelRecommendation -> topicId.equals(topicLevelRecommendation.getTopic().getTopicId())).toList();
+        for (TopicLevelRecommendation topicLevelRecommendation : matchingList) {
+            RecommendationRequest recommendationRequest = modelMapper.map(topicLevelRecommendation, RecommendationRequest.class);
+            recommendationRequests.add(recommendationRequest);
+        }
+        return recommendationRequests;
+    }
+
+    private List<RecommendationRequest> getParameterRecommendation(List<ParameterLevelRecommendation> parameterLevelRecommendationList, Integer parameterId) {
+        List<RecommendationRequest> parameterLevelRecommendationRequests = new ArrayList<>();
+        List<ParameterLevelRecommendation> matchingList = parameterLevelRecommendationList.stream().filter(parameterLevelRecommendation -> parameterId.equals(parameterLevelRecommendation.getParameter().getParameterId())).toList();
+        for (ParameterLevelRecommendation parameterLevelRecommendation : matchingList) {
+            RecommendationRequest parameterLevelRecommendationRequest = modelMapper.map(parameterLevelRecommendation, RecommendationRequest.class);
+            parameterLevelRecommendationRequests.add(parameterLevelRecommendationRequest);
+        }
+        return parameterLevelRecommendationRequests;
+    }
+
+
+    public List<AssessmentResponse> getAssessments(String userEmail) {
+        List<Assessment> assessments = findAssessments(userEmail);
+        List<AssessmentResponse> assessmentResponses = new ArrayList<>();
+        if (Objects.nonNull(assessments))
+            assessments.forEach(assessment ->
+            {
+                AssessmentResponse assessmentResponse = assessmentMapper.map(assessment);
+                assessmentResponse.setAssessmentDescription(assessment.getAssessmentDescription());
+                assessmentResponse.setOwner(userEmail.equals(assessment.getOwnerEmail()));
+                assessmentResponses.add(assessmentResponse);
+            });
+        return assessmentResponses;
+    }
+
+    public Assessment setAssessment(Assessment assessment, AssessmentRequest assessmentRequest) {
+        assessment.setAssessmentName(assessmentRequest.getAssessmentName());
+        assessment.getOrganisation().setOrganisationName(assessmentRequest.getOrganisationName());
+        assessment.getOrganisation().setDomain(assessmentRequest.getDomain());
+        assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
+        assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
+        assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
+        assessment.setAssessmentDescription(assessmentRequest.getAssessmentDescription());
+        return  assessment;
     }
 }

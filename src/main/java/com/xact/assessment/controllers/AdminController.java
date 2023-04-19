@@ -6,6 +6,7 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
@@ -31,51 +32,15 @@ import java.util.List;
 @Controller("/v1/admin")
 @Transactional
 public class AdminController {
-    private static final ModelMapper mapper = new ModelMapper();
+
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
-    static {
-        PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setCategory(source.getCategory().getCategoryId());
-            }
-        };
-        PropertyMap<AssessmentTopic, AssessmentTopicDto> topicMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setModule(source.getModule().getModuleId());
-            }
-        };
-        PropertyMap<AssessmentParameter, AssessmentParameterDto> parameterMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setTopic(source.getTopic().getTopicId());
-            }
-        };
-        PropertyMap<Question, QuestionDto> questionMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setParameter(source.getParameter().getParameterId());
-            }
-        };
-        PropertyMap<AssessmentTopicReference, AssessmentTopicReferenceDto> topicReferenceMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setTopic(source.getTopic().getTopicId());
-            }
-        };
-        PropertyMap<AssessmentParameterReference, AssessmentParameterReferenceDto> parameterReferenceMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setParameter(source.getParameter().getParameterId());
-            }
-        };
-        mapper.addMappings(moduleMap);
-        mapper.addMappings(topicMap);
-        mapper.addMappings(parameterMap);
-        mapper.addMappings(questionMap);
-        mapper.addMappings(topicReferenceMap);
-        mapper.addMappings(parameterReferenceMap);
-    }
+    private static final ModelMapper mapper = new ModelMapper();
 
     private final AssessmentMasterDataService assessmentMasterDataService;
 
+    private final MasterDataMapper mapper1 = new MasterDataMapper();
     private final AssessmentService assessmentService;
 
 
@@ -89,7 +54,7 @@ public class AdminController {
     public HttpResponse<CategoryDto> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
         LOGGER.info("{}: Create category - {}", authentication.getName(), assessmentCategory.getCategoryName());
         AssessmentCategory assessmentCategory1 = assessmentMasterDataService.createAssessmentCategory(assessmentCategory);
-        CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
+        CategoryDto categoryDto = mapper1.mapCategory(assessmentCategory1);
         return HttpResponse.ok(categoryDto);
     }
 
@@ -133,7 +98,7 @@ public class AdminController {
     public HttpResponse<AssessmentTopicReferenceDto> createTopicReference(@Body TopicReferencesRequest topicReferencesRequest, Authentication authentication) {
         LOGGER.info("{}: Create topic reference - {}", authentication.getName(), topicReferencesRequest.getReference());
         AssessmentTopicReference assessmentTopicReference = assessmentMasterDataService.createAssessmentTopicReference(topicReferencesRequest);
-        AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
+        AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper1.mapTopicReference(assessmentTopicReference);
         return HttpResponse.ok(assessmentTopicReferenceDto);
     }
 
@@ -142,7 +107,7 @@ public class AdminController {
     public HttpResponse<AssessmentParameterReferenceDto> createParameterReference(@Body ParameterReferencesRequest parameterReferencesRequests, Authentication authentication) {
         LOGGER.info("{}: Create parameter reference - {}", authentication.getName(), parameterReferencesRequests.getParameter());
         AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.createAssessmentParameterReference(parameterReferencesRequests);
-        AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
+        AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper1.mapParameterReference(assessmentParameterReference);
         return HttpResponse.ok(assessmentParameterReferenceDto);
     }
 
@@ -152,7 +117,7 @@ public class AdminController {
         LOGGER.info("{}: Update category - {}", authentication.getName(), assessmentCategoryRequest.getCategoryName());
         AssessmentCategory assessmentCategory = getCategory(categoryId);
         AssessmentCategory assessmentCategory1 = assessmentMasterDataService.updateCategory(assessmentCategory, assessmentCategoryRequest);
-        CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
+        CategoryDto categoryDto = mapper1.mapCategory(assessmentCategory1);
         return HttpResponse.ok(categoryDto);
     }
 
@@ -195,7 +160,7 @@ public class AdminController {
     public HttpResponse<AssessmentTopicReferenceDto> updateTopicReference(@PathVariable("referenceId") Integer referenceId, TopicReferencesRequest topicReferencesRequest, Authentication authentication) {
         LOGGER.info("{}: Update topic-reference - {}", authentication.getName(), topicReferencesRequest.getReference());
         AssessmentTopicReference assessmentTopicReference = assessmentMasterDataService.updateTopicReference(referenceId, topicReferencesRequest);
-        AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
+        AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper1.mapTopicReference(assessmentTopicReference);
         return HttpResponse.ok(assessmentTopicReferenceDto);
     }
 
@@ -204,7 +169,7 @@ public class AdminController {
     public HttpResponse<AssessmentParameterReferenceDto> updateParameterReference(@PathVariable("referenceId") Integer referenceId, ParameterReferencesRequest parameterReferencesRequest, Authentication authentication) {
         LOGGER.info("{}: Update parameter-reference - {}", authentication.getName(), parameterReferencesRequest.getReference());
         AssessmentParameterReference assessmentParameterReference = assessmentMasterDataService.updateParameterReference(referenceId, parameterReferencesRequest);
-        AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
+        AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper1.mapParameterReference(assessmentParameterReference);
         return HttpResponse.ok(assessmentParameterReferenceDto);
 
     }

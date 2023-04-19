@@ -51,29 +51,25 @@ class AssessmentControllerTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setEmail(userEmail);
         user.setUserInfo(userInfo);
-        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
-        Assessment assessment = new Assessment(1, "xact", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
-        Map<String, Object> authMap = new HashMap<>();
-        authMap.put("sub", userEmail);
-        AssessmentUser assessmentUser = new AssessmentUser(new UserId("test@thoughtworks.com", assessment), AssessmentRole.Owner);
-        assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
-        when(assessmentService.findAssessments(userEmail)).thenReturn(Collections.singletonList(assessment));
+
+        AssessmentResponse assessmentResponse = new AssessmentResponse();
+        assessmentResponse.setAssessmentId(1);
+        assessmentResponse.setAssessmentName("xact");
+        assessmentResponse.setOrganisationName("abc");
+        assessmentResponse.setAssessmentStatus(AssessmentStatusDto.Active);
+        assessmentResponse.setAssessmentPurpose("Client Purpose");
+        assessmentResponse.setUpdatedAt(updated);
+
+        when(assessmentService.getAssessments(userEmail)).thenReturn(Collections.singletonList(assessmentResponse));
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        AssessmentResponse expectedAssessment = new AssessmentResponse();
-        expectedAssessment.setAssessmentId(1);
-        expectedAssessment.setAssessmentName("xact");
-        expectedAssessment.setOrganisationName("abc");
-        expectedAssessment.setAssessmentStatus(AssessmentStatusDto.Active);
-        expectedAssessment.setAssessmentPurpose("Client Purpose");
-        expectedAssessment.setUpdatedAt(updated);
+
         HttpResponse<List<AssessmentResponse>> actualAssessments = assessmentController.getAssessments(authentication);
 
-        assertEquals(expectedAssessment.getAssessmentId(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentId());
-        assertEquals(expectedAssessment.getAssessmentName(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentName());
-        assertEquals(expectedAssessment.getAssessmentStatus(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentStatus());
-        assertEquals(expectedAssessment.getOrganisationName(), Objects.requireNonNull(actualAssessments.body()).get(0).getOrganisationName());
-        assertEquals(expectedAssessment.getUpdatedAt(), Objects.requireNonNull(actualAssessments.body()).get(0).getUpdatedAt());
-        verify(assessmentService).findAssessments(userEmail);
+        assertEquals(assessmentResponse.getAssessmentId(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentId());
+        assertEquals(assessmentResponse.getAssessmentName(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentName());
+        assertEquals(assessmentResponse.getAssessmentStatus(), Objects.requireNonNull(actualAssessments.body()).get(0).getAssessmentStatus());
+        assertEquals(assessmentResponse.getOrganisationName(), Objects.requireNonNull(actualAssessments.body()).get(0).getOrganisationName());
+        assertEquals(assessmentResponse.getUpdatedAt(), Objects.requireNonNull(actualAssessments.body()).get(0).getUpdatedAt());
     }
 
     @Test
@@ -181,8 +177,8 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setRecommendationImpact(LOW);
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
         parameterLevelRecommendation.setDeliveryHorizon(LATER);
-        when(assessmentService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
-        when(assessmentService.getParameterRecommendations(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
+//        when(assessmentService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
+//        when(assessmentService.getParameterRecommendations(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();
         assessmentParameter.setParameterId(1);
@@ -195,7 +191,7 @@ class AssessmentControllerTest {
         userQuestion.setAssessment(assessment);
         userQuestion.setAnswer("answer");
 
-        when(assessmentService.getUserQuestions(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
+//        when(assessmentService.getUserQuestions(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
 
 
        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
@@ -229,8 +225,8 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
         topicLevelRecommendation.setDeliveryHorizon(LATER);
-        when(assessmentService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
-        when(assessmentService.getTopicRecommendations(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
+//        when(assessmentService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
+//        when(assessmentService.getTopicRecommendations(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
         RecommendationRequest recommendationRequest = new RecommendationRequest();
         Integer recommendationTextId1 = recommendationRequest.getRecommendationId() != null ? recommendationRequest.getRecommendationId() : null;
@@ -245,27 +241,25 @@ class AssessmentControllerTest {
         topicRatingAndRecommendationList.add(topicRatingAndRecommendation);
 
 
-        when(assessmentService.getAnswers(assessmentId)).thenReturn(answers);
-        when(assessmentService.getTopicLevelRatings(assessmentId)).thenReturn(topicAssessments);
-        when(assessmentService.getParameterLevelRatings(assessmentId)).thenReturn(parameterAssessments);
-        AssessmentResponse expectedAssessment = new AssessmentResponse();
-        expectedAssessment.setAssessmentId(123);
-        expectedAssessment.setAssessmentName("xact");
-        expectedAssessment.setOrganisationName("abc");
-        expectedAssessment.setAssessmentStatus(AssessmentStatusDto.Active);
-        expectedAssessment.setUpdatedAt(updated);
+        AssessmentResponse assessmentResponse = new AssessmentResponse();
+        assessmentResponse.setAssessmentId(123);
+        assessmentResponse.setAssessmentName("xact");
+        assessmentResponse.setOrganisationName("abc");
+        assessmentResponse.setAssessmentStatus(AssessmentStatusDto.Active);
+        assessmentResponse.setUpdatedAt(updated);
 
-        expectedAssessment.setTopicRatingAndRecommendation(topicRatingAndRecommendationList);
-        expectedAssessment.setParameterRatingAndRecommendation(parameterRatingAndRecommendationList);
+        assessmentResponse.setTopicRatingAndRecommendation(topicRatingAndRecommendationList);
+        assessmentResponse.setParameterRatingAndRecommendation(parameterRatingAndRecommendationList);
+
+
+        when(assessmentService.getAssessmentResponse(assessment)).thenReturn(assessmentResponse);
         HttpResponse<AssessmentResponse> actualAssessment = assessmentController.getAssessment(assessmentId, authentication);
 
-        assertEquals(expectedAssessment.getAssessmentId(), Objects.requireNonNull(actualAssessment.body()).getAssessmentId());
-        assertEquals(expectedAssessment.getAssessmentName(), Objects.requireNonNull(actualAssessment.body()).getAssessmentName());
-        assertEquals(expectedAssessment.getAssessmentStatus(), Objects.requireNonNull(actualAssessment.body()).getAssessmentStatus());
-        assertEquals(expectedAssessment.getOrganisationName(), Objects.requireNonNull(actualAssessment.body()).getOrganisationName());
-        assertEquals(expectedAssessment.getUpdatedAt(), Objects.requireNonNull(actualAssessment.body()).getUpdatedAt());
-        assertEquals("new question ?", Objects.requireNonNull(actualAssessment.body()).getUserQuestionResponseList().get(0).getQuestion());
-        verify(assessmentService).getAssessment(assessmentId, user);
+        assertEquals(assessmentResponse.getAssessmentId(), Objects.requireNonNull(actualAssessment.body()).getAssessmentId());
+        assertEquals(assessmentResponse.getAssessmentName(), Objects.requireNonNull(actualAssessment.body()).getAssessmentName());
+        assertEquals(assessmentResponse.getAssessmentStatus(), Objects.requireNonNull(actualAssessment.body()).getAssessmentStatus());
+        assertEquals(assessmentResponse.getOrganisationName(), Objects.requireNonNull(actualAssessment.body()).getOrganisationName());
+        assertEquals(assessmentResponse.getUpdatedAt(), Objects.requireNonNull(actualAssessment.body()).getUpdatedAt());
     }
 
     @Test
@@ -675,22 +669,18 @@ class AssessmentControllerTest {
         assessmentTopic.setTopicId(topicId);
         assessmentTopic.setTopicName("Topic Name");
 
-        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, assessmentTopic);
         TopicLevelRating topicLevelRating = new TopicLevelRating();
         topicLevelRating.setTopicLevelId(topicLevelId);
         topicLevelRating.setRating(1);
 
-        when(assessmentService.searchTopicRating(topicLevelId)).thenReturn(Optional.of(topicLevelRating));
-
-        when(assessmentService.getTopic(topicId)).thenReturn(Optional.of(assessmentTopic));
 
         HttpResponse actualResponse = assessmentController.saveTopicRating(assessmentId, topicId, "1", authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).saveTopicRating(topicLevelRating);
+        verify(assessmentService).saveTopicRating(1,assessment,"1");
 
     }
 
@@ -727,20 +717,18 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-        when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, assessmentParameter);
         ParameterLevelRating parameterLevelRating = new ParameterLevelRating();
         parameterLevelRating.setParameterLevelId(parameterLevelId);
         parameterLevelRating.setRating(1);
 
-        when(assessmentService.searchParameterRating(parameterLevelId)).thenReturn(Optional.of(parameterLevelRating));
 
         HttpResponse actualResponse = assessmentController.saveParameterRating(assessmentId, parameterId, "2", authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).saveParameterRating(parameterLevelRating);
+        verify(assessmentService).saveParameterRating(1,assessment,"2");
 
     }
 
@@ -951,7 +939,7 @@ class AssessmentControllerTest {
         userQuestion.setAssessment(assessment);
 
 
-        when(assessmentService.saveUserQuestion(assessment, assessmentParameter.getParameterId(), questionText)).thenReturn(userQuestion);
+        when(assessmentService.saveUserQuestion(assessment, assessmentParameter.getParameterId(), questionText)).thenReturn(any(UserQuestionResponse.class));
         when(assessmentService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
 
         HttpResponse<UserQuestionResponse> actualResponse = assessmentController.saveUserQuestion(assessmentId, assessmentParameter.getParameterId(), questionText, authentication);
@@ -1144,10 +1132,10 @@ class AssessmentControllerTest {
     void getAssessmentMasterData() {
         Assessment assessment = new Assessment();
         assessment.setAssessmentId(1);
-        AssessmentCategory category = new AssessmentCategory();
+        AssessmentCategoryDto category = new AssessmentCategoryDto();
         category.setCategoryId(3);
         category.setCategoryName("My category");
-        List<AssessmentCategory> allCategories = Collections.singletonList(category);
+        List<AssessmentCategoryDto> allCategories = Collections.singletonList(category);
         when(assessmentService.getAllCategories()).thenReturn(allCategories);
 
         HttpResponse<UserAssessmentResponse> userAssessmentResponseHttpResponse = assessmentController.getCategories(assessment.getAssessmentId());

@@ -4,7 +4,6 @@
 
 package unit.com.xact.assessment.services;
 
-import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.NotificationSchedulerService;

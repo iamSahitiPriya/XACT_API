@@ -8,17 +8,15 @@ import com.xact.assessment.dtos.ContributorDto;
 import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AssessmentModule;
 import com.xact.assessment.models.ContributorId;
-import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.services.AdminService;
 import com.xact.assessment.services.ModuleContributorService;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
-import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
 
 class AdminServiceTest {
 

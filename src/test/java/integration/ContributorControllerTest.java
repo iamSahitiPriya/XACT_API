@@ -5,7 +5,6 @@
 package integration;
 
 import com.xact.assessment.dtos.ContributorQuestionStatus;
-import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AssessmentModule;
 import com.xact.assessment.models.ContributorId;
 import com.xact.assessment.models.ModuleContributor;

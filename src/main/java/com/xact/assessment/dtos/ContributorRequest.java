@@ -5,8 +5,6 @@
 package com.xact.assessment.dtos;
 
 import com.xact.assessment.exceptions.InvalidContributorException;
-import com.xact.assessment.exceptions.InvalidEmailException;
-import com.xact.assessment.exceptions.UnauthorisedUserException;
 import io.micronaut.core.annotation.Introspected;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

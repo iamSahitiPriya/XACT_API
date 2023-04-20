@@ -53,23 +53,6 @@ class QuestionServiceTest {
 
     }
 
-//    @Test
-//    void shouldSaveAdminQuestion() {
-//        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
-//        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
-//        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
-//        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
-//
-//        Question question = new Question();
-//        question.setQuestionId(1);
-//        question.setQuestionText("Question?");
-//        question.setParameter(parameter);
-//        when(questionRepository.save(question)).thenReturn(question);
-//        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(Optional.empty());
-//        questionService.createQuestion("hello@thoughtworks.com",question);
-//        verify(questionRepository).save(question);
-//    }
-
     @Test
     void shouldSaveAuthorQuestions() {
         AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");

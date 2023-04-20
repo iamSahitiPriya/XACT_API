@@ -43,8 +43,6 @@ class AssessmentControllerTest {
 
     @Test
     void testGetAssessments() {
-
-        Date created = new Date(2022 - 4 - 13);
         Date updated = new Date(2022 - 4 - 13);
         User user = new User();
         String userEmail = "hello@thoughtworks.com";
@@ -177,8 +175,6 @@ class AssessmentControllerTest {
         parameterLevelRecommendation.setRecommendationImpact(LOW);
         parameterLevelRecommendation.setRecommendationEffort(HIGH);
         parameterLevelRecommendation.setDeliveryHorizon(LATER);
-//        when(assessmentService.getParameter(parameter.getParameterId())).thenReturn(Optional.of(parameter));
-//        when(assessmentService.getParameterRecommendations(assessmentId)).thenReturn(Collections.singletonList(parameterLevelRecommendation));
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();
         assessmentParameter.setParameterId(1);
@@ -190,9 +186,6 @@ class AssessmentControllerTest {
         userQuestion.setParameter(assessmentParameter);
         userQuestion.setAssessment(assessment);
         userQuestion.setAnswer("answer");
-
-//        when(assessmentService.getUserQuestions(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
-
 
        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         Integer recommendationTextId = parameterLevelRecommendationRequest.getRecommendationId() != null ? parameterLevelRecommendationRequest.getRecommendationId() : null;
@@ -225,8 +218,6 @@ class AssessmentControllerTest {
         topicLevelRecommendation.setRecommendationImpact(LOW);
         topicLevelRecommendation.setRecommendationEffort(HIGH);
         topicLevelRecommendation.setDeliveryHorizon(LATER);
-//        when(assessmentService.getTopic(topic.getTopicId())).thenReturn(Optional.of(topic));
-//        when(assessmentService.getTopicRecommendations(assessmentId)).thenReturn(Collections.singletonList(topicLevelRecommendation));
 
         RecommendationRequest recommendationRequest = new RecommendationRequest();
         Integer recommendationTextId1 = recommendationRequest.getRecommendationId() != null ? recommendationRequest.getRecommendationId() : null;
@@ -1032,9 +1023,6 @@ class AssessmentControllerTest {
         Answer answer = new Answer();
         answer.setAnswerId(answerId);
         answer.setAnswerNote("Answer");
-
-//        when(assessmentService.getAnswer(answerId)).thenReturn(Optional.of(answer));
-//        when(answerService.saveAnswer(answer)).thenReturn(answer);
 
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest();
         updateAnswerRequest.setQuestionId(1);

@@ -629,9 +629,7 @@ class AssessmentMasterDataServiceTest {
         assessmentModule1.setTopics(validTopics);
         assessmentTopic.setParameters(validParameters);
 
-
         when(userAssessmentModuleService.findModuleByAssessment(assessmentId)).thenReturn(assessmentModules1);
-
 
         assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
 
@@ -933,7 +931,6 @@ class AssessmentMasterDataServiceTest {
         userAssessmentModule.setAssessment(assessment);
 
         when(userAssessmentModuleService.existsById(assessmentModuleId)).thenReturn(true);
-
 
         Assertions.assertTrue(assessmentMasterDataService.isModuleSelectedByUser(assessment, assessmentModule));
 

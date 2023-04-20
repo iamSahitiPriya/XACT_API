@@ -8,7 +8,10 @@ import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.services.*;
+import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
+import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -157,33 +160,30 @@ class AssessmentServiceTest {
         assertEquals(Active, actualAssessment.getAssessmentStatus());
     }
 
-//    @Test
-//    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
-//        List<AssessmentUser> assessmentUsersList = new ArrayList<>();
-//
-//        Integer assessmentId = 1;
-//
-//        Assessment assessment = new Assessment();
-//        assessment.setAssessmentId(assessmentId);
-//        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-//
-//        UserId userId1 = new UserId("hello@gmail.com", assessment);
-//        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
-//        assessmentUsersList.add(assessmentUsers1);
-//
-//        UserId userId2 = new UserId("new@gmail.com", assessment);
-//        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
-//        assessmentUsersList.add(assessmentUsers2);
-//
-//        List<String> expectedAssessmentUsersList = new ArrayList<>();
-//        for (AssessmentUser eachUser : assessmentUsersList) {
-//            expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
-//        }
-//        when(usersAssessmentsService.getAssessmentFacilitators(assessmentId)).thenReturn(expectedAssessmentUsersList);
-//        List<String> actualResponse = assessmentService.getAssessmentFacilitators(assessmentId);
-//        assertEquals(expectedAssessmentUsersList, actualResponse);
-//
-//    }
+    @Test
+    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
+
+        Integer assessmentId = 1;
+
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+
+        UserId userId1 = new UserId("hello@gmail.com", assessment);
+        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
+        assessmentUsers.add(assessmentUsers1);
+
+        UserId userId2 = new UserId("new@gmail.com", assessment);
+        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
+        assessmentUsers.add(assessmentUsers2);
+
+
+        when(usersAssessmentsService.getAssessmentFacilitators(assessment)).thenReturn(assessmentUsers);
+        Set<AssessmentUser> actualResponse = assessmentService.getAssessmentFacilitators(assessment);
+        assertEquals(assessmentUsers, actualResponse);
+
+    }
 
     @Test
     void shouldUpdateAssessment() {
@@ -483,7 +483,6 @@ class AssessmentServiceTest {
         assessmentService.updateAssessmentModules(moduleRequests, assessment);
 
         verify(usersAssessmentsService).updateAssessmentModules(moduleRequests, assessment);
-
     }
 
 
@@ -534,9 +533,7 @@ class AssessmentServiceTest {
         parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
         parameterLevelRecommendationRequest.setDeliveryHorizon(RecommendationDeliveryHorizon.LATER);
-
         Assessment assessment = new Assessment();
-
 
         ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest, ParameterLevelRecommendation.class);
 

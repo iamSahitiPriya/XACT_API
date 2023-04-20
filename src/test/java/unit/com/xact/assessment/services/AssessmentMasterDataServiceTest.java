@@ -128,7 +128,7 @@ class AssessmentMasterDataServiceTest {
         moduleContributor2.setContributorId(contributorId2);
         moduleContributor2.setContributorRole(ContributorRole.REVIEWER);
 
-        when(moduleContributorService.getContributorRolesByEmail("hello@thoughtworks.com")).thenReturn(Set.of(moduleContributor1, moduleContributor2));
+        when(moduleContributorService.getContributorsByEmail("hello@thoughtworks.com")).thenReturn(Set.of(moduleContributor1, moduleContributor2));
         when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
 
         List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user,AUTHOR.toString());
@@ -174,7 +174,7 @@ class AssessmentMasterDataServiceTest {
         category.setModules(Collections.singleton(assessmentModule));
 
         ModuleContributor moduleContributor = new ModuleContributor();
-        when(moduleContributorService.getContributorRolesByEmail("hello@thoughtworks.com")).thenReturn(Collections.singleton(moduleContributor));
+        when(moduleContributorService.getContributorsByEmail("hello@thoughtworks.com")).thenReturn(Collections.singleton(moduleContributor));
         when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
         when(categoryService.getCategoriesSortedByUpdatedDate()).thenReturn(Collections.singletonList(category));
 
@@ -282,22 +282,6 @@ class AssessmentMasterDataServiceTest {
         verify(parameterService).createParameter(assessmentParameter);
     }
 
-    @Test
-    void shouldCreateQuestion() {
-        QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionText("hello");
-        questionRequest.setParameter(1);
-
-        AssessmentParameter assessmentParameter = new AssessmentParameter();
-        Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
-        List<Question> questions = new ArrayList<>();
-        Integer parameterId = 1;
-        when(questionService.getAllQuestions()).thenReturn(questions);
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
-
-        assessmentMasterDataService.createAssessmentQuestion("hello@thoughtworks.com",questionRequest);
-        verify(questionService).createQuestion("hello@thoughtworks.com",question);
-    }
 
     @Test
     void shouldCreateTopicReferences() {

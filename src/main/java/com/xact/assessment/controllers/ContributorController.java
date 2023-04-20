@@ -9,8 +9,7 @@ import com.xact.assessment.annotations.ContributorAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.Question;
 import com.xact.assessment.models.User;
-import com.xact.assessment.services.AssessmentMasterDataService;
-import com.xact.assessment.services.QuestionService;
+import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -31,17 +30,14 @@ public class ContributorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContributorController.class);
     private static final ModelMapper mapper = new ModelMapper();
-
-    private final QuestionService questionService;
     private final UserAuthService userAuthService;
-    private final AssessmentMasterDataService assessmentMasterDataService;
+    private final ModuleContributorService contributorService;
 
-
-    public ContributorController(QuestionService questionService, UserAuthService userAuthService, AssessmentMasterDataService assessmentMasterDataService) {
-        this.questionService = questionService;
+    public ContributorController(UserAuthService userAuthService, ModuleContributorService contributorService) {
         this.userAuthService = userAuthService;
-        this.assessmentMasterDataService = assessmentMasterDataService;
+        this.contributorService = contributorService;
     }
+
 
     @Get(value = "/questions{?role}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
@@ -49,7 +45,7 @@ public class ContributorController {
     public HttpResponse<ContributorResponse> getContributorQuestions(@QueryValue ContributorRole role, Authentication authentication) {
         LOGGER.info("Get all questions");
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        ContributorResponse contributorResponse = questionService.getContributorResponse(role, loggedInUser.getUserEmail());
+        ContributorResponse contributorResponse = contributorService.getContributorResponse(role, loggedInUser.getUserEmail());
 
         return HttpResponse.ok(contributorResponse);
     }
@@ -59,7 +55,7 @@ public class ContributorController {
     public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         LOGGER.info("{}: Create questions - {}", loggedInUser.getUserEmail(), questionRequest.getQuestionText());
-        Question question = assessmentMasterDataService.createAssessmentQuestion(loggedInUser.getUserEmail(),questionRequest);
+        Question question = contributorService.createAssessmentQuestion(loggedInUser.getUserEmail(),questionRequest);
         return getQuestionResponse(question);
     }
 
@@ -78,7 +74,7 @@ public class ContributorController {
     public HttpResponse<QuestionStatusUpdateResponse> updateContributorQuestionsStatus(@PathVariable Integer moduleId, @QueryValue ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Authentication authentication) {
         LOGGER.info("Update question status");
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        QuestionStatusUpdateResponse questionStatusUpdateResponse = questionService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, loggedInUser.getUserEmail());
+        QuestionStatusUpdateResponse questionStatusUpdateResponse = contributorService.updateContributorQuestionsStatus(moduleId, status, questionStatusUpdateRequest, loggedInUser.getUserEmail());
 
         return HttpResponse.ok(questionStatusUpdateResponse);
 
@@ -89,7 +85,7 @@ public class ContributorController {
     public HttpResponse<Question> deleteQuestion(@PathVariable Integer questionId, Authentication authentication) {
         LOGGER.info("Delete question: {}", questionId);
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        questionService.deleteQuestion(questionId, loggedInUser.getUserEmail());
+        contributorService.deleteQuestion(questionId, loggedInUser.getUserEmail());
 
         return HttpResponse.ok();
 
@@ -100,7 +96,7 @@ public class ContributorController {
     public HttpResponse<QuestionDto> updateQuestion(@PathVariable Integer questionId, @Body String questionText, Authentication authentication) {
         LOGGER.info("Update question: {}", questionId);
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        Question question = questionService.updateContributorQuestion(questionId, questionText, loggedInUser.getUserEmail());
+        Question question = contributorService.updateContributorQuestion(questionId, questionText, loggedInUser.getUserEmail());
         QuestionDto questionResponse = new QuestionDto();
         questionResponse.setParameter(question.getParameter().getParameterId());
         questionResponse.setQuestionText(question.getQuestionText());
@@ -108,7 +104,6 @@ public class ContributorController {
         questionResponse.setStatus(question.getQuestionStatus());
 
         return HttpResponse.ok(questionResponse);
-
     }
 
 

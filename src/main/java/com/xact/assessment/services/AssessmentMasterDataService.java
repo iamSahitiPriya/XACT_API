@@ -156,13 +156,6 @@ public class AssessmentMasterDataService {
         return isUnique(parameters, parameterName);
     }
 
-    public Question createAssessmentQuestion(String userEmail, QuestionRequest questionRequest) {
-        AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
-        Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
-        questionService.createQuestion(userEmail, question);
-        return question;
-    }
-
     public AssessmentTopicReference createAssessmentTopicReference(TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         if (isTopicRatingUnique(assessmentTopic.getReferences(), topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopic.getReferences(), topicReferencesRequest.getReference())) {
@@ -366,7 +359,7 @@ public class AssessmentMasterDataService {
 
     public List<CategoryDto> getMasterDataByRole(User loggedInUser,String role) {
         Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
-        Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorRolesByEmail(loggedInUser.getUserEmail());
+        Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorsByEmail(loggedInUser.getUserEmail());
 
         if (accessControlRoles.isPresent() && accessControlRoles.get().toString().equalsIgnoreCase(role))
             return getAdminMasterData(accessControlRoles);

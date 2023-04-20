@@ -7,7 +7,6 @@ package unit.com.xact.assessment.services;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.QuestionRepository;
-import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.QuestionService;
 import com.xact.assessment.services.UserQuestionService;
 import org.junit.jupiter.api.Assertions;
@@ -19,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.xact.assessment.dtos.ContributorQuestionStatus.DRAFT;
 import static com.xact.assessment.dtos.ContributorQuestionStatus.PUBLISHED;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -27,15 +27,13 @@ class QuestionServiceTest {
     private QuestionRepository questionRepository;
     private QuestionService questionService;
     private UserQuestionService userQuestionService;
-    private ModuleContributorService moduleContributorService;
 
     @BeforeEach
     public void beforeEach() {
         questionRepository = mock(QuestionRepository.class);
         userQuestionService = mock(UserQuestionService.class);
-        moduleContributorService = mock(ModuleContributorService.class);
 
-        questionService = new QuestionService(questionRepository, userQuestionService, moduleContributorService);
+        questionService = new QuestionService(questionRepository, userQuestionService);
 
     }
 
@@ -53,22 +51,22 @@ class QuestionServiceTest {
 
     }
 
-//    @Test
-//    void shouldSaveAdminQuestion() {
-//        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
-//        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
-//        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
-//        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
-//
-//        Question question = new Question();
-//        question.setQuestionId(1);
-//        question.setQuestionText("Question?");
-//        question.setParameter(parameter);
-//        when(questionRepository.save(question)).thenReturn(question);
-//        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(Optional.empty());
-//        questionService.createQuestion("hello@thoughtworks.com",question);
-//        verify(questionRepository).save(question);
-//    }
+    @Test
+    void shouldSaveQuestionWhenContributorRoleIsAuthor() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("Question?");
+        question.setParameter(parameter);
+        question.setQuestionStatus(DRAFT);
+        when(questionRepository.save(question)).thenReturn(question);
+        questionService.createQuestion(Optional.of(ContributorRole.AUTHOR), question);
+        verify(questionRepository).save(question);
+    }
 
     @Test
     void shouldSaveAuthorQuestions() {
@@ -82,8 +80,7 @@ class QuestionServiceTest {
         question.setQuestionText("Question?");
         question.setParameter(parameter);
         when(questionRepository.save(question)).thenReturn(question);
-        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(Optional.of(ContributorRole.AUTHOR));
-        questionService.createQuestion("hello@thoughtworks.com",question);
+        questionService.createQuestion(Optional.of(ContributorRole.AUTHOR), question);
         verify(questionRepository).save(question);
     }
 
@@ -129,10 +126,9 @@ class QuestionServiceTest {
 
         assessmentParameter.setQuestions(Collections.singleton(question));
 
-        when(moduleContributorService.getModulesByRole("email@thoughtworks.com", ContributorRole.AUTHOR)).thenReturn(Collections.singletonList(assessmentModule));
         when(questionRepository.getAuthorQuestions(assessmentModule.getModuleId())).thenReturn(Collections.singletonList(question));
 
-        ContributorResponse actualContributorResponse = questionService.getContributorResponse(ContributorRole.AUTHOR,"email@thoughtworks.com");
+        ContributorResponse actualContributorResponse = questionService.getContributorResponse(ContributorRole.AUTHOR, Collections.singletonList(assessmentModule));
 
         ContributorResponse expectedResponse = getExpectedResponse();
 
@@ -195,10 +191,9 @@ class QuestionServiceTest {
 
         assessmentParameter.setQuestions(Collections.singleton(question));
 
-        when(moduleContributorService.getModulesByRole("email@thoughtworks.com", ContributorRole.REVIEWER)).thenReturn(Collections.singletonList(assessmentModule));
         when(questionRepository.getReviewerQuestions(assessmentModule.getModuleId())).thenReturn(Collections.singletonList(question));
 
-        ContributorResponse actualContributorResponse = questionService.getContributorResponse(ContributorRole.REVIEWER,"email@thoughtworks.com");
+        ContributorResponse actualContributorResponse = questionService.getContributorResponse(ContributorRole.REVIEWER, Collections.singletonList(assessmentModule));
 
         ContributorResponse expectedResponse = getExpectedResponse();
         expectedResponse.getContributorModuleData().get(0).getTopics().get(0).getParameters().get(0).getQuestions().get(0).setStatus(PUBLISHED);
@@ -209,7 +204,7 @@ class QuestionServiceTest {
 
     @Test
     void shouldSaveUserQuestions() {
-        UserQuestion userQuestion=new UserQuestion();
+        UserQuestion userQuestion = new UserQuestion();
         userQuestion.setContributionStatus(false);
 
         questionService.save(Collections.singletonList(userQuestion));
@@ -218,14 +213,14 @@ class QuestionServiceTest {
 
     @Test
     void shouldGetAllQuestions() {
-        Question question=new Question();
+        Question question = new Question();
         question.setQuestionId(1);
         question.setQuestionText("question");
-        List<Question> questionList=new ArrayList<>();
+        List<Question> questionList = new ArrayList<>();
         questionList.add(question);
         when(questionRepository.findAll()).thenReturn(questionList);
-        List<Question> questionListResponse=questionService.getAllQuestions();
-        assertEquals(questionListResponse,questionList);
+        List<Question> questionListResponse = questionService.getAllQuestions();
+        assertEquals(questionListResponse, questionList);
     }
 
     @Test
@@ -244,14 +239,14 @@ class QuestionServiceTest {
         question.setQuestionText("question");
         question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
         question.setParameter(assessmentParameter);
-        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(Optional.of(ContributorRole.AUTHOR));
         when(questionRepository.findById(1)).thenReturn(Optional.of(question));
 
-        questionService.deleteQuestion(1,"hello@thoughtworks.com");
+        questionService.deleteQuestion(question, Optional.of(ContributorRole.AUTHOR));
         verify(questionRepository).delete(question);
 
 
     }
+
     @Test
     void shouldUpdateContributorQuestion() {
         AssessmentModule assessmentModule = new AssessmentModule();
@@ -263,40 +258,38 @@ class QuestionServiceTest {
         assessmentParameter.setParameterId(1);
         assessmentParameter.setTopic(assessmentTopic);
 
-        Question question=new Question();
+        Question question = new Question();
         question.setQuestionId(1);
         question.setQuestionText("question");
         question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
         question.setParameter(assessmentParameter);
         when(questionRepository.findById(1)).thenReturn(Optional.of(question));
-        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(Optional.of(ContributorRole.AUTHOR));
-        questionService.updateContributorQuestion(1,"editedQuestion?","hello@thoughtworks.com");
+        questionService.updateContributorQuestion(question, "editedQuestion?", Optional.of(ContributorRole.AUTHOR));
 
         String expectedQuestionText = "editedQuestion?";
         String actualQuestionText = question.getQuestionText();
 
-        assertEquals(expectedQuestionText,actualQuestionText);
+        assertEquals(expectedQuestionText, actualQuestionText);
 
     }
 
     @Test
     void shouldUpdateContributorQuestionStatus() {
-        AssessmentModule assessmentModule=new AssessmentModule();
+        AssessmentModule assessmentModule = new AssessmentModule();
         assessmentModule.setModuleId(1);
-        String userEmail="smss@thoughtworks.com";
-        Question question=new Question();
+        String userEmail = "smss@thoughtworks.com";
+        Question question = new Question();
         question.setQuestionId(1);
         question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
-        QuestionStatusUpdateRequest questionStatusUpdateRequest=new QuestionStatusUpdateRequest();
+        QuestionStatusUpdateRequest questionStatusUpdateRequest = new QuestionStatusUpdateRequest();
         questionStatusUpdateRequest.setQuestionId(Collections.singletonList(question.getQuestionId()));
         questionStatusUpdateRequest.setComments("comments");
 
-        when(moduleContributorService.getRole(assessmentModule.getModuleId(),userEmail)).thenReturn(Optional.of(ContributorRole.AUTHOR));
         when(questionRepository.findById(question.getQuestionId())).thenReturn(Optional.of(question));
 
-        QuestionStatusUpdateResponse actualResponse = questionService.updateContributorQuestionsStatus(assessmentModule.getModuleId(),ContributorQuestionStatus.SENT_FOR_REVIEW,questionStatusUpdateRequest,userEmail);
+        QuestionStatusUpdateResponse actualResponse = questionService.updateContributorQuestionsStatus(ContributorQuestionStatus.SENT_FOR_REVIEW, questionStatusUpdateRequest, Optional.of(ContributorRole.AUTHOR));
 
-        Assertions.assertEquals(ContributorQuestionStatus.SENT_FOR_REVIEW,actualResponse.getStatus());
+        Assertions.assertEquals(ContributorQuestionStatus.SENT_FOR_REVIEW, actualResponse.getStatus());
 
     }
 
@@ -311,17 +304,35 @@ class QuestionServiceTest {
         assessmentParameter.setParameterId(1);
         assessmentParameter.setTopic(assessmentTopic);
 
-        Question question=new Question();
+        Question question = new Question();
         question.setQuestionId(1);
         question.setQuestionText("question");
         question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
         question.setParameter(assessmentParameter);
         when(questionRepository.findById(1)).thenReturn(Optional.of(question));
-        when(moduleContributorService.getRole(1,"hello@thoughtworks.com")).thenReturn(Optional.of(ContributorRole.REVIEWER));
-        questionService.updateContributorQuestion(1,"editedQuestion?","hello@thoughtworks.com");
+        questionService.updateContributorQuestion(question, "editedQuestion?", Optional.of(ContributorRole.REVIEWER));
 
 
-        assertEquals(PUBLISHED,question.getQuestionStatus());
+        assertEquals(PUBLISHED, question.getQuestionStatus());
 
     }
+
+    @Test
+    void shouldSaveQuestion() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("Question?");
+        question.setParameter(parameter);
+        question.setQuestionStatus(DRAFT);
+        when(questionRepository.save(question)).thenReturn(question);
+        questionService.createQuestion(Optional.of(ContributorRole.REVIEWER), question);
+
+        verify(questionRepository, never()).save(question);
+    }
+
 }

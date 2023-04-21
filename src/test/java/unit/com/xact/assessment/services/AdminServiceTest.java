@@ -9,6 +9,8 @@ import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AssessmentModule;
 import com.xact.assessment.models.ContributorId;
 import com.xact.assessment.services.AdminService;
+import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.ModuleContributorService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -22,7 +24,11 @@ class AdminServiceTest {
 
     ModuleContributorService moduleContributorService = Mockito.mock(ModuleContributorService.class);
 
-    private final AdminService adminService = new AdminService(moduleContributorService);
+    AssessmentMasterDataService assessmentMasterDataService=Mockito.mock(AssessmentMasterDataService.class);
+
+    AssessmentService assessmentService=Mockito.mock(AssessmentService.class);
+
+    private final AdminService adminService = new AdminService(moduleContributorService, assessmentMasterDataService, assessmentService);
 
     @Test
     void shouldSaveModuleContributor() {

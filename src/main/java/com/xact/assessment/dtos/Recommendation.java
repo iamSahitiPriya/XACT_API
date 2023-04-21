@@ -31,7 +31,7 @@ public class Recommendation {
         return recommendation1.getDeliveryHorizon().compareTo(recommendation2.getDeliveryHorizon());
     }
 
-    public static int sortRecommendationByUpdatedTime(Recommendation recommendation1, Recommendation recommendation2) {
+    public static int compareByUpdatedTime(Recommendation recommendation1, Recommendation recommendation2) {
         return recommendation2.getUpdatedAt().compareTo(recommendation1.getUpdatedAt());
     }
 }

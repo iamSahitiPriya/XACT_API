@@ -611,6 +611,6 @@ public class ReportService {
 
     private void sortRecommendations(List<Recommendation> sortedRecommendations, Map<RecommendationImpact, List<Recommendation>> deliveryHorizonMap, RecommendationImpact recommendationImpact) {
         if (deliveryHorizonMap.containsKey(recommendationImpact))
-            sortedRecommendations.addAll(deliveryHorizonMap.get(recommendationImpact).stream().sorted(Recommendation::sortRecommendationByUpdatedTime).toList());
+            sortedRecommendations.addAll(deliveryHorizonMap.get(recommendationImpact).stream().sorted(Recommendation::compareByUpdatedTime).toList());
     }
 }

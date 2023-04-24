@@ -33,5 +33,5 @@ public interface ModuleContributorRepository extends CrudRepository<ModuleContri
 
     @Executable
     @Query("delete  FROM ModuleContributor moduleContributor where moduleContributor.contributorId.module.moduleId=:moduleId")
-    void deleteByModule(Integer moduleId);
+    void deleteByModuleId(Integer moduleId);
 }

@@ -48,7 +48,7 @@ public class ModuleContributorService {
             ModuleContributor moduleContributor = getModuleContributor(moduleId, contributor);
             moduleContributors.add(moduleContributor);
         }
-        moduleContributorRepository.deleteByModule(moduleId);
+        moduleContributorRepository.deleteByModuleId(moduleId);
         moduleContributorRepository.saveAll(moduleContributors);
     }
 

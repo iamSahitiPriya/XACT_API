@@ -20,8 +20,8 @@ public class ContributorDto {
     private ContributorRole role;
 
     public boolean isValid(String pattern) {
-        Pattern pat = Pattern.compile(pattern);
-        return pat.matcher(userEmail).matches();
+        Pattern emailPattern = Pattern.compile(pattern);
+        return emailPattern.matcher(userEmail).matches();
 
     }
 }

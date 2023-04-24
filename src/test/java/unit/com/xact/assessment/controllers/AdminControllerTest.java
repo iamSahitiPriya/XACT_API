@@ -9,7 +9,6 @@ import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
@@ -25,14 +24,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class AdminControllerTest {
+
     AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
-
     AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
-
-    UserAuthService userAuthService=Mockito.mock(UserAuthService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
-    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService, userAuthService);
+    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService);
 
     @Test
     void createAssessmentCategory() {
@@ -91,32 +88,6 @@ class AdminControllerTest {
         when(assessmentMasterDataService.createAssessmentParameter(parameterRequest)).thenReturn(assessmentParameter);
 
         HttpResponse<ParameterResponse> actualResponse = adminController.createParameter(parameterRequest, authentication);
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-    }
-
-    @Test
-    void createAssessmentQuestions() {
-        QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionText("Test");
-        questionRequest.setParameter(1);
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail(userEmail);
-        user.setUserInfo(userInfo);
-
-        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
-        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
-        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
-        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
-        Question question = new Question("Text", parameter);
-
-        question.setQuestionStatus(ContributorQuestionStatus.PUBLISHED);
-
-        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        when(assessmentMasterDataService.createAssessmentQuestion(userEmail,questionRequest)).thenReturn(question);
-
-        HttpResponse<QuestionResponse> actualResponse = adminController.createQuestion(questionRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
@@ -214,24 +185,6 @@ class AdminControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
-    @Test
-    void shouldUpdateQuestion() {
-        QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionText("question");
-        Integer questionId = 1;
-
-        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
-        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
-        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
-        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
-        Question question = new Question("Text", parameter);
-
-        when(assessmentMasterDataService.updateQuestion(questionId,questionRequest)).thenReturn(question);
-
-        HttpResponse<QuestionResponse> actualResponse = adminController.updateQuestion(questionId, questionRequest, authentication);
-
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-    }
 
     @Test
     void shouldUpdateTopicReferences() {

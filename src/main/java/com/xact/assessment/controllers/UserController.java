@@ -4,10 +4,10 @@
 
 package com.xact.assessment.controllers;
 
-import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AccessControlRoles;
+import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
-import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.AccessControlService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
@@ -19,8 +19,7 @@ import io.micronaut.security.rules.SecurityRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,23 +27,23 @@ import java.util.Set;
 public class UserController {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-    private final AssessmentService assessmentService;
+    private final AccessControlService accessControlService;
     private final UserAuthService userAuthService;
 
-    public UserController(AssessmentService assessmentService, UserAuthService userAuthService) {
-        this.assessmentService = assessmentService;
+    public UserController(AccessControlService accessControlService, UserAuthService userAuthService) {
+        this.accessControlService = accessControlService;
         this.userAuthService = userAuthService;
     }
 
     @Get(value = "/roles")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AccessControlRoles>> getRole(Authentication authentication) {
-        List<AccessControlRoles> roles = new ArrayList<>();
+    public HttpResponse<Set<AccessControlRoles>> getRole(Authentication authentication) {
+        Set<AccessControlRoles> roles = new HashSet<>();
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        Optional<AccessControlRoles> accessControlRoles = assessmentService.getUserRole(loggedInUser.getUserEmail());
+        Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
         accessControlRoles.ifPresent(roles::add);
-        Set<ContributorRole> contributorRoles = userAuthService.getContributorRoles(loggedInUser.getUserEmail());
-        contributorRoles.stream().forEach(contributorRole -> roles.add(AccessControlRoles.valueOf(contributorRole.toString())));
+        Set<ModuleContributor> contributorRoles = userAuthService.getContributorRoles(loggedInUser.getUserEmail());
+        contributorRoles.stream().forEach(contributorRole -> roles.add(AccessControlRoles.valueOf(contributorRole.getContributorRole().toString())));
         return HttpResponse.ok(roles);
     }
 

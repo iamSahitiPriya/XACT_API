@@ -256,7 +256,7 @@ class AdminControllerTest {
 
     @Test
     void getAllCategories() {
-        var actualResult = client.toBlocking().exchange(HttpRequest.GET("/v1/categories")
+        var actualResult = client.toBlocking().exchange(HttpRequest.GET("/v1/categories?role=Admin")
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), actualResult.getStatus());
@@ -365,36 +365,6 @@ class AdminControllerTest {
         assertEquals(expectedResult, assessmentParameter1.getIsActive());
 
         assessmentParameterRepository.update(assessmentParameter);
-        entityManager.getTransaction().commit();
-    }
-
-    @Test
-    void shouldUpdateQuestion() {
-        Optional<Question> question = questionRepository.findById(1);
-        Question question1 = question.get();
-
-        String questionText = question1.getQuestionText();
-
-        entityManager.getTransaction().commit();
-        entityManager.clear();
-        entityManager.close();
-
-        String dataRequest = "{" + "\"questionId\"" + ":" + question1.getQuestionId() + "," + "\"questionText\"" + ":" + "\"Updated Question\"" + "," + "\"parameter\"" + ":" + question1.getParameter().getParameterId() + "}";
-
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/admin/questions/" + question1.getQuestionId(), dataRequest)
-                .bearerAuth("anything"));
-
-        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
-
-        entityManager.getTransaction().begin();
-        Optional<Question> question2 = questionRepository.findById(1);
-        Question question3 = question2.get();
-
-        assertEquals("Updated Question", question3.getQuestionText());
-
-        question3.setQuestionText(questionText);
-
-        questionRepository.update(question3);
         entityManager.getTransaction().commit();
     }
 

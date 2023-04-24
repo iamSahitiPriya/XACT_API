@@ -5,8 +5,8 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.client.UserInfoClient;
-import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.dtos.UserInfoDto;
+import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
 import com.xact.assessment.repositories.UserRepository;
@@ -68,7 +68,8 @@ public class UserAuthService {
         return userRepository.findByUsers(users);
     }
 
-    public Set<ContributorRole> getContributorRoles(String userEmail) {
-        return moduleContributorService.getContributorRolesByEmail(userEmail);
+    public Set<ModuleContributor> getContributorRoles(String userEmail) {
+        return moduleContributorService.getContributorsByEmail(userEmail);
     }
+
 }

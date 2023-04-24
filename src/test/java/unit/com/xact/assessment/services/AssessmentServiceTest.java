@@ -8,7 +8,10 @@ import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.services.*;
+import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
+import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -29,7 +32,6 @@ class AssessmentServiceTest {
     private AssessmentMasterDataService assessmentMasterDataService;
     private AssessmentService assessmentService;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
-    private AccessControlService accessControlService;
     private FeedbackNotificationConfig feedbackNotificationConfig;
 
     private static final ModelMapper modelMapper = new ModelMapper();
@@ -41,9 +43,8 @@ class AssessmentServiceTest {
         assessmentRepository = mock(AssessmentRepository.class);
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
-        accessControlService = mock(AccessControlService.class);
         feedbackNotificationConfig = mock(FeedbackNotificationConfig.class);
-        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, feedbackNotificationConfig);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, feedbackNotificationConfig);
     }
 
     @Test

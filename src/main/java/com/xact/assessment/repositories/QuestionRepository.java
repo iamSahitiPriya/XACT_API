@@ -17,10 +17,10 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
 
     @Executable
-    @Query("SELECT question from Question question WHERE question.parameter.topic.module.moduleId=:moduleId and not question.questionStatus = 'PUBLISHED'")
+    @Query("SELECT question from Question question WHERE question.parameter.topic.module.moduleId=:moduleId and not question.questionStatus = 'PUBLISHED' and not question.questionStatus = 'REJECTED'")
     List<Question> getAuthorQuestions(Integer moduleId);
 
     @Executable
-    @Query("SELECT question from Question question WHERE question.parameter.topic.module.moduleId=:moduleId and (NOT question.questionStatus = 'PUBLISHED') and (NOT question.questionStatus = 'DRAFT')")
+    @Query("SELECT question from Question question WHERE question.parameter.topic.module.moduleId=:moduleId and  question.questionStatus = 'SENT_FOR_REVIEW'")
     List<Question> getReviewerQuestions(Integer moduleId);
 }

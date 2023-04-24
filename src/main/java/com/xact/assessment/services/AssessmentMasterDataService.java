@@ -7,6 +7,7 @@ package com.xact.assessment.services;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.exceptions.DuplicateRecordException;
 import com.xact.assessment.exceptions.InvalidHierarchyException;
+import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;
@@ -25,17 +26,22 @@ public class AssessmentMasterDataService {
     private final QuestionService questionService;
     private final UserAssessmentModuleService userAssessmentModuleService;
     private final ModuleService moduleService;
+    private final MasterDataMapper masterDataMapper = new MasterDataMapper();
     private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
     private static final String HIERARCHY_NOT_ALLOWED = "Update not allowed because topic and parameter both have associated references.";
+    private final AccessControlService accessControlService;
+    private final ModuleContributorService moduleContributorService;
 
 
-    public AssessmentMasterDataService(CategoryService categoryService, ModuleService moduleService, QuestionService questionService, ParameterService parameterService, TopicService topicService, UserAssessmentModuleService userAssessmentModuleService) {
+    public AssessmentMasterDataService(CategoryService categoryService, ModuleService moduleService, QuestionService questionService, ParameterService parameterService, TopicService topicService, UserAssessmentModuleService userAssessmentModuleService, AccessControlService accessControlService, ModuleContributorService moduleContributorService) {
         this.categoryService = categoryService;
         this.moduleService = moduleService;
         this.questionService = questionService;
         this.parameterService = parameterService;
         this.topicService = topicService;
         this.userAssessmentModuleService = userAssessmentModuleService;
+        this.accessControlService = accessControlService;
+        this.moduleContributorService = moduleContributorService;
     }
 
     public List<AssessmentCategory> getAllCategories() {
@@ -57,10 +63,10 @@ public class AssessmentMasterDataService {
                     assessmentModule.setTopics(assessmentModule.getActiveTopics());
                     for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
                         assessmentTopic.setParameters(assessmentTopic.getActiveParameters());
-                        for(AssessmentParameter assessmentParameter : assessmentTopic.getParameters()){
+                        for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
                             Set<Question> questionList = new HashSet<>();
-                            for(Question question : assessmentParameter.getQuestions()){
-                                if(question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED){
+                            for (Question question : assessmentParameter.getQuestions()) {
+                                if (question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED) {
                                     questionList.add(question);
                                 }
                             }
@@ -148,13 +154,6 @@ public class AssessmentMasterDataService {
     private boolean isParameterUnique(String parameterName, AssessmentTopic assessmentTopic) {
         List<String> parameters = assessmentTopic.getParameters().stream().map(AssessmentParameter::getParameterName).toList();
         return isUnique(parameters, parameterName);
-    }
-
-    public Question createAssessmentQuestion(String userEmail,QuestionRequest questionRequest) {
-        AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
-        Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
-        questionService.createQuestion(userEmail,question);
-        return question;
     }
 
     public AssessmentTopicReference createAssessmentTopicReference(TopicReferencesRequest topicReferencesRequest) {
@@ -358,5 +357,122 @@ public class AssessmentMasterDataService {
     }
 
 
+    public List<CategoryDto> getMasterDataByRole(User loggedInUser,String role) {
+        Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
+        Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorsByEmail(loggedInUser.getUserEmail());
+
+        if (accessControlRoles.isPresent() && accessControlRoles.get().toString().equalsIgnoreCase(role))
+            return getAdminMasterData(accessControlRoles);
+        else
+            return getContributorMasterData(contributorRoles);
+
+    }
+
+    private List<CategoryDto> getContributorMasterData(Set<ModuleContributor> contributorRoles) {
+        List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
+        Map<AssessmentCategory, List<ModuleContributor>> contributorCategories = groupContributorCategoriesByModules(contributorRoles);
+
+        for (Map.Entry<AssessmentCategory, List<ModuleContributor>> entry : contributorCategories.entrySet()) {
+            CategoryDto categoryDto = getContributorCategories(entry.getKey(), contributorCategories.get(entry.getKey()));
+            assessmentCategoriesResponse.add(categoryDto);
+
+        }
+
+        return assessmentCategoriesResponse;
+    }
+
+    private Map<AssessmentCategory, List<ModuleContributor>> groupContributorCategoriesByModules(Set<ModuleContributor> contributorRoles) {
+        Map<AssessmentCategory, List<ModuleContributor>> contributorCategories = new HashMap<>();
+        for (ModuleContributor contributor : contributorRoles) {
+            AssessmentModule assessmentModule = contributor.getContributorId().getModule();
+            AssessmentCategory assessmentCategory = assessmentModule.getCategory();
+            if (contributorCategories.containsKey(assessmentCategory)) {
+                contributorCategories.get(assessmentCategory).add(contributor);
+            } else {
+                List<ModuleContributor> moduleContributors = new ArrayList<>();
+                moduleContributors.add(contributor);
+                contributorCategories.put(assessmentCategory, moduleContributors);
+            }
+        }
+        return contributorCategories;
+    }
+
+    private List<CategoryDto> getAdminMasterData(Optional<AccessControlRoles> accessControlRoles) {
+        List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
+        List<AssessmentCategory> assessmentCategories = getCategoriesSortedByUpdatedDate();
+        if (Objects.nonNull(assessmentCategories)) {
+            for (AssessmentCategory assessmentCategory : assessmentCategories) {
+                CategoryDto categoryDto = getAdminCategories(accessControlRoles, assessmentCategory);
+                assessmentCategoriesResponse.add(categoryDto);
+            }
+
+        }
+        return assessmentCategoriesResponse;
+    }
+
+    private CategoryDto getContributorCategories(AssessmentCategory assessmentCategory , List<ModuleContributor> moduleContributors) {
+        CategoryDto categoryDto = masterDataMapper.mapCategory(assessmentCategory);
+        SortedSet<AssessmentModuleDto> moduleDtos = new TreeSet<>();
+        for (ModuleContributor moduleContributor : moduleContributors) {
+            setModule(moduleContributor.getContributorId().getModule(), AccessControlRoles.valueOf(moduleContributor.getContributorRole().toString()), moduleDtos);
+        }
+        categoryDto.setModules(moduleDtos);
+        return categoryDto;
+    }
+
+    private CategoryDto getAdminCategories(Optional<AccessControlRoles> accessControlRoles, AssessmentCategory assessmentCategory) {
+        CategoryDto categoryDto = masterDataMapper.mapCategory(assessmentCategory);
+        SortedSet<AssessmentModuleDto> modules = new TreeSet<>();
+        for (AssessmentModule assessmentModule : assessmentCategory.getModules()) {
+            accessControlRoles.ifPresent(controlRoles -> setModule(assessmentModule, controlRoles, modules));
+        }
+        categoryDto.setModules(modules);
+        return categoryDto;
+    }
+
+    private void setModule(AssessmentModule assessmentModule, AccessControlRoles role, SortedSet<AssessmentModuleDto> moduleDtos) {
+        AssessmentModuleDto assessmentModuleDto = masterDataMapper.mapModule(assessmentModule);
+        SortedSet<AssessmentTopicDto> topicDtos = getTopics(role, assessmentModule);
+        assessmentModuleDto.setTopics(topicDtos);
+        moduleDtos.add(assessmentModuleDto);
+    }
+
+    private SortedSet<AssessmentTopicDto> getTopics(AccessControlRoles contributor, AssessmentModule assessmentModule) {
+        SortedSet<AssessmentTopicDto> topicDtos = new TreeSet<>();
+        for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
+            AssessmentTopicDto topicDto = masterDataMapper.mapTopic(assessmentTopic);
+            SortedSet<AssessmentParameterDto> parameterDtos = getParameters(contributor, assessmentTopic);
+            topicDto.setParameters(parameterDtos);
+            topicDtos.add(topicDto);
+        }
+        return topicDtos;
+    }
+
+    private SortedSet<AssessmentParameterDto> getParameters(AccessControlRoles contributor, AssessmentTopic assessmentTopic) {
+        SortedSet<AssessmentParameterDto> parameterDtos = new TreeSet<>();
+        for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
+            AssessmentParameterDto parameterDto = masterDataMapper.mapParameter(assessmentParameter);
+            SortedSet<QuestionDto> questions = getQuestions(contributor, assessmentParameter);
+            parameterDto.setQuestions(questions);
+            parameterDtos.add(parameterDto);
+        }
+        return parameterDtos;
+    }
+
+    private SortedSet<QuestionDto> getQuestions(AccessControlRoles role, AssessmentParameter assessmentParameter) {
+        SortedSet<QuestionDto> questions = new TreeSet<>();
+        for (Question question : assessmentParameter.getQuestions()) {
+            addQuestionByRole(role, questions, question);
+        }
+        return questions;
+    }
+
+    private void addQuestionByRole(AccessControlRoles role, SortedSet<QuestionDto> questions, Question question) {
+        QuestionDto questionDto = masterDataMapper.mapQuestion(question);
+        if (role == AccessControlRoles.AUTHOR ||
+                (role == AccessControlRoles.REVIEWER && (question.getQuestionStatus() != ContributorQuestionStatus.DRAFT)) ||
+                (role == AccessControlRoles.Admin && question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED))
+            questions.add(questionDto);
+    }
 }
 

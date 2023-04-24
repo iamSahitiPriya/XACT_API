@@ -368,13 +368,13 @@ class AssessmentControllerTest {
         RecommendationRequest recommendationRequest = new RecommendationRequest(null, "text", LOW, RecommendationEffort.LOW, NOW);
         TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(recommendationRequest, TopicLevelRecommendation.class);
         topicLevelRecommendation.setRecommendationId(1);
-        when(assessmentService.saveTopicRecommendation(recommendationRequest, assessment, topicId)).thenReturn(topicLevelRecommendation);
+        when(assessmentService.saveTopicLevelRecommendation(topicId,recommendationRequest, assessment)).thenReturn(topicLevelRecommendation);
 
         HttpResponse<RecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, recommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).saveTopicRecommendation(recommendationRequest, assessment, topicId);
+        verify(assessmentService).saveTopicLevelRecommendation(topicId,recommendationRequest, assessment);
     }
 
     @Test
@@ -407,14 +407,14 @@ class AssessmentControllerTest {
         RecommendationRequest recommendationRequest = new RecommendationRequest(1, "text", LOW, RecommendationEffort.LOW, NOW);
         TopicLevelRecommendation topicLevelRecommendation = modelMapper.map(recommendationRequest, TopicLevelRecommendation.class);
 
-        when(assessmentService.updateTopicRecommendation(recommendationRequest)).thenReturn(topicLevelRecommendation);
+        when(assessmentService.saveTopicLevelRecommendation(topicId,recommendationRequest,assessment)).thenReturn(topicLevelRecommendation);
         doNothing().when(assessmentService).updateAssessment(assessment);
 
         HttpResponse<RecommendationResponse> actualResponse = assessmentController.saveTopicRecommendation(assessmentId, topicId, recommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).updateTopicRecommendation(recommendationRequest);
+        verify(assessmentService).saveTopicLevelRecommendation(topicId,recommendationRequest,assessment);
     }
 
     @Test
@@ -508,14 +508,15 @@ class AssessmentControllerTest {
         parameterLevelRecommendationRequest.setRecommendationText("some text");
 
         ParameterLevelRecommendation parameterLevelRecommendation =modelMapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
-
-        when(assessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment,parameterId)).thenReturn(parameterLevelRecommendation);
+        parameterLevelRecommendation.setRecommendationId(1);
+        when(assessmentService.saveParameterLevelRecommendation(parameterId,parameterLevelRecommendationRequest,assessment)).thenReturn(parameterLevelRecommendation);
+        doNothing().when(assessmentService).updateAssessment(assessment);
 
         HttpResponse<RecommendationResponse> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, parameterLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+        verify(assessmentService).saveParameterLevelRecommendation(parameterId,parameterLevelRecommendationRequest, assessment);
     }
 
     @Test
@@ -559,13 +560,13 @@ class AssessmentControllerTest {
 
         ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest, ParameterLevelRecommendation.class);
 
-        when(assessmentService.updateParameterRecommendation(parameterLevelRecommendationRequest)).thenReturn(parameterLevelRecommendation);
+        when(assessmentService.saveParameterLevelRecommendation(parameterId,parameterLevelRecommendationRequest,assessment)).thenReturn(parameterLevelRecommendation);
 
         HttpResponse<RecommendationResponse> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, parameterLevelRecommendationRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).updateParameterRecommendation(parameterLevelRecommendationRequest);
+        verify(assessmentService).saveParameterLevelRecommendation(parameterId,parameterLevelRecommendationRequest,assessment);
     }
 
     @Test

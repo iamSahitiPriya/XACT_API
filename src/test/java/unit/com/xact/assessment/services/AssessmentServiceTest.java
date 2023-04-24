@@ -49,7 +49,6 @@ class AssessmentServiceTest {
 
     @Test
     void shouldAddUsersToAssessment() {
-        String email = "abc@thoughtworks.com";
         AssessmentRequest assessmentRequest = new AssessmentRequest();
         assessmentRequest.setAssessmentName("assessment1");
         assessmentRequest.setTeamSize(1);
@@ -368,9 +367,11 @@ class AssessmentServiceTest {
         userQuestion.setAssessment(assessment);
         userQuestion.setAnswer("answer");
         userQuestion.setAnswer("answer Text?");
+        UpdateAnswerRequest answerRequest = new UpdateAnswerRequest(1,AnswerType.ADDITIONAL,"answer Text?");
 
         doNothing().when(usersAssessmentsService).saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
-        assessmentService.saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
+
+        assessmentService.saveAnswer(userQuestion.getQuestionId(), answerRequest,assessment);
 
         verify(usersAssessmentsService).saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
 
@@ -541,5 +542,97 @@ class AssessmentServiceTest {
         ParameterLevelRecommendation parameterLevelRecommendation1 = assessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, 1);
 
         assertEquals("text", parameterLevelRecommendation1.getRecommendationText());
+    }
+
+    @Test
+    void shouldReturnUserQuestionWhenQuestionIdIsGiven() {
+        UserQuestion userQuestion = new UserQuestion(1,new Assessment(),new AssessmentParameter(),"","",new Date(),new Date(),false);
+
+        when(usersAssessmentsService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+
+        Optional<UserQuestion> actualResponse = assessmentService.searchUserQuestion(1);
+
+        verify(usersAssessmentsService).searchUserQuestion(1);
+
+        assertEquals(Optional.of(userQuestion),actualResponse);
+    }
+
+    @Test
+    void shouldReturnAssessmentResponse() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        AssessmentUser assessmentUser = new AssessmentUser(new UserId("",assessment),AssessmentRole.Owner);
+        assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
+        assessment.setOrganisation(new Organisation(1,"","","",1));
+        Answer answer = new Answer(new AnswerId(assessment,new Question()),"",new Date(),new Date());
+        UserQuestion userQuestion = new UserQuestion(1,new Assessment(),new AssessmentParameter(),"","",new Date(),new Date(),false);
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter();
+        assessmentParameter1.setParameterId(2);
+        TopicLevelRating topicLevelRating = new TopicLevelRating(new TopicLevelId(assessment,assessmentTopic),2,new Date(),new Date());
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(assessmentTopic);
+        TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation(assessmentTopic1);
+        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
+        topicLevelRecommendationList.add(topicLevelRecommendation);
+        topicLevelRecommendationList.add(topicLevelRecommendation1);
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating(new ParameterLevelId(assessment,assessmentParameter),1,new Date(),new Date());
+        List<ParameterLevelRating> parameterLevelRatingList = new ArrayList<>();
+        parameterLevelRatingList.add(parameterLevelRating);
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(assessmentParameter);
+        ParameterLevelRecommendation parameterLevelRecommendation1 = new ParameterLevelRecommendation(assessmentParameter1);
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
+        parameterLevelRecommendationList.add(parameterLevelRecommendation1);
+        parameterLevelRecommendationList.add(parameterLevelRecommendation);
+
+        when(topicAndParameterLevelAssessmentService.getAnswers(1)).thenReturn(Collections.singletonList(answer));
+        when(usersAssessmentsService.getUserQuestions(1)).thenReturn(Collections.singletonList(userQuestion));
+        when(topicAndParameterLevelAssessmentService.getTopicRatings(1)).thenReturn(Collections.singletonList(topicLevelRating));
+        when(topicAndParameterLevelAssessmentService.getTopicRecommendations(1)).thenReturn(topicLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterRatings(1)).thenReturn(parameterLevelRatingList);
+        when(topicAndParameterLevelAssessmentService.getParameterRecommendations(1)).thenReturn(parameterLevelRecommendationList);
+
+        AssessmentResponse assessmentResponse = assessmentService.getAssessmentResponse(assessment);
+
+        assertEquals(2,assessmentResponse.getParameterRatingAndRecommendation().size());
+    }
+
+    @Test
+    void shouldSetValuesToAssessment() {
+        AssessmentRequest assessmentRequest = new AssessmentRequest("name","purpose","description","name","domain","industry",2,new ArrayList<>());
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setOrganisation(new Organisation());
+
+        Assessment assessment1 = assessmentService.setAssessment(assessment,assessmentRequest);
+
+        assertEquals("name",assessment1.getAssessmentName());
+    }
+
+    @Test
+    void shouldReturnAssessmentUsers() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        AssessmentUser assessmentUser = new AssessmentUser(new UserId("abc@thoughtworks.com",assessment),AssessmentRole.Owner);
+        AssessmentUser assessmentUser1 = new AssessmentUser(new UserId("cde@thoughtworks.com",assessment),AssessmentRole.Facilitator);
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
+        List<UserDto> assessmentUserList = new ArrayList<>();
+        assessmentUserList.add(new UserDto("abc@thoughtworks.com",UserRole.Owner));
+        assessmentUserList.add(new UserDto("cde@thoughtworks.com",UserRole.Facilitator));
+        assessmentUsers.add(assessmentUser);
+        assessmentUsers.add(assessmentUser1);
+        AssessmentRequest assessmentRequest = new AssessmentRequest("name","purpose","description","name","domain","industry",2,assessmentUserList);
+        User user = new User("1",new UserInfo("abc@thoughtworks.com","Abc","abc",""),"");
+
+
+        assessment.setAssessmentUsers(new HashSet<>());
+
+        Set<AssessmentUser> assessmentUsers1 = assessmentService.getAssessmentUsers(assessmentRequest,user,assessment);
+
+        assertEquals(2,assessmentUsers1.size());
     }
 }

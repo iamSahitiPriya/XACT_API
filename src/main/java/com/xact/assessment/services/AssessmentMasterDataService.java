@@ -52,6 +52,8 @@ public class AssessmentMasterDataService {
         return categoryService.getCategory(categoryId);
     }
 
+
+
     public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
         List<AssessmentCategory> categories = new ArrayList<>();
         Set<AssessmentCategory> categorySet = new HashSet<>();
@@ -63,10 +65,10 @@ public class AssessmentMasterDataService {
                     assessmentModule.setTopics(assessmentModule.getActiveTopics());
                     for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
                         assessmentTopic.setParameters(assessmentTopic.getActiveParameters());
-                        for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
+                        for(AssessmentParameter assessmentParameter : assessmentTopic.getParameters()){
                             Set<Question> questionList = new HashSet<>();
-                            for (Question question : assessmentParameter.getQuestions()) {
-                                if (question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED) {
+                            for(Question question : assessmentParameter.getQuestions()){
+                                if(question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED){
                                     questionList.add(question);
                                 }
                             }
@@ -364,7 +366,7 @@ public class AssessmentMasterDataService {
     }
 
 
-    public List<CategoryDto> getMasterDataByRole(User loggedInUser,String role) {
+    public List<CategoryDto> getMasterDataByRole(User loggedInUser, String role) {
         Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
         Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorRolesByEmail(loggedInUser.getUserEmail());
 
@@ -417,7 +419,7 @@ public class AssessmentMasterDataService {
         return assessmentCategoriesResponse;
     }
 
-    private CategoryDto getContributorCategories(AssessmentCategory assessmentCategory , List<ModuleContributor> moduleContributors) {
+    private CategoryDto getContributorCategories(AssessmentCategory assessmentCategory, List<ModuleContributor> moduleContributors) {
         CategoryDto categoryDto = masterDataMapper.mapCategory(assessmentCategory);
         SortedSet<AssessmentModuleDto> moduleDtos = new TreeSet<>();
         for (ModuleContributor moduleContributor : moduleContributors) {

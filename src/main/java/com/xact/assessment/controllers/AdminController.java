@@ -18,7 +18,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -115,7 +114,7 @@ public class AdminController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<CategoryDto> updateCategory(@PathVariable("categoryId") Integer categoryId, @Body @Valid AssessmentCategoryRequest assessmentCategoryRequest, Authentication authentication) {
         LOGGER.info("{}: Update category - {}", authentication.getName(), assessmentCategoryRequest.getCategoryName());
-        AssessmentCategory assessmentCategory = getCategory(categoryId);
+        AssessmentCategory assessmentCategory = assessmentMasterDataService.getCategory(categoryId);
         AssessmentCategory assessmentCategory1 = assessmentMasterDataService.updateCategory(assessmentCategory, assessmentCategoryRequest);
         CategoryDto categoryDto = mapper1.mapCategory(assessmentCategory1);
         return HttpResponse.ok(categoryDto);
@@ -204,9 +203,6 @@ public class AdminController {
         return HttpResponse.ok(adminAssessmentResponse);
     }
 
-    private AssessmentCategory getCategory(Integer categoryId) {
-        return assessmentMasterDataService.getCategory(categoryId);
-    }
 
 
 }

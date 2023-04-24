@@ -12,6 +12,8 @@ import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -39,6 +41,8 @@ public class AssessmentService {
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     ModelMapper mapper = new ModelMapper();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentService.class);
+
 
     public AssessmentService(AssessmentRepository assessmentRepository, UsersAssessmentsService usersAssessmentsService, AssessmentMasterDataService assessmentMasterDataService, TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService, FeedbackNotificationConfig feedbackNotificationConfig) {
         this.usersAssessmentsService = usersAssessmentsService;
@@ -152,6 +156,7 @@ public class AssessmentService {
     }
 
     public void updateAssessment(Assessment assessment) {
+        LOGGER.info("Update assessment timestamp. assessment: {}", assessment.getAssessmentId());
         assessment.setUpdatedAt(new Date());
         assessmentRepository.update(assessment);
     }
@@ -193,7 +198,16 @@ public class AssessmentService {
         return topicAndParameterLevelAssessmentService.getAnswers(assessmentId);
     }
 
-    public void saveAnswer(UpdateAnswerRequest answerRequest, Assessment assessment) {
+    public void saveAnswer(Integer questionId, UpdateAnswerRequest answerRequest, Assessment assessment) {
+        if (answerRequest.getType() == AnswerType.DEFAULT) {
+            saveAnswer(answerRequest, assessment);
+
+        } else {
+            saveUserAnswer(questionId, answerRequest.getAnswer());
+        }
+    }
+
+    private void saveAnswer(UpdateAnswerRequest answerRequest, Assessment assessment) {
         topicAndParameterLevelAssessmentService.saveAnswer(answerRequest, assessment);
     }
 
@@ -273,7 +287,7 @@ public class AssessmentService {
         List<AssessmentCategory> userAssessmentCategories =  assessmentMasterDataService.getUserAssessmentCategories(assessmentId);
         List<AssessmentCategoryDto> userAssessmentCategoriesResponse = new ArrayList<>();
         if (Objects.nonNull(userAssessmentCategories)) {
-            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapTillModuleOnly(assessmentCategory)));
+            userAssessmentCategories.forEach(assessmentCategory -> userAssessmentCategoriesResponse.add(masterDataMapper.mapAssessmentCategory(assessmentCategory)));
 
         }
         return userAssessmentCategoriesResponse;
@@ -289,7 +303,7 @@ public class AssessmentService {
 
     }
 
-    public void saveUserAnswer(Integer questionId, String answer) {
+    private void saveUserAnswer(Integer questionId, String answer) {
         usersAssessmentsService.saveUserAnswer(questionId, answer);
     }
 
@@ -450,12 +464,37 @@ public class AssessmentService {
 
     public Assessment setAssessment(Assessment assessment, AssessmentRequest assessmentRequest) {
         assessment.setAssessmentName(assessmentRequest.getAssessmentName());
-        assessment.getOrganisation().setOrganisationName(assessmentRequest.getOrganisationName());
-        assessment.getOrganisation().setDomain(assessmentRequest.getDomain());
-        assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
-        assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
+        setOrganisation(assessment, assessmentRequest);
         assessment.setAssessmentPurpose(assessmentRequest.getAssessmentPurpose());
         assessment.setAssessmentDescription(assessmentRequest.getAssessmentDescription());
         return  assessment;
     }
-}
+
+    private void setOrganisation(Assessment assessment, AssessmentRequest assessmentRequest) {
+        assessment.getOrganisation().setOrganisationName(assessmentRequest.getOrganisationName());
+        assessment.getOrganisation().setDomain(assessmentRequest.getDomain());
+        assessment.getOrganisation().setIndustry(assessmentRequest.getIndustry());
+        assessment.getOrganisation().setSize(assessmentRequest.getTeamSize());
+    }
+
+    public TopicLevelRecommendation saveTopicLevelRecommendation(Integer topicId, RecommendationRequest recommendationRequest, Assessment assessment) {
+            TopicLevelRecommendation topicLevelRecommendation;
+            if (recommendationRequest.getRecommendationId() != null) {
+                topicLevelRecommendation = updateTopicRecommendation(recommendationRequest);
+            } else {
+                topicLevelRecommendation = saveTopicRecommendation(recommendationRequest, assessment, topicId);
+            }
+            return topicLevelRecommendation;
+        }
+
+    public ParameterLevelRecommendation saveParameterLevelRecommendation(Integer parameterId, RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment) {
+            ParameterLevelRecommendation parameterLevelRecommendation;
+            if (parameterLevelRecommendationRequest.getRecommendationId() != null) {
+                parameterLevelRecommendation = updateParameterRecommendation(parameterLevelRecommendationRequest);
+            } else {
+                parameterLevelRecommendation = saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+            }
+            return parameterLevelRecommendation;
+        }
+    }
+

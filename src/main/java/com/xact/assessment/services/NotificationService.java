@@ -63,7 +63,7 @@ public class NotificationService {
         Set<String> userEmails = userInfos.stream().map(UserInfo::getEmail).collect(Collectors.toSet());
         Notification notification = getNotification(userEmails);
         notification.setTemplateName(NotificationType.FEEDBACK_V1);
-        Set<String> userDetails = userInfos.stream().map(UserInfo -> UserInfo.getFirstName() + " " + UserInfo.getLastName() + ":" + UserInfo.getEmail()).collect(Collectors.toSet());
+        Set<String> userDetails = userInfos.stream().map(userInfo -> userInfo.getFirstName() + " " + userInfo.getLastName() + ":" + userInfo.getEmail()).collect(Collectors.toSet());
         Map<String, String> payload = getPayloadForFeedback(assessment, userDetails);
         ObjectMapper objectMapper = new ObjectMapper();
         notification.setPayload(objectMapper.writeValueAsString(payload));

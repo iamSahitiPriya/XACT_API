@@ -31,7 +31,7 @@ class TopicDtoTest {
         var positive = TopicDto1.compareTo(TopicDto3);
         var negative = TopicDto3.compareTo(TopicDto2);
 
-        assertEquals(equal, 0);
+        assertEquals(0,equal);
         assertTrue(negative < 0);
         assertTrue(positive > 0);
     }

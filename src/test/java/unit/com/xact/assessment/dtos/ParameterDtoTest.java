@@ -31,7 +31,7 @@ class ParameterDtoTest {
         var positive = ParameterDto1.compareTo(ParameterDto3);
         var negative = ParameterDto3.compareTo(ParameterDto2);
 
-        assertEquals( 0,equal);
+        assertEquals(0, equal);
         assertTrue(negative < 0);
         assertTrue(positive > 0);
     }

@@ -22,7 +22,7 @@ class AssessmentCategoryDtoTest {
         var negative = AssessmentCategoryDto1.compareTo(AssessmentCategoryDto3);
         var positive = AssessmentCategoryDto3.compareTo(AssessmentCategoryDto2);
 
-        assertEquals(0,equal);
+        assertEquals(0, equal);
         assertTrue(negative < 0);
         assertTrue(positive > 0);
     }

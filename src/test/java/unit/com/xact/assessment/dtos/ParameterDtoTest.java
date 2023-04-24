@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ParameterDtoTest {
 
@@ -30,7 +31,7 @@ class ParameterDtoTest {
         var positive = ParameterDto1.compareTo(ParameterDto3);
         var negative = ParameterDto3.compareTo(ParameterDto2);
 
-        assertEquals(0,equal);
+        assertEquals(0, equal);
         assertTrue(negative < 0);
         assertTrue(positive > 0);
     }

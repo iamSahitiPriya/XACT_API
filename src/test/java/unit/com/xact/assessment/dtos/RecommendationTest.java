@@ -30,7 +30,7 @@ class RecommendationTest {
         int positive1 = Recommendation.compareByDeliveryHorizon(rec2, rec1);
         int positive2 = Recommendation.compareByDeliveryHorizon(rec3, rec4);
 
-        assertEquals(0,equal);
+        assertEquals(0, equal);
         assertTrue(positive1 > 0);
         assertTrue(positive2 > 0);
         assertTrue(negative1 < 0);
@@ -57,7 +57,7 @@ class RecommendationTest {
         var positive = Recommendation.compareByUpdatedTime(rec1, rec3);
         var negative = Recommendation.compareByUpdatedTime(rec3, rec2);
 
-        assertEquals(0,equal);
+        assertEquals(0, equal);
         assertTrue(negative < 0);
         assertTrue(positive > 0);
     }

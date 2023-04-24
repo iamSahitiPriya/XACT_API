@@ -3,10 +3,8 @@ package unit.com.xact.assessment.dtos;
 import com.xact.assessment.dtos.AssessmentCategoryDto;
 import org.junit.jupiter.api.Test;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AssessmentCategoryDtoTest {
 
@@ -24,7 +22,7 @@ class AssessmentCategoryDtoTest {
         var negative = AssessmentCategoryDto1.compareTo(AssessmentCategoryDto3);
         var positive = AssessmentCategoryDto3.compareTo(AssessmentCategoryDto2);
 
-        assertEquals(0,equal);
+        assertEquals(0, equal);
         assertTrue(negative < 0);
         assertTrue(positive > 0);
     }

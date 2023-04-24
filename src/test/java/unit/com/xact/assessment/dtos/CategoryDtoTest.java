@@ -31,7 +31,7 @@ class CategoryDtoTest {
         var positive = categoryDto1.compareTo(categoryDto3);
         var negative = categoryDto3.compareTo(categoryDto2);
 
-        assertEquals(0,equal);
+        assertEquals(0, equal);
         assertTrue(negative < 0);
         assertTrue(positive > 0);
     }

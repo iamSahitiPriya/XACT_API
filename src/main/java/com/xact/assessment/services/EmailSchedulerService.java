@@ -15,7 +15,6 @@ import com.xact.assessment.dtos.NotificationDetail;
 import com.xact.assessment.dtos.NotificationRequest;
 import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
-import com.xact.assessment.utils.NamingConventionUtil;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import org.apache.velocity.Template;
@@ -39,7 +38,6 @@ public class EmailSchedulerService {
     private final TokenService tokenService;
     private final EmailNotificationClient emailNotificationClient;
     private final NotificationService notificationService;
-    private final NamingConventionUtil namingConventionUtil = new NamingConventionUtil();
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailSchedulerService.class);
 
     public EmailSchedulerService(EmailConfig emailConfig, ProfileConfig profileConfig, TokenService tokenService, EmailNotificationClient emailNotificationClient, NotificationService notificationService) {
@@ -101,7 +99,7 @@ public class EmailSchedulerService {
         Template template = Velocity.getTemplate("templates/" + notification.getTemplateName().getTemplateResource());
 
         EmailPayload emailPayload = new ObjectMapper().readValue(notification.getPayload(), EmailPayload.class);
-        emailPayload.setOrganisationName(namingConventionUtil.convertToPascalCase(emailPayload.getOrganisationName()));
+        emailPayload.setOrganisationName(emailPayload.getOrganisationName());
 
         context.put("assessment", emailPayload);
         context.put("url", profileConfig.getUrl());

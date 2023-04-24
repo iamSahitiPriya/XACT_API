@@ -23,9 +23,5 @@ public class TopicLevelAssessmentRequest {
     @JsonProperty("parameterLevel")
     private List<ParameterLevelAssessmentRequest> parameterLevelAssessmentRequestList;
     private TopicRatingAndRecommendation topicRatingAndRecommendation;
-
-    public boolean isRatedAtTopicLevel(){
-        return topicRatingAndRecommendation != null;
-    }
 }
 

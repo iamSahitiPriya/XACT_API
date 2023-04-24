@@ -6,10 +6,7 @@ package com.xact.assessment.models;
 
 
 import io.micronaut.core.annotation.Introspected;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -22,6 +19,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Introspected
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "tbl_assessment_topic_recommendation")
 public class TopicLevelRecommendation extends Recommendation {

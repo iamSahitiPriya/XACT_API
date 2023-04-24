@@ -47,7 +47,7 @@ public class AssessmentRequest {
         if (users != null) {
             for (UserDto user : users) {
                 if (!user.isValid(pattern)) {
-                    throw new InvalidEmailException("Invalid email of user : " + user);
+                    throw new  InvalidEmailException("Invalid email of user : " + user);
                 }
             }
         }

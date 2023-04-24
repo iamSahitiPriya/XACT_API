@@ -3,10 +3,8 @@ package unit.com.xact.assessment.dtos;
 import com.xact.assessment.dtos.AssessmentCategoryDto;
 import org.junit.jupiter.api.Test;
 
-import java.util.Calendar;
-import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AssessmentCategoryDtoTest {
 

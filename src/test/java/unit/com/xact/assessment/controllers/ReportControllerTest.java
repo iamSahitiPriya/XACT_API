@@ -148,7 +148,7 @@ class ReportControllerTest {
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
         assessmentTopicReference.setReferenceId(1);
         assessmentTopicReference.setReference("First Reference");
-        assessmentTopicReference.setRating(Rating.FIVE);
+        assessmentTopicReference.setRating(RatingLevel.FIVE);
         assessmentTopicReference.setTopic(assessmentTopic);
 
         assessmentTopic.setReferences(Set.of(assessmentTopicReference));
@@ -171,7 +171,7 @@ class ReportControllerTest {
 
         AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference();
         assessmentParameterReference.setReference("Second Reference");
-        assessmentParameterReference.setRating(Rating.FIVE);
+        assessmentParameterReference.setRating(RatingLevel.FIVE);
         assessmentParameterReference.setParameter(assessmentParameter);
 
         assessmentParameter.setReferences(Set.of(assessmentParameterReference));

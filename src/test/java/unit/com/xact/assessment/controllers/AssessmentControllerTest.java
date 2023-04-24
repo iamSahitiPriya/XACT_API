@@ -164,7 +164,7 @@ class AssessmentControllerTest {
         when(assessmentService.getAnswers(assessmentId)).thenReturn(answers);
 
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, parameter);
-        ParameterLevelRating parameterAssessment = new ParameterLevelRating(parameterLevelId, 4, new Date(), new Date());
+        ParameterLevelRating parameterAssessment = new ParameterLevelRating (4, new Date(), new Date(),parameterLevelId);
         parameterAssessments.add(parameterAssessment);
 
         List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationList = new ArrayList<>();
@@ -212,7 +212,7 @@ class AssessmentControllerTest {
 
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
-        TopicLevelRating topicAssessment = new TopicLevelRating(topicLevelId, 4, new Date(), new Date());
+        TopicLevelRating topicAssessment = new TopicLevelRating(4, new Date(), new Date(),topicLevelId);
         topicAssessments.add(topicAssessment);
 
         List<TopicRatingAndRecommendation> topicRatingAndRecommendationList = new ArrayList<>();

@@ -64,7 +64,7 @@ class ReportServiceTest {
         module.setActive(true);
         AssessmentTopic topic1 = new AssessmentTopic("abc", module, true, "");
         AssessmentParameter parameter1 = AssessmentParameter.builder().parameterName("def").topic(topic1).isActive(true).comments("").build();
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter1, Rating.FOUR, "");
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter1, RatingLevel.FOUR, "");
         parameter1.setReferences(Collections.singleton(assessmentParameterReference));
         Set<AssessmentTopic> assessmentTopics = new HashSet<>();
         assessmentTopics.add(topic);
@@ -103,7 +103,7 @@ class ReportServiceTest {
         parameterAssessments.add(parameterAssessment);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
-        TopicLevelRating topicAssessment = new TopicLevelRating(topicLevelId, 4, new Date(), new Date());
+        TopicLevelRating topicAssessment = new TopicLevelRating(4, new Date(), new Date(),topicLevelId);
         topicAssessments.add(topicAssessment);
         HashMap<Integer, List<TopicLevelRecommendation>> topicRecommendationMap = new HashMap<>();
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
@@ -222,7 +222,7 @@ class ReportServiceTest {
         parameterAssessments.add(parameterAssessment);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
-        TopicLevelRating topicAssessment = new TopicLevelRating(topicLevelId, 4, new Date(), new Date());
+        TopicLevelRating topicAssessment = new TopicLevelRating( 4, new Date(), new Date(),topicLevelId);
         topicAssessments.add(topicAssessment);
 
         HashMap<Integer, List<TopicLevelRecommendation>> topicRecommendationMap = new HashMap<>();
@@ -464,7 +464,7 @@ class ReportServiceTest {
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
         assessmentTopicReference.setReferenceId(1);
         assessmentTopicReference.setReference("First Reference");
-        assessmentTopicReference.setRating(Rating.ONE);
+        assessmentTopicReference.setRating(RatingLevel.ONE);
         assessmentTopicReference.setTopic(assessmentTopic);
 
         assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));
@@ -540,7 +540,7 @@ class ReportServiceTest {
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
         assessmentTopicReference.setReferenceId(1);
         assessmentTopicReference.setReference("First Reference");
-        assessmentTopicReference.setRating(Rating.FIVE);
+        assessmentTopicReference.setRating(RatingLevel.FIVE);
         assessmentTopicReference.setTopic(assessmentTopic);
 
         assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));

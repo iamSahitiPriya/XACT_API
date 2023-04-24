@@ -174,9 +174,9 @@ public class AssessmentMasterDataService {
         } else return true;
     }
 
-    private boolean isTopicRatingUnique(Set<AssessmentTopicReference> references, Rating rating) {
+    private boolean isTopicRatingUnique(Set<AssessmentTopicReference> references, RatingLevel rating) {
         if (references != null) {
-            List<Rating> ratings = references.stream().map(AssessmentTopicReference::getRating).toList();
+            List<RatingLevel> ratings = references.stream().map(AssessmentTopicReference::getRating).toList();
             return !ratings.contains(rating);
         } else return true;
     }
@@ -198,9 +198,9 @@ public class AssessmentMasterDataService {
         } else return true;
     }
 
-    private boolean isParameterRatingUnique(Set<AssessmentParameterReference> references, Rating rating) {
+    private boolean isParameterRatingUnique(Set<AssessmentParameterReference> references, RatingLevel rating) {
         if (references != null) {
-            List<Rating> ratings = references.stream().map(AssessmentParameterReference::getRating).toList();
+            List<RatingLevel> ratings = references.stream().map(AssessmentParameterReference::getRating).toList();
             return !ratings.contains(rating);
         } else return true;
     }

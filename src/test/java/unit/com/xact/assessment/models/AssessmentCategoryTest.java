@@ -47,7 +47,7 @@ class AssessmentCategoryTest {
 
         assessmentTopicReference.setReferenceId(1);
         assessmentTopicReference.setReference("Topic Reference");
-        assessmentTopicReference.setRating(Rating.ONE);
+        assessmentTopicReference.setRating(RatingLevel.ONE);
 
         assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));
         assessmentTopicList.add(assessmentTopic1);
@@ -62,7 +62,7 @@ class AssessmentCategoryTest {
         assessmentParameterReference.setParameter(assessmentParameter);
         assessmentParameterReference.setReferenceId(1);
         assessmentParameterReference.setReference("Parameter Reference");
-        assessmentParameterReference.setRating(Rating.FIVE);
+        assessmentParameterReference.setRating(RatingLevel.FIVE);
 
         assessmentTopic1.setParameters(Collections.singleton(assessmentParameter));
 

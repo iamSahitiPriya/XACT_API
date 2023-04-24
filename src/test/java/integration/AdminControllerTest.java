@@ -186,7 +186,7 @@ class AdminControllerTest {
 
         entityManager.getTransaction().begin();
         for (AssessmentTopicReference assessmentTopicReference : assessmentTopicReferences) {
-            if (assessmentTopicReference.getRating().equals(Rating.TWO)) {
+            if (assessmentTopicReference.getRating().equals(RatingLevel.TWO)) {
                 assertEquals("This is a reference", assessmentTopicReference.getReference());
                 assessmentTopicReferenceRepository.deleteById(assessmentTopicReference.getReferenceId());
             }
@@ -240,7 +240,7 @@ class AdminControllerTest {
         Set<AssessmentParameterReference> assessmentParameterReference = assessmentParameterRepository.findByParameterId(assessmentParameter.getParameterId()).getReferences();
         entityManager.getTransaction().begin();
         for (AssessmentParameterReference assessmentParameterReference1 : assessmentParameterReference) {
-            if (assessmentParameterReference1.getRating().equals(Rating.TWO)) {
+            if (assessmentParameterReference1.getRating().equals(RatingLevel.TWO)) {
                 assertEquals("This is a reference", assessmentParameterReference1.getReference());
                 assessmentParameterReferenceRepository.deleteById(assessmentParameterReference1.getReferenceId());
             }
@@ -476,7 +476,7 @@ class AdminControllerTest {
         assessmentTopic.setModule(assessmentModule);
         assessmentTopic.setActive(true);
 
-        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic,Rating.FIVE,"New Reference");
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, RatingLevel.FIVE,"New Reference");
 
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
@@ -528,7 +528,7 @@ class AdminControllerTest {
         assessmentParameter.setTopic(assessmentTopic);
         assessmentParameter.setActive(true);
 
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter,Rating.FIVE,"New Reference");
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, RatingLevel.FIVE,"New Reference");
 
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));

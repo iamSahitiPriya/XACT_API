@@ -5,7 +5,7 @@
 package com.xact.assessment.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.xact.assessment.models.Rating;
+import com.xact.assessment.models.RatingLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +19,7 @@ public class ParameterReferencesRequest {
     private Integer parameter;
 
     @JsonProperty
-    private Rating rating;
+    private RatingLevel rating;
 
     @JsonProperty
     private String reference;

@@ -36,12 +36,12 @@ public class AssessmentTopicReference implements Serializable {
 
     @Column(name = "rating")
     @Enumerated(EnumType.STRING)
-    private Rating rating;
+    private RatingLevel rating;
 
     @Column(name = "reference")
     private String reference;
 
-    public AssessmentTopicReference( AssessmentTopic topic, Rating rating, String reference) {
+    public AssessmentTopicReference(AssessmentTopic topic, RatingLevel rating, String reference) {
         this.topic = topic;
         this.rating = rating;
         this.reference = reference;

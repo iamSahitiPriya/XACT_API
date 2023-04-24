@@ -124,10 +124,10 @@ class AdminControllerTest {
     void createAssessmentTopicReferences() {
         TopicReferencesRequest referencesRequest = new TopicReferencesRequest();
         referencesRequest.setReference("references");
-        referencesRequest.setRating(Rating.FIVE);
+        referencesRequest.setRating(RatingLevel.FIVE);
         referencesRequest.setTopic(1);
 
-        when(assessmentMasterDataService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(assessmentMasterDataService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), RatingLevel.FIVE, "reference"));
 
         HttpResponse<AssessmentTopicReferenceDto> actualResponse = adminController.createTopicReference(referencesRequest, authentication);
         assertEquals(actualResponse.getStatus(), HttpResponse.ok().getStatus());
@@ -137,10 +137,10 @@ class AdminControllerTest {
     void createParameterReferences() {
         ParameterReferencesRequest referencesRequest = new ParameterReferencesRequest();
         referencesRequest.setReference("References");
-        referencesRequest.setRating(Rating.FIVE);
+        referencesRequest.setRating(RatingLevel.FIVE);
         referencesRequest.setParameter(1);
 
-        when(assessmentMasterDataService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
+        when(assessmentMasterDataService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(), RatingLevel.FIVE,"reference"));
 
         HttpResponse<AssessmentParameterReferenceDto> actualResponse = adminController.createParameterReference(referencesRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -241,7 +241,7 @@ class AdminControllerTest {
         AssessmentTopicReference topicReference = new AssessmentTopicReference();
         topicReference.setReference("Hello");
 
-        when(assessmentMasterDataService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(assessmentMasterDataService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), RatingLevel.FIVE, "reference"));
 
         HttpResponse actualResponse = adminController.updateTopicReference(referenceId, referencesRequest, authentication);
 
@@ -256,7 +256,7 @@ class AdminControllerTest {
         AssessmentParameterReference parameterReference = new AssessmentParameterReference();
         parameterReference.setReference("Hello");
 
-        when(assessmentMasterDataService.updateParameterReference(referenceId,referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
+        when(assessmentMasterDataService.updateParameterReference(referenceId,referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(), RatingLevel.FIVE,"reference"));
         HttpResponse actualResponse = adminController.updateParameterReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());

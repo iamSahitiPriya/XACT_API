@@ -8,6 +8,8 @@ import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
+import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Introspected;
@@ -75,7 +77,9 @@ public class AdminController {
         mapper.addMappings(parameterReferenceMap);
     }
 
+    private final AssessmentMasterDataService assessmentMasterDataService;
 
+    private final AssessmentService assessmentService;
     private final UserAuthService userAuthService;
 
     private final AdminService adminService;
@@ -83,10 +87,10 @@ public class AdminController {
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
-
-    public AdminController(UserAuthService userAuthService, AdminService adminService) {
+    public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, UserAuthService userAuthService, AdminService adminService) {
+        this.assessmentMasterDataService = assessmentMasterDataService;
+        this.assessmentService = assessmentService;
         this.userAuthService = userAuthService;
-
         this.adminService = adminService;
     }
 
@@ -134,14 +138,6 @@ public class AdminController {
         return HttpResponse.ok(parameterResponse);
     }
 
-    @Post(value = "/questions", produces = MediaType.APPLICATION_JSON)
-    @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
-        User loggedInUser = userAuthService.getCurrentUser(authentication);
-        LOGGER.info("{}: Create questions - {}", loggedInUser.getUserEmail(), questionRequest.getQuestionText());
-        Question question = adminService.createAssessmentQuestion(loggedInUser.getUserEmail(), questionRequest);
-        return getQuestionResponse(question);
-    }
 
     private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {
         QuestionResponse questionResponse = mapper.map(question, QuestionResponse.class);
@@ -274,10 +270,10 @@ public class AdminController {
 
     @Post(value = "/modules/{moduleId}/contributors")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<ContributorDto> saveModuleContributor(@PathVariable("moduleId") Integer moduleId,@Valid @Body ContributorRequest contributorRequest, Authentication authentication) {
+    public HttpResponse<ContributorDto> saveModuleContributor(@PathVariable("moduleId") Integer moduleId, @Valid @Body ContributorRequest contributorRequest, Authentication authentication) {
         LOGGER.info("Save Contributor For {} module by {}", moduleId, authentication.getName());
-         contributorRequest.validate(emailPattern);
-         adminService.saveContributors(moduleId, contributorRequest.getContributors());
+        contributorRequest.validate(emailPattern);
+        adminService.saveContributors(moduleId, contributorRequest.getContributors());
         return HttpResponse.ok();
     }
 

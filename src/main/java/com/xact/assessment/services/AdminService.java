@@ -47,9 +47,6 @@ public class AdminService {
         return  assessmentMasterDataService.createAssessmentParameter(assessmentParameterRequest);
     }
 
-    public Question createAssessmentQuestion(String userEmail, QuestionRequest questionRequest) {
-        return assessmentMasterDataService.createAssessmentQuestion(userEmail, questionRequest);
-    }
 
     public AssessmentTopicReference createAssessmentTopicReference(TopicReferencesRequest topicReferencesRequest) {
         return assessmentMasterDataService.createAssessmentTopicReference(topicReferencesRequest);

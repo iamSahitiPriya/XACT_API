@@ -14,7 +14,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
+import static com.xact.assessment.dtos.ContributorQuestionStatus.DRAFT;
 import static com.xact.assessment.dtos.ContributorQuestionStatus.PUBLISHED;
+import static com.xact.assessment.models.AccessControlRoles.AUTHOR;
+import static com.xact.assessment.models.AccessControlRoles.Admin;
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +33,9 @@ class AssessmentMasterDataServiceTest {
     private final ModuleRepository moduleRepository = mock(ModuleRepository.class);
     private final UserAssessmentModuleService userAssessmentModuleService = mock(UserAssessmentModuleService.class);
     private final ModuleService moduleService1 = new ModuleService(moduleRepository);
-    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryService, moduleService, questionService, parameterService, topicService, userAssessmentModuleService);
+    private final AccessControlService accessControlService = mock(AccessControlService.class);
+    private final ModuleContributorService moduleContributorService = mock(ModuleContributorService.class);
+    private final AssessmentMasterDataService assessmentMasterDataService = new AssessmentMasterDataService(categoryService, moduleService, questionService, parameterService, topicService, userAssessmentModuleService, accessControlService, moduleContributorService);
 
     @Test
     void getAllCategories() {
@@ -46,7 +51,137 @@ class AssessmentMasterDataServiceTest {
 
         verify(categoryService).getAllCategories();
     }
+    @Test
+    void shouldGetContributorMasterData() {
+        User user = new User();
+        user.setUserId("hello@thoughtworks.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("hello@thoughtworks.com");
+        user.setUserInfo(userInfo);
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryId(1);
+        category.setCategoryName("Category");
 
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setCategory(category);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic");
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter");
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question");
+        question.setQuestionStatus(DRAFT);
+        question.setParameter(assessmentParameter);
+
+        AssessmentModule assessmentModule1 = new AssessmentModule();
+        assessmentModule1.setModuleId(2);
+        assessmentModule1.setModuleName("Module 2");
+        assessmentModule1.setCategory(category);
+
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        assessmentTopic1.setTopicName("Topic");
+        assessmentTopic1.setModule(assessmentModule1);
+
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter();
+        assessmentParameter1.setParameterId(2);
+        assessmentParameter1.setParameterName("Parameter");
+        assessmentParameter1.setTopic(assessmentTopic1);
+
+        Question question1 = new Question();
+        question1.setQuestionId(2);
+        question1.setQuestionText("question1");
+        question1.setQuestionStatus(PUBLISHED);
+        question1.setParameter(assessmentParameter1);
+
+        assessmentParameter.setQuestions(Collections.singleton(question));
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+
+        assessmentParameter1.setQuestions(Collections.singleton(question1));
+        assessmentTopic1.setParameters(Collections.singleton(assessmentParameter1));
+        assessmentModule1.setTopics(Collections.singleton(assessmentTopic1));
+
+        category.setModules(Set.of(assessmentModule, assessmentModule1));
+
+        ModuleContributor moduleContributor1 = new ModuleContributor();
+        ContributorId contributorId1 = new ContributorId();
+        contributorId1.setModule(assessmentModule);
+        contributorId1.setUserEmail("hello@thoughtworks.com");
+        moduleContributor1.setContributorId(contributorId1);
+        moduleContributor1.setContributorRole(ContributorRole.AUTHOR);
+
+        ModuleContributor moduleContributor2 = new ModuleContributor();
+        ContributorId contributorId2 = new ContributorId();
+        contributorId2.setModule(assessmentModule1);
+        contributorId2.setUserEmail("hello@thoughtworks.com");
+        moduleContributor2.setContributorId(contributorId2);
+        moduleContributor2.setContributorRole(ContributorRole.REVIEWER);
+
+        when(moduleContributorService.getContributorsByEmail("hello@thoughtworks.com")).thenReturn(Set.of(moduleContributor1, moduleContributor2));
+        when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
+
+        List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user,AUTHOR.toString());
+        assertEquals(1,categoryDtoList.size());
+
+    }
+
+    @Test
+    void shouldGetAdminMasterData() {
+        User user = new User();
+        user.setUserId("hello@thoughtworks.com");
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("hello@thoughtworks.com");
+        user.setUserInfo(userInfo);
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryId(1);
+        category.setCategoryName("Category");
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setCategory(category);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic");
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter");
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question");
+        question.setQuestionStatus(PUBLISHED);
+        question.setParameter(assessmentParameter);
+
+        assessmentParameter.setQuestions(Collections.singleton(question));
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        category.setModules(Collections.singleton(assessmentModule));
+
+        ModuleContributor moduleContributor = new ModuleContributor();
+        when(moduleContributorService.getContributorsByEmail("hello@thoughtworks.com")).thenReturn(Collections.singleton(moduleContributor));
+        when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
+        when(categoryService.getCategoriesSortedByUpdatedDate()).thenReturn(Collections.singletonList(category));
+
+        List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user,Admin.toString());
+        assertEquals(1,categoryDtoList.size());
+
+    }
     @Test
     void shouldCreateCategory() {
         AssessmentCategoryRequest categoryRequest = new AssessmentCategoryRequest();
@@ -147,22 +282,6 @@ class AssessmentMasterDataServiceTest {
         verify(parameterService).createParameter(assessmentParameter);
     }
 
-    @Test
-    void shouldCreateQuestion() {
-        QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionText("hello");
-        questionRequest.setParameter(1);
-
-        AssessmentParameter assessmentParameter = new AssessmentParameter();
-        Question question = new Question(questionRequest.getQuestionText(), assessmentParameter);
-        List<Question> questions = new ArrayList<>();
-        Integer parameterId = 1;
-        when(questionService.getAllQuestions()).thenReturn(questions);
-        when(parameterService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
-
-        assessmentMasterDataService.createAssessmentQuestion("hello@thoughtworks.com",questionRequest);
-        verify(questionService).createQuestion("hello@thoughtworks.com",question);
-    }
 
     @Test
     void shouldCreateTopicReferences() {

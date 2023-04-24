@@ -24,8 +24,8 @@ public interface ModuleContributorRepository extends CrudRepository<ModuleContri
     List<AssessmentModule> findByRole(String userEmail, ContributorRole contributorRole);
 
     @Executable
-    @Query("SELECT contributor.contributorRole FROM ModuleContributor contributor WHERE contributor.contributorId.userEmail=:userEmail")
-    Set<ContributorRole> findRolesByEmail(String userEmail);
+    @Query("SELECT contributor FROM ModuleContributor contributor WHERE contributor.contributorId.userEmail=:userEmail")
+    Set<ModuleContributor> findContributorsByEmail(String userEmail);
 
     @Executable
     @Query("Select moduleContributor.contributorRole FROM ModuleContributor moduleContributor where moduleContributor.contributorId.module.moduleId=:moduleId and moduleContributor.contributorId.userEmail=:userEmail")

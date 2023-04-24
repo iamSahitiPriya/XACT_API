@@ -7,7 +7,7 @@ package unit.com.xact.assessment.controllers;
 import com.xact.assessment.controllers.ContributorController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
-import com.xact.assessment.services.QuestionService;
+import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -22,13 +22,10 @@ import static org.mockito.Mockito.*;
 
 class ContributorControllerTest {
 
-    private final QuestionService questionService = mock(QuestionService.class);
-
-    private final UserAuthService userAuthService=mock(UserAuthService.class);
-    private final ContributorController contributorController = new ContributorController(questionService, userAuthService);
-
+    private final UserAuthService userAuthService = mock(UserAuthService.class);
+    private final ModuleContributorService contributorService = mock(ModuleContributorService.class);
+    private final ContributorController contributorController = new ContributorController(userAuthService, contributorService);
     private final Authentication authentication = Mockito.mock(Authentication.class);
-
 
     @Test
     void shouldGetContributorQuestions() {
@@ -53,7 +50,7 @@ class ContributorControllerTest {
         contributorModuleData.setTopics(Collections.singletonList(contributorTopicData));
 
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        when(questionService.getContributorResponse(AUTHOR, userEmail)).thenReturn(contributorResponse);
+        when(contributorService.getContributorResponse(AUTHOR, userEmail)).thenReturn(contributorResponse);
 
         HttpResponse<ContributorResponse> actualResponse = contributorController.getContributorQuestions(AUTHOR, authentication);
 
@@ -78,7 +75,7 @@ class ContributorControllerTest {
         questionStatusUpdateResponse.setComments("comments");
 
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        when(questionService.updateContributorQuestionsStatus(1, ContributorQuestionStatus.SENT_FOR_REVIEW, questionStatusUpdateRequest, userEmail)).thenReturn(questionStatusUpdateResponse);
+        when(contributorService.updateContributorQuestionsStatus(1, ContributorQuestionStatus.SENT_FOR_REVIEW, questionStatusUpdateRequest, userEmail)).thenReturn(questionStatusUpdateResponse);
 
         HttpResponse<QuestionStatusUpdateResponse> actualResponse = contributorController.updateContributorQuestionsStatus(1, ContributorQuestionStatus.SENT_FOR_REVIEW, questionStatusUpdateRequest, authentication);
 
@@ -95,11 +92,56 @@ class ContributorControllerTest {
         user.setUserInfo(userInfo);
 
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        doNothing().when(questionService).deleteQuestion(questionId, userEmail);
+        doNothing().when(contributorService).deleteQuestion(questionId, userEmail);
 
         HttpResponse<Question> actualResponse = contributorController.deleteQuestion(questionId, authentication);
 
         Assertions.assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+    }
+
+    @Test
+    void shouldSaveQuestion() {
+        QuestionRequest questionRequest = new QuestionRequest();
+        questionRequest.setQuestionText("question?");
+        questionRequest.setParameter(1);
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
+
+        AssessmentCategory category = new AssessmentCategory();
+        category.setCategoryId(1);
+        category.setCategoryName("Category");
+
+        AssessmentModule assessmentModule = new AssessmentModule();
+        assessmentModule.setModuleId(1);
+        assessmentModule.setModuleName("Module");
+        assessmentModule.setCategory(category);
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Topic");
+        assessmentTopic.setModule(assessmentModule);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        assessmentParameter.setParameterName("Parameter");
+        assessmentParameter.setTopic(assessmentTopic);
+
+        Question question = new Question();
+        question.setQuestionId(1);
+        question.setQuestionText("question?");
+        question.setParameter(assessmentParameter);
+
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
+
+        when(contributorService.createAssessmentQuestion(userEmail, questionRequest)).thenReturn(question);
+
+        HttpResponse<QuestionResponse> actualQuestionResponse = contributorController.createQuestion(questionRequest, authentication);
+        Assertions.assertEquals(HttpResponse.ok().getStatus(), actualQuestionResponse.getStatus());
+
 
     }
 
@@ -123,7 +165,7 @@ class ContributorControllerTest {
         question.setParameter(parameter);
 
 
-        when(questionService.updateContributorQuestion(questionId, questionText,userEmail)).thenReturn(question);
+        when(contributorService.updateContributorQuestion(questionId, questionText, userEmail)).thenReturn(question);
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
 
         HttpResponse<QuestionDto> actualResponse = contributorController.updateQuestion(questionId, questionText, authentication);

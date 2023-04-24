@@ -15,12 +15,34 @@ public class MasterDataMapper {
 
     private static final ModelMapper moduleMapper = new ModelMapper();
     private static final ModelMapper mapper = new ModelMapper();
+    private static final ModelMapper contributorModuleMapper = new ModelMapper();
+    private static final ModelMapper contributorTopicMapper = new ModelMapper();
+    private static final ModelMapper contributorParameterMapper = new ModelMapper();
+    private static final ModelMapper questionMapper = new ModelMapper();
 
     static {
         PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMapOnly = new PropertyMap<>() {
             protected void configure() {
                 map().setCategory(source.getCategory().getCategoryId());
                 map().setTopics(new TreeSet<>());
+            }
+        };
+        PropertyMap<AssessmentModule,AssessmentModuleDto> contributorModuleMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setCategory(source.getCategory().getCategoryId());
+                map().setTopics(new TreeSet<>());
+            }
+        };
+        PropertyMap<AssessmentTopic,AssessmentTopicDto> contributorTopicMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setModule(source.getModule().getModuleId());
+                map().setParameters(new TreeSet<>());
+            }
+        };
+        PropertyMap<AssessmentParameter,AssessmentParameterDto> contributorParameterMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setTopic(source.getTopic().getTopicId());
+                map().setQuestions(new TreeSet<>());
             }
         };
         PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
@@ -60,7 +82,14 @@ public class MasterDataMapper {
         mapper.addMappings(topicReferenceMap);
         mapper.addMappings(parameterReferenceMap);
         moduleMapper.addMappings(moduleMapOnly);
+        contributorModuleMapper.addMappings(contributorModuleMap);
+        contributorTopicMapper.addMappings(contributorTopicMap);
+        contributorTopicMapper.addMappings(topicReferenceMap);
+        contributorParameterMapper.addMappings(contributorParameterMap);
+        contributorParameterMapper.addMappings(parameterReferenceMap);
+        questionMapper.addMappings(questionMap);
     }
+
 
     public AssessmentCategoryDto mapTillModuleOnly(AssessmentCategory assessmentCategory) {
         return moduleMapper.map(assessmentCategory, AssessmentCategoryDto.class);
@@ -72,5 +101,21 @@ public class MasterDataMapper {
 
     public CategoryDto mapCategory(AssessmentCategory assessmentCategory) {
         return mapper.map(assessmentCategory, CategoryDto.class);
+    }
+
+    public AssessmentModuleDto mapModule(AssessmentModule assessmentModule) {
+        return contributorModuleMapper.map(assessmentModule, AssessmentModuleDto.class);
+    }
+
+    public AssessmentTopicDto mapTopic(AssessmentTopic assessmentTopic) {
+        return contributorTopicMapper.map(assessmentTopic,AssessmentTopicDto.class);
+    }
+
+    public AssessmentParameterDto mapParameter(AssessmentParameter assessmentParameter) {
+        return contributorParameterMapper.map(assessmentParameter,AssessmentParameterDto.class);
+    }
+
+    public QuestionDto mapQuestion(Question question) {
+        return questionMapper.map(question,QuestionDto.class);
     }
 }

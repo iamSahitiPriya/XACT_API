@@ -8,6 +8,8 @@ import com.xact.assessment.controllers.AdminController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
+import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.AssessmentService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -28,8 +30,10 @@ class AdminControllerTest {
     UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
+    AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
+    AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     AdminService adminService = Mockito.mock(AdminService.class);
-    AdminController adminController = new AdminController(userAuthService, adminService);
+    AdminController adminController = new AdminController(assessmentMasterDataService,assessmentService,userAuthService, adminService);
 
     @Test
     void createAssessmentCategory() {
@@ -91,31 +95,6 @@ class AdminControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
-    @Test
-    void createAssessmentQuestions() {
-        QuestionRequest questionRequest = new QuestionRequest();
-        questionRequest.setQuestionText("Test");
-        questionRequest.setParameter(1);
-        User user = new User();
-        String userEmail = "hello@thoughtworks.com";
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail(userEmail);
-        user.setUserInfo(userInfo);
-
-        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
-        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
-        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
-        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
-        Question question = new Question("Text", parameter);
-
-        question.setQuestionStatus(ContributorQuestionStatus.PUBLISHED);
-
-        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        when(adminService.createAssessmentQuestion(userEmail, questionRequest)).thenReturn(question);
-
-        HttpResponse<QuestionResponse> actualResponse = adminController.createQuestion(questionRequest, authentication);
-        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-    }
 
     @Test
     void createAssessmentTopicReferences() {

@@ -7,9 +7,10 @@ package unit.com.xact.assessment.controllers;
 import com.xact.assessment.controllers.UserController;
 import com.xact.assessment.dtos.ContributorRole;
 import com.xact.assessment.models.AccessControlRoles;
+import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
-import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.AccessControlService;
 import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
@@ -17,8 +18,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,8 +29,8 @@ import static org.mockito.Mockito.when;
 class UserControllerTest {
     private final Authentication authentication = Mockito.mock(Authentication.class);
     private final UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
-    private final AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
-    private final UserController userController = new UserController(assessmentService, userAuthService);
+    private final AccessControlService accessControlService = Mockito.mock(AccessControlService.class);
+    private final UserController userController = new UserController(accessControlService, userAuthService);
 
     @Test
     void shouldGetTheUserRole() {
@@ -38,12 +39,14 @@ class UserControllerTest {
         UserInfo userInfo = new UserInfo();
         userInfo.setEmail(userEmail);
         user.setUserInfo(userInfo);
-
+        ModuleContributor moduleContributor = new ModuleContributor();
+        moduleContributor.setContributorRole(ContributorRole.AUTHOR);
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        when(assessmentService.getUserRole(userEmail)).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
-        when(userAuthService.getContributorRoles(userEmail)).thenReturn(Collections.singleton(ContributorRole.valueOf("AUTHOR")));
+        when(accessControlService.getAccessControlRolesByEmail(userEmail)).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
 
-        HttpResponse<List<AccessControlRoles>> accessControlRolesHttpResponse = userController.getRole(authentication);
+        when(userAuthService.getContributorRoles(userEmail)).thenReturn(Collections.singleton(moduleContributor));
+
+        HttpResponse<Set<AccessControlRoles>> accessControlRolesHttpResponse = userController.getRole(authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), accessControlRolesHttpResponse.getStatus());
 

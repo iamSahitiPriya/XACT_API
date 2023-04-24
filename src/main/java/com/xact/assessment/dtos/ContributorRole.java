@@ -9,14 +9,16 @@ public enum ContributorRole {
 
 
     public boolean isStatusValid(ContributorQuestionStatus status) {
-        return isStatusValidForAuthor(status) || isStatusValidForReviewer(status);
+        if (this.equals(AUTHOR))
+            return isStatusValidForAuthor(status);
+        return this.equals(REVIEWER) && isStatusValidForReviewer(status);
     }
 
     private boolean isStatusValidForReviewer(ContributorQuestionStatus status) {
-        return this.equals(REVIEWER) && (status == ContributorQuestionStatus.REQUESTED_FOR_CHANGE || status == ContributorQuestionStatus.PUBLISHED || status == ContributorQuestionStatus.REJECTED);
+        return (status == ContributorQuestionStatus.REQUESTED_FOR_CHANGE || status == ContributorQuestionStatus.PUBLISHED || status == ContributorQuestionStatus.REJECTED);
     }
 
     private boolean isStatusValidForAuthor(ContributorQuestionStatus status) {
-        return this.equals(AUTHOR) && status == ContributorQuestionStatus.SENT_FOR_REVIEW;
+        return status == ContributorQuestionStatus.SENT_FOR_REVIEW;
     }
 }

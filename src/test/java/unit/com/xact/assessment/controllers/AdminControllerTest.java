@@ -26,14 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class AdminControllerTest {
-
-    UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
-    AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
-    AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     AdminService adminService = Mockito.mock(AdminService.class);
-    AdminController adminController = new AdminController(assessmentMasterDataService,assessmentService,userAuthService, adminService);
+    AdminController adminController = new AdminController(adminService);
 
     @Test
     void createAssessmentCategory() {

@@ -77,20 +77,13 @@ public class AdminController {
         mapper.addMappings(parameterReferenceMap);
     }
 
-    private final AssessmentMasterDataService assessmentMasterDataService;
-
-    private final AssessmentService assessmentService;
-    private final UserAuthService userAuthService;
 
     private final AdminService adminService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
-    public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, UserAuthService userAuthService, AdminService adminService) {
-        this.assessmentMasterDataService = assessmentMasterDataService;
-        this.assessmentService = assessmentService;
-        this.userAuthService = userAuthService;
+    public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
 

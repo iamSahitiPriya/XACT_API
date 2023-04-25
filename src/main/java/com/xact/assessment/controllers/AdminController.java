@@ -8,9 +8,6 @@ import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
-import com.xact.assessment.services.AssessmentMasterDataService;
-import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.UserAuthService;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
@@ -77,20 +74,13 @@ public class AdminController {
         mapper.addMappings(parameterReferenceMap);
     }
 
-    private final AssessmentMasterDataService assessmentMasterDataService;
-
-    private final AssessmentService assessmentService;
-    private final UserAuthService userAuthService;
 
     private final AdminService adminService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
-    public AdminController(AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, UserAuthService userAuthService, AdminService adminService) {
-        this.assessmentMasterDataService = assessmentMasterDataService;
-        this.assessmentService = assessmentService;
-        this.userAuthService = userAuthService;
+    public AdminController(AdminService adminService) {
         this.adminService = adminService;
     }
 

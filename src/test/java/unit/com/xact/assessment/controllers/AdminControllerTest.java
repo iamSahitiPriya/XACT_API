@@ -8,9 +8,6 @@ import com.xact.assessment.controllers.AdminController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
-import com.xact.assessment.services.AssessmentMasterDataService;
-import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
@@ -26,14 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class AdminControllerTest {
-
-    UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
-    AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
-    AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
     AdminService adminService = Mockito.mock(AdminService.class);
-    AdminController adminController = new AdminController(assessmentMasterDataService,assessmentService,userAuthService, adminService);
+    AdminController adminController = new AdminController(adminService);
 
     @Test
     void createAssessmentCategory() {

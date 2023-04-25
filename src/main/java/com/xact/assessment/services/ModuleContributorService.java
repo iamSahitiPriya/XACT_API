@@ -5,13 +5,11 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
-import com.xact.assessment.models.AssessmentModule;
-import com.xact.assessment.models.AssessmentParameter;
-import com.xact.assessment.models.ModuleContributor;
-import com.xact.assessment.models.Question;
+import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.ModuleContributorRepository;
 import jakarta.inject.Singleton;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -21,10 +19,13 @@ public class ModuleContributorService {
     private final QuestionService questionService;
     private final  ParameterService parameterService;
     private final ModuleContributorRepository moduleContributorRepository;
+    private final ModuleService moduleService;
 
-    public ModuleContributorService(QuestionService questionService, ParameterService parameterService, ModuleContributorRepository moduleContributorRepository) {
+
+    public ModuleContributorService(QuestionService questionService, ParameterService parameterService, ModuleContributorRepository moduleContributorRepository, ModuleService moduleService) {
         this.questionService = questionService;
         this.parameterService = parameterService;
+        this.moduleService = moduleService;
         this.moduleContributorRepository = moduleContributorRepository;
     }
 
@@ -70,5 +71,24 @@ public class ModuleContributorService {
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = getRole(moduleId, userEmail);
         return questionService.updateContributorQuestion(question, questionText, contributorRole);
+    }
+
+    public void saveContributors(Integer moduleId, List<ContributorDto> contributors) {
+        List<ModuleContributor> moduleContributors = new ArrayList<>();
+        for (ContributorDto contributor : contributors) {
+            ModuleContributor moduleContributor = getModuleContributor(moduleId, contributor);
+            moduleContributors.add(moduleContributor);
+        }
+        moduleContributorRepository.deleteByModuleId(moduleId);
+        moduleContributorRepository.saveAll(moduleContributors);
+    }
+    private ModuleContributor getModuleContributor(Integer moduleId, ContributorDto contributorDto) {
+        ContributorId contributorId = new ContributorId();
+        contributorId.setModule(moduleService.getModule(moduleId));
+        contributorId.setUserEmail(contributorDto.getUserEmail());
+        ModuleContributor moduleContributor = new ModuleContributor();
+        moduleContributor.setContributorId(contributorId);
+        moduleContributor.setContributorRole(contributorDto.getRole());
+        return moduleContributor;
     }
 }

@@ -7,8 +7,10 @@ package unit.com.xact.assessment.controllers;
 import com.xact.assessment.controllers.AdminController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
+import com.xact.assessment.services.AdminService;
 import com.xact.assessment.services.AssessmentMasterDataService;
 import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
@@ -16,20 +18,22 @@ import org.mockito.Mockito;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AdminControllerTest {
 
-    AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
-    AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
+    UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
-    AdminController adminController = new AdminController(assessmentMasterDataService, assessmentService);
+    AssessmentMasterDataService assessmentMasterDataService = Mockito.mock(AssessmentMasterDataService.class);
+    AssessmentService assessmentService = Mockito.mock(AssessmentService.class);
+    AdminService adminService = Mockito.mock(AdminService.class);
+    AdminController adminController = new AdminController(assessmentMasterDataService,assessmentService,userAuthService, adminService);
 
     @Test
     void createAssessmentCategory() {
@@ -39,7 +43,7 @@ class AdminControllerTest {
         categoryRequest.setActive(false);
 
         AssessmentCategory category = new AssessmentCategory("hello", false, "");
-        when(assessmentMasterDataService.createAssessmentCategory(categoryRequest)).thenReturn(category);
+        when(adminService.createAssessmentCategory(categoryRequest)).thenReturn(category);
 
         HttpResponse<CategoryDto> categoryHttpResponse = adminController.createAssessmentCategory(categoryRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), categoryHttpResponse.getStatus());
@@ -53,7 +57,7 @@ class AdminControllerTest {
         moduleRequest.setActive(false);
         AssessmentCategory category = new AssessmentCategory(1, "categoryName", true, "");
         AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", category, true, "");
-        when(assessmentMasterDataService.createAssessmentModule(moduleRequest)).thenReturn(assessmentModule);
+        when(adminService.createAssessmentModule(moduleRequest)).thenReturn(assessmentModule);
         HttpResponse<ModuleResponse> actualResponse = adminController.createAssessmentModule(moduleRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
@@ -69,7 +73,7 @@ class AdminControllerTest {
         assessmentTopic.setActive(false);
         assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
 
-        when(assessmentMasterDataService.createAssessmentTopics(topicRequest)).thenReturn(assessmentTopic);
+        when(adminService.createAssessmentTopics(topicRequest)).thenReturn(assessmentTopic);
         HttpResponse<TopicResponse> actualResponse = adminController.createTopic(topicRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -85,11 +89,12 @@ class AdminControllerTest {
         AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
         AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
         AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
-        when(assessmentMasterDataService.createAssessmentParameter(parameterRequest)).thenReturn(assessmentParameter);
+        when(adminService.createAssessmentParameter(parameterRequest)).thenReturn(assessmentParameter);
 
         HttpResponse<ParameterResponse> actualResponse = adminController.createParameter(parameterRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
 
     @Test
     void createAssessmentTopicReferences() {
@@ -98,7 +103,7 @@ class AdminControllerTest {
         referencesRequest.setRating(Rating.FIVE);
         referencesRequest.setTopic(1);
 
-        when(assessmentMasterDataService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(adminService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
 
         HttpResponse<AssessmentTopicReferenceDto> actualResponse = adminController.createTopicReference(referencesRequest, authentication);
         assertEquals(actualResponse.getStatus(), HttpResponse.ok().getStatus());
@@ -111,7 +116,7 @@ class AdminControllerTest {
         referencesRequest.setRating(Rating.FIVE);
         referencesRequest.setParameter(1);
 
-        when(assessmentMasterDataService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
+        when(adminService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(), Rating.FIVE, "reference"));
 
         HttpResponse<AssessmentParameterReferenceDto> actualResponse = adminController.createParameterReference(referencesRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -126,8 +131,8 @@ class AdminControllerTest {
         assessmentCategory.setCategoryId(1);
         assessmentCategory.setCategoryName("this is a category");
 
-        when(assessmentMasterDataService.getCategory(1)).thenReturn(assessmentCategory);
-        when(assessmentMasterDataService.updateCategory(assessmentCategory, categoryRequest)).thenReturn(assessmentCategory);
+        when(adminService.getCategory(1)).thenReturn(assessmentCategory);
+        when(adminService.updateCategory(assessmentCategory, categoryRequest)).thenReturn(assessmentCategory);
 
         HttpResponse<CategoryDto> actualResponse = adminController.updateCategory(categoryId, categoryRequest, authentication);
 
@@ -141,7 +146,7 @@ class AdminControllerTest {
         Integer moduleId = 1;
         AssessmentCategory category = new AssessmentCategory(1, "categoryName", true, "");
         AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", category, true, "");
-        when(assessmentMasterDataService.updateModule(1, moduleRequest)).thenReturn(assessmentModule);
+        when(adminService.updateModule(1, moduleRequest)).thenReturn(assessmentModule);
 
 
         HttpResponse actualResponse = adminController.updateModule(moduleId, moduleRequest, authentication);
@@ -160,7 +165,7 @@ class AdminControllerTest {
         assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
 
 
-        when(assessmentMasterDataService.updateTopic(1, topicRequest)).thenReturn(assessmentTopic);
+        when(adminService.updateTopic(1, topicRequest)).thenReturn(assessmentTopic);
 
         HttpResponse actualResponse = adminController.updateTopic(topicId, topicRequest, authentication);
 
@@ -178,13 +183,31 @@ class AdminControllerTest {
         AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).comments("").build();
 
 
-        when(assessmentMasterDataService.updateParameter(assessmentParameter.getParameterId(), parameterRequest)).thenReturn(assessmentParameter);
+        when(adminService.updateParameter(assessmentParameter.getParameterId(), parameterRequest)).thenReturn(assessmentParameter);
 
         HttpResponse actualResponse = adminController.updateParameter(assessmentParameter.getParameterId(), parameterRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
+    @Test
+    void shouldUpdateQuestion() {
+        QuestionRequest questionRequest = new QuestionRequest();
+        questionRequest.setQuestionText("question");
+        Integer questionId = 1;
+
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = new Question("Text", parameter);
+
+        when(adminService.updateQuestion(questionId, questionRequest)).thenReturn(question);
+
+        HttpResponse<QuestionResponse> actualResponse = adminController.updateQuestion(questionId, questionRequest, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
 
     @Test
     void shouldUpdateTopicReferences() {
@@ -194,7 +217,7 @@ class AdminControllerTest {
         AssessmentTopicReference topicReference = new AssessmentTopicReference();
         topicReference.setReference("Hello");
 
-        when(assessmentMasterDataService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(adminService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
 
         HttpResponse actualResponse = adminController.updateTopicReference(referenceId, referencesRequest, authentication);
 
@@ -209,7 +232,7 @@ class AdminControllerTest {
         AssessmentParameterReference parameterReference = new AssessmentParameterReference();
         parameterReference.setReference("Hello");
 
-        when(assessmentMasterDataService.updateParameterReference(referenceId,referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(),Rating.FIVE,"reference"));
+        when(adminService.updateParameterReference(referenceId, referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(), Rating.FIVE, "reference"));
         HttpResponse actualResponse = adminController.updateParameterReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -222,17 +245,17 @@ class AdminControllerTest {
         HttpResponse actualResponse = adminController.deleteTopicReference(referenceId, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        verify(assessmentMasterDataService).deleteTopicReference(referenceId);
+        verify(adminService).deleteTopicReference(referenceId);
     }
 
     @Test
     void shouldDeleteParameterReference() {
         Integer referenceId = 10;
 
-        HttpResponse actualResponse = adminController.deleteParameterReference(referenceId,authentication);
+        HttpResponse actualResponse = adminController.deleteParameterReference(referenceId, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
-        verify(assessmentMasterDataService).deleteParameterReference(referenceId);
+        verify(adminService).deleteParameterReference(referenceId);
     }
 
     @Test
@@ -254,13 +277,13 @@ class AdminControllerTest {
         String endDate = "2022-05-13";
 
 
-        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
+        when(adminService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
 
         HttpResponse actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
-        verify(assessmentService).getTotalAssessments(startDate, endDate);
+        verify(adminService).getTotalAssessments(startDate, endDate);
 
     }
 
@@ -281,7 +304,7 @@ class AdminControllerTest {
 
         String startDate = "2022-10-13";
         String endDate = "2022-05-13";
-        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
+        when(adminService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
 
         HttpResponse<AdminAssessmentResponse> actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
 
@@ -306,9 +329,25 @@ class AdminControllerTest {
         String startDate = "2022-10-13";
         String endDate = "2022-05-13";
 
-        when(assessmentService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
+        when(adminService.getTotalAssessments(startDate, endDate)).thenReturn(assessments);
 
         HttpResponse actualResponse = adminController.getAssessmentsCount(startDate, endDate, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void shouldSaveContributorsForModule() {
+        Integer moduleId = 1;
+        ContributorRequest contributorRequest = new ContributorRequest();
+        ContributorDto contributorDto = new ContributorDto();
+        contributorDto.setUserEmail("abc@thoughtworks.com");
+        contributorDto.setRole(ContributorRole.AUTHOR);
+        contributorRequest.setContributors(Collections.singletonList(contributorDto));
+
+        doNothing().when(adminService).saveContributors(moduleId, contributorRequest.getContributors());
+
+        HttpResponse<ContributorDto> actualResponse = adminController.saveModuleContributor(moduleId, contributorRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }

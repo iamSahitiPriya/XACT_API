@@ -31,7 +31,7 @@ public class ModuleService {
     }
 
     public void updateModule(AssessmentModule assessmentModule) {
-        moduleRepository.update(assessmentModule);
+         moduleRepository.update(assessmentModule);
     }
 
     public Integer getAssessedModules(List<TopicLevelRating> topicLevelRatingList, List<ParameterLevelRating> parameterLevelRatingList){

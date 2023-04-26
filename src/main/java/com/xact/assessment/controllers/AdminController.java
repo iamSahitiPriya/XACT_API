@@ -122,6 +122,7 @@ public class AdminController {
         ModuleResponse moduleResponse = mapper.map(assessmentModule, ModuleResponse.class);
         moduleResponse.setCategoryId(assessmentModule.getCategory().getCategoryId());
         moduleResponse.setUpdatedAt(assessmentModule.getUpdatedAt());
+        moduleResponse.setContributors(assessmentModuleRequest.getContributors());
         return HttpResponse.ok(moduleResponse);
     }
 

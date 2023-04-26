@@ -18,6 +18,7 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,44 @@ public class ContributorController {
     private static final ModelMapper mapper = new ModelMapper();
     private final UserAuthService userAuthService;
     private final ModuleContributorService contributorService;
+    static {
+        PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setCategory(source.getCategory().getCategoryId());
+            }
+        };
+        PropertyMap<AssessmentTopic, AssessmentTopicDto> topicMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setModule(source.getModule().getModuleId());
+            }
+        };
+        PropertyMap<AssessmentParameter, AssessmentParameterDto> parameterMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setTopic(source.getTopic().getTopicId());
+            }
+        };
+        PropertyMap<Question, QuestionDto> questionMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setParameter(source.getParameter().getParameterId());
+            }
+        };
+        PropertyMap<AssessmentTopicReference, AssessmentTopicReferenceDto> topicReferenceMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setTopic(source.getTopic().getTopicId());
+            }
+        };
+        PropertyMap<AssessmentParameterReference, AssessmentParameterReferenceDto> parameterReferenceMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setParameter(source.getParameter().getParameterId());
+            }
+        };
+        mapper.addMappings(moduleMap);
+        mapper.addMappings(topicMap);
+        mapper.addMappings(parameterMap);
+        mapper.addMappings(questionMap);
+        mapper.addMappings(topicReferenceMap);
+        mapper.addMappings(parameterReferenceMap);
+    }
 
     public ContributorController(UserAuthService userAuthService, ModuleContributorService contributorService) {
         this.userAuthService = userAuthService;

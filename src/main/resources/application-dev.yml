@@ -73,7 +73,7 @@ notification:
     durationInDays: 1
 
 userQuestion:
-  fixedDelay : "1d"
+  fixedDelay : "5m"
 
 cleanup:
   initialDelay: "1m"

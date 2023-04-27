@@ -80,6 +80,8 @@ cleanup:
     fixedDelay: "60d"
   activityLog:
     fixedDelay: "1d"
+  rejectedQuestion:
+    fixedDelay: "10d"
 
 identityProvider:
   iss: https://thoughtworks.okta.com/oauth2/default

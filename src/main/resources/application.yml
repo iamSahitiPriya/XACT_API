@@ -81,6 +81,8 @@ cleanup:
     fixedDelay: "60d"
   activityLog:
     fixedDelay: "1d"
+  rejectedQuestion:
+    fixedDelay: "10d"
 
 identityProvider:
   iss: https://dev-47045452.okta.com/oauth2/default

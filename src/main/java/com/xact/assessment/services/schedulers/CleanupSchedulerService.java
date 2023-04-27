@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package com.xact.assessment.services;
+package com.xact.assessment.services.schedulers;
 
 import com.xact.assessment.repositories.ActivityLogRepository;
 import com.xact.assessment.repositories.NotificationRepository;
@@ -17,7 +17,7 @@ import java.util.Date;
 @Singleton
 public class CleanupSchedulerService {
 
-    public static final int NOTIFICATION_DELAY = 60;
+    private static final int NOTIFICATION_DELAY = 60;
     private static final int ACTIVITY_LOG_DELAY = 1;
     private final NotificationRepository notificationRepository;
     private final ActivityLogRepository activityLogRepository;

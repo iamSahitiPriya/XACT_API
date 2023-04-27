@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package unit.com.xact.assessment.services;
+package unit.com.xact.assessment.services.scheduler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.xact.assessment.client.EmailNotificationClient;
@@ -16,9 +16,9 @@ import com.xact.assessment.models.Notification;
 import com.xact.assessment.models.NotificationStatus;
 import com.xact.assessment.models.NotificationType;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.EmailSchedulerService;
 import com.xact.assessment.services.NotificationService;
 import com.xact.assessment.services.TokenService;
+import com.xact.assessment.services.schedulers.EmailSchedulerService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

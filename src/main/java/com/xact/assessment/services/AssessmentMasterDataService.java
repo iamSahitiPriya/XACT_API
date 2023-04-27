@@ -16,8 +16,6 @@ import java.util.*;
 
 @Singleton
 public class AssessmentMasterDataService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataService.class);
-
 
     private final CategoryService categoryService;
     private final UserAssessmentModuleService userAssessmentModuleService;
@@ -111,12 +109,6 @@ public class AssessmentMasterDataService {
         }
     }
 
-    private boolean isTopicReferenceUnique(Set<AssessmentTopicReference> references, String reference) {
-        if (references != null) {
-            List<String> topicReferences = references.stream().map(AssessmentTopicReference::getReference).toList();
-            return isUnique(topicReferences, reference);
-        } else return true;
-    }
 
     public AssessmentCategory updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
         if (isUnique(assessmentCategory.getCategoryName(), assessmentCategoryRequest.getCategoryName(), isCategoryUnique(assessmentCategoryRequest.getCategoryName()))) {
@@ -189,7 +181,7 @@ public class AssessmentMasterDataService {
     }
 
 
-    public List<CategoryDto> getMasterDataByRole(User loggedInUser,String role) {
+    public List<CategoryDto> getMasterDataByRole(User loggedInUser, String role) {
         Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
         Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorsByEmail(loggedInUser.getUserEmail());
 
@@ -242,7 +234,7 @@ public class AssessmentMasterDataService {
         return assessmentCategoriesResponse;
     }
 
-    private CategoryDto getContributorCategories(AssessmentCategory assessmentCategory , List<ModuleContributor> moduleContributors) {
+    private CategoryDto getContributorCategories(AssessmentCategory assessmentCategory, List<ModuleContributor> moduleContributors) {
         CategoryDto categoryDto = masterDataMapper.mapCategory(assessmentCategory);
         SortedSet<AssessmentModuleDto> moduleDtos = new TreeSet<>();
         for (ModuleContributor moduleContributor : moduleContributors) {

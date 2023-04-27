@@ -362,17 +362,4 @@ class ParameterServiceTest {
         verify(assessmentParameterRepository).findAll();
 
     }
-//    @Test
-//    void shouldGetListOfParametersInDescOrder() {
-//        List<AssessmentParameter> assessmentParameters = new ArrayList<>();
-//        AssessmentParameter assessmentParameter = new AssessmentParameter();
-//        assessmentParameter.setParameterId(1);
-//        assessmentParameters.add(assessmentParameter);
-//
-//        when(assessmentParameterRepository.listOrderByUpdatedAtDesc()).thenReturn(assessmentParameters);
-//        parameterService.getParameters();
-//
-//        verify(assessmentParameterRepository).listOrderByUpdatedAtDesc();
-//
-//    }
 }

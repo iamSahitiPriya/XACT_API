@@ -24,8 +24,6 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

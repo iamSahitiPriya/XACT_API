@@ -6,7 +6,6 @@ package com.xact.assessment.dtos;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.xact.assessment.models.ModuleContributor;
 import io.micronaut.core.annotation.Introspected;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

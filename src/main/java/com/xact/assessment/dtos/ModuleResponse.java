@@ -4,7 +4,6 @@
 
 package com.xact.assessment.dtos;
 
-import com.xact.assessment.models.ModuleContributor;
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

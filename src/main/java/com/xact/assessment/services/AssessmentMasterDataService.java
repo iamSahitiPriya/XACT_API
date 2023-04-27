@@ -6,7 +6,6 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.exceptions.DuplicateRecordException;
-import com.xact.assessment.exceptions.InvalidHierarchyException;
 import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;

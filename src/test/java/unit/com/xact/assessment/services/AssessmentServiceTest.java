@@ -160,33 +160,6 @@ class AssessmentServiceTest {
         assertEquals(Active, actualAssessment.getAssessmentStatus());
     }
 
-//    @Test
-//    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
-//        List<AssessmentUser> assessmentUsersList = new ArrayList<>();
-//
-//        Integer assessmentId = 1;
-//
-//        Assessment assessment = new Assessment();
-//        assessment.setAssessmentId(assessmentId);
-//        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-//
-//        UserId userId1 = new UserId("hello@gmail.com", assessment);
-//        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
-//        assessmentUsersList.add(assessmentUsers1);
-//
-//        UserId userId2 = new UserId("new@gmail.com", assessment);
-//        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
-//        assessmentUsersList.add(assessmentUsers2);
-//
-//        List<String> expectedAssessmentUsersList = new ArrayList<>();
-//        for (AssessmentUser eachUser : assessmentUsersList) {
-//            expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
-//        }
-//        when(usersAssessmentsService.getAssessmentFacilitators(assessmentId)).thenReturn(expectedAssessmentUsersList);
-//        List<String> actualResponse = assessmentService.getAssessmentFacilitators(assessmentId);
-//        assertEquals(expectedAssessmentUsersList, actualResponse);
-//
-//    }
 
     @Test
     void shouldUpdateAssessment() {

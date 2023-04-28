@@ -12,6 +12,7 @@ import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -27,6 +28,16 @@ class ContributorControllerTest {
     private final ModuleContributorService contributorService = mock(ModuleContributorService.class);
     private final ContributorController contributorController = new ContributorController(userAuthService, contributorService);
     private final Authentication authentication = Mockito.mock(Authentication.class);
+
+    private final  User user = new User();
+    @BeforeEach
+    public void beforeEach() {
+
+        String userEmail = "hello@thoughtworks.com";
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);;
+    }
 
     @Test
     void shouldGetContributorQuestions() {
@@ -174,6 +185,7 @@ class ContributorControllerTest {
         Assertions.assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
     }
+
     @Test
     void createAssessmentTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
@@ -186,6 +198,7 @@ class ContributorControllerTest {
         assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
 
         when(contributorService.createAssessmentTopics(topicRequest)).thenReturn(assessmentTopic);
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
         HttpResponse<TopicResponse> actualResponse = contributorController.createTopic(topicRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -202,6 +215,7 @@ class ContributorControllerTest {
         AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
         AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
         when(contributorService.createAssessmentParameter(parameterRequest)).thenReturn(assessmentParameter);
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse<ParameterResponse> actualResponse = contributorController.createParameter(parameterRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -216,6 +230,7 @@ class ContributorControllerTest {
         referencesRequest.setTopic(1);
 
         when(contributorService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse<AssessmentTopicReferenceDto> actualResponse = contributorController.createTopicReference(referencesRequest, authentication);
         assertEquals(actualResponse.getStatus(), HttpResponse.ok().getStatus());
@@ -229,10 +244,12 @@ class ContributorControllerTest {
         referencesRequest.setParameter(1);
 
         when(contributorService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(), Rating.FIVE, "reference"));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse<AssessmentParameterReferenceDto> actualResponse = contributorController.createParameterReference(referencesRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
     @Test
     void shouldUpdateTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
@@ -245,6 +262,7 @@ class ContributorControllerTest {
 
 
         when(contributorService.updateTopic(1, topicRequest)).thenReturn(assessmentTopic);
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse actualResponse = contributorController.updateTopic(topicId, topicRequest, authentication);
 
@@ -263,6 +281,7 @@ class ContributorControllerTest {
 
 
         when(contributorService.updateParameter(assessmentParameter.getParameterId(), parameterRequest)).thenReturn(assessmentParameter);
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse actualResponse = contributorController.updateParameter(assessmentParameter.getParameterId(), parameterRequest, authentication);
 
@@ -297,6 +316,7 @@ class ContributorControllerTest {
         topicReference.setReference("Hello");
 
         when(contributorService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse actualResponse = contributorController.updateTopicReference(referenceId, referencesRequest, authentication);
 
@@ -312,6 +332,8 @@ class ContributorControllerTest {
         parameterReference.setReference("Hello");
 
         when(contributorService.updateParameterReference(referenceId, referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(), Rating.FIVE, "reference"));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
+
         HttpResponse actualResponse = contributorController.updateParameterReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
@@ -320,6 +342,7 @@ class ContributorControllerTest {
     @Test
     void shouldDeleteTopicReference() {
         Integer referenceId = 10;
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse actualResponse = contributorController.deleteTopicReference(referenceId, authentication);
 
@@ -330,6 +353,9 @@ class ContributorControllerTest {
     @Test
     void shouldDeleteParameterReference() {
         Integer referenceId = 10;
+
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
+
 
         HttpResponse actualResponse = contributorController.deleteParameterReference(referenceId, authentication);
 

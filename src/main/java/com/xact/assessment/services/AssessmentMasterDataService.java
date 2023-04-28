@@ -9,8 +9,6 @@ import com.xact.assessment.exceptions.DuplicateRecordException;
 import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 

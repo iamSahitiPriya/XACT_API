@@ -198,7 +198,7 @@ class AssessmentControllerTest {
         when(assessmentService.getUserQuestions(assessmentId)).thenReturn(Collections.singletonList(userQuestion));
 
 
-       RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
+        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         Integer recommendationTextId = parameterLevelRecommendationRequest.getRecommendationId() != null ? parameterLevelRecommendationRequest.getRecommendationId() : null;
         parameterLevelRecommendationRequest.setRecommendationId(recommendationTextId);
         parameterLevelRecommendationRequest.setRecommendationText(parameterLevelRecommendation.getRecommendationText());
@@ -519,12 +519,12 @@ class AssessmentControllerTest {
         when(assessmentService.getParameter(parameterId)).thenReturn(Optional.of(assessmentParameter));
 
 
-       RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
+        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationText("some text");
 
-        ParameterLevelRecommendation parameterLevelRecommendation =modelMapper.map(parameterLevelRecommendationRequest,ParameterLevelRecommendation.class);
+        ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest, ParameterLevelRecommendation.class);
 
-        when(assessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest,assessment,parameterId)).thenReturn(parameterLevelRecommendation);
+        when(assessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId)).thenReturn(parameterLevelRecommendation);
 
         HttpResponse<RecommendationResponse> actualResponse = assessmentController.saveParameterRecommendation(assessmentId, parameterId, parameterLevelRecommendationRequest, authentication);
 
@@ -565,7 +565,7 @@ class AssessmentControllerTest {
         assessmentParameter.setParameterId(parameterId);
         assessmentParameter.setParameterName("Parameter Name");
 
-       RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
+        RecommendationRequest parameterLevelRecommendationRequest = new RecommendationRequest();
         parameterLevelRecommendationRequest.setRecommendationText("some text");
         parameterLevelRecommendationRequest.setRecommendationId(1);
         parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
@@ -1045,8 +1045,6 @@ class AssessmentControllerTest {
         answer.setAnswerId(answerId);
         answer.setAnswerNote("Answer");
 
-//        when(assessmentService.getAnswer(answerId)).thenReturn(Optional.of(answer));
-//        when(answerService.saveAnswer(answer)).thenReturn(answer);
 
         UpdateAnswerRequest updateAnswerRequest = new UpdateAnswerRequest();
         updateAnswerRequest.setQuestionId(1);

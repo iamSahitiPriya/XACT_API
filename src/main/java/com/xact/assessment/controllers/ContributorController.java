@@ -35,6 +35,7 @@ public class ContributorController {
     private static final ModelMapper mapper = new ModelMapper();
     private final UserAuthService userAuthService;
     private final ModuleContributorService contributorService;
+
     static {
         PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
             protected void configure() {
@@ -96,7 +97,7 @@ public class ContributorController {
     public HttpResponse<QuestionResponse> createQuestion(@Body @Valid QuestionRequest questionRequest, Authentication authentication) {
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         LOGGER.info("{}: Create questions - {}", loggedInUser.getUserEmail(), questionRequest.getQuestionText());
-        Question question = contributorService.createAssessmentQuestion(loggedInUser.getUserEmail(),questionRequest);
+        Question question = contributorService.createAssessmentQuestion(loggedInUser.getUserEmail(), questionRequest);
         return getQuestionResponse(question);
     }
 
@@ -136,79 +137,105 @@ public class ContributorController {
 
         return HttpResponse.ok(questionResponse);
     }
+
     @Post(value = "/topics", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicResponse> createTopic(@Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
         LOGGER.info("{}: Create topics - {}", authentication.getName(), assessmentTopicRequest.getTopicName());
-        AssessmentTopic assessmentTopic = contributorService.createAssessmentTopics(assessmentTopicRequest);
-        TopicResponse topicResponse = mapper.map(assessmentTopic, TopicResponse.class);
-        topicResponse.setModuleId(assessmentTopic.getModule().getModuleId());
-        topicResponse.setCategoryId(assessmentTopic.getModule().getCategory().getCategoryId());
-
-        return HttpResponse.ok(topicResponse);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        AssessmentModule assessmentModule = contributorService.getModuleById(assessmentTopicRequest.getModule());
+        if (isValid(loggedInUser, assessmentModule)) {
+            AssessmentTopic assessmentTopic = contributorService.createAssessmentTopics(assessmentTopicRequest);
+            TopicResponse topicResponse = mapper.map(assessmentTopic, TopicResponse.class);
+            topicResponse.setModuleId(assessmentTopic.getModule().getModuleId());
+            topicResponse.setCategoryId(assessmentTopic.getModule().getCategory().getCategoryId());
+            return HttpResponse.ok(topicResponse);
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
 
     @Post(value = "/parameters", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterResponse> createParameter(@Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
         LOGGER.info("{}: Create parameter - {}", authentication.getName(), assessmentParameterRequest.getParameterName());
-
-        AssessmentParameter assessmentParameter = contributorService.createAssessmentParameter(assessmentParameterRequest);
-        ParameterResponse parameterResponse = mapper.map(assessmentParameter, ParameterResponse.class);
-        parameterResponse.setModuleId(assessmentParameter.getTopic().getModule().getModuleId());
-        parameterResponse.setTopicId(assessmentParameter.getTopic().getTopicId());
-        parameterResponse.setCategoryId(assessmentParameter.getTopic().getModule().getCategory().getCategoryId());
-        return HttpResponse.ok(parameterResponse);
-    }
-
-
-    private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {
-        QuestionResponse questionResponse = mapper.map(question, QuestionResponse.class);
-        questionResponse.setCategory(question.getParameter().getTopic().getModule().getCategory().getCategoryId());
-        questionResponse.setModule(question.getParameter().getTopic().getModule().getModuleId());
-        questionResponse.setTopic(question.getParameter().getTopic().getTopicId());
-        questionResponse.setParameterId(question.getParameter().getParameterId());
-        return HttpResponse.ok(questionResponse);
+        AssessmentModule assessmentModule = contributorService.getModule(assessmentParameterRequest.getTopic());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if (isValid(loggedInUser, assessmentModule)) {
+            AssessmentParameter assessmentParameter = contributorService.createAssessmentParameter(assessmentParameterRequest);
+            ParameterResponse parameterResponse = mapper.map(assessmentParameter, ParameterResponse.class);
+            parameterResponse.setModuleId(assessmentParameter.getTopic().getModule().getModuleId());
+            parameterResponse.setTopicId(assessmentParameter.getTopic().getTopicId());
+            parameterResponse.setCategoryId(assessmentParameter.getTopic().getModule().getCategory().getCategoryId());
+            return HttpResponse.ok(parameterResponse);
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
 
     @Post(value = "/topic-references", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopicReferenceDto> createTopicReference(@Body TopicReferencesRequest topicReferencesRequest, Authentication authentication) {
         LOGGER.info("{}: Create topic reference - {}", authentication.getName(), topicReferencesRequest.getReference());
-        AssessmentTopicReference assessmentTopicReference = contributorService.createAssessmentTopicReference(topicReferencesRequest);
-        AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
-        return HttpResponse.ok(assessmentTopicReferenceDto);
+        AssessmentModule assessmentModule = contributorService.getModule(topicReferencesRequest.getTopic());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if (isValid(loggedInUser, assessmentModule)) {
+            AssessmentTopicReference assessmentTopicReference = contributorService.createAssessmentTopicReference(topicReferencesRequest);
+            AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
+            return HttpResponse.ok(assessmentTopicReferenceDto);
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
 
     @Post(value = "/parameter-references", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameterReferenceDto> createParameterReference(@Body ParameterReferencesRequest parameterReferencesRequests, Authentication authentication) {
         LOGGER.info("{}: Create parameter reference - {}", authentication.getName(), parameterReferencesRequests.getParameter());
-        AssessmentParameterReference assessmentParameterReference = contributorService.createAssessmentParameterReference(parameterReferencesRequests);
-        AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
-        return HttpResponse.ok(assessmentParameterReferenceDto);
+        AssessmentModule assessmentModule = contributorService.getModuleByParameter(parameterReferencesRequests.getParameter());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if (isValid(loggedInUser, assessmentModule)) {
+            AssessmentParameterReference assessmentParameterReference = contributorService.createAssessmentParameterReference(parameterReferencesRequests);
+            AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
+            return HttpResponse.ok(assessmentParameterReferenceDto);
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
+
     @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicResponse> updateTopic(@PathVariable("topicId") Integer topicId, @Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {
         LOGGER.info("{}: Update topic - {}", authentication.getName(), assessmentTopicRequest.getTopicName());
-        AssessmentTopic assessmentTopic = contributorService.updateTopic(topicId, assessmentTopicRequest);
-        TopicResponse topicResponse = mapper.map(assessmentTopic, TopicResponse.class);
-        topicResponse.setUpdatedAt(assessmentTopic.getUpdatedAt());
-        topicResponse.setCategoryId(assessmentTopic.getModule().getCategory().getCategoryId());
-        return HttpResponse.ok(topicResponse);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        AssessmentModule assessmentModule = contributorService.getModuleById(assessmentTopicRequest.getModule());
+        if (isValid(loggedInUser, assessmentModule)) {
+            AssessmentTopic assessmentTopic = contributorService.updateTopic(topicId, assessmentTopicRequest);
+            TopicResponse topicResponse = mapper.map(assessmentTopic, TopicResponse.class);
+            topicResponse.setUpdatedAt(assessmentTopic.getUpdatedAt());
+            topicResponse.setCategoryId(assessmentTopic.getModule().getCategory().getCategoryId());
+            return HttpResponse.ok(topicResponse);
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
 
     @Put(value = "/parameters/{parameterId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterResponse> updateParameter(@PathVariable("parameterId") Integer parameterId, @Body @Valid AssessmentParameterRequest assessmentParameterRequest, Authentication authentication) {
         LOGGER.info("{}: Update parameter - {}", authentication.getName(), assessmentParameterRequest.getParameterName());
-        AssessmentParameter assessmentParameter = contributorService.updateParameter(parameterId, assessmentParameterRequest);
-        ParameterResponse parameterResponse = mapper.map(assessmentParameter, ParameterResponse.class);
-        parameterResponse.setModuleId(assessmentParameter.getTopic().getModule().getModuleId());
-        parameterResponse.setTopicId(assessmentParameter.getTopic().getTopicId());
-        parameterResponse.setCategoryId(assessmentParameter.getTopic().getModule().getCategory().getCategoryId());
-        return HttpResponse.ok(parameterResponse);
+        AssessmentModule assessmentModule = contributorService.getModule(assessmentParameterRequest.getTopic());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if (isValid(loggedInUser, assessmentModule)) {
+            AssessmentParameter assessmentParameter = contributorService.updateParameter(parameterId, assessmentParameterRequest);
+            ParameterResponse parameterResponse = mapper.map(assessmentParameter, ParameterResponse.class);
+            parameterResponse.setModuleId(assessmentParameter.getTopic().getModule().getModuleId());
+            parameterResponse.setTopicId(assessmentParameter.getTopic().getTopicId());
+            parameterResponse.setCategoryId(assessmentParameter.getTopic().getModule().getCategory().getCategoryId());
+            return HttpResponse.ok(parameterResponse);
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
 
     @Put(value = "/questions/{questionId}", produces = MediaType.APPLICATION_JSON)
@@ -223,18 +250,30 @@ public class ContributorController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentTopicReferenceDto> updateTopicReference(@PathVariable("referenceId") Integer referenceId, TopicReferencesRequest topicReferencesRequest, Authentication authentication) {
         LOGGER.info("{}: Update topic-reference - {}", authentication.getName(), topicReferencesRequest.getReference());
-        AssessmentTopicReference assessmentTopicReference = contributorService.updateTopicReference(referenceId, topicReferencesRequest);
-        AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
-        return HttpResponse.ok(assessmentTopicReferenceDto);
+        AssessmentModule assessmentModule = contributorService.getModule(topicReferencesRequest.getTopic());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if (isValid(loggedInUser, assessmentModule)) {
+            AssessmentTopicReference assessmentTopicReference = contributorService.updateTopicReference(referenceId, topicReferencesRequest);
+            AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
+            return HttpResponse.ok(assessmentTopicReferenceDto);
+        } else {
+            return HttpResponse.unauthorized();
+        }
     }
 
     @Put(value = "/parameter-references/{referenceId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentParameterReferenceDto> updateParameterReference(@PathVariable("referenceId") Integer referenceId, ParameterReferencesRequest parameterReferencesRequest, Authentication authentication) {
         LOGGER.info("{}: Update parameter-reference - {}", authentication.getName(), parameterReferencesRequest.getReference());
-        AssessmentParameterReference assessmentParameterReference = contributorService.updateParameterReference(referenceId, parameterReferencesRequest);
-        AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
-        return HttpResponse.ok(assessmentParameterReferenceDto);
+        AssessmentModule assessmentModule = contributorService.getModuleByParameter(parameterReferencesRequest.getParameter());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if (isValid(loggedInUser, assessmentModule)) {
+            AssessmentParameterReference assessmentParameterReference = contributorService.updateParameterReference(referenceId, parameterReferencesRequest);
+            AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
+            return HttpResponse.ok(assessmentParameterReferenceDto);
+        } else {
+            return HttpResponse.unauthorized();
+        }
 
     }
 
@@ -242,18 +281,42 @@ public class ContributorController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicReferencesRequest> deleteTopicReference(@PathVariable("referenceId") Integer referenceId, Authentication authentication) {
         LOGGER.info("{}: Delete topic reference. referenceId - {}", authentication.getName(), referenceId);
-        contributorService.deleteTopicReference(referenceId);
-        return HttpResponse.ok();
+        AssessmentModule assessmentModule = contributorService.getModuleByTopicReference(referenceId);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if(isValid(loggedInUser,assessmentModule)) {
+            contributorService.deleteTopicReference(referenceId);
+            return HttpResponse.ok();
+        }else{
+            return HttpResponse.unauthorized();
+        }
     }
 
     @Delete(value = "parameter-references/{referenceId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<ParameterReferencesRequest> deleteParameterReference(@PathVariable("referenceId") Integer referenceId, Authentication authentication) {
         LOGGER.info("{}: Delete parameter reference. referenceId: {}", authentication.getName(), referenceId);
-        contributorService.deleteParameterReference(referenceId);
-        return HttpResponse.ok();
+        AssessmentModule assessmentModule = contributorService.getModuleByParameterReference(referenceId);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if(isValid(loggedInUser,assessmentModule)) {
+            contributorService.deleteParameterReference(referenceId);
+            return HttpResponse.ok();
+        }else{
+            return HttpResponse.unauthorized();
+        }
     }
 
+    private boolean isValid(User loggedInUser, AssessmentModule module) {
+        return contributorService.validate(loggedInUser, module);
+    }
+
+    private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {
+        QuestionResponse questionResponse = mapper.map(question, QuestionResponse.class);
+        questionResponse.setCategory(question.getParameter().getTopic().getModule().getCategory().getCategoryId());
+        questionResponse.setModule(question.getParameter().getTopic().getModule().getModuleId());
+        questionResponse.setTopic(question.getParameter().getTopic().getTopicId());
+        questionResponse.setParameterId(question.getParameter().getParameterId());
+        return HttpResponse.ok(questionResponse);
+    }
 
 
 }

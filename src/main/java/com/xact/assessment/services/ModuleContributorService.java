@@ -272,4 +272,33 @@ public class ModuleContributorService {
             return isUnique(topicReferences, reference);
         } else return true;
     }
+
+    public boolean validate(User loggedInUser, AssessmentModule module) {
+        Optional<ContributorRole> role = moduleContributorRepository.findRole(module.getModuleId(), loggedInUser.getUserEmail());
+        return role.isPresent() && role.get().equals(ContributorRole.AUTHOR);
+
+    }
+
+    public AssessmentModule getModule(Integer topic) {
+        return topicService.getTopicById(topic).getModule();
+    }
+
+    public AssessmentModule getModuleById(Integer module) {
+        return moduleService.getModule(module);
+    }
+
+    public AssessmentModule getModuleByParameter(Integer parameterId) {
+        Optional<AssessmentParameter> parameter =  parameterService.getParameter(parameterId);
+        return parameter.isPresent()? parameter.get().getTopic().getModule():new AssessmentModule();
+    }
+
+    public AssessmentModule getModuleByTopicReference(Integer referenceId) {
+        AssessmentTopicReference assessmentTopicReference = topicService.getAssessmentTopicReference(referenceId);
+        return assessmentTopicReference.getTopic().getModule();
+    }
+
+    public AssessmentModule getModuleByParameterReference(Integer referenceId) {
+        AssessmentParameterReference assessmentParameterReference = parameterService.getAssessmentParameterReference(referenceId);
+        return assessmentParameterReference.getParameter().getTopic().getModule();
+    }
 }

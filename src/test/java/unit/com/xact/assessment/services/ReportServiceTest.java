@@ -103,7 +103,7 @@ class ReportServiceTest {
         parameterAssessments.add(parameterAssessment);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
-        TopicLevelRating topicAssessment = new TopicLevelRating(topicLevelId, 4, new Date(), new Date());
+        TopicLevelRating topicAssessment = new TopicLevelRating(4, new Date(), new Date(),topicLevelId);
         topicAssessments.add(topicAssessment);
         HashMap<Integer, List<TopicLevelRecommendation>> topicRecommendationMap = new HashMap<>();
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
@@ -222,7 +222,7 @@ class ReportServiceTest {
         parameterAssessments.add(parameterAssessment);
 
         TopicLevelId topicLevelId = new TopicLevelId(assessment, topic);
-        TopicLevelRating topicAssessment = new TopicLevelRating(topicLevelId, 4, new Date(), new Date());
+        TopicLevelRating topicAssessment = new TopicLevelRating( 4, new Date(), new Date(),topicLevelId);
         topicAssessments.add(topicAssessment);
 
         HashMap<Integer, List<TopicLevelRecommendation>> topicRecommendationMap = new HashMap<>();

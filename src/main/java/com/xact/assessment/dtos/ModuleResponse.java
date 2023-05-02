@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Set;
 
 @Introspected
 @NoArgsConstructor
@@ -22,6 +23,7 @@ public class ModuleResponse {
     private String moduleName;
     private Integer categoryId;
     private Date updatedAt;
+    private Set<ContributorDto> contributors;
     private String comments;
     private boolean active;
 }

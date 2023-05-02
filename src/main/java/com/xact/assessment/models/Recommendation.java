@@ -7,7 +7,10 @@ package com.xact.assessment.models;
 import com.xact.assessment.dtos.RecommendationDeliveryHorizon;
 import com.xact.assessment.dtos.RecommendationEffort;
 import com.xact.assessment.dtos.RecommendationImpact;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -19,7 +22,6 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
 @MappedSuperclass
 public class Recommendation {
     @Id

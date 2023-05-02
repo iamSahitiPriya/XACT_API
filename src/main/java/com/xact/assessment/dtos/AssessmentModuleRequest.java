@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -25,7 +26,7 @@ public class AssessmentModuleRequest {
 
     @JsonProperty
     private Integer category ;
-
+    private Set<ContributorDto> contributors;
     @JsonProperty
     private boolean isActive;
 

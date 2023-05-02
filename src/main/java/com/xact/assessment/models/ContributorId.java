@@ -21,9 +21,8 @@ import java.io.Serializable;
 public class ContributorId  implements Serializable {
     @ManyToOne
     @MapsId
-    @JoinColumn(name = "module")
+    @JoinColumn(name = "module", referencedColumnName = "module_id")
     private AssessmentModule module;
-
 
     private String userEmail;
 }

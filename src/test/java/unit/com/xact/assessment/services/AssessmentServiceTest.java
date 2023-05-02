@@ -8,7 +8,10 @@ import com.xact.assessment.config.FeedbackNotificationConfig;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.repositories.AssessmentRepository;
-import com.xact.assessment.services.*;
+import com.xact.assessment.services.AssessmentMasterDataService;
+import com.xact.assessment.services.AssessmentService;
+import com.xact.assessment.services.TopicAndParameterLevelAssessmentService;
+import com.xact.assessment.services.UsersAssessmentsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
@@ -29,7 +32,6 @@ class AssessmentServiceTest {
     private AssessmentMasterDataService assessmentMasterDataService;
     private AssessmentService assessmentService;
     private TopicAndParameterLevelAssessmentService topicAndParameterLevelAssessmentService;
-    private AccessControlService accessControlService;
     private FeedbackNotificationConfig feedbackNotificationConfig;
 
     private static final ModelMapper modelMapper = new ModelMapper();
@@ -41,14 +43,12 @@ class AssessmentServiceTest {
         assessmentRepository = mock(AssessmentRepository.class);
         assessmentMasterDataService = mock(AssessmentMasterDataService.class);
         topicAndParameterLevelAssessmentService = mock(TopicAndParameterLevelAssessmentService.class);
-        accessControlService = mock(AccessControlService.class);
         feedbackNotificationConfig = mock(FeedbackNotificationConfig.class);
-        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, accessControlService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, feedbackNotificationConfig);
+        assessmentService = new AssessmentService(assessmentRepository, usersAssessmentsService, assessmentMasterDataService, topicAndParameterLevelAssessmentService, feedbackNotificationConfig);
     }
 
     @Test
     void shouldAddUsersToAssessment() {
-        String email = "abc@thoughtworks.com";
         AssessmentRequest assessmentRequest = new AssessmentRequest();
         assessmentRequest.setAssessmentName("assessment1");
         assessmentRequest.setTeamSize(1);
@@ -159,33 +159,30 @@ class AssessmentServiceTest {
         assertEquals(Active, actualAssessment.getAssessmentStatus());
     }
 
-//    @Test
-//    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
-//        List<AssessmentUser> assessmentUsersList = new ArrayList<>();
-//
-//        Integer assessmentId = 1;
-//
-//        Assessment assessment = new Assessment();
-//        assessment.setAssessmentId(assessmentId);
-//        assessment.setAssessmentStatus(AssessmentStatus.Completed);
-//
-//        UserId userId1 = new UserId("hello@gmail.com", assessment);
-//        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
-//        assessmentUsersList.add(assessmentUsers1);
-//
-//        UserId userId2 = new UserId("new@gmail.com", assessment);
-//        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
-//        assessmentUsersList.add(assessmentUsers2);
-//
-//        List<String> expectedAssessmentUsersList = new ArrayList<>();
-//        for (AssessmentUser eachUser : assessmentUsersList) {
-//            expectedAssessmentUsersList.add(eachUser.getUserId().getUserEmail());
-//        }
-//        when(usersAssessmentsService.getAssessmentFacilitators(assessmentId)).thenReturn(expectedAssessmentUsersList);
-//        List<String> actualResponse = assessmentService.getAssessmentFacilitators(assessmentId);
-//        assertEquals(expectedAssessmentUsersList, actualResponse);
-//
-//    }
+    @Test
+    void shouldReturnAssessmentUsersListWithParticularAssessmentId() {
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
+
+        Integer assessmentId = 1;
+
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(assessmentId);
+        assessment.setAssessmentStatus(AssessmentStatus.Completed);
+
+        UserId userId1 = new UserId("hello@gmail.com", assessment);
+        AssessmentUser assessmentUsers1 = new AssessmentUser(userId1, AssessmentRole.Facilitator);
+        assessmentUsers.add(assessmentUsers1);
+
+        UserId userId2 = new UserId("new@gmail.com", assessment);
+        AssessmentUser assessmentUsers2 = new AssessmentUser(userId2, AssessmentRole.Facilitator);
+        assessmentUsers.add(assessmentUsers2);
+
+
+        when(usersAssessmentsService.getAssessmentFacilitators(assessment)).thenReturn(assessmentUsers);
+        Set<AssessmentUser> actualResponse = assessmentService.getAssessmentFacilitators(assessment);
+        assertEquals(assessmentUsers, actualResponse);
+
+    }
 
     @Test
     void shouldUpdateAssessment() {
@@ -370,9 +367,11 @@ class AssessmentServiceTest {
         userQuestion.setAssessment(assessment);
         userQuestion.setAnswer("answer");
         userQuestion.setAnswer("answer Text?");
+        UpdateAnswerRequest answerRequest = new UpdateAnswerRequest(1,AnswerType.ADDITIONAL,"answer Text?");
 
         doNothing().when(usersAssessmentsService).saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
-        assessmentService.saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
+
+        assessmentService.saveAnswer(userQuestion.getQuestionId(), answerRequest,assessment);
 
         verify(usersAssessmentsService).saveUserAnswer(userQuestion.getQuestionId(), userQuestion.getAnswer());
 
@@ -485,7 +484,6 @@ class AssessmentServiceTest {
         assessmentService.updateAssessmentModules(moduleRequests, assessment);
 
         verify(usersAssessmentsService).updateAssessmentModules(moduleRequests, assessment);
-
     }
 
 
@@ -536,9 +534,7 @@ class AssessmentServiceTest {
         parameterLevelRecommendationRequest.setEffort(RecommendationEffort.LOW);
         parameterLevelRecommendationRequest.setImpact(RecommendationImpact.HIGH);
         parameterLevelRecommendationRequest.setDeliveryHorizon(RecommendationDeliveryHorizon.LATER);
-
         Assessment assessment = new Assessment();
-
 
         ParameterLevelRecommendation parameterLevelRecommendation = modelMapper.map(parameterLevelRecommendationRequest, ParameterLevelRecommendation.class);
 
@@ -546,5 +542,97 @@ class AssessmentServiceTest {
         ParameterLevelRecommendation parameterLevelRecommendation1 = assessmentService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, 1);
 
         assertEquals("text", parameterLevelRecommendation1.getRecommendationText());
+    }
+
+    @Test
+    void shouldReturnUserQuestionWhenQuestionIdIsGiven() {
+        UserQuestion userQuestion = new UserQuestion(1,new Assessment(),new AssessmentParameter(),"","",new Date(),new Date(),false);
+
+        when(usersAssessmentsService.searchUserQuestion(1)).thenReturn(Optional.of(userQuestion));
+
+        Optional<UserQuestion> actualResponse = assessmentService.searchUserQuestion(1);
+
+        verify(usersAssessmentsService).searchUserQuestion(1);
+
+        assertEquals(Optional.of(userQuestion),actualResponse);
+    }
+
+    @Test
+    void shouldReturnAssessmentResponse() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        AssessmentUser assessmentUser = new AssessmentUser(new UserId("",assessment),AssessmentRole.Owner);
+        assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
+        assessment.setOrganisation(new Organisation(1,"","","",1));
+        Answer answer = new Answer(new AnswerId(assessment,new Question()),"",new Date(),new Date());
+        UserQuestion userQuestion = new UserQuestion(1,new Assessment(),new AssessmentParameter(),"","",new Date(),new Date(),false);
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        AssessmentTopic assessmentTopic1 = new AssessmentTopic();
+        assessmentTopic1.setTopicId(2);
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterId(1);
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter();
+        assessmentParameter1.setParameterId(2);
+        TopicLevelRating topicLevelRating = new TopicLevelRating(2,new Date(),new Date(),new TopicLevelId(assessment,assessmentTopic));
+        TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(assessmentTopic);
+        TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation(assessmentTopic1);
+        List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
+        topicLevelRecommendationList.add(topicLevelRecommendation);
+        topicLevelRecommendationList.add(topicLevelRecommendation1);
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating(1,new Date(),new Date(),new ParameterLevelId(assessment,assessmentParameter));
+        List<ParameterLevelRating> parameterLevelRatingList = new ArrayList<>();
+        parameterLevelRatingList.add(parameterLevelRating);
+        ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(assessmentParameter);
+        ParameterLevelRecommendation parameterLevelRecommendation1 = new ParameterLevelRecommendation(assessmentParameter1);
+        List<ParameterLevelRecommendation> parameterLevelRecommendationList = new ArrayList<>();
+        parameterLevelRecommendationList.add(parameterLevelRecommendation1);
+        parameterLevelRecommendationList.add(parameterLevelRecommendation);
+
+        when(topicAndParameterLevelAssessmentService.getAnswers(1)).thenReturn(Collections.singletonList(answer));
+        when(usersAssessmentsService.getUserQuestions(1)).thenReturn(Collections.singletonList(userQuestion));
+        when(topicAndParameterLevelAssessmentService.getTopicRatings(1)).thenReturn(Collections.singletonList(topicLevelRating));
+        when(topicAndParameterLevelAssessmentService.getTopicRecommendations(1)).thenReturn(topicLevelRecommendationList);
+        when(topicAndParameterLevelAssessmentService.getParameterRatings(1)).thenReturn(parameterLevelRatingList);
+        when(topicAndParameterLevelAssessmentService.getParameterRecommendations(1)).thenReturn(parameterLevelRecommendationList);
+
+        AssessmentResponse assessmentResponse = assessmentService.getAssessmentResponse(assessment);
+
+        assertEquals(2,assessmentResponse.getParameterRatingAndRecommendation().size());
+    }
+
+    @Test
+    void shouldSetValuesToAssessment() {
+        AssessmentRequest assessmentRequest = new AssessmentRequest("name","purpose","description","name","domain","industry",2,new ArrayList<>());
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setOrganisation(new Organisation());
+
+        Assessment assessment1 = assessmentService.setAssessment(assessment,assessmentRequest);
+
+        assertEquals("name",assessment1.getAssessmentName());
+    }
+
+    @Test
+    void shouldReturnAssessmentUsers() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        AssessmentUser assessmentUser = new AssessmentUser(new UserId("abc@thoughtworks.com",assessment),AssessmentRole.Owner);
+        AssessmentUser assessmentUser1 = new AssessmentUser(new UserId("cde@thoughtworks.com",assessment),AssessmentRole.Facilitator);
+        Set<AssessmentUser> assessmentUsers = new HashSet<>();
+        List<UserDto> assessmentUserList = new ArrayList<>();
+        assessmentUserList.add(new UserDto("abc@thoughtworks.com",UserRole.Owner));
+        assessmentUserList.add(new UserDto("cde@thoughtworks.com",UserRole.Facilitator));
+        assessmentUsers.add(assessmentUser);
+        assessmentUsers.add(assessmentUser1);
+        AssessmentRequest assessmentRequest = new AssessmentRequest("name","purpose","description","name","domain","industry",2,assessmentUserList);
+        User user = new User("1",new UserInfo("abc@thoughtworks.com","Abc","abc",""),"");
+
+
+        assessment.setAssessmentUsers(new HashSet<>());
+
+        Set<AssessmentUser> assessmentUsers1 = assessmentService.getAssessmentUsers(assessmentRequest,user,assessment);
+
+        assertEquals(2,assessmentUsers1.size());
     }
 }

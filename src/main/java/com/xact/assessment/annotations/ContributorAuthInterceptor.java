@@ -30,7 +30,7 @@ public class ContributorAuthInterceptor implements MethodInterceptor<Authenticat
         context.getParameterValueMap().forEach((name, value) -> {
             if (name.equals("authentication")) {
                 Authentication authentication = (Authentication) value;
-                Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorRolesByEmail(authentication.getName());
+                Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorsByEmail(authentication.getName());
                 if (contributorRoles.stream().noneMatch(contributor -> (contributor.getContributorRole() == ContributorRole.AUTHOR ) || contributor.getContributorRole() == ContributorRole.REVIEWER)) {
                     throw new UnauthorisedUserException("User not Authorised");
                 }

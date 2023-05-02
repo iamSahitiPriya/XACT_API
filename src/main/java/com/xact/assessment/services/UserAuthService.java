@@ -69,7 +69,7 @@ public class UserAuthService {
     }
 
     public Set<ModuleContributor> getContributorRoles(String userEmail) {
-        return moduleContributorService.getContributorRolesByEmail(userEmail);
+        return moduleContributorService.getContributorsByEmail(userEmail);
     }
 
 }

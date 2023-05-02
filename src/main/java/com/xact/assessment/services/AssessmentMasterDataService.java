@@ -40,6 +40,8 @@ public class AssessmentMasterDataService {
         return categoryService.getCategory(categoryId);
     }
 
+
+
     public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
         List<AssessmentCategory> categories = new ArrayList<>();
         Set<AssessmentCategory> categorySet = new HashSet<>();
@@ -51,10 +53,10 @@ public class AssessmentMasterDataService {
                     assessmentModule.setTopics(assessmentModule.getActiveTopics());
                     for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
                         assessmentTopic.setParameters(assessmentTopic.getActiveParameters());
-                        for (AssessmentParameter assessmentParameter : assessmentTopic.getParameters()) {
+                        for(AssessmentParameter assessmentParameter : assessmentTopic.getParameters()){
                             Set<Question> questionList = new HashSet<>();
-                            for (Question question : assessmentParameter.getQuestions()) {
-                                if (question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED) {
+                            for(Question question : assessmentParameter.getQuestions()){
+                                if(question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED){
                                     questionList.add(question);
                                 }
                             }

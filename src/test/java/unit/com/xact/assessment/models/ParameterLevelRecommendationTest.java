@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
  class ParameterLevelRecommendationTest {
-    ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation();
     @Test
     void hasNullRecommendation() {
         ParameterLevelRecommendation parameterLevelRecommendation= new ParameterLevelRecommendation();

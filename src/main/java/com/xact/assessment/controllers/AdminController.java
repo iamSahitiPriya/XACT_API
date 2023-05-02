@@ -6,6 +6,7 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
 import io.micronaut.context.annotation.Value;
@@ -17,7 +18,6 @@ import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.PropertyMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,50 +31,10 @@ import java.util.List;
 @Controller("/v1/admin")
 @Transactional
 public class AdminController {
-    private static final ModelMapper mapper = new ModelMapper();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
-
-    static {
-        PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setCategory(source.getCategory().getCategoryId());
-            }
-        };
-        PropertyMap<AssessmentTopic, AssessmentTopicDto> topicMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setModule(source.getModule().getModuleId());
-            }
-        };
-        PropertyMap<AssessmentParameter, AssessmentParameterDto> parameterMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setTopic(source.getTopic().getTopicId());
-            }
-        };
-        PropertyMap<Question, QuestionDto> questionMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setParameter(source.getParameter().getParameterId());
-            }
-        };
-        PropertyMap<AssessmentTopicReference, AssessmentTopicReferenceDto> topicReferenceMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setTopic(source.getTopic().getTopicId());
-            }
-        };
-        PropertyMap<AssessmentParameterReference, AssessmentParameterReferenceDto> parameterReferenceMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setParameter(source.getParameter().getParameterId());
-            }
-        };
-        mapper.addMappings(moduleMap);
-        mapper.addMappings(topicMap);
-        mapper.addMappings(parameterMap);
-        mapper.addMappings(questionMap);
-        mapper.addMappings(topicReferenceMap);
-        mapper.addMappings(parameterReferenceMap);
-    }
-
-
+    private static final ModelMapper mapper = new ModelMapper();
+    private final MasterDataMapper masterDataMapper = new MasterDataMapper();
     private final AdminService adminService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
@@ -89,7 +49,7 @@ public class AdminController {
     public HttpResponse<CategoryDto> createAssessmentCategory(@Body @Valid AssessmentCategoryRequest assessmentCategory, Authentication authentication) {
         LOGGER.info("{}: Create category - {}", authentication.getName(), assessmentCategory.getCategoryName());
         AssessmentCategory assessmentCategory1 = adminService.createAssessmentCategory(assessmentCategory);
-        CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
+        CategoryDto categoryDto = masterDataMapper.mapCategory(assessmentCategory1);
         return HttpResponse.ok(categoryDto);
     }
 
@@ -110,7 +70,7 @@ public class AdminController {
         LOGGER.info("{}: Update category - {}", authentication.getName(), assessmentCategoryRequest.getCategoryName());
         AssessmentCategory assessmentCategory = getCategory(categoryId);
         AssessmentCategory assessmentCategory1 = adminService.updateCategory(assessmentCategory, assessmentCategoryRequest);
-        CategoryDto categoryDto = mapper.map(assessmentCategory1, CategoryDto.class);
+        CategoryDto categoryDto = masterDataMapper.mapCategory(assessmentCategory1);
         return HttpResponse.ok(categoryDto);
     }
 
@@ -153,5 +113,6 @@ public class AdminController {
     private AssessmentCategory getCategory(Integer categoryId) {
         return adminService.getCategory(categoryId);
     }
+
 
 }

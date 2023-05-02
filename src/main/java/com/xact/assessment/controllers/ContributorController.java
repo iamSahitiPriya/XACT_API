@@ -7,6 +7,7 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.annotations.ContributorAuth;
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.ModuleContributorService;
 import com.xact.assessment.services.UserAuthService;
@@ -33,47 +34,10 @@ public class ContributorController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ContributorController.class);
     private static final ModelMapper mapper = new ModelMapper();
+    private final MasterDataMapper masterDataMapper = new MasterDataMapper();
     private final UserAuthService userAuthService;
     private final ModuleContributorService contributorService;
 
-    static {
-        PropertyMap<AssessmentModule, AssessmentModuleDto> moduleMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setCategory(source.getCategory().getCategoryId());
-            }
-        };
-        PropertyMap<AssessmentTopic, AssessmentTopicDto> topicMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setModule(source.getModule().getModuleId());
-            }
-        };
-        PropertyMap<AssessmentParameter, AssessmentParameterDto> parameterMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setTopic(source.getTopic().getTopicId());
-            }
-        };
-        PropertyMap<Question, QuestionDto> questionMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setParameter(source.getParameter().getParameterId());
-            }
-        };
-        PropertyMap<AssessmentTopicReference, AssessmentTopicReferenceDto> topicReferenceMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setTopic(source.getTopic().getTopicId());
-            }
-        };
-        PropertyMap<AssessmentParameterReference, AssessmentParameterReferenceDto> parameterReferenceMap = new PropertyMap<>() {
-            protected void configure() {
-                map().setParameter(source.getParameter().getParameterId());
-            }
-        };
-        mapper.addMappings(moduleMap);
-        mapper.addMappings(topicMap);
-        mapper.addMappings(parameterMap);
-        mapper.addMappings(questionMap);
-        mapper.addMappings(topicReferenceMap);
-        mapper.addMappings(parameterReferenceMap);
-    }
 
     public ContributorController(UserAuthService userAuthService, ModuleContributorService contributorService) {
         this.userAuthService = userAuthService;
@@ -144,7 +108,7 @@ public class ContributorController {
         LOGGER.info("{}: Create topics - {}", authentication.getName(), assessmentTopicRequest.getTopicName());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         AssessmentModule assessmentModule = contributorService.getModuleById(assessmentTopicRequest.getModule());
-        if (isValid(loggedInUser, assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentTopic assessmentTopic = contributorService.createAssessmentTopics(assessmentTopicRequest);
             TopicResponse topicResponse = mapper.map(assessmentTopic, TopicResponse.class);
             topicResponse.setModuleId(assessmentTopic.getModule().getModuleId());
@@ -161,7 +125,7 @@ public class ContributorController {
         LOGGER.info("{}: Create parameter - {}", authentication.getName(), assessmentParameterRequest.getParameterName());
         AssessmentModule assessmentModule = contributorService.getModule(assessmentParameterRequest.getTopic());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if (isValid(loggedInUser, assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentParameter assessmentParameter = contributorService.createAssessmentParameter(assessmentParameterRequest);
             ParameterResponse parameterResponse = mapper.map(assessmentParameter, ParameterResponse.class);
             parameterResponse.setModuleId(assessmentParameter.getTopic().getModule().getModuleId());
@@ -179,9 +143,9 @@ public class ContributorController {
         LOGGER.info("{}: Create topic reference - {}", authentication.getName(), topicReferencesRequest.getReference());
         AssessmentModule assessmentModule = contributorService.getModule(topicReferencesRequest.getTopic());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if (isValid(loggedInUser, assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentTopicReference assessmentTopicReference = contributorService.createAssessmentTopicReference(topicReferencesRequest);
-            AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
+            AssessmentTopicReferenceDto assessmentTopicReferenceDto = masterDataMapper.mapTopicReference(assessmentTopicReference);
             return HttpResponse.ok(assessmentTopicReferenceDto);
         } else {
             return HttpResponse.unauthorized();
@@ -194,9 +158,9 @@ public class ContributorController {
         LOGGER.info("{}: Create parameter reference - {}", authentication.getName(), parameterReferencesRequests.getParameter());
         AssessmentModule assessmentModule = contributorService.getModuleByParameter(parameterReferencesRequests.getParameter());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if (isValid(loggedInUser, assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentParameterReference assessmentParameterReference = contributorService.createAssessmentParameterReference(parameterReferencesRequests);
-            AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
+            AssessmentParameterReferenceDto assessmentParameterReferenceDto = masterDataMapper.mapParameterReference(assessmentParameterReference);
             return HttpResponse.ok(assessmentParameterReferenceDto);
         } else {
             return HttpResponse.unauthorized();
@@ -209,7 +173,7 @@ public class ContributorController {
         LOGGER.info("{}: Update topic - {}", authentication.getName(), assessmentTopicRequest.getTopicName());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         AssessmentModule assessmentModule = contributorService.getModuleById(assessmentTopicRequest.getModule());
-        if (isValid(loggedInUser, assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentTopic assessmentTopic = contributorService.updateTopic(topicId, assessmentTopicRequest);
             TopicResponse topicResponse = mapper.map(assessmentTopic, TopicResponse.class);
             topicResponse.setUpdatedAt(assessmentTopic.getUpdatedAt());
@@ -226,7 +190,7 @@ public class ContributorController {
         LOGGER.info("{}: Update parameter - {}", authentication.getName(), assessmentParameterRequest.getParameterName());
         AssessmentModule assessmentModule = contributorService.getModule(assessmentParameterRequest.getTopic());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if (isValid(loggedInUser, assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentParameter assessmentParameter = contributorService.updateParameter(parameterId, assessmentParameterRequest);
             ParameterResponse parameterResponse = mapper.map(assessmentParameter, ParameterResponse.class);
             parameterResponse.setModuleId(assessmentParameter.getTopic().getModule().getModuleId());
@@ -252,9 +216,9 @@ public class ContributorController {
         LOGGER.info("{}: Update topic-reference - {}", authentication.getName(), topicReferencesRequest.getReference());
         AssessmentModule assessmentModule = contributorService.getModule(topicReferencesRequest.getTopic());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if (isValid(loggedInUser, assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentTopicReference assessmentTopicReference = contributorService.updateTopicReference(referenceId, topicReferencesRequest);
-            AssessmentTopicReferenceDto assessmentTopicReferenceDto = mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
+            AssessmentTopicReferenceDto assessmentTopicReferenceDto =  masterDataMapper.mapTopicReference(assessmentTopicReference);
             return HttpResponse.ok(assessmentTopicReferenceDto);
         } else {
             return HttpResponse.unauthorized();
@@ -267,9 +231,9 @@ public class ContributorController {
         LOGGER.info("{}: Update parameter-reference - {}", authentication.getName(), parameterReferencesRequest.getReference());
         AssessmentModule assessmentModule = contributorService.getModuleByParameter(parameterReferencesRequest.getParameter());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if (isValid(loggedInUser, assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentParameterReference assessmentParameterReference = contributorService.updateParameterReference(referenceId, parameterReferencesRequest);
-            AssessmentParameterReferenceDto assessmentParameterReferenceDto = mapper.map(assessmentParameterReference, AssessmentParameterReferenceDto.class);
+            AssessmentParameterReferenceDto assessmentParameterReferenceDto = masterDataMapper.mapParameterReference(assessmentParameterReference);
             return HttpResponse.ok(assessmentParameterReferenceDto);
         } else {
             return HttpResponse.unauthorized();
@@ -283,7 +247,7 @@ public class ContributorController {
         LOGGER.info("{}: Delete topic reference. referenceId - {}", authentication.getName(), referenceId);
         AssessmentModule assessmentModule = contributorService.getModuleByTopicReference(referenceId);
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if(isValid(loggedInUser,assessmentModule)) {
+        if(contributorService.validate(loggedInUser,assessmentModule)) {
             contributorService.deleteTopicReference(referenceId);
             return HttpResponse.ok();
         }else{
@@ -297,7 +261,7 @@ public class ContributorController {
         LOGGER.info("{}: Delete parameter reference. referenceId: {}", authentication.getName(), referenceId);
         AssessmentModule assessmentModule = contributorService.getModuleByParameterReference(referenceId);
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if(isValid(loggedInUser,assessmentModule)) {
+        if(contributorService.validate(loggedInUser,assessmentModule)) {
             contributorService.deleteParameterReference(referenceId);
             return HttpResponse.ok();
         }else{
@@ -305,9 +269,6 @@ public class ContributorController {
         }
     }
 
-    private boolean isValid(User loggedInUser, AssessmentModule module) {
-        return contributorService.validate(loggedInUser, module);
-    }
 
     private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {
         QuestionResponse questionResponse = mapper.map(question, QuestionResponse.class);

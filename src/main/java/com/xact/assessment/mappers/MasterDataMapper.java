@@ -98,6 +98,12 @@ public class MasterDataMapper {
     public AssessmentCategoryDto mapAssessmentCategory(AssessmentCategory assessmentCategory) {
         return mapper.map(assessmentCategory, AssessmentCategoryDto.class);
     }
+    public AssessmentTopicReferenceDto mapTopicReference(AssessmentTopicReference assessmentTopicReference){
+        return mapper.map(assessmentTopicReference, AssessmentTopicReferenceDto.class);
+    }
+    public AssessmentParameterReferenceDto mapParameterReference(AssessmentParameterReference assessmentParameterReference){
+        return mapper.map(assessmentParameterReference,AssessmentParameterReferenceDto.class);
+    }
 
     public CategoryDto mapCategory(AssessmentCategory assessmentCategory) {
         return mapper.map(assessmentCategory, CategoryDto.class);

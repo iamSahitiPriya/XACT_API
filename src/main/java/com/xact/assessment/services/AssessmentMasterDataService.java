@@ -40,8 +40,6 @@ public class AssessmentMasterDataService {
         return categoryService.getCategory(categoryId);
     }
 
-
-
     public List<AssessmentCategory> getUserAssessmentCategories(Integer assessmentId) {
         List<AssessmentCategory> categories = new ArrayList<>();
         Set<AssessmentCategory> categorySet = new HashSet<>();

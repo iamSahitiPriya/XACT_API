@@ -574,13 +574,13 @@ class AssessmentServiceTest {
         assessmentParameter.setParameterId(1);
         AssessmentParameter assessmentParameter1 = new AssessmentParameter();
         assessmentParameter1.setParameterId(2);
-        TopicLevelRating topicLevelRating = new TopicLevelRating(new TopicLevelId(assessment,assessmentTopic),2,new Date(),new Date());
+        TopicLevelRating topicLevelRating = new TopicLevelRating(2,new Date(),new Date(),new TopicLevelId(assessment,assessmentTopic));
         TopicLevelRecommendation topicLevelRecommendation = new TopicLevelRecommendation(assessmentTopic);
         TopicLevelRecommendation topicLevelRecommendation1 = new TopicLevelRecommendation(assessmentTopic1);
         List<TopicLevelRecommendation> topicLevelRecommendationList = new ArrayList<>();
         topicLevelRecommendationList.add(topicLevelRecommendation);
         topicLevelRecommendationList.add(topicLevelRecommendation1);
-        ParameterLevelRating parameterLevelRating = new ParameterLevelRating(new ParameterLevelId(assessment,assessmentParameter),1,new Date(),new Date());
+        ParameterLevelRating parameterLevelRating = new ParameterLevelRating(1,new Date(),new Date(),new ParameterLevelId(assessment,assessmentParameter));
         List<ParameterLevelRating> parameterLevelRatingList = new ArrayList<>();
         parameterLevelRatingList.add(parameterLevelRating);
         ParameterLevelRecommendation parameterLevelRecommendation = new ParameterLevelRecommendation(assessmentParameter);

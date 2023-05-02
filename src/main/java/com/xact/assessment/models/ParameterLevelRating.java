@@ -9,8 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,23 +21,14 @@ import java.util.Date;
 @Introspected
 @Entity
 @Table(name = "tbl_assessment_parameter")
-public class ParameterLevelRating implements Serializable {
+public class ParameterLevelRating extends RatingLevel implements Serializable {
     @EmbeddedId
     @AttributeOverride(name = "assessmentParameter", column = @Column(name = "parameter_id"))
     @AttributeOverride(name = "assessment", column = @Column(name = "assessment_id"))
     public ParameterLevelId parameterLevelId;
 
-    @Column(name = "score")
-    private Integer rating;
-
-    @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "created_at", nullable = false)
-    private Date createdAt;
-
-    @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "updated_at", nullable = false)
-    private Date updatedAt;
-
+    public ParameterLevelRating(Integer rating, Date createdAt, Date updatedAt, ParameterLevelId parameterLevelId) {
+        super(rating, createdAt, updatedAt);
+        this.parameterLevelId = parameterLevelId;
+    }
 }

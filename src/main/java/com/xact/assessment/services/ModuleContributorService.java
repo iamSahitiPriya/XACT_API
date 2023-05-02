@@ -24,7 +24,7 @@ public class ModuleContributorService {
     private final ModuleService moduleService;
     private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
     private static final String HIERARCHY_NOT_ALLOWED = "Update not allowed because topic and parameter both have associated references.";
-    private static final Logger LOGGER = LoggerFactory.getLogger(AssessmentMasterDataService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ModuleContributorService.class);
 
 
 

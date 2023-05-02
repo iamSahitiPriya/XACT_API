@@ -267,7 +267,6 @@ class ModuleContributorServiceTest {
         parameter.setReferences(Collections.singleton(assessmentParameterReference));
         when(parameterService.getParameter(1)).thenReturn(Optional.of(parameter));
 
-        AssessmentParameterReference parameterReference = new AssessmentParameterReference();
         ParameterReferencesRequest referencesRequest = new ParameterReferencesRequest();
         referencesRequest.setParameter(1);
         referencesRequest.setReference("UPDATE REFERENCE");
@@ -291,7 +290,6 @@ class ModuleContributorServiceTest {
         moduleContributorService.deleteParameterReference(1);
 
         verify(parameterService).deleteParameterReference(1);
-        ;
     }
 
     @Test

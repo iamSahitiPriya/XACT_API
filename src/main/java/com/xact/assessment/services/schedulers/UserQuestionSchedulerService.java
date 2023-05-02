@@ -2,9 +2,11 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package com.xact.assessment.services;
+package com.xact.assessment.services.schedulers;
 
 import com.xact.assessment.models.UserQuestion;
+import com.xact.assessment.services.QuestionService;
+import com.xact.assessment.services.UserQuestionService;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import org.slf4j.Logger;

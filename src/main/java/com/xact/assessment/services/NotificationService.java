@@ -291,5 +291,9 @@ public class NotificationService {
             LOGGER.error("JsonProcessingException");
         }
     }
+
+    public void deleteSentNotifications(Date expiryDate) {
+       notificationRepository.deleteSentNotifications(expiryDate);
+    }
 }
 

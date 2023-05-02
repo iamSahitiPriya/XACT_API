@@ -2,7 +2,7 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package unit.com.xact.assessment.services;
+package unit.com.xact.assessment.services.scheduler;
 
 import com.xact.assessment.client.AccountClient;
 import com.xact.assessment.config.AccountConfig;
@@ -11,9 +11,9 @@ import com.xact.assessment.dtos.AccountResponse;
 import com.xact.assessment.models.AccessTokenResponse;
 import com.xact.assessment.models.Account;
 import com.xact.assessment.repositories.AccountRepository;
-import com.xact.assessment.services.AccountSchedulerService;
 import com.xact.assessment.services.AccountService;
 import com.xact.assessment.services.TokenService;
+import com.xact.assessment.services.schedulers.AccountSchedulerService;
 import io.micronaut.context.env.Environment;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

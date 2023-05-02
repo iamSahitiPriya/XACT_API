@@ -10,10 +10,7 @@ import com.xact.assessment.repositories.QuestionRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static com.xact.assessment.dtos.ContributorQuestionStatus.*;
 import static com.xact.assessment.dtos.ContributorRole.AUTHOR;
@@ -212,6 +209,10 @@ public class QuestionService {
             }
         }
         return questionStatusUpdateResponse;
+    }
+
+    public void deleteRejectedQuestions(Date expiryDate) {
+        questionRepository.deleteRejectedQuestions(expiryDate);
     }
 }
 

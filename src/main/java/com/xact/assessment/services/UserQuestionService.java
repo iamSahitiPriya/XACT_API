@@ -83,7 +83,7 @@ public class UserQuestionService {
     }
 
     public List<UserQuestion> getUserQuestionsOfFinishedAssessment() {
-        return userQuestionRepository.findByFinishedAssessment();
+        return userQuestionRepository.findByFinishedClientAndInternalAssessment();
     }
 
 

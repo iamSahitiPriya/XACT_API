@@ -2,12 +2,12 @@
  * Copyright (c) 2022 - Thoughtworks Inc. All rights reserved.
  */
 
-package unit.com.xact.assessment.services;
+package unit.com.xact.assessment.services.scheduler;
 
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AssessmentService;
-import com.xact.assessment.services.NotificationSchedulerService;
 import com.xact.assessment.services.NotificationService;
+import com.xact.assessment.services.schedulers.NotificationSchedulerService;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

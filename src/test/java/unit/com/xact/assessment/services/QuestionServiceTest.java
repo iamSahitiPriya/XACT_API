@@ -13,10 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.xact.assessment.dtos.ContributorQuestionStatus.DRAFT;
 import static com.xact.assessment.dtos.ContributorQuestionStatus.PUBLISHED;
@@ -335,4 +332,10 @@ class QuestionServiceTest {
         verify(questionRepository, never()).save(question);
     }
 
+    @Test
+    void shouldDeleteRejectedQuestions() {
+        questionService.deleteRejectedQuestions(new Date());
+
+        verify(questionRepository).deleteRejectedQuestions(any(Date.class));
+    }
 }

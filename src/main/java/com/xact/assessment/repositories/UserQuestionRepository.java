@@ -24,6 +24,6 @@ public interface UserQuestionRepository extends CrudRepository<UserQuestion, Int
     List<UserQuestion> findByAssessmentId(@Parameter("assessmentId") Integer assessmentId);
 
 
-    @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentStatus='Completed'")
-    List<UserQuestion> findByFinishedAssessment();
+    @Query("SELECT userQues FROM UserQuestion userQues WHERE userQues.assessment.assessmentStatus='Completed' and  not userQues.assessment.assessmentPurpose='Just Exploring'")
+    List<UserQuestion> findByFinishedClientAndInternalAssessment();
 }

@@ -148,5 +148,10 @@ class ActivityLogServiceTest {
         assertEquals(0,activityResponseList.size());
     }
 
+    @Test
+    void shouldDeleteActivityLogs() {
+        activityLogService.deleteActivityLogs(any(Date.class));
 
+        verify(activityLogRepository).deleteActivityLogs(any(Date.class));
+    }
 }

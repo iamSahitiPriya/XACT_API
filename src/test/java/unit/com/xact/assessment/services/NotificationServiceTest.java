@@ -288,5 +288,10 @@ class NotificationServiceTest {
         verify(notificationRepository).findByType(NotificationType.FEEDBACK_V1);
     }
 
+    @Test
+    void shouldDeleteNotification() {
+        notificationService.deleteSentNotifications(any(Date.class));
 
+        verify(notificationRepository).deleteSentNotifications(any(Date.class));
+    }
 }

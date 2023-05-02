@@ -103,4 +103,8 @@ public class ActivityLogService {
         LOGGER.info("Save Activity log for assessment: {}", activityLog.getActivityId().getAssessment().getAssessmentId());
         return activityLogRepository.save(activityLog);
     }
+
+    public void deleteActivityLogs(Date expiryDate) {
+        activityLogRepository.deleteActivityLogs(expiryDate);
+    }
 }

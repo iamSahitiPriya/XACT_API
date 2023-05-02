@@ -234,9 +234,9 @@ public class ModuleContributorService {
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
-    private boolean isTopicRatingUnique(Set<AssessmentTopicReference> references, RatingLevel rating) {
+    private boolean isTopicRatingUnique(Set<AssessmentTopicReference> references, Rating rating) {
         if (references != null) {
-            List<RatingLevel> ratings = references.stream().map(AssessmentTopicReference::getRating).toList();
+            List<Rating> ratings = references.stream().map(AssessmentTopicReference::getRating).toList();
             return !ratings.contains(rating);
         } else return true;
     }
@@ -257,9 +257,9 @@ public class ModuleContributorService {
         } else return true;
     }
 
-    private boolean isParameterRatingUnique(Set<AssessmentParameterReference> references, RatingLevel rating) {
+    private boolean isParameterRatingUnique(Set<AssessmentParameterReference> references, Rating rating) {
         if (references != null) {
-            List<RatingLevel> ratings = references.stream().map(AssessmentParameterReference::getRating).toList();
+            List<Rating> ratings = references.stream().map(AssessmentParameterReference::getRating).toList();
             return !ratings.contains(rating);
         } else return true;
     }

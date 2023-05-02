@@ -21,7 +21,7 @@ import java.util.Date;
 @Introspected
 @Entity
 @Table(name = "tbl_assessment_topic")
-public class TopicLevelRating extends  Rating implements Serializable {
+public class TopicLevelRating extends RatingLevel implements Serializable {
 
     @EmbeddedId
     @AttributeOverride(name = "assessmentTopic", column = @Column(name = "topic_id"))

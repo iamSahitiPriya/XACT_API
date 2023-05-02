@@ -64,7 +64,7 @@ class ReportServiceTest {
         module.setActive(true);
         AssessmentTopic topic1 = new AssessmentTopic("abc", module, true, "");
         AssessmentParameter parameter1 = AssessmentParameter.builder().parameterName("def").topic(topic1).isActive(true).comments("").build();
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter1, RatingLevel.FOUR, "");
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter1, Rating.FOUR, "");
         parameter1.setReferences(Collections.singleton(assessmentParameterReference));
         Set<AssessmentTopic> assessmentTopics = new HashSet<>();
         assessmentTopics.add(topic);
@@ -464,7 +464,7 @@ class ReportServiceTest {
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
         assessmentTopicReference.setReferenceId(1);
         assessmentTopicReference.setReference("First Reference");
-        assessmentTopicReference.setRating(RatingLevel.ONE);
+        assessmentTopicReference.setRating(Rating.ONE);
         assessmentTopicReference.setTopic(assessmentTopic);
 
         assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));
@@ -540,7 +540,7 @@ class ReportServiceTest {
         AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference();
         assessmentTopicReference.setReferenceId(1);
         assessmentTopicReference.setReference("First Reference");
-        assessmentTopicReference.setRating(RatingLevel.FIVE);
+        assessmentTopicReference.setRating(Rating.FIVE);
         assessmentTopicReference.setTopic(assessmentTopic);
 
         assessmentTopic.setReferences(Collections.singleton(assessmentTopicReference));

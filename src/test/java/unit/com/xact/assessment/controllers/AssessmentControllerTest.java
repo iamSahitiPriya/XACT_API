@@ -158,7 +158,7 @@ class AssessmentControllerTest {
         when(assessmentService.getAnswers(assessmentId)).thenReturn(answers);
 
         ParameterLevelId parameterLevelId = new ParameterLevelId(assessment, parameter);
-        ParameterLevelRating parameterAssessment = new ParameterLevelRating (4, new Date(), new Date(),parameterLevelId);
+        ParameterLevelRating parameterAssessment = new ParameterLevelRating(4, new Date(), new Date(),parameterLevelId);
         parameterAssessments.add(parameterAssessment);
 
         List<ParameterRatingAndRecommendation> parameterRatingAndRecommendationList = new ArrayList<>();

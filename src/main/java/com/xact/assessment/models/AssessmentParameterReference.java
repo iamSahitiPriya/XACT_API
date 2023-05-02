@@ -36,12 +36,12 @@ public class AssessmentParameterReference implements Serializable {
 
     @Column(name = "rating")
     @Enumerated(EnumType.STRING)
-    private RatingLevel rating;
+    private Rating rating;
 
     @Column(name = "reference")
     private String reference;
 
-    public AssessmentParameterReference(AssessmentParameter parameter, RatingLevel rating, String reference) {
+    public AssessmentParameterReference(AssessmentParameter parameter, Rating rating, String reference) {
         this.parameter = parameter;
         this.rating = rating;
         this.reference = reference;

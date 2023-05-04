@@ -81,4 +81,25 @@ public class AssessmentParameter implements Serializable {
     public boolean hasReferences() {
         return references != null && !references.isEmpty();
     }
+
+    public Double getQuestionAverage() {
+        double questionSum = 0;
+        int questionCount = 0;
+        double averageRating=0;
+        for (Question question : this.questions) {
+            if (question.hasReferences()) {
+                double questionAverageScore = question.getRating();
+                if (questionAverageScore != 0) {
+                    questionSum += questionAverageScore;
+                    questionCount+= 1;
+                }
+
+            }
+        }
+        if (questionSum == 0 && questionCount == 0) {
+            return averageRating;
+        }
+        averageRating = questionSum / questionCount;
+        return averageRating;
+    }
 }

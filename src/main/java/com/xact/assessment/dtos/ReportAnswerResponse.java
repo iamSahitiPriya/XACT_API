@@ -17,5 +17,7 @@ import lombok.Setter;
 public class ReportAnswerResponse {
     private AssessmentParameter parameter;
     private String question;
+    private Integer questionId;
     private String answer;
+    private Integer rating;
 }

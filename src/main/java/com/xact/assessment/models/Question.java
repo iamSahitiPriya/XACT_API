@@ -71,6 +71,13 @@ public class Question implements Serializable {
         this.parameter = parameter;
     }
 
+    @Transient
+    private Integer rating;
+
+    public Integer getRating() {
+        return rating == null ? 0 : rating;
+    }
+
 
     @Transient
     static
@@ -100,4 +107,7 @@ public class Question implements Serializable {
     }
 
 
+    public boolean hasReferences() {
+        return references != null && !references.isEmpty();
+    }
 }

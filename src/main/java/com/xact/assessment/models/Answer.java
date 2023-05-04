@@ -45,8 +45,15 @@ public class Answer implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+    @Column(name="score")
+    private Integer rating;
+
 
     public boolean hasNotes() {
         return answerNote != null && !answerNote.isBlank();
+    }
+
+    public boolean hasRating() {
+        return rating != null;
     }
 }

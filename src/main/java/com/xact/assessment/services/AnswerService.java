@@ -28,13 +28,13 @@ public class AnswerService {
     public Answer saveAnswer(Answer answer) {
 
         if (answerRepository.existsById(answer.getAnswerId())) {
-            if (answer.hasNotes()) {
+            if (answer.hasNotes() || answer.hasRating()) {
                 answerRepository.update(answer);
             } else {
                 answerRepository.delete(answer);
             }
         } else {
-            if (answer.hasNotes()) {
+            if (answer.hasNotes() || answer.hasRating()) {
                 answerRepository.save(answer);
             }
         }

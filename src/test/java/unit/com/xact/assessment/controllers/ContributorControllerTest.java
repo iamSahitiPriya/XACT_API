@@ -229,7 +229,7 @@ class ContributorControllerTest {
         referencesRequest.setRating(Rating.FIVE);
         referencesRequest.setTopic(1);
 
-        when(contributorService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(contributorService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference( Rating.FIVE, "reference",new AssessmentTopic()));
         when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse<AssessmentTopicReferenceDto> actualResponse = contributorController.createTopicReference(referencesRequest, authentication);
@@ -243,7 +243,7 @@ class ContributorControllerTest {
         referencesRequest.setRating(Rating.FIVE);
         referencesRequest.setParameter(1);
 
-        when(contributorService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(), Rating.FIVE, "reference"));
+        when(contributorService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference( Rating.FIVE, "reference",new AssessmentParameter()));
         when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse<AssessmentParameterReferenceDto> actualResponse = contributorController.createParameterReference(referencesRequest, authentication);
@@ -315,7 +315,7 @@ class ContributorControllerTest {
         AssessmentTopicReference topicReference = new AssessmentTopicReference();
         topicReference.setReference("Hello");
 
-        when(contributorService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference(new AssessmentTopic(), Rating.FIVE, "reference"));
+        when(contributorService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference( Rating.FIVE, "reference",new AssessmentTopic()));
         when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse actualResponse = contributorController.updateTopicReference(referenceId, referencesRequest, authentication);
@@ -331,7 +331,7 @@ class ContributorControllerTest {
         AssessmentParameterReference parameterReference = new AssessmentParameterReference();
         parameterReference.setReference("Hello");
 
-        when(contributorService.updateParameterReference(referenceId, referencesRequest)).thenReturn(new AssessmentParameterReference(new AssessmentParameter(), Rating.FIVE, "reference"));
+        when(contributorService.updateParameterReference(referenceId, referencesRequest)).thenReturn(new AssessmentParameterReference( Rating.FIVE, "reference",new AssessmentParameter()));
         when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse actualResponse = contributorController.updateParameterReference(referenceId, referencesRequest, authentication);

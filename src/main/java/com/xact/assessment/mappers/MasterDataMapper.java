@@ -75,12 +75,18 @@ public class MasterDataMapper {
                 map().setParameter(source.getParameter().getParameterId());
             }
         };
+        PropertyMap<AssessmentQuestionReference,AssessmentQuestionReferenceDto> questionReferenceMap = new PropertyMap<>() {
+            protected void configure() {
+                map().setQuestion(source.getQuestion().getQuestionId());
+            }
+        };
         mapper.addMappings(moduleMap);
         mapper.addMappings(topicMap);
         mapper.addMappings(parameterMap);
         mapper.addMappings(questionMap);
         mapper.addMappings(topicReferenceMap);
         mapper.addMappings(parameterReferenceMap);
+        mapper.addMappings(questionReferenceMap);
         moduleMapper.addMappings(moduleMapOnly);
         contributorModuleMapper.addMappings(contributorModuleMap);
         contributorTopicMapper.addMappings(contributorTopicMap);
@@ -103,6 +109,10 @@ public class MasterDataMapper {
     }
     public AssessmentParameterReferenceDto mapParameterReference(AssessmentParameterReference assessmentParameterReference){
         return mapper.map(assessmentParameterReference,AssessmentParameterReferenceDto.class);
+    }
+
+    public AssessmentQuestionReferenceDto mapQuestionReference(AssessmentQuestionReference assessmentQuestionReference){
+        return mapper.map(assessmentQuestionReference,AssessmentQuestionReferenceDto.class);
     }
 
     public CategoryDto mapCategory(AssessmentCategory assessmentCategory) {

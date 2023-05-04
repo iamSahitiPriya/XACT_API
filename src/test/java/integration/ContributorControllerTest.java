@@ -450,7 +450,7 @@ class ContributorControllerTest {
         assessmentTopic.setModule(assessmentModule);
         assessmentTopic.setActive(true);
 
-        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, Rating.FIVE, "New Reference");
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(Rating.FIVE, "New Reference",assessmentTopic);
 
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
@@ -498,7 +498,7 @@ class ContributorControllerTest {
         assessmentParameter.setTopic(assessmentTopic);
         assessmentParameter.setActive(true);
 
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, Rating.FIVE, "New Reference");
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(Rating.FIVE, "New Reference",assessmentParameter);
 
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));

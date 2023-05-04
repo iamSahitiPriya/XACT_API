@@ -227,7 +227,7 @@ public class ModuleContributorService {
     public AssessmentTopicReference createAssessmentTopicReference(TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         if (isTopicRatingUnique(assessmentTopic.getReferences(), topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopic.getReferences(), topicReferencesRequest.getReference())) {
-            AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
+            AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(topicReferencesRequest.getRating(), topicReferencesRequest.getReference(),assessmentTopic);
             topicService.saveTopicReference(assessmentTopicReference);
             return assessmentTopicReference;
         } else
@@ -244,7 +244,7 @@ public class ModuleContributorService {
     public AssessmentParameterReference createAssessmentParameterReference(ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         if (isParameterRatingUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getReference())) {
-            AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference());
+            AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference(),assessmentParameter);
             parameterService.saveParameterReference(assessmentParameterReference);
             return assessmentParameterReference;
         } else

@@ -63,6 +63,9 @@ public class Question implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private Date updatedAt;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
+    @ElementCollection()
+    private Set<AssessmentQuestionReference> references;
     public Question(String questionText, AssessmentParameter parameter) {
         this.questionText = questionText;
         this.parameter = parameter;

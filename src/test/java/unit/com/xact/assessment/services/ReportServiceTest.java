@@ -64,7 +64,7 @@ class ReportServiceTest {
         module.setActive(true);
         AssessmentTopic topic1 = new AssessmentTopic("abc", module, true, "");
         AssessmentParameter parameter1 = AssessmentParameter.builder().parameterName("def").topic(topic1).isActive(true).comments("").build();
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter1, Rating.FOUR, "");
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference( Rating.FOUR, "",parameter1);
         parameter1.setReferences(Collections.singleton(assessmentParameterReference));
         Set<AssessmentTopic> assessmentTopics = new HashSet<>();
         assessmentTopics.add(topic);

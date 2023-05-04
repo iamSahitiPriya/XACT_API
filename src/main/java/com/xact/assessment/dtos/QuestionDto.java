@@ -5,10 +5,13 @@
 package com.xact.assessment.dtos;
 
 
+import com.xact.assessment.models.AssessmentQuestionReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.SortedSet;
 
 @NoArgsConstructor
 @Getter
@@ -21,6 +24,7 @@ public class QuestionDto implements Comparable<QuestionDto> {
     private Integer parameter;
     private ContributorQuestionStatus status;
     private String comments;
+    private SortedSet<AssessmentQuestionReferenceDto> references;
 
     @Override
     public int compareTo(QuestionDto currentQuestion) {

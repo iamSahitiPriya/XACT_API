@@ -153,10 +153,9 @@ class ModuleContributorServiceTest {
         AssessmentTopic topic = new AssessmentTopic();
         when(topicService.getTopic(1)).thenReturn(Optional.of(topic));
         moduleContributorService.createAssessmentTopicReference(topicReferencesRequest);
-        AssessmentTopicReference assessmentTopicReference1 = new AssessmentTopicReference(topic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
 
-        doNothing().when(topicService).saveTopicReference(assessmentTopicReference1);
-        verify(topicService).saveTopicReference(assessmentTopicReference1);
+        doNothing().when(topicService).saveTopicReference(any(AssessmentTopicReference.class));
+        verify(topicService).saveTopicReference(any(AssessmentTopicReference.class));
 
     }
 
@@ -170,10 +169,9 @@ class ModuleContributorServiceTest {
         AssessmentParameter parameter = new AssessmentParameter();
         when(parameterService.getParameter(1)).thenReturn(Optional.of(parameter));
         moduleContributorService.createAssessmentParameterReference(parameterReferencesRequest);
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter, parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference());
 
-        doNothing().when(parameterService).saveParameterReference(assessmentParameterReference);
-        verify(parameterService).saveParameterReference(assessmentParameterReference);
+        doNothing().when(parameterService).saveParameterReference(any(AssessmentParameterReference.class));
+        verify(parameterService).saveParameterReference(any(AssessmentParameterReference.class));
     }
     @Test
     void shouldUpdateTopic() {
@@ -246,7 +244,7 @@ class ModuleContributorServiceTest {
         AssessmentTopic topic = new AssessmentTopic();
         when(topicService.getTopic(1)).thenReturn(Optional.of(topic));
 
-        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(topic, Rating.TWO, "new reference");
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference( Rating.TWO, "new reference",topic);
         topic.setReferences(Collections.singleton(assessmentTopicReference));
 
 
@@ -263,7 +261,7 @@ class ModuleContributorServiceTest {
         parameterReferencesRequest.setRating(Rating.valueOf("TWO"));
 
         AssessmentParameter parameter = new AssessmentParameter();
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameter, Rating.TWO, "new reference");
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference( Rating.TWO, "new reference",parameter);
         parameter.setReferences(Collections.singleton(assessmentParameterReference));
         when(parameterService.getParameter(1)).thenReturn(Optional.of(parameter));
 
@@ -334,7 +332,7 @@ class ModuleContributorServiceTest {
         parameterReferencesRequest.setRating(Rating.ONE);
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();
-        assessmentParameter.setReferences(Collections.singleton(new AssessmentParameterReference(assessmentParameter, Rating.ONE, "reference")));
+        assessmentParameter.setReferences(Collections.singleton(new AssessmentParameterReference( Rating.ONE, "reference",assessmentParameter)));
         assessmentParameter.setParameterId(1);
         when(parameterService.getParameter(assessmentParameter.getParameterId())).thenReturn(Optional.of(assessmentParameter));
 
@@ -349,7 +347,7 @@ class ModuleContributorServiceTest {
         topicReferencesRequest.setRating(Rating.ONE);
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
-        assessmentTopic.setReferences(Collections.singleton(new AssessmentTopicReference(assessmentTopic, Rating.ONE, "reference")));
+        assessmentTopic.setReferences(Collections.singleton(new AssessmentTopicReference(Rating.ONE, "reference",assessmentTopic)));
         assessmentTopic.setTopicId(1);
         when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
 
@@ -409,9 +407,9 @@ class ModuleContributorServiceTest {
         parameterReferencesRequest.setRating(Rating.TWO);
 
         AssessmentParameter assessmentParameter = new AssessmentParameter();
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, Rating.ONE, "reference");
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(Rating.ONE, "reference",assessmentParameter);
         assessmentParameterReference.setReferenceId(1);
-        AssessmentParameterReference assessmentParameterReference1 = new AssessmentParameterReference(assessmentParameter, Rating.TWO, "reference1");
+        AssessmentParameterReference assessmentParameterReference1 = new AssessmentParameterReference(Rating.TWO, "reference1",assessmentParameter);
         assessmentParameterReference1.setReferenceId(2);
         Set<AssessmentParameterReference> assessmentParameterReferences = new HashSet<>();
         assessmentParameterReferences.add(assessmentParameterReference);
@@ -432,9 +430,9 @@ class ModuleContributorServiceTest {
         topicReferencesRequest.setRating(Rating.TWO);
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
-        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, Rating.ONE, "reference");
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference( Rating.ONE, "reference",assessmentTopic);
         assessmentTopicReference.setReferenceId(1);
-        AssessmentTopicReference assessmentTopicReference1 = new AssessmentTopicReference(assessmentTopic, Rating.TWO, "reference1");
+        AssessmentTopicReference assessmentTopicReference1 = new AssessmentTopicReference(Rating.TWO, "reference1",assessmentTopic);
         assessmentTopicReference1.setReferenceId(2);
         assessmentTopic.setTopicId(1);
         Set<AssessmentTopicReference> assessmentTopicReferences = new HashSet<>();

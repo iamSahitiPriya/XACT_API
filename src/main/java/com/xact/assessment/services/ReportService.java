@@ -69,11 +69,11 @@ public class ReportService {
     private Map<Integer, List<ReportAnswerResponse>> getParameterWiseAnswer(List<Answer> answers, List<UserQuestion> userQuestions) {
         Map<Integer, List<ReportAnswerResponse>> parameterListMap = new TreeMap<>();
         for (Answer answer : answers) {
-            ReportAnswerResponse reportAnswerResponse = new ReportAnswerResponse(answer.getAnswerId().getQuestion().getParameter(), answer.getAnswerId().getQuestion().getQuestionText(),answer.getAnswerId().getQuestion().getQuestionId(), answer.getAnswerNote(),answer.getRating());
+            ReportAnswerResponse reportAnswerResponse = new ReportAnswerResponse(answer.getAnswerId().getQuestion().getParameter(), answer.getAnswerId().getQuestion().getQuestionText(), answer.getAnswerId().getQuestion().getQuestionId(), answer.getAnswerNote(), answer.getRating());
             mapAnswerBasedOnParameter(parameterListMap, reportAnswerResponse);
         }
         for (UserQuestion userQuestion : userQuestions) {
-            ReportAnswerResponse reportAnswerResponse = new ReportAnswerResponse(userQuestion.getParameter(), userQuestion.getQuestion(),ZERO, userQuestion.getAnswer(),ZERO);
+            ReportAnswerResponse reportAnswerResponse = new ReportAnswerResponse(userQuestion.getParameter(), userQuestion.getQuestion(), ZERO, userQuestion.getAnswer(), ZERO);
             mapAnswerBasedOnParameter(parameterListMap, reportAnswerResponse);
         }
         return parameterListMap;
@@ -105,7 +105,7 @@ public class ReportService {
         List<TopicLevelRating> topicAssessmentData = topicAndParameterLevelAssessmentService.getTopicRatings(assessment.getAssessmentId());
         List<Answer> answers = topicAndParameterLevelAssessmentService.getAnswers(assessment.getAssessmentId());
         List<UserQuestion> userQuestions = userQuestionService.findByAssessmentAndAnswer(assessment.getAssessmentId());
-        Map<Integer, List<ReportAnswerResponse>> parameterAnswerListMap= getParameterWiseAnswer(answers, userQuestions);
+        Map<Integer, List<ReportAnswerResponse>> parameterAnswerListMap = getParameterWiseAnswer(answers, userQuestions);
         List<AssessmentCategory> assessmentCategories = assessmentMasterDataService.getAllCategories();
         for (AssessmentCategory assessmentCategory : assessmentCategories) {
             fillInMaturityScore(assessmentCategory, parameterAnswerListMap, topicAssessmentData, parameterAssessmentData, assessment);
@@ -226,7 +226,7 @@ public class ReportService {
         Map<String, List<CategoryMaturity>> dataSet = new HashMap<>();
         List<CategoryMaturity> listOfCurrentScores = new ArrayList<>();
         for (AssessmentCategory assessmentCategory : assessmentCategoryList) {
-            fillInMaturityScore(assessmentCategory, parameterAnswerListMap,topicLevelRatings, parameterLevelRatings, assessment);
+            fillInMaturityScore(assessmentCategory, parameterAnswerListMap, topicLevelRatings, parameterLevelRatings, assessment);
             CategoryMaturity categoryMaturity = new CategoryMaturity();
             double avgCategoryScore = assessmentCategory.getCategoryAverage();
             categoryMaturity.setCategory(assessmentCategory.getCategoryName());
@@ -384,13 +384,13 @@ public class ReportService {
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic topic, Integer topicRating, List<TopicLevelRecommendation> topicRecommendation) {
         if (topicRecommendation.isEmpty()) {
-            writeDataOnSheet(workbook, sheet, module, topic, topicRating, new TopicLevelRecommendation(), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING,ZERO);
+            writeDataOnSheet(workbook, sheet, module, topic, topicRating, new TopicLevelRecommendation(), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING, ZERO);
         } else {
             for (int index = 0; index < topicRecommendation.size(); index++) {
                 if (index == 0) {
-                    writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING,ZERO);
+                    writeDataOnSheet(workbook, sheet, module, topic, topicRating, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING, ZERO);
                 } else {
-                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING,ZERO);
+                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, topicRecommendation.get(index), topicRecommendation.size(), new AssessmentParameter(), ZERO, new ParameterLevelRecommendation(), 0, BLANK_STRING, BLANK_STRING, ZERO);
                 }
             }
         }
@@ -399,13 +399,13 @@ public class ReportService {
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, AssessmentParameter parameter, Integer paramRating, List<ParameterLevelRecommendation> parameterRecommendation) {
         if (parameterRecommendation.isEmpty()) {
-            writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, paramRating, new ParameterLevelRecommendation(), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING,ZERO);
+            writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, paramRating, new ParameterLevelRecommendation(), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING, ZERO);
         } else {
             for (int index = 0; index < parameterRecommendation.size(); index++) {
                 if (index == 0) {
-                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, paramRating, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING,ZERO);
+                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, paramRating, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING, ZERO);
                 } else {
-                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, ZERO, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING,ZERO);
+                    writeDataOnSheet(workbook, sheet, module, topic, ZERO, new TopicLevelRecommendation(), 0, parameter, ZERO, parameterRecommendation.get(index), parameterRecommendation.size(), BLANK_STRING, BLANK_STRING, ZERO);
                 }
             }
         }
@@ -414,11 +414,11 @@ public class ReportService {
 
     private void writeDataOnSheet(Workbook workbook, Sheet sheet, AssessmentModule module, AssessmentTopic
             topic, Integer topicRating, TopicLevelRecommendation topicRecommendation, int topicRecommendationCount, AssessmentParameter parameter, Integer paramRating, ParameterLevelRecommendation
-                                          paramRecommendation, int paramRecommendationCount, String questionText, String answer,Integer questionRating) {
+                                          paramRecommendation, int paramRecommendationCount, String questionText, String answer, Integer questionRating) {
         String topicImpact = getRecommendationImpact(topicRecommendation.getRecommendationImpact());
         String topicEffort = getRecommendationEffort(topicRecommendation.getRecommendationEffort());
         String topicDeliveryHorizon = getRecommendationDeliveryHorizon(topicRecommendation.getDeliveryHorizon());
-        String paramImpact =getRecommendationImpact(paramRecommendation.getRecommendationImpact());
+        String paramImpact = getRecommendationImpact(paramRecommendation.getRecommendationImpact());
         String paramEffort = getRecommendationEffort(paramRecommendation.getRecommendationEffort());
         String paramDeliveryHorizon = getRecommendationDeliveryHorizon(paramRecommendation.getDeliveryHorizon());
         Row row = sheet.createRow(sheet.getLastRowNum() + 1);
@@ -453,13 +453,14 @@ public class ReportService {
 
     private String getRecommendationImpact(RecommendationImpact recommendationImpact) {
         String impact;
-        if (recommendationImpact!= null) {
+        if (recommendationImpact != null) {
             impact = recommendationImpact.toString();
         } else {
             impact = BLANK_STRING;
         }
         return impact;
     }
+
     private String getRecommendationEffort(RecommendationEffort recommendationEffort) {
         String effort;
         if (recommendationEffort != null) {
@@ -469,9 +470,10 @@ public class ReportService {
         }
         return effort;
     }
+
     private String getRecommendationDeliveryHorizon(RecommendationDeliveryHorizon recommendationDeliveryHorizon) {
         String deliveryHorizon;
-        if (recommendationDeliveryHorizon!= null) {
+        if (recommendationDeliveryHorizon != null) {
             deliveryHorizon = recommendationDeliveryHorizon.toString();
         } else {
             deliveryHorizon = BLANK_STRING;
@@ -502,10 +504,10 @@ public class ReportService {
                         setTopicRating(topicLevelRatings, assessmentTopic);
                     } else {
                         for (AssessmentParameter assessmentParameter : assessmentTopic.getActiveParameters()) {
-                            if(assessmentParameter.hasReferences()) {
+                            if (assessmentParameter.hasReferences()) {
                                 setParameterRating(parameterLevelRatings, assessmentParameter);
-                            }else{
-                                setQuestionRating(parameterAnswerListMap,assessmentParameter);
+                            } else {
+                                getQuestionRating(parameterAnswerListMap, assessmentParameter);
                             }
                         }
                     }
@@ -514,20 +516,21 @@ public class ReportService {
         }
     }
 
-    private void setQuestionRating(Map<Integer, List<ReportAnswerResponse>> parameterAnswerListMap, AssessmentParameter assessmentParameter) {
-        for(Map.Entry<Integer,List<ReportAnswerResponse>> entry : parameterAnswerListMap.entrySet())
-        {
-            if(Objects.equals(assessmentParameter.getParameterId(), entry.getKey())){
-                entry.getValue().forEach(eachAnswer ->{
-                    assessmentParameter.getQuestions().forEach(eachQuestion ->{
-                        if(eachQuestion.getQuestionId().equals(eachAnswer.getQuestionId())){
+    private void getQuestionRating(Map<Integer, List<ReportAnswerResponse>> parameterAnswerListMap, AssessmentParameter assessmentParameter) {
+        for (Map.Entry<Integer, List<ReportAnswerResponse>> entry : parameterAnswerListMap.entrySet()) {
+            if (Objects.equals(assessmentParameter.getParameterId(), entry.getKey())) {
+                for (ReportAnswerResponse eachAnswer : entry.getValue()) {
+                    for (Question eachQuestion : assessmentParameter.getQuestions()) {
+                        if (eachQuestion.getQuestionId().equals(eachAnswer.getQuestionId())) {
                             eachQuestion.setRating(eachAnswer.getRating());
                         }
-                    });
-                });
+                    }
+                }
             }
+            assessmentParameter.setRating((int) assessmentParameter.getQuestionAverage());
         }
     }
+
 
     private void setParameterRating(List<ParameterLevelRating> parameterLevelRatings, AssessmentParameter assessmentParameter) {
         for (ParameterLevelRating parameterLevelRating : parameterLevelRatings) {

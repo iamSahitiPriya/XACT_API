@@ -82,7 +82,7 @@ public class AssessmentParameter implements Serializable {
         return references != null && !references.isEmpty();
     }
 
-    public Double getQuestionAverage() {
+    public double getQuestionAverage() {
         double questionSum = 0;
         int questionCount = 0;
         double averageRating=0;

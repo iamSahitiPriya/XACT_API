@@ -94,6 +94,7 @@ public class MasterDataMapper {
         contributorParameterMapper.addMappings(contributorParameterMap);
         contributorParameterMapper.addMappings(parameterReferenceMap);
         questionMapper.addMappings(questionMap);
+        questionMapper.addMappings(questionReferenceMap);
     }
 
 

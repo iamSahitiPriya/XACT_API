@@ -251,6 +251,20 @@ class ContributorControllerTest {
     }
 
     @Test
+    void createQuestionReferences() {
+        QuestionReferenceRequest referencesRequest = new QuestionReferenceRequest();
+        referencesRequest.setReference("References");
+        referencesRequest.setRating(Rating.FIVE);
+        referencesRequest.setQuestion(1);
+
+        when(contributorService.createAssessmentQuestionReference(referencesRequest)).thenReturn(new AssessmentQuestionReference( Rating.FIVE, "reference",new Question()));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
+
+        HttpResponse<AssessmentQuestionReferenceDto> actualResponse = contributorController.createQuestionReference(referencesRequest, authentication);
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
     void shouldUpdateTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
         topicRequest.setTopicName("Module");

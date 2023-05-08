@@ -23,6 +23,7 @@ class ModuleContributorServiceTest {
     private final QuestionService questionService = mock(QuestionService.class);
     private final ParameterService parameterService = mock(ParameterService.class);
     private final TopicService topicService = mock(TopicService.class);
+    private final AssessmentQuestionReferenceService assessmentQuestionReferenceService = mock(AssessmentQuestionReferenceService.class);
 
     private ModuleService moduleService;
 
@@ -30,7 +31,7 @@ class ModuleContributorServiceTest {
     public void beforeEach() {
         moduleContributorRepository = mock(ModuleContributorRepository.class);
         moduleService = mock(ModuleService.class);
-        moduleContributorService = new ModuleContributorService(questionService, parameterService, topicService, moduleContributorRepository, moduleService);
+        moduleContributorService = new ModuleContributorService(questionService, parameterService, topicService, assessmentQuestionReferenceService, moduleContributorRepository, moduleService);
 
     }
 
@@ -173,6 +174,22 @@ class ModuleContributorServiceTest {
         doNothing().when(parameterService).saveParameterReference(any(AssessmentParameterReference.class));
         verify(parameterService).saveParameterReference(any(AssessmentParameterReference.class));
     }
+
+    @Test
+    void shouldCreateQuestionReference() {
+        QuestionReferenceRequest questionReferenceRequest = new QuestionReferenceRequest();
+        questionReferenceRequest.setQuestion(1);
+        questionReferenceRequest.setReference("reference");
+        questionReferenceRequest.setRating(Rating.valueOf("TWO"));
+
+        Question question = new Question();
+        when(questionService.getQuestionById(1)).thenReturn(question);
+        moduleContributorService.createAssessmentQuestionReference(questionReferenceRequest);
+
+        doNothing().when(assessmentQuestionReferenceService).saveQuestionReference(any(AssessmentQuestionReference.class));
+        verify(assessmentQuestionReferenceService).saveQuestionReference(any(AssessmentQuestionReference.class));
+    }
+
     @Test
     void shouldUpdateTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
@@ -352,6 +369,21 @@ class ModuleContributorServiceTest {
         when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
 
         assertThrows(DuplicateRecordException.class, () -> moduleContributorService.createAssessmentTopicReference(topicReferencesRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheQuestionReferenceIsAlreadyPresent() {
+        QuestionReferenceRequest questionReferenceRequest = new QuestionReferenceRequest();
+        questionReferenceRequest.setQuestion(1);
+        questionReferenceRequest.setReference("reference");
+        questionReferenceRequest.setRating(Rating.ONE);
+
+        Question question = new Question();
+        question.setReferences(Collections.singleton(new AssessmentQuestionReference(Rating.ONE, "reference",question)));
+        question.setQuestionId(1);
+        when(questionService.getQuestionById(question.getQuestionId())).thenReturn(question);
+
+        assertThrows(DuplicateRecordException.class, () -> moduleContributorService.createAssessmentQuestionReference(questionReferenceRequest));
     }
 
     @Test

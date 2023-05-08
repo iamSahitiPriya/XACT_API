@@ -65,6 +65,10 @@ class ContributorControllerTest {
 
     @Inject
     EntityManager entityManager;
+
+    @Inject
+    private AssessmentQuestionReferenceRepository assessmentQuestionReferenceRepository;
+
     @BeforeEach
     public void beforeEach() {
         AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
@@ -312,6 +316,67 @@ class ContributorControllerTest {
             }
         }
 
+        assessmentParameterRepository.deleteById(assessmentParameter.getParameterId());
+        assessmentTopicRepository.deleteById(assessmentTopic.getTopicId());
+        categoryRepository.deleteById(assessmentCategory.getCategoryId());
+        entityManager.getTransaction().commit();
+
+    }
+
+
+    @Test
+    void shouldCreateQuestionReference()  {
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryName("Category Name Example_1");
+        assessmentCategory.setActive(true);
+
+        AssessmentModule assessmentModule =moduleRepository.findByModuleId(1);
+
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicName("Topic Name Example_1");
+        assessmentTopic.setModule(assessmentModule);
+        assessmentTopic.setActive(true);
+
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        assessmentCategory.setModules(Collections.singleton(assessmentModule));
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterName("Parameter Name Example_1");
+        assessmentParameter.setTopic(assessmentTopic);
+        assessmentParameter.setActive(true);
+
+        Question question = new Question("new question",assessmentParameter);
+        assessmentParameter.setQuestions(Collections.singleton(question));
+
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
+        categoryRepository.save(assessmentCategory);
+        moduleRepository.save(assessmentModule);
+        assessmentTopicRepository.save(assessmentTopic);
+        assessmentParameterRepository.save(assessmentParameter);
+        questionRepository.save(question);
+        entityManager.getTransaction().commit();
+        entityManager.clear();
+        entityManager.close();
+
+        String dataRequest = "[{" + "\"question\"" + ":" + question.getQuestionId() + "," + "\"rating\"" + ":" + "\"TWO\"" + "," + "\"reference\"" + ":" + "\"This is a reference\"" + "}]";
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/contributor/question-references", dataRequest)
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+        Set<AssessmentQuestionReference> assessmentQuestionReferences = questionRepository.findById(question.getQuestionId()).get().getReferences();
+
+        entityManager.getTransaction().begin();
+        for (AssessmentQuestionReference assessmentQuestionReference : assessmentQuestionReferences) {
+            if (assessmentQuestionReference.getRating().equals(Rating.TWO)) {
+                assertEquals("This is a reference", assessmentQuestionReference.getReference());
+                assessmentQuestionReferenceRepository.deleteById(assessmentQuestionReference.getReferenceId());
+            }
+        }
+
+        questionRepository.deleteById(question.getQuestionId());
         assessmentParameterRepository.deleteById(assessmentParameter.getParameterId());
         assessmentTopicRepository.deleteById(assessmentTopic.getTopicId());
         categoryRepository.deleteById(assessmentCategory.getCategoryId());

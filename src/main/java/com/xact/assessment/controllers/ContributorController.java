@@ -166,6 +166,21 @@ public class ContributorController {
         }
     }
 
+    @Post(value = "/question-references", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AssessmentQuestionReferenceDto> createQuestionReference(@Body QuestionReferenceRequest questionReferenceRequest, Authentication authentication) {
+        LOGGER.info("{}: Create question reference - {}", authentication.getName(), questionReferenceRequest.getQuestion());
+        AssessmentModule assessmentModule = contributorService.getModuleByQuestionId(questionReferenceRequest.getQuestion());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
+            AssessmentQuestionReference assessmentQuestionReference = contributorService.createAssessmentQuestionReference(questionReferenceRequest);
+            AssessmentQuestionReferenceDto assessmentQuestionReferenceDto = masterDataMapper.mapQuestionReference(assessmentQuestionReference);
+            return HttpResponse.ok(assessmentQuestionReferenceDto);
+        } else {
+            return HttpResponse.unauthorized();
+        }
+    }
+
     @Put(value = "/topics/{topicId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicResponse> updateTopic(@PathVariable("topicId") Integer topicId, @Body @Valid AssessmentTopicRequest assessmentTopicRequest, Authentication authentication) {

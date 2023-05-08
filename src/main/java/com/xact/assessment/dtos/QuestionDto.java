@@ -5,7 +5,6 @@
 package com.xact.assessment.dtos;
 
 
-import com.xact.assessment.models.AssessmentQuestionReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

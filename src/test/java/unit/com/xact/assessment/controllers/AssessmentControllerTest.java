@@ -153,7 +153,7 @@ class AssessmentControllerTest {
         parameter.setTopic(topic);
         question.setParameter(parameter);
         AnswerId answerId = new AnswerId(assessment, question);
-        Answer answer = new Answer(answerId, "my answer", new Date(), new Date());
+        Answer answer = new Answer(answerId, "my answer", new Date(), new Date(),5);
         answers.add(answer);
         when(assessmentService.getAnswers(assessmentId)).thenReturn(answers);
 
@@ -725,6 +725,50 @@ class AssessmentControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
 
         verify(assessmentService).saveParameterRating(1,assessment,"2");
+
+    }
+
+    @Test
+    void testUpdateAssessmentQuestionRating() {
+        Integer assessmentId = 1;
+
+        User user = new User();
+        String userEmail = "hello@thoughtworks.com";
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail(userEmail);
+        user.setUserInfo(userInfo);
+
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
+
+        UserId userId = new UserId();
+        userId.setUserEmail("hello@thoughtworks.com");
+
+        Date created = new Date(2022 - 4 - 13);
+        Date updated = new Date(2022 - 4 - 13);
+        Organisation organisation = new Organisation(2, "abc", "hello", "ABC", 4);
+
+        Assessment assessment = new Assessment(1, "Name", "Client Assessment", organisation, AssessmentStatus.Active, created, updated);
+        userId.setAssessment(assessment);
+
+        AssessmentUser assessmentUser = new AssessmentUser();
+        assessmentUser.setUserId(userId);
+
+        when(assessmentService.getAssessment(assessmentId, user)).thenReturn(assessment);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        Question question = new Question("",assessmentParameter);
+        question.setQuestionId(1);
+
+        AnswerId answerId = new AnswerId(assessment,question);
+        Answer answer = new Answer(answerId,"",new Date(),new Date(),5);
+
+
+
+        HttpResponse actualResponse = assessmentController.saveQuestionRating(assessmentId, 1, "1", authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+        verify(assessmentService).saveQuestionRating(1,assessment,"1");
 
     }
 

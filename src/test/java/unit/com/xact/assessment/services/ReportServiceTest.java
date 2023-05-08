@@ -82,8 +82,9 @@ class ReportServiceTest {
         topic.setModule(module);
         parameter.setTopic(topic);
         question.setParameter(parameter);
+        parameter.setQuestions(Collections.singleton(question));
         AnswerId answerId = new AnswerId(assessment, question);
-        Answer answer = new Answer(answerId, "my answer", new Date(), new Date());
+        Answer answer = new Answer(answerId, "my answer", new Date(), new Date(),4);
         answers.add(answer);
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
 
@@ -209,8 +210,9 @@ class ReportServiceTest {
         parameter.setTopic(topic);
         topic.setParameters(Collections.singleton(parameter));
         question.setParameter(parameter);
+        parameter.setQuestions(Collections.singleton(question));
         AnswerId answerId = new AnswerId(assessment, question);
-        Answer answer = new Answer(answerId, "my answer", new Date(), new Date());
+        Answer answer = new Answer(answerId, "my answer", new Date(), new Date(),4);
         answers.add(answer);
         List<ParameterLevelRating> parameterAssessments = new ArrayList<>();
         List<TopicLevelRating> topicAssessments = new ArrayList<>();
@@ -338,8 +340,9 @@ class ReportServiceTest {
         topic.setParameters(Collections.singleton(parameter));
 
         question.setParameter(parameter);
+        parameter.setQuestions(Collections.singleton(question));
         AnswerId answerId = new AnswerId(assessment, question);
-        Answer answer = new Answer(answerId, "my answer", new Date(), new Date());
+        Answer answer = new Answer(answerId, "my answer", new Date(), new Date(),5);
         answers.add(answer);
         when(answerService.getAnswers(assessmentId)).thenReturn(answers);
 

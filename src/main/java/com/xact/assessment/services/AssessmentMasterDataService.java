@@ -293,7 +293,7 @@ public class AssessmentMasterDataService {
         QuestionDto questionDto = masterDataMapper.mapQuestion(question);
         if (role == AccessControlRoles.AUTHOR ||
                 (role == AccessControlRoles.REVIEWER && (question.getQuestionStatus() != ContributorQuestionStatus.DRAFT)) ||
-                (role == AccessControlRoles.Admin && question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED))
+                (role == AccessControlRoles.PRIMARY_ADMIN && question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED))
             questions.add(questionDto);
     }
 }

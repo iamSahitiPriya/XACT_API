@@ -72,4 +72,7 @@ public class UserAuthService {
         return moduleContributorService.getContributorsByEmail(userEmail);
     }
 
+    public List<UserInfo> getUsers() {
+         return userRepository.findAllUsers();
+    }
 }

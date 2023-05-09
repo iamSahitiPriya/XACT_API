@@ -70,7 +70,7 @@ class AdminControllerTest {
     @BeforeEach
     public void beforeEach() {
         String userEmail = "dummy@test.com";
-        AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.Admin);
+        AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.PRIMARY_ADMIN);
         accessControlRepository.save(accessControlList);
     }
 

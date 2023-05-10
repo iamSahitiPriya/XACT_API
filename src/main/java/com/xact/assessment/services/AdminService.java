@@ -4,9 +4,11 @@
 
 package com.xact.assessment.services;
 
+import com.xact.assessment.dtos.AccessControlRoleDto;
 import com.xact.assessment.dtos.AssessmentCategoryRequest;
 import com.xact.assessment.dtos.AssessmentModuleRequest;
 import com.xact.assessment.dtos.ContributorDto;
+import com.xact.assessment.models.AccessControlList;
 import com.xact.assessment.models.Assessment;
 import com.xact.assessment.models.AssessmentCategory;
 import com.xact.assessment.models.AssessmentModule;
@@ -23,12 +25,14 @@ public class AdminService {
     private final AssessmentMasterDataService assessmentMasterDataService;
 
     private final AssessmentService assessmentService;
+    private final AccessControlService accessControlService;
 
 
-    public AdminService(ModuleContributorService moduleContributorService, AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService) {
+    public AdminService(ModuleContributorService moduleContributorService, AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, AccessControlService accessControlService) {
         this.moduleContributorService = moduleContributorService;
         this.assessmentMasterDataService = assessmentMasterDataService;
         this.assessmentService = assessmentService;
+        this.accessControlService = accessControlService;
     }
 
     public void saveContributors(Integer moduleId, List<ContributorDto> contributors) {
@@ -57,5 +61,13 @@ public class AdminService {
 
     public AssessmentCategory getCategory(Integer categoryId) {
         return assessmentMasterDataService.getCategory(categoryId);
+    }
+
+    public void saveRole(AccessControlRoleDto accessControlRole) {
+        accessControlService.saveRole(accessControlRole);
+    }
+
+    public List<AccessControlList> getAllAccessControlRoles() {
+        return accessControlService.getAllAccessControlRoles();
     }
 }

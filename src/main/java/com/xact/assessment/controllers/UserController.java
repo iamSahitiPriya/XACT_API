@@ -15,6 +15,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.security.annotation.Secured;
 import io.micronaut.security.authentication.Authentication;
 import io.micronaut.security.rules.SecurityRule;
@@ -52,19 +53,19 @@ public class UserController {
 
     @Get(value = "/login")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public void login(@Header("authorization") String authorizationHeader,Authentication authentication) {
+    public void login(@Header("authorization") String authorizationHeader, Authentication authentication) {
         LOGGER.info("Fetching user details");
         User currentUser = userAuthService.getCurrentUser(authentication);
-        userAuthService.login(authorizationHeader,currentUser);
+        userAuthService.login(authorizationHeader, currentUser);
     }
 
-    @Get(value="/all")
+    @Get(value = "/all")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<UserInfoDto>> getUsers(Authentication authentication){
+    public HttpResponse<List<UserInfoDto>> getUsers(Authentication authentication) {
         LOGGER.info("Fetching all user details");
-        List<UserInfo> users =userAuthService.getUsers();
+        List<UserInfo> users = userAuthService.getUsers();
         List<UserInfoDto> userInfoResponse = new ArrayList<>();
-        users.forEach(userInfo -> userInfoResponse.add(modelMapper.map(userInfo,UserInfoDto.class)));
+        users.forEach(userInfo -> userInfoResponse.add(modelMapper.map(userInfo, UserInfoDto.class)));
         return HttpResponse.ok(userInfoResponse);
     }
 }

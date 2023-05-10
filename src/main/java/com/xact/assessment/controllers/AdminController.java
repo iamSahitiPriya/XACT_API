@@ -7,10 +7,7 @@ package com.xact.assessment.controllers;
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.mappers.MasterDataMapper;
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.AssessmentModule;
-import com.xact.assessment.models.AssessmentStatus;
+import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Introspected;
@@ -27,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Introspected
@@ -111,6 +109,23 @@ public class AdminController {
         contributorRequest.validate(emailPattern);
         adminService.saveContributors(moduleId, contributorRequest.getContributors());
         return HttpResponse.ok();
+    }
+    @Post(value="/user")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AccessControlRoleDto> saveAdmin(Authentication authentication, @Valid @Body AccessControlRoleDto accessControlRole){
+        LOGGER.info("Save Role For {} - {}", accessControlRole.getEmail(),accessControlRole.getAccessControlRoles());
+        adminService.saveRole(accessControlRole);
+        return HttpResponse.created(accessControlRole);
+    }
+    @Get(value="/all")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<List<AccessControlRoleDto>> getAllAccessControlRoles(Authentication authentication){
+        LOGGER.info("Get all access control roles");
+        List<AccessControlList> accessControlList = adminService.getAllAccessControlRoles();
+        List<AccessControlRoleDto> accessControlRoles = new ArrayList<>();
+        accessControlList.forEach(accessControlRole->accessControlRoles.add(mapper.map(accessControlRole, AccessControlRoleDto.class)));
+        return HttpResponse.ok(accessControlRoles);
+
     }
 
     private AssessmentCategory getCategory(Integer categoryId) {

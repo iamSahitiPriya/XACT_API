@@ -20,4 +20,12 @@ public class AssessmentQuestionReferenceService {
     public void saveQuestionReference(AssessmentQuestionReference assessmentQuestionReference) {
         assessmentQuestionReferenceRepository.save(assessmentQuestionReference);
     }
+
+    public AssessmentQuestionReference getReferenceById(Integer referenceId) {
+       return  assessmentQuestionReferenceRepository.findById(referenceId).orElseThrow();
+    }
+
+    public void delete(Integer referenceId) {
+        assessmentQuestionReferenceRepository.deleteById(referenceId);
+    }
 }

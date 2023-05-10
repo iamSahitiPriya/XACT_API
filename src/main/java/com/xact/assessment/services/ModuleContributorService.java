@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class ModuleContributorService {
@@ -162,7 +163,7 @@ public class ModuleContributorService {
     public AssessmentTopicReference updateTopicReference(Integer referenceId, TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         AssessmentTopicReference assessmentTopicReference = topicService.getAssessmentTopicReference(referenceId);
-        Set<AssessmentTopicReference> assessmentTopicReferences = new HashSet<>(assessmentTopic.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentTopicReference.getReferenceId())).toList());
+        Set<AssessmentTopicReference> assessmentTopicReferences = assessmentTopic.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentTopicReference.getReferenceId())).collect(Collectors.toSet());
         if (isTopicRatingUnique(assessmentTopicReferences, topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopicReferences, topicReferencesRequest.getReference())) {
             assessmentTopicReference.setReference(topicReferencesRequest.getReference());
             assessmentTopicReference.setTopic(assessmentTopic);
@@ -175,7 +176,7 @@ public class ModuleContributorService {
     public AssessmentParameterReference updateParameterReference(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         AssessmentParameterReference assessmentParameterReference = parameterService.getAssessmentParameterReference(referenceId);
-        Set<AssessmentParameterReference> assessmentParameterReferences = new HashSet<>(assessmentParameter.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentParameterReference.getReferenceId())).toList());
+        Set<AssessmentParameterReference> assessmentParameterReferences = assessmentParameter.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentParameterReference.getReferenceId())).collect(Collectors.toSet());
         if (isParameterRatingUnique(assessmentParameterReferences, parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameterReferences, parameterReferencesRequest.getReference())) {
             assessmentParameterReference.setParameter(assessmentParameter);
             assessmentParameterReference.setReference(parameterReferencesRequest.getReference());
@@ -187,6 +188,21 @@ public class ModuleContributorService {
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
+    public AssessmentQuestionReference updateQuestionReference(Integer referenceId, QuestionReferenceRequest questionReferenceRequest) {
+        Question question=questionService.getQuestion(questionReferenceRequest.getQuestion()).orElseThrow();
+        AssessmentQuestionReference assessmentQuestionReference=assessmentQuestionReferenceService.getReferenceById(referenceId);
+        Set<AssessmentQuestionReference> assessmentQuestionReferences= question.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentQuestionReference.getReferenceId())).collect(Collectors.toSet());
+        if(isQuestionRatingUnique(assessmentQuestionReferences,questionReferenceRequest.getRating()) && isQuestionReferenceUnique(assessmentQuestionReferences, questionReferenceRequest.getReference())){
+            assessmentQuestionReference.setQuestion(question);
+            assessmentQuestionReference.setReference(questionReferenceRequest.getReference());
+            assessmentQuestionReference.setRating(questionReferenceRequest.getRating());
+
+            questionService.updateQuestionReference(assessmentQuestionReference);
+            return assessmentQuestionReference;
+        } else
+            throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
+        
+    }
     public void deleteTopicReference(Integer referenceId) {
         topicService.deleteTopicReference(referenceId);
     }
@@ -339,5 +355,14 @@ public class ModuleContributorService {
 
     public AssessmentModule getModuleByQuestionId(Integer questionId) {
         return questionService.getQuestionById(questionId).getParameter().getTopic().getModule();
+    }
+
+
+    public AssessmentModule getModuleByQuestionReference(Integer referenceId) {
+       return assessmentQuestionReferenceService.getReferenceById(referenceId).getQuestion().getParameter().getTopic().getModule();
+    }
+
+    public void deleteQuestionReference(Integer referenceId) {
+        assessmentQuestionReferenceService.delete(referenceId);
     }
 }

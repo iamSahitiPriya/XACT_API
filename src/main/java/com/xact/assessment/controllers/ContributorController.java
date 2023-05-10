@@ -255,6 +255,22 @@ public class ContributorController {
 
     }
 
+    @Put(value = "/question/references/{referenceId}", produces = MediaType.APPLICATION_JSON)
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AssessmentQuestionReferenceDto> updateQuestionReference(@PathVariable("referenceId") Integer referenceId, QuestionReferenceRequest questionReferenceRequest, Authentication authentication) {
+        LOGGER.info("{}: Update question-reference - {}", authentication.getName(), questionReferenceRequest.getReference());
+        AssessmentModule assessmentModule = contributorService.getModuleByParameter(questionReferenceRequest.getQuestion());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
+            AssessmentQuestionReference assessmentQuestionReference= contributorService.updateQuestionReference(referenceId, questionReferenceRequest);
+            AssessmentQuestionReferenceDto assessmentQuestionReferenceDto = masterDataMapper.mapQuestionReference(assessmentQuestionReference);
+            return HttpResponse.ok(assessmentQuestionReferenceDto);
+        } else {
+            return HttpResponse.unauthorized();
+        }
+
+    }
+
     @Delete(value = "topic-references/{referenceId}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<TopicReferencesRequest> deleteTopicReference(@PathVariable("referenceId") Integer referenceId, Authentication authentication) {
@@ -282,6 +298,22 @@ public class ContributorController {
             return HttpResponse.unauthorized();
         }
     }
+
+    @Delete(value = "question/references/{referenceId}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<QuestionReferenceRequest> deleteQuestionReference(@PathVariable("referenceId") Integer referenceId, Authentication authentication) {
+        LOGGER.info("{}: Delete Question reference. referenceId: {}", authentication.getName(), referenceId);
+        AssessmentModule assessmentModule = contributorService.getModuleByQuestionReference(referenceId);
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        if(contributorService.validate(loggedInUser,assessmentModule)) {
+            contributorService.deleteQuestionReference(referenceId);
+            return HttpResponse.ok();
+        }else{
+            return HttpResponse.unauthorized();
+        }
+    }
+
+
 
 
     private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {

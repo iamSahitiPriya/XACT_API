@@ -6,6 +6,7 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
+import com.xact.assessment.repositories.AssessmentQuestionReferenceRepository;
 import com.xact.assessment.repositories.QuestionRepository;
 import jakarta.inject.Singleton;
 import org.modelmapper.ModelMapper;
@@ -22,11 +23,14 @@ public class QuestionService {
 
     private final UserQuestionService userQuestionService;
 
+    private final AssessmentQuestionReferenceRepository assessmentQuestionReferenceRepository;
+
     private static final ModelMapper modelMapper = new ModelMapper();
 
-    public QuestionService(QuestionRepository questionRepository, UserQuestionService userQuestionService) {
+    public QuestionService(QuestionRepository questionRepository, UserQuestionService userQuestionService, AssessmentQuestionReferenceRepository assessmentQuestionReferenceRepository) {
         this.questionRepository = questionRepository;
         this.userQuestionService = userQuestionService;
+        this.assessmentQuestionReferenceRepository = assessmentQuestionReferenceRepository;
     }
 
     public Optional<Question> getQuestion(Integer questionId) {
@@ -213,6 +217,12 @@ public class QuestionService {
 
     public void deleteRejectedQuestions(Date expiryDate) {
         questionRepository.deleteRejectedQuestions(expiryDate);
+    }
+
+
+
+    public void updateQuestionReference(AssessmentQuestionReference assessmentQuestionReference) {
+        assessmentQuestionReferenceRepository.update(assessmentQuestionReference);
     }
 }
 

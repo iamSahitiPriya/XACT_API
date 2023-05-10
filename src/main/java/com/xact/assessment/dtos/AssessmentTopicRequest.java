@@ -26,4 +26,7 @@ public class AssessmentTopicRequest {
     private boolean isActive;
     @JsonProperty
     private String comments;
+    @JsonProperty
+    private boolean isTopicLevelReference;
+
 }

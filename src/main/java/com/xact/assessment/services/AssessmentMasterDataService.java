@@ -263,6 +263,7 @@ public class AssessmentMasterDataService {
         SortedSet<AssessmentTopicDto> topicDtos = new TreeSet<>();
         for (AssessmentTopic assessmentTopic : assessmentModule.getTopics()) {
             AssessmentTopicDto topicDto = masterDataMapper.mapTopic(assessmentTopic);
+            System.out.println(topicDto.isTopicLevelReference());
             SortedSet<AssessmentParameterDto> parameterDtos = getParameters(contributor, assessmentTopic);
             topicDto.setParameters(parameterDtos);
             topicDtos.add(topicDto);

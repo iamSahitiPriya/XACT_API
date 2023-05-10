@@ -70,6 +70,9 @@ public class AssessmentTopic implements Serializable {
     @Column(name = "comments")
     private String comments;
 
+    @Column(name="has_reference")
+    private boolean isTopicLevelReference;
+
     public boolean getIsActive() {
         return isActive;
     }

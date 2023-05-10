@@ -67,6 +67,9 @@ public class AssessmentParameter implements Serializable {
     @Column(name = "comments")
     private String comments;
 
+    @Column(name="has_reference")
+    private boolean isParameterLevelReference;
+
     public boolean getIsActive() {
         return isActive;
     }

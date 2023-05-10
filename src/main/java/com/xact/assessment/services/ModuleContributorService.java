@@ -199,6 +199,7 @@ public class ModuleContributorService {
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
         if (isTopicUnique(assessmentTopicRequest.getTopicName(), assessmentModule)) {
             AssessmentTopic assessmentTopic = new AssessmentTopic(assessmentTopicRequest.getTopicName(), assessmentModule, assessmentTopicRequest.isActive(), assessmentTopicRequest.getComments());
+            assessmentTopic.setTopicLevelReference(assessmentTopicRequest.isTopicLevelReference());
             topicService.createTopic(assessmentTopic);
             return assessmentTopic;
         } else {

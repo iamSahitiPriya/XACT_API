@@ -23,6 +23,7 @@ public class TopicDto implements Comparable<TopicDto> {
     private boolean isActive;
     private Date updatedAt;
     private String comments;
+    private boolean isTopicLevelReference;
     private SortedSet<ParameterDto> parameters;
 
     @Override

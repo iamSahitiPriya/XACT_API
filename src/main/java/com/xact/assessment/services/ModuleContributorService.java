@@ -217,7 +217,7 @@ public class ModuleContributorService {
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameter.getTopic()).orElseThrow();
         if (isParameterUnique(assessmentParameter.getParameterName(), assessmentTopic)) {
             AssessmentParameter assessmentParameter1 = AssessmentParameter.builder().parameterName(assessmentParameter.getParameterName()).topic(assessmentTopic)
-                    .isActive(assessmentParameter.isActive()).comments(assessmentParameter.getComments()).build();
+                    .isActive(assessmentParameter.isActive()).comments(assessmentParameter.getComments()).isParameterLevelReference(assessmentParameter.isParameterLevelReference()).build();
 
             parameterService.createParameter(assessmentParameter1);
             return assessmentParameter1;

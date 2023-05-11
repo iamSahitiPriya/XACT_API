@@ -9,6 +9,7 @@ import com.xact.assessment.dtos.*;
 import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Introspected
@@ -36,12 +36,14 @@ public class AdminController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
     private static final ModelMapper mapper = new ModelMapper();
     private final MasterDataMapper masterDataMapper = new MasterDataMapper();
+    private final UserAuthService userAuthService;
     private final AdminService adminService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
-    public AdminController(AdminService adminService) {
+    public AdminController(UserAuthService userAuthService, AdminService adminService) {
+        this.userAuthService = userAuthService;
         this.adminService = adminService;
     }
 
@@ -123,6 +125,14 @@ public class AdminController {
         LOGGER.info("Get all access control roles");
         List<AccessControlResponse> accessControlList = adminService.getAllAccessControlRoles();
         return HttpResponse.ok(accessControlList);
+    }
+    @Delete("/user")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AccessControlRoleDto> deleteUser(Authentication authentication, @Valid @Body AccessControlRoleDto accessControlRole){
+        LOGGER.info("Remove user role for : {}", accessControlRole.getEmail());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        adminService.deleteUserRole(accessControlRole, loggedInUser);
+        return HttpResponse.ok();
     }
 
     private AssessmentCategory getCategory(Integer categoryId) {

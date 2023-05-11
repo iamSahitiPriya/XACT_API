@@ -26,7 +26,7 @@ class AdminControllerTest {
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
     AdminService adminService = Mockito.mock(AdminService.class);
-    AdminController adminController = new AdminController(adminService);
+    AdminController adminController = new AdminController(userAuthService, adminService);
 
     @Test
     void createAssessmentCategory() {

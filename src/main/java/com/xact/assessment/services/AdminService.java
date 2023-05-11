@@ -81,4 +81,8 @@ public class AdminService {
         }
         return  accessControlResponses;
     }
+
+    public void deleteUserRole(AccessControlRoleDto accessControlRole, User loggedInUser) {
+        accessControlService.deleteUserRole(accessControlRole);
+    }
 }

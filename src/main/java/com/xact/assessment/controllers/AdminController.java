@@ -117,15 +117,12 @@ public class AdminController {
         adminService.saveRole(accessControlRole);
         return HttpResponse.created(accessControlRole);
     }
-    @Get(value="/all")
+    @Get
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AccessControlRoleDto>> getAllAccessControlRoles(Authentication authentication){
+    public HttpResponse<List<AccessControlResponse>> getAllAccessControlRoles(Authentication authentication){
         LOGGER.info("Get all access control roles");
-        List<AccessControlList> accessControlList = adminService.getAllAccessControlRoles();
-        List<AccessControlRoleDto> accessControlRoles = new ArrayList<>();
-        accessControlList.forEach(accessControlRole->accessControlRoles.add(mapper.map(accessControlRole, AccessControlRoleDto.class)));
-        return HttpResponse.ok(accessControlRoles);
-
+        List<AccessControlResponse> accessControlList = adminService.getAllAccessControlRoles();
+        return HttpResponse.ok(accessControlList);
     }
 
     private AssessmentCategory getCategory(Integer categoryId) {

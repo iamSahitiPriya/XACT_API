@@ -28,7 +28,7 @@ class AdminServiceTest {
 
     AssessmentService assessmentService=Mockito.mock(AssessmentService.class);
 
-    private final AdminService adminService = new AdminService(moduleContributorService, assessmentMasterDataService, assessmentService, accessControlService);
+    private final AdminService adminService = new AdminService(moduleContributorService, assessmentMasterDataService, userAuthService, assessmentService, accessControlService);
 
     @Test
     void shouldSaveModuleContributor() {

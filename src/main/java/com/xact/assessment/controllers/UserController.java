@@ -59,7 +59,7 @@ public class UserController {
         userAuthService.login(authorizationHeader, currentUser);
     }
 
-    @Get(value = "/all")
+    @Get
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<UserInfoDto>> getUsers(Authentication authentication) {
         LOGGER.info("Fetching all user details");

@@ -4,17 +4,12 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AccessControlRoleDto;
-import com.xact.assessment.dtos.AssessmentCategoryRequest;
-import com.xact.assessment.dtos.AssessmentModuleRequest;
-import com.xact.assessment.dtos.ContributorDto;
-import com.xact.assessment.models.AccessControlList;
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.AssessmentModule;
+import com.xact.assessment.dtos.*;
+import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -23,14 +18,16 @@ public class AdminService {
     private final ModuleContributorService moduleContributorService;
 
     private final AssessmentMasterDataService assessmentMasterDataService;
+    private final UserAuthService userAuthService;
 
     private final AssessmentService assessmentService;
     private final AccessControlService accessControlService;
 
 
-    public AdminService(ModuleContributorService moduleContributorService, AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService, AccessControlService accessControlService) {
+    public AdminService(ModuleContributorService moduleContributorService, AssessmentMasterDataService assessmentMasterDataService, UserAuthService userAuthService, AssessmentService assessmentService, AccessControlService accessControlService) {
         this.moduleContributorService = moduleContributorService;
         this.assessmentMasterDataService = assessmentMasterDataService;
+        this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
         this.accessControlService = accessControlService;
     }
@@ -67,7 +64,21 @@ public class AdminService {
         accessControlService.saveRole(accessControlRole);
     }
 
-    public List<AccessControlList> getAllAccessControlRoles() {
-        return accessControlService.getAllAccessControlRoles();
+    public List<AccessControlResponse> getAllAccessControlRoles() {
+        List<AccessControlList> accessControlLists = accessControlService.getAllAccessControlRoles();
+        List<AccessControlResponse> accessControlResponses = new ArrayList<>();
+        for (AccessControlList user : accessControlLists) {
+            UserInfo userInfo = userAuthService.getUserInfo(user.getEmail());
+            AccessControlResponse accessControlResponse = new AccessControlResponse();
+            if(userInfo != null){
+                accessControlResponse.setUsername(userInfo.getFirstName()+' '+userInfo.getLastName());
+            }else{
+                accessControlResponse.setUsername(user.getEmail());
+            }
+            accessControlResponse.setEmail(user.getEmail());
+            accessControlResponse.setAccessControlRoles(user.getAccessControlRoles());
+            accessControlResponses.add(accessControlResponse);
+        }
+        return  accessControlResponses;
     }
 }

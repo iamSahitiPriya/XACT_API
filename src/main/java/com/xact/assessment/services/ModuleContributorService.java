@@ -188,8 +188,7 @@ public class ModuleContributorService {
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
-    public AssessmentQuestionReference updateQuestionReference(Integer referenceId, QuestionReferenceRequest questionReferenceRequest) {
-        Question question=questionService.getQuestion(questionReferenceRequest.getQuestion()).orElseThrow();
+    public AssessmentQuestionReference updateQuestionReference(Integer referenceId, QuestionReferenceRequest questionReferenceRequest, Question question) {
         AssessmentQuestionReference assessmentQuestionReference=assessmentQuestionReferenceService.getReferenceById(referenceId);
         Set<AssessmentQuestionReference> assessmentQuestionReferences= question.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentQuestionReference.getReferenceId())).collect(Collectors.toSet());
         if(isQuestionRatingUnique(assessmentQuestionReferences,questionReferenceRequest.getRating()) && isQuestionReferenceUnique(assessmentQuestionReferences, questionReferenceRequest.getReference())){
@@ -353,8 +352,8 @@ public class ModuleContributorService {
         return assessmentParameterReference.getParameter().getTopic().getModule();
     }
 
-    public AssessmentModule getModuleByQuestionId(Integer questionId) {
-        return questionService.getQuestionById(questionId).getParameter().getTopic().getModule();
+    public Question getQuestionById(Integer questionId) {
+        return questionService.getQuestionById(questionId);
     }
 
 

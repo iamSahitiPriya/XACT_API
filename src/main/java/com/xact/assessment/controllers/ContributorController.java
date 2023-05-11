@@ -170,7 +170,8 @@ public class ContributorController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentQuestionReferenceDto> createQuestionReference(@Body QuestionReferenceRequest questionReferenceRequest, Authentication authentication) {
         LOGGER.info("{}: Create question reference - {}", authentication.getName(), questionReferenceRequest.getQuestion());
-        AssessmentModule assessmentModule = contributorService.getModuleByQuestionId(questionReferenceRequest.getQuestion());
+        Question question = contributorService.getQuestionById(questionReferenceRequest.getQuestion());
+        AssessmentModule assessmentModule = question.getParameter().getTopic().getModule();
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentQuestionReference assessmentQuestionReference = contributorService.createAssessmentQuestionReference(questionReferenceRequest);
@@ -232,7 +233,7 @@ public class ContributorController {
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         if (contributorService.validate(loggedInUser, assessmentModule)) {
             AssessmentTopicReference assessmentTopicReference = contributorService.updateTopicReference(referenceId, topicReferencesRequest);
-            AssessmentTopicReferenceDto assessmentTopicReferenceDto =  masterDataMapper.mapTopicReference(assessmentTopicReference);
+            AssessmentTopicReferenceDto assessmentTopicReferenceDto = masterDataMapper.mapTopicReference(assessmentTopicReference);
             return HttpResponse.ok(assessmentTopicReferenceDto);
         } else {
             return HttpResponse.unauthorized();
@@ -258,11 +259,12 @@ public class ContributorController {
     @Put(value = "/question/references/{referenceId}", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentQuestionReferenceDto> updateQuestionReference(@PathVariable("referenceId") Integer referenceId, QuestionReferenceRequest questionReferenceRequest, Authentication authentication) {
-        LOGGER.info("{}: Update question-reference - {}", authentication.getName(), questionReferenceRequest.getReference());
-        AssessmentModule assessmentModule = contributorService.getModuleByParameter(questionReferenceRequest.getQuestion());
+        LOGGER.info("{}: Update question-reference - {}", authentication.getName(), referenceId);
+        Question question = contributorService.getQuestionById(questionReferenceRequest.getQuestion());
+        AssessmentModule assessmentModule = question.getParameter().getTopic().getModule();
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         if (contributorService.validate(loggedInUser, assessmentModule)) {
-            AssessmentQuestionReference assessmentQuestionReference= contributorService.updateQuestionReference(referenceId, questionReferenceRequest);
+            AssessmentQuestionReference assessmentQuestionReference = contributorService.updateQuestionReference(referenceId, questionReferenceRequest, question);
             AssessmentQuestionReferenceDto assessmentQuestionReferenceDto = masterDataMapper.mapQuestionReference(assessmentQuestionReference);
             return HttpResponse.ok(assessmentQuestionReferenceDto);
         } else {
@@ -277,10 +279,10 @@ public class ContributorController {
         LOGGER.info("{}: Delete topic reference. referenceId - {}", authentication.getName(), referenceId);
         AssessmentModule assessmentModule = contributorService.getModuleByTopicReference(referenceId);
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if(contributorService.validate(loggedInUser,assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             contributorService.deleteTopicReference(referenceId);
             return HttpResponse.ok();
-        }else{
+        } else {
             return HttpResponse.unauthorized();
         }
     }
@@ -291,10 +293,10 @@ public class ContributorController {
         LOGGER.info("{}: Delete parameter reference. referenceId: {}", authentication.getName(), referenceId);
         AssessmentModule assessmentModule = contributorService.getModuleByParameterReference(referenceId);
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if(contributorService.validate(loggedInUser,assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             contributorService.deleteParameterReference(referenceId);
             return HttpResponse.ok();
-        }else{
+        } else {
             return HttpResponse.unauthorized();
         }
     }
@@ -305,15 +307,13 @@ public class ContributorController {
         LOGGER.info("{}: Delete Question reference. referenceId: {}", authentication.getName(), referenceId);
         AssessmentModule assessmentModule = contributorService.getModuleByQuestionReference(referenceId);
         User loggedInUser = userAuthService.getCurrentUser(authentication);
-        if(contributorService.validate(loggedInUser,assessmentModule)) {
+        if (contributorService.validate(loggedInUser, assessmentModule)) {
             contributorService.deleteQuestionReference(referenceId);
             return HttpResponse.ok();
-        }else{
+        } else {
             return HttpResponse.unauthorized();
         }
     }
-
-
 
 
     private HttpResponse<QuestionResponse> getQuestionResponse(Question question) {

@@ -134,7 +134,7 @@ class ModuleContributorServiceTest {
         parameterRequest.setComments("");
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
-        AssessmentParameter assessmentParameter1 = new AssessmentParameter(1, "new parameter", assessmentTopic, null, null, true, new Date(), new Date(), "", 1);
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter(1, "new parameter", assessmentTopic, null, null, true, new Date(), new Date(), "",true, 1);
         assessmentTopic.setParameters(Collections.singleton(assessmentParameter1));
         AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterName(parameterRequest.getParameterName()).topic(assessmentTopic).isActive(parameterRequest.isActive()).comments(parameterRequest.getComments()).build();
         when(topicService.getTopic(1)).thenReturn(Optional.of(assessmentTopic));
@@ -219,7 +219,7 @@ class ModuleContributorServiceTest {
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterName(parameterRequest.getParameterName()).topic(assessmentTopic).isActive(parameterRequest.isActive()).comments(parameterRequest.getComments()).build();
-        AssessmentParameter assessmentParameter1 = new AssessmentParameter(2, "new parameter", assessmentTopic, null, null, true, new Date(), new Date(), "", 1);
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter(2, "new parameter", assessmentTopic, null, null, true, new Date(), new Date(), "",true, 1);
         assessmentTopic.setParameters(Collections.singleton(assessmentParameter1));
 
         AssessmentParameterRequest assessmentParameterRequest = new AssessmentParameterRequest();
@@ -334,7 +334,7 @@ class ModuleContributorServiceTest {
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
-        AssessmentParameter assessmentParameter = new AssessmentParameter(1, "parameter", assessmentTopic, null, null, true, new Date(), new Date(), "", 1);
+        AssessmentParameter assessmentParameter = new AssessmentParameter(1, "parameter", assessmentTopic, null, null, true, new Date(), new Date(), "",true, 1);
         assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
         when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
 
@@ -418,9 +418,8 @@ class ModuleContributorServiceTest {
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
-        AssessmentParameter assessmentParameter = new AssessmentParameter(1, "parameter", null, null, null, true, new Date(), new Date(), "", 1);
-        AssessmentParameter assessmentParameter1 = new AssessmentParameter(2, "new parameter", null, null, null, true, new Date(), new Date(), "", 1);
-
+        AssessmentParameter assessmentParameter = new AssessmentParameter(1,"paramter",null,null,null,true,new Date(),new Date(),"",true,1);
+        AssessmentParameter assessmentParameter1 = new AssessmentParameter(2, "new parameter", null, null, null, true, new Date(), new Date(), "",true,1);
         when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
         when(parameterService.getParameter(assessmentParameter1.getParameterId())).thenReturn(Optional.of(assessmentParameter1));
         Set<AssessmentParameter> parameters = new HashSet<>();

@@ -196,7 +196,7 @@ public class ModuleContributorService {
             assessmentQuestionReference.setReference(questionReferenceRequest.getReference());
             assessmentQuestionReference.setRating(questionReferenceRequest.getRating());
 
-            questionService.updateQuestionReference(assessmentQuestionReference);
+            assessmentQuestionReferenceService.updateQuestionReference(assessmentQuestionReference);
             return assessmentQuestionReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);

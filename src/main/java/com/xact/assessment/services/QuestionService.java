@@ -23,14 +23,12 @@ public class QuestionService {
 
     private final UserQuestionService userQuestionService;
 
-    private final AssessmentQuestionReferenceRepository assessmentQuestionReferenceRepository;
 
     private static final ModelMapper modelMapper = new ModelMapper();
 
-    public QuestionService(QuestionRepository questionRepository, UserQuestionService userQuestionService, AssessmentQuestionReferenceRepository assessmentQuestionReferenceRepository) {
+    public QuestionService(QuestionRepository questionRepository, UserQuestionService userQuestionService) {
         this.questionRepository = questionRepository;
         this.userQuestionService = userQuestionService;
-        this.assessmentQuestionReferenceRepository = assessmentQuestionReferenceRepository;
     }
 
     public Optional<Question> getQuestion(Integer questionId) {
@@ -76,7 +74,7 @@ public class QuestionService {
         }
     }
 
-    public ContributorResponse getContributorResponse(ContributorRole contributorRole,List<AssessmentModule> assessmentModules) {
+    public ContributorResponse getContributorResponse(ContributorRole contributorRole, List<AssessmentModule> assessmentModules) {
         ContributorResponse contributorResponse = new ContributorResponse();
         List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(contributorRole, assessmentModules);
         contributorResponse.setContributorModuleData(contributorModuleDataList);
@@ -84,7 +82,7 @@ public class QuestionService {
     }
 
 
-    public QuestionStatusUpdateResponse updateContributorQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest,Optional<ContributorRole> contributorRole) {
+    public QuestionStatusUpdateResponse updateContributorQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Optional<ContributorRole> contributorRole) {
         QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
         if (contributorRole.isPresent() && contributorRole.get().isStatusValid(status)) {
             questionStatusUpdateResponse = updateContributorQuestion(status, questionStatusUpdateRequest);
@@ -217,12 +215,6 @@ public class QuestionService {
 
     public void deleteRejectedQuestions(Date expiryDate) {
         questionRepository.deleteRejectedQuestions(expiryDate);
-    }
-
-
-
-    public void updateQuestionReference(AssessmentQuestionReference assessmentQuestionReference) {
-        assessmentQuestionReferenceRepository.update(assessmentQuestionReference);
     }
 }
 

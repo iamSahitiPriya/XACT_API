@@ -28,4 +28,8 @@ public class AssessmentQuestionReferenceService {
     public void delete(Integer referenceId) {
         assessmentQuestionReferenceRepository.deleteById(referenceId);
     }
+
+    public void updateQuestionReference(AssessmentQuestionReference assessmentQuestionReference) {
+        assessmentQuestionReferenceRepository.update(assessmentQuestionReference);
+    }
 }

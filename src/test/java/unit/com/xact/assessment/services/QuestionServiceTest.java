@@ -30,7 +30,7 @@ class QuestionServiceTest {
         questionRepository = mock(QuestionRepository.class);
         userQuestionService = mock(UserQuestionService.class);
 
-        questionService = new QuestionService(questionRepository, userQuestionService, assessmentQuestionReferenceRepository);
+        questionService = new QuestionService(questionRepository, userQuestionService);
 
     }
 

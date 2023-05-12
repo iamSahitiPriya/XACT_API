@@ -36,10 +36,10 @@ public class AccessControlService {
         return accessControlRepository.findAll();
     }
 
-    public void deleteUserRole(AccessControlRoleDto accessControlRole) {
-        AccessControlList accessControlList = new AccessControlList();
-        accessControlList.setEmail(accessControlRole.getEmail());
-        accessControlList.setAccessControlRoles(accessControlRole.getAccessControlRoles());
-        accessControlRepository.delete(accessControlList);
+    public void deleteUserRole(String email) {
+        AccessControlList accessControlList = accessControlRepository.findById(email).orElse(new AccessControlList());
+        if(accessControlList.getAccessControlRoles() != null) {
+            accessControlRepository.delete(accessControlList);
+        }
     }
 }

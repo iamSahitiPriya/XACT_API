@@ -5,6 +5,7 @@
 package com.xact.assessment.services;
 
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
 
@@ -33,7 +34,7 @@ public class AdminService {
     }
 
     public void saveContributors(Integer moduleId, List<ContributorDto> contributors) {
-        moduleContributorService.saveContributors(moduleId,contributors);
+        moduleContributorService.saveContributors(moduleId, contributors);
     }
 
     public AssessmentCategory createAssessmentCategory(AssessmentCategoryRequest assessmentCategory) {
@@ -45,11 +46,11 @@ public class AdminService {
     }
 
     public AssessmentCategory updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
-        return assessmentMasterDataService.updateCategory(assessmentCategory,assessmentCategoryRequest);
+        return assessmentMasterDataService.updateCategory(assessmentCategory, assessmentCategoryRequest);
     }
 
     public AssessmentModule updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
-        return assessmentMasterDataService.updateModule(moduleId,assessmentModuleRequest);
+        return assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
     }
 
     public List<Assessment> getTotalAssessments(String startDate, String endDate) throws ParseException {
@@ -60,8 +61,12 @@ public class AdminService {
         return assessmentMasterDataService.getCategory(categoryId);
     }
 
-    public void saveRole(AccessControlRoleDto accessControlRole) {
-        accessControlService.saveRole(accessControlRole);
+    public void saveRole(AccessControlRoleDto user, AccessControlRoles accessControlRoles) {
+        if ((accessControlRoles.equals(AccessControlRoles.PRIMARY_ADMIN))) {
+            accessControlService.saveRole(user);
+        }else{
+            throw new UnauthorisedUserException("User not authorised.");
+        }
     }
 
     public List<AccessControlResponse> getAllAccessControlRoles() {
@@ -70,19 +75,19 @@ public class AdminService {
         for (AccessControlList user : accessControlLists) {
             UserInfo userInfo = userAuthService.getUserInfo(user.getEmail());
             AccessControlResponse accessControlResponse = new AccessControlResponse();
-            if(userInfo != null){
-                accessControlResponse.setUsername(userInfo.getFirstName()+' '+userInfo.getLastName());
-            }else{
+            if (userInfo != null) {
+                accessControlResponse.setUsername(userInfo.getFirstName() + ' ' + userInfo.getLastName());
+            } else {
                 accessControlResponse.setUsername(user.getEmail());
             }
             accessControlResponse.setEmail(user.getEmail());
             accessControlResponse.setAccessControlRoles(user.getAccessControlRoles());
             accessControlResponses.add(accessControlResponse);
         }
-        return  accessControlResponses;
+        return accessControlResponses;
     }
 
-    public void deleteUserRole(AccessControlRoleDto accessControlRole, User loggedInUser) {
-        accessControlService.deleteUserRole(accessControlRole);
+    public void deleteUserRole(String email) {
+        accessControlService.deleteUserRole(email);
     }
 }

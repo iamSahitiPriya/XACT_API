@@ -6,6 +6,7 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.mappers.MasterDataMapper;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
@@ -114,25 +115,40 @@ public class AdminController {
     }
     @Post(value="/user")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AccessControlRoleDto> saveAdmin(Authentication authentication, @Valid @Body AccessControlRoleDto accessControlRole){
-        LOGGER.info("Save Role For {} - {}", accessControlRole.getEmail(),accessControlRole.getAccessControlRoles());
-        adminService.saveRole(accessControlRole);
-        return HttpResponse.created(accessControlRole);
+    public HttpResponse<AccessControlRoleDto> saveAdmin(Authentication authentication, @Valid @Body AccessControlRoleDto user){
+        LOGGER.info("Save Role For {} - {}", user.getEmail(),user.getAccessControlRoles());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        AccessControlRoles accessControlRoles = userAuthService.getLoggedInUserRole(loggedInUser);
+        try {
+            adminService.saveRole(user, accessControlRoles);
+            return HttpResponse.created(user);
+        }catch(UnauthorisedUserException e){
+            return HttpResponse.unauthorized();
+        }
     }
     @Get
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<AccessControlResponse>> getAllAccessControlRoles(Authentication authentication){
         LOGGER.info("Get all access control roles");
-        List<AccessControlResponse> accessControlList = adminService.getAllAccessControlRoles();
-        return HttpResponse.ok(accessControlList);
+        try {
+            userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
+            List<AccessControlResponse> accessControlList = adminService.getAllAccessControlRoles();
+            return HttpResponse.ok(accessControlList);
+        }catch (UnauthorisedUserException e){
+            return HttpResponse.unauthorized();
+        }
     }
-    @Delete("/user")
+    @Delete("/user{?email}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AccessControlRoleDto> deleteUser(Authentication authentication, @Valid @Body AccessControlRoleDto accessControlRole){
-        LOGGER.info("Remove user role for : {}", accessControlRole.getEmail());
-        User loggedInUser = userAuthService.getCurrentUser(authentication);
-        adminService.deleteUserRole(accessControlRole, loggedInUser);
-        return HttpResponse.ok();
+    public HttpResponse<AccessControlRoleDto> deleteUser(Authentication authentication, @QueryValue String email){
+        LOGGER.info("Remove user role for : {}", email);
+        try {
+            userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
+            adminService.deleteUserRole(email);
+            return HttpResponse.ok();
+        }catch (UnauthorisedUserException e){
+            return HttpResponse.unauthorized();
+        }
     }
 
     private AssessmentCategory getCategory(Integer categoryId) {

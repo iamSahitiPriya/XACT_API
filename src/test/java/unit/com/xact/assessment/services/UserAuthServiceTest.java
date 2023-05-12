@@ -30,7 +30,7 @@ class UserAuthServiceTest {
     private UserInfoClient userInfoClient = mock(UserInfoClient.class);
     private UserRepository userRepository = mock(UserRepository.class);
     private ModuleContributorService moduleContributorService = mock(ModuleContributorService.class);
-    private UserAuthService userAuthService = new UserAuthService(userInfoClient, userRepository, moduleContributorService);
+    private UserAuthService userAuthService = new UserAuthService(userInfoClient, userRepository, moduleContributorService, accessControlService);
 
 
     @Test

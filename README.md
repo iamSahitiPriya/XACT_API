@@ -1,6 +1,7 @@
 ## Pre-Requisite
 
--  Java 11
+-  Java 17
+-  Posgres   : `docker run --name postgres -p 5432:5432 -e POSTGRES_USER=$USER -e POSTGRES_PASSWORD=$USER -d postgres`
 
 ## Preffered IDE
 
@@ -12,6 +13,7 @@
 
 -  Build : ./gradlew clean build
 -  Build : ./gradlew clean run
+
 
 ## Verify server response
 

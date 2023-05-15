@@ -72,6 +72,7 @@ public class ModuleContributorService {
         Question question = questionService.getQuestionById(questionId);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = getRole(moduleId, userEmail);
+        assessmentQuestionReferenceService.deleteByQuestionId(questionId);
         questionService.deleteQuestion(question, contributorRole);
     }
 

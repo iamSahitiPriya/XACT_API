@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static com.xact.assessment.constants.AppConstants.EMAIL;
@@ -76,8 +77,10 @@ public class UserAuthService {
         return moduleContributorService.getContributorsByEmail(userEmail);
     }
 
-    public List<UserInfo> getUsers() {
-         return userRepository.findAllUsers();
+    public List<UserInfo> getUsers(User currentUser) {
+         List<UserInfo> userInfo = userRepository.findAllUsers();
+         return userInfo.stream().filter(userInfo1 -> !Objects.equals(userInfo1.getEmail(), currentUser.getUserEmail())).toList();
+
     }
 
     public void validateUser(Authentication authentication,AccessControlRoles role) {

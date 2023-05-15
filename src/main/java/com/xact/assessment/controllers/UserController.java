@@ -63,7 +63,8 @@ public class UserController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<UserInfoDto>> getUsers(Authentication authentication) {
         LOGGER.info("Fetching all user details");
-        List<UserInfo> users = userAuthService.getUsers();
+        User currentUser = userAuthService.getCurrentUser(authentication);
+        List<UserInfo> users = userAuthService.getUsers(currentUser);
         List<UserInfoDto> userInfoResponse = new ArrayList<>();
         users.forEach(userInfo -> userInfoResponse.add(modelMapper.map(userInfo, UserInfoDto.class)));
         return HttpResponse.ok(userInfoResponse);

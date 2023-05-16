@@ -289,6 +289,33 @@ class ModuleContributorServiceTest {
         moduleContributorService.updateParameterReference(1, referencesRequest);
         verify(parameterService).updateParameterReference(assessmentParameterReference);
     }
+
+    @Test
+    void shouldUpdateQuestionReference() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = Question.builder().questionId(1).questionText("question").parameter(parameter).build();
+
+        AssessmentQuestionReference assessmentQuestionReference=new AssessmentQuestionReference();
+        assessmentQuestionReference.setReferenceId(1);
+        assessmentQuestionReference.setReference("last reference");
+        assessmentQuestionReference.setQuestion(question);
+        assessmentQuestionReference.setRating(Rating.THREE);
+        question.setReferences(Collections.singleton(assessmentQuestionReference));
+
+
+        QuestionReferenceRequest questionReferenceRequest = new QuestionReferenceRequest();
+        questionReferenceRequest.setReference("reference");
+        questionReferenceRequest.setQuestion(question.getQuestionId());
+
+
+        when(questionService.getQuestion(question.getQuestionId())).thenReturn(Optional.of(question));
+        when(assessmentQuestionReferenceService.getReferenceById(assessmentQuestionReference.getReferenceId())).thenReturn(assessmentQuestionReference);
+        moduleContributorService.updateQuestionReference(1, questionReferenceRequest,question);
+        verify(assessmentQuestionReferenceService).updateQuestionReference(assessmentQuestionReference);
+    }
     @Test
     void deleteTopicReference() {
         doNothing().when(topicService).deleteTopicReference(1);
@@ -418,7 +445,7 @@ class ModuleContributorServiceTest {
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);
-        AssessmentParameter assessmentParameter = new AssessmentParameter(1,"paramter",null,null,null,true,new Date(),new Date(),"",true,1);
+        AssessmentParameter assessmentParameter = new AssessmentParameter(1,"parameter",null,null,null,true,new Date(),new Date(),"",true,1);
         AssessmentParameter assessmentParameter1 = new AssessmentParameter(2, "new parameter", null, null, null, true, new Date(), new Date(), "",true,1);
         when(topicService.getTopic(assessmentTopic.getTopicId())).thenReturn(Optional.of(assessmentTopic));
         when(parameterService.getParameter(assessmentParameter1.getParameterId())).thenReturn(Optional.of(assessmentParameter1));
@@ -475,5 +502,29 @@ class ModuleContributorServiceTest {
 
 
         assertThrows(DuplicateRecordException.class, () -> moduleContributorService.updateTopicReference(1, topicReferencesRequest));
+    }
+
+    @Test
+    void shouldThrowDuplicateRecordExceptionWhenTheUpdatedQuestionReferenceIsAlreadyPresent() {
+        QuestionReferenceRequest questionReferenceRequest = new QuestionReferenceRequest();
+        questionReferenceRequest.setQuestion(1);
+        questionReferenceRequest.setReference("reference1");
+        questionReferenceRequest.setRating(Rating.TWO);
+
+        Question question = new Question();
+        AssessmentQuestionReference assessmentQuestionReference = new AssessmentQuestionReference( Rating.ONE, "reference",question);
+        assessmentQuestionReference.setReferenceId(1);
+        AssessmentQuestionReference assessmentTopicReference1 = new AssessmentQuestionReference(Rating.TWO, "reference1",question);
+        assessmentTopicReference1.setReferenceId(2);
+        question.setQuestionId(1);
+        Set<AssessmentQuestionReference> assessmentQuestionReferences = new HashSet<>();
+        assessmentQuestionReferences.add(assessmentQuestionReference);
+        assessmentQuestionReferences.add(assessmentTopicReference1);
+        question.setReferences(assessmentQuestionReferences);
+
+        when(questionService.getQuestion(question.getQuestionId())).thenReturn(Optional.of(question));
+        when(assessmentQuestionReferenceService.getReferenceById(assessmentQuestionReference.getReferenceId())).thenReturn(assessmentQuestionReference);
+
+        assertThrows(DuplicateRecordException.class, () -> moduleContributorService.updateQuestionReference(1, questionReferenceRequest,question));
     }
 }

@@ -8,10 +8,7 @@ package com.xact.assessment.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.xact.assessment.dtos.ContributorQuestionStatus;
 import io.micronaut.core.annotation.Introspected;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -24,6 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -66,10 +65,7 @@ public class Question implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "question")
     @ElementCollection()
     private Set<AssessmentQuestionReference> references;
-    public Question(String questionText, AssessmentParameter parameter) {
-        this.questionText = questionText;
-        this.parameter = parameter;
-    }
+
 
     @Transient
     private Integer rating;
@@ -78,6 +74,10 @@ public class Question implements Serializable {
         return rating == null ? 0 : rating;
     }
 
+    public Question(String questionText, AssessmentParameter parameter) {
+        this.questionText = questionText;
+        this.parameter = parameter;
+    }
 
     @Transient
     static

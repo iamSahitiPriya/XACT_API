@@ -230,7 +230,7 @@ class ContributorControllerTest {
         assessmentCategory.setCategoryName("Category Name 1 Example");
         assessmentCategory.setActive(true);
 
-        AssessmentModule assessmentModule =moduleRepository.findByModuleId(1);
+        AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicName("Topic Name 1 Example");
@@ -275,7 +275,7 @@ class ContributorControllerTest {
         assessmentCategory.setCategoryName("Category Name Example_1");
         assessmentCategory.setActive(true);
 
-        AssessmentModule assessmentModule =moduleRepository.findByModuleId(1);
+        AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
 
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
@@ -325,12 +325,12 @@ class ContributorControllerTest {
 
 
     @Test
-    void shouldCreateQuestionReference()  {
+    void shouldCreateQuestionReference() {
         AssessmentCategory assessmentCategory = new AssessmentCategory();
         assessmentCategory.setCategoryName("Category Name Example_1");
         assessmentCategory.setActive(true);
 
-        AssessmentModule assessmentModule =moduleRepository.findByModuleId(1);
+        AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
 
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
@@ -346,7 +346,7 @@ class ContributorControllerTest {
         assessmentParameter.setTopic(assessmentTopic);
         assessmentParameter.setActive(true);
 
-        Question question = new Question("new question",assessmentParameter);
+        Question question = new Question("new question", assessmentParameter);
         assessmentParameter.setQuestions(Collections.singleton(question));
 
         assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
@@ -473,7 +473,7 @@ class ContributorControllerTest {
     void shouldUpdateParameterReferences() {
         Optional<AssessmentParameterReference> assessmentParameterReference = assessmentParameterReferenceRepository.findById(1);
         AssessmentParameterReference assessmentParameterReference1 = assessmentParameterReference.get();
-        AssessmentModule assessmentModule =moduleRepository.findByModuleId(1);
+        AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
         assessmentParameterReference1.getParameter().getTopic().setModule(assessmentModule);
 
         String reference = assessmentParameterReference1.getReference();
@@ -501,13 +501,14 @@ class ContributorControllerTest {
         entityManager.getTransaction().commit();
     }
 
+
     @Test
     void shouldDeleteTopicReference() {
         AssessmentCategory assessmentCategory = new AssessmentCategory();
         assessmentCategory.setCategoryName("Category Name 1 Example");
         assessmentCategory.setActive(true);
 
-        AssessmentModule assessmentModule =moduleRepository.findByModuleId(1);
+        AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
 
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
@@ -515,7 +516,7 @@ class ContributorControllerTest {
         assessmentTopic.setModule(assessmentModule);
         assessmentTopic.setActive(true);
 
-        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(Rating.FIVE, "New Reference",assessmentTopic);
+        AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(Rating.FIVE, "New Reference", assessmentTopic);
 
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
@@ -550,7 +551,7 @@ class ContributorControllerTest {
         assessmentCategory.setCategoryName("Category Name 1 Example");
         assessmentCategory.setActive(true);
 
-        AssessmentModule assessmentModule =moduleRepository.findByModuleId(1);
+        AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
 
 
         AssessmentTopic assessmentTopic = new AssessmentTopic();
@@ -563,7 +564,7 @@ class ContributorControllerTest {
         assessmentParameter.setTopic(assessmentTopic);
         assessmentParameter.setActive(true);
 
-        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(Rating.FIVE, "New Reference",assessmentParameter);
+        AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(Rating.FIVE, "New Reference", assessmentParameter);
 
         assessmentCategory.setModules(Collections.singleton(assessmentModule));
         assessmentModule.setTopics(Collections.singleton(assessmentTopic));
@@ -596,5 +597,66 @@ class ContributorControllerTest {
 
         entityManager.getTransaction().commit();
     }
+
+    @Test
+    void shouldDeleteQuestionReference() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory();
+        assessmentCategory.setCategoryName("Category Name 1 Example");
+        assessmentCategory.setActive(true);
+
+        AssessmentModule assessmentModule = moduleRepository.findByModuleId(1);
+
+
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicName("Topic Name 1 Example");
+        assessmentTopic.setModule(assessmentModule);
+        assessmentTopic.setActive(true);
+
+        AssessmentParameter assessmentParameter = new AssessmentParameter();
+        assessmentParameter.setParameterName("Parameter Name 1 Example");
+        assessmentParameter.setTopic(assessmentTopic);
+        assessmentParameter.setActive(true);
+
+        Question question=new Question();
+        question.setQuestionText("question text");
+        question.setQuestionStatus(ContributorQuestionStatus.DRAFT);
+        question.setParameter(assessmentParameter);
+
+        AssessmentQuestionReference assessmentQuestionReference = new AssessmentQuestionReference(Rating.FIVE, "New Reference", question);
+
+        assessmentCategory.setModules(Collections.singleton(assessmentModule));
+        assessmentModule.setTopics(Collections.singleton(assessmentTopic));
+        assessmentTopic.setParameters(Collections.singleton(assessmentParameter));
+        assessmentParameter.setQuestions(Collections.singleton(question));
+        question.setReferences(Collections.singleton(assessmentQuestionReference));
+
+        categoryRepository.save(assessmentCategory);
+        assessmentTopicRepository.save(assessmentTopic);
+        assessmentParameterRepository.save(assessmentParameter);
+        questionRepository.save(question);
+
+        assessmentQuestionReferenceRepository.save(assessmentQuestionReference);
+        entityManager.getTransaction().commit();
+        entityManager.clear();
+        entityManager.close();
+
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/contributor/question/references/" + assessmentQuestionReference.getReferenceId())
+                .bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
+
+
+        entityManager.getTransaction().begin();
+        assessmentQuestionReferenceRepository.deleteById(assessmentQuestionReference.getReferenceId());
+        questionRepository.deleteById(question.getQuestionId());
+        assessmentParameterRepository.deleteById(assessmentParameter.getParameterId());
+        assessmentTopicRepository.deleteById(assessmentTopic.getTopicId());
+        categoryRepository.deleteById(assessmentCategory.getCategoryId());
+
+
+        entityManager.getTransaction().commit();
+
+    }
+
 
 }

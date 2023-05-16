@@ -252,12 +252,19 @@ class ContributorControllerTest {
 
     @Test
     void createQuestionReferences() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = Question.builder().questionId(1).questionText("question").parameter(parameter).build();
+
         QuestionReferenceRequest referencesRequest = new QuestionReferenceRequest();
         referencesRequest.setReference("References");
         referencesRequest.setRating(Rating.FIVE);
         referencesRequest.setQuestion(1);
 
-        when(contributorService.createAssessmentQuestionReference(referencesRequest)).thenReturn(new AssessmentQuestionReference( Rating.FIVE, "reference",new Question()));
+        when(contributorService.getQuestionById(question.getQuestionId())).thenReturn(question);
+        when(contributorService.createAssessmentQuestionReference(referencesRequest)).thenReturn(new AssessmentQuestionReference( Rating.FIVE, "reference",question));
         when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
 
         HttpResponse<AssessmentQuestionReferenceDto> actualResponse = contributorController.createQuestionReference(referencesRequest, authentication);
@@ -354,6 +361,29 @@ class ContributorControllerTest {
     }
 
     @Test
+    void shouldUpdateQuestionReferences() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = Question.builder().questionId(1).questionText("question").parameter(parameter).build();
+
+        QuestionReferenceRequest questionReferenceRequest = new QuestionReferenceRequest();
+        questionReferenceRequest.setReference("reference");
+        questionReferenceRequest.setQuestion(question.getQuestionId());
+        Integer referenceId = 1;
+        AssessmentQuestionReference assessmentQuestionReference=new AssessmentQuestionReference();
+        assessmentQuestionReference.setReference("reference of last question");
+
+        when(contributorService.getQuestionById(question.getQuestionId())).thenReturn(question);
+        when(contributorService.updateQuestionReference(referenceId, questionReferenceRequest,question)).thenReturn(new AssessmentQuestionReference( Rating.FIVE, "reference",question));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
+
+        HttpResponse<AssessmentQuestionReferenceDto> actualResponse = contributorController.updateQuestionReference(referenceId, questionReferenceRequest, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+    @Test
     void shouldDeleteTopicReference() {
         Integer referenceId = 10;
         when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
@@ -375,5 +405,42 @@ class ContributorControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         verify(contributorService).deleteParameterReference(referenceId);
+    }
+
+    @Test
+    void shouldDeleteQuestionReference() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = Question.builder().questionId(1).questionText("question").parameter(parameter).build();
+
+        Integer referenceId = 1;
+
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
+        when(contributorService.getModuleByQuestionReference(referenceId)).thenReturn(assessmentModule);
+
+        HttpResponse actualResponse = contributorController.deleteQuestionReference(referenceId, authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+        verify(contributorService).deleteQuestionReference(referenceId);
+    }
+
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenContributorIsNotValid() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = Question.builder().questionId(1).questionText("question").parameter(parameter).build();
+
+        Integer referenceId = 1;
+
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+        when(contributorService.getModuleByQuestionReference(referenceId)).thenReturn(assessmentModule);
+
+        HttpResponse actualResponse = contributorController.deleteQuestionReference(referenceId, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
     }
 }

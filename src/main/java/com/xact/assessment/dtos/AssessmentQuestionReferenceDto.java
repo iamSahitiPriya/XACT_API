@@ -4,16 +4,13 @@
 
 package com.xact.assessment.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
+@EqualsAndHashCode
 public class AssessmentQuestionReferenceDto implements Comparable<AssessmentQuestionReferenceDto> {
     private Integer referenceId;
     private Integer question;

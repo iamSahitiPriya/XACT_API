@@ -6,7 +6,6 @@ package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.AdminController;
 import com.xact.assessment.dtos.*;
-import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
 import com.xact.assessment.services.UserAuthService;

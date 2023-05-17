@@ -5,7 +5,6 @@
 package unit.com.xact.assessment.services;
 
 import com.xact.assessment.client.UserInfoClient;
-import com.xact.assessment.dtos.AccessControlRoleDto;
 import com.xact.assessment.dtos.UserInfoDto;
 import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.AccessControlRoles;

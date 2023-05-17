@@ -205,6 +205,24 @@ class ContributorControllerTest {
     }
 
     @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledCreateAssessmentTopic() {
+        AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
+        topicRequest.setTopicName("Hello this is a topic");
+        topicRequest.setActive(false);
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("Hello this is a topic");
+        assessmentTopic.setActive(false);
+        assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
+
+        when(contributorService.createAssessmentTopics(topicRequest)).thenReturn(assessmentTopic);
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+        HttpResponse<TopicResponse> actualResponse = contributorController.createTopic(topicRequest, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
     void createAssessmentParameter() {
         AssessmentParameterRequest parameterRequest = new AssessmentParameterRequest();
         parameterRequest.setParameterName("Parameter");
@@ -221,6 +239,23 @@ class ContributorControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledCreateAssessmentParameter() {
+        AssessmentParameterRequest parameterRequest = new AssessmentParameterRequest();
+        parameterRequest.setParameterName("Parameter");
+        parameterRequest.setActive(false);
+
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        when(contributorService.createAssessmentParameter(parameterRequest)).thenReturn(assessmentParameter);
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse<ParameterResponse> actualResponse = contributorController.createParameter(parameterRequest, authentication);
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
+    }
+
 
     @Test
     void createAssessmentTopicReferences() {
@@ -235,6 +270,19 @@ class ContributorControllerTest {
         HttpResponse<AssessmentTopicReferenceDto> actualResponse = contributorController.createTopicReference(referencesRequest, authentication);
         assertEquals(actualResponse.getStatus(), HttpResponse.ok().getStatus());
     }
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledCreateAssessmentTopicReferences() {
+        TopicReferencesRequest referencesRequest = new TopicReferencesRequest();
+        referencesRequest.setReference("references");
+        referencesRequest.setRating(Rating.FIVE);
+        referencesRequest.setTopic(1);
+
+        when(contributorService.createAssessmentTopicReference(referencesRequest)).thenReturn(new AssessmentTopicReference( Rating.FIVE, "reference",new AssessmentTopic()));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse<AssessmentTopicReferenceDto> actualResponse = contributorController.createTopicReference(referencesRequest, authentication);
+        assertEquals( HttpResponse.unauthorized().getStatus(),actualResponse.getStatus());
+    }
 
     @Test
     void createParameterReferences() {
@@ -248,6 +296,19 @@ class ContributorControllerTest {
 
         HttpResponse<AssessmentParameterReferenceDto> actualResponse = contributorController.createParameterReference(referencesRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+    @Test
+    void ShouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledCreateParameterReferences() {
+        ParameterReferencesRequest referencesRequest = new ParameterReferencesRequest();
+        referencesRequest.setReference("References");
+        referencesRequest.setRating(Rating.FIVE);
+        referencesRequest.setParameter(1);
+
+        when(contributorService.createAssessmentParameterReference(referencesRequest)).thenReturn(new AssessmentParameterReference( Rating.FIVE, "reference",new AssessmentParameter()));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse<AssessmentParameterReferenceDto> actualResponse = contributorController.createParameterReference(referencesRequest, authentication);
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
     }
 
     @Test
@@ -270,7 +331,26 @@ class ContributorControllerTest {
         HttpResponse<AssessmentQuestionReferenceDto> actualResponse = contributorController.createQuestionReference(referencesRequest, authentication);
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledCreateQuestionReferences() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = Question.builder().questionId(1).questionText("question").parameter(parameter).build();
 
+        QuestionReferenceRequest referencesRequest = new QuestionReferenceRequest();
+        referencesRequest.setReference("References");
+        referencesRequest.setRating(Rating.FIVE);
+        referencesRequest.setQuestion(1);
+
+        when(contributorService.getQuestionById(question.getQuestionId())).thenReturn(question);
+        when(contributorService.createAssessmentQuestionReference(referencesRequest)).thenReturn(new AssessmentQuestionReference( Rating.FIVE, "reference",question));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse<AssessmentQuestionReferenceDto> actualResponse = contributorController.createQuestionReference(referencesRequest, authentication);
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
+    }
     @Test
     void shouldUpdateTopic() {
         AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
@@ -288,6 +368,24 @@ class ContributorControllerTest {
         HttpResponse actualResponse = contributorController.updateTopic(topicId, topicRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledUpdateTopic() {
+        AssessmentTopicRequest topicRequest = new AssessmentTopicRequest();
+        topicRequest.setTopicName("Module");
+        Integer topicId = 1;
+        AssessmentTopic assessmentTopic = new AssessmentTopic();
+        assessmentTopic.setTopicId(1);
+        assessmentTopic.setTopicName("this is a module");
+        assessmentTopic.setModule(new AssessmentModule("hello", new AssessmentCategory("hello", false, ""), false, ""));
+
+
+        when(contributorService.updateTopic(1, topicRequest)).thenReturn(assessmentTopic);
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse actualResponse = contributorController.updateTopic(topicId, topicRequest, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
     }
 
     @Test
@@ -307,6 +405,25 @@ class ContributorControllerTest {
         HttpResponse actualResponse = contributorController.updateParameter(assessmentParameter.getParameterId(), parameterRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledUpdateParameter() {
+        AssessmentParameterRequest parameterRequest = new AssessmentParameterRequest();
+        parameterRequest.setParameterName("Module");
+
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter assessmentParameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).comments("").build();
+
+
+        when(contributorService.updateParameter(assessmentParameter.getParameterId(), parameterRequest)).thenReturn(assessmentParameter);
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse actualResponse = contributorController.updateParameter(assessmentParameter.getParameterId(), parameterRequest, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
     }
 
     @Test
@@ -345,6 +462,21 @@ class ContributorControllerTest {
     }
 
     @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledUpdateTopicReferences() {
+        TopicReferencesRequest referencesRequest = new TopicReferencesRequest();
+        referencesRequest.setReference("reference");
+        Integer referenceId = 1;
+        AssessmentTopicReference topicReference = new AssessmentTopicReference();
+        topicReference.setReference("Hello");
+
+        when(contributorService.updateTopicReference(referenceId, referencesRequest)).thenReturn(new AssessmentTopicReference( Rating.FIVE, "reference",new AssessmentTopic()));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse actualResponse = contributorController.updateTopicReference(referenceId, referencesRequest, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
+    }
+    @Test
     void shouldUpdateParameterReferences() {
         ParameterReferencesRequest referencesRequest = new ParameterReferencesRequest();
         referencesRequest.setReference("reference");
@@ -358,6 +490,22 @@ class ContributorControllerTest {
         HttpResponse actualResponse = contributorController.updateParameterReference(referenceId, referencesRequest, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledUpdateParameterReferences() {
+        ParameterReferencesRequest referencesRequest = new ParameterReferencesRequest();
+        referencesRequest.setReference("reference");
+        Integer referenceId = 1;
+        AssessmentParameterReference parameterReference = new AssessmentParameterReference();
+        parameterReference.setReference("Hello");
+
+        when(contributorService.updateParameterReference(referenceId, referencesRequest)).thenReturn(new AssessmentParameterReference( Rating.FIVE, "reference",new AssessmentParameter()));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse actualResponse = contributorController.updateParameterReference(referenceId, referencesRequest, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
     }
 
     @Test
@@ -383,6 +531,30 @@ class ContributorControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledUpdateQuestionReferences() {
+        AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
+        AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
+        AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
+        AssessmentParameter parameter = AssessmentParameter.builder().parameterId(1).parameterName("parameterName").topic(topic).isActive(true).comments("").build();
+        Question question = Question.builder().questionId(1).questionText("question").parameter(parameter).build();
+
+        QuestionReferenceRequest questionReferenceRequest = new QuestionReferenceRequest();
+        questionReferenceRequest.setReference("reference");
+        questionReferenceRequest.setQuestion(question.getQuestionId());
+        Integer referenceId = 1;
+        AssessmentQuestionReference assessmentQuestionReference=new AssessmentQuestionReference();
+        assessmentQuestionReference.setReference("reference of last question");
+
+        when(contributorService.getQuestionById(question.getQuestionId())).thenReturn(question);
+        when(contributorService.updateQuestionReference(referenceId, questionReferenceRequest,question)).thenReturn(new AssessmentQuestionReference( Rating.FIVE, "reference",question));
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse<AssessmentQuestionReferenceDto> actualResponse = contributorController.updateQuestionReference(referenceId, questionReferenceRequest, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
+    }
     @Test
     void shouldDeleteTopicReference() {
         Integer referenceId = 10;
@@ -392,6 +564,16 @@ class ContributorControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         verify(contributorService).deleteTopicReference(referenceId);
+    }
+
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledDeleteTopicReference() {
+        Integer referenceId = 10;
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+
+        HttpResponse actualResponse = contributorController.deleteTopicReference(referenceId, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
     }
 
     @Test
@@ -406,7 +588,17 @@ class ContributorControllerTest {
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         verify(contributorService).deleteParameterReference(referenceId);
     }
+    @Test
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledDeleteParameterReference() {
+        Integer referenceId = 10;
 
+        when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
+        when(contributorService.getModuleByParameterReference(referenceId)).thenReturn(new AssessmentModule());
+
+        HttpResponse<ParameterReferencesRequest> actualResponse = contributorController.deleteParameterReference(referenceId, authentication);
+
+        assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
+    }
     @Test
     void shouldDeleteQuestionReference() {
         AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
@@ -420,14 +612,14 @@ class ContributorControllerTest {
         when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(true);
         when(contributorService.getModuleByQuestionReference(referenceId)).thenReturn(assessmentModule);
 
-        HttpResponse actualResponse = contributorController.deleteQuestionReference(referenceId, authentication);
+        HttpResponse<QuestionReferenceRequest> actualResponse = contributorController.deleteQuestionReference(referenceId, authentication);
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         verify(contributorService).deleteQuestionReference(referenceId);
     }
 
     @Test
-    void shouldReturnUnAuthorizedResponseWhenContributorIsNotValid() {
+    void shouldReturnUnAuthorizedResponseWhenInvalidContributorIsCalledDelete() {
         AssessmentCategory assessmentCategory = new AssessmentCategory(1, "category", true, "");
         AssessmentModule assessmentModule = new AssessmentModule(1, "moduleName", assessmentCategory, true, "");
         AssessmentTopic topic = new AssessmentTopic(1, "topicName", assessmentModule, true, "");
@@ -439,7 +631,7 @@ class ContributorControllerTest {
         when(contributorService.validate(any(User.class),any(AssessmentModule.class))).thenReturn(false);
         when(contributorService.getModuleByQuestionReference(referenceId)).thenReturn(assessmentModule);
 
-        HttpResponse actualResponse = contributorController.deleteQuestionReference(referenceId, authentication);
+        HttpResponse<QuestionReferenceRequest> actualResponse = contributorController.deleteQuestionReference(referenceId, authentication);
 
         assertEquals(HttpResponse.unauthorized().getStatus(), actualResponse.getStatus());
     }

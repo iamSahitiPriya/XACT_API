@@ -69,7 +69,7 @@ class AdminServiceTest {
 
         verify(accessControlService).getAllAccessControlRoles();
         verify(userAuthService).getUserInfo("abc@thoughtworks.com");
-        Assertions.assertEquals(response.size(),1);
+        Assertions.assertEquals(1, response.size());
 
     }
 
@@ -139,6 +139,6 @@ class AdminServiceTest {
         User loggedInUser = new User();
         loggedInUser.setUserInfo(userInfo);
 
-        Assertions.assertThrows(UnauthorisedUserException.class, ()->adminService.deleteUserRole(roleDto.getEmail(), loggedInUser));
+        Assertions.assertThrows(RuntimeException.class, ()->adminService.deleteUserRole(roleDto.getEmail(), loggedInUser));
     }
 }

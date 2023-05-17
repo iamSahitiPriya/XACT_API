@@ -121,7 +121,7 @@ class UserAuthServiceTest {
 
         List<UserInfo> userInfos = userAuthService.getLoggedInUsers(users);
 
-        assertEquals(userInfos.size(), 1);
+        assertEquals(1, userInfos.size());
     }
 
     @Test
@@ -134,7 +134,7 @@ class UserAuthServiceTest {
         when(userRepository.findAllUsers()).thenReturn(Collections.singletonList(userInfo));
 
         List<UserInfo> userInfos = userAuthService.getUsers();
-        assertEquals(userInfos.size(), 1);
+        assertEquals(1, userInfos.size());
     }
 
     @Test

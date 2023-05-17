@@ -46,7 +46,7 @@ class AccessControlServiceTest {
 
         List<AccessControlList> accessControlLists = accessControlService.getAllAccessControlRoles();
 
-        Assertions.assertEquals(accessControlLists.size(),1);
+        Assertions.assertEquals(1, accessControlLists.size());
     }
 
     @Test

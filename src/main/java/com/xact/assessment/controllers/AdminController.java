@@ -113,40 +113,45 @@ public class AdminController {
         adminService.saveContributors(moduleId, contributorRequest.getContributors());
         return HttpResponse.ok();
     }
-    @Post(value="/user")
+
+    @Post(value = "/user")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AccessControlRoleDto> saveAdmin(Authentication authentication, @Valid @Body AccessControlRoleDto user){
-        LOGGER.info("Save Role For {} - {}", user.getEmail(),user.getAccessControlRoles());
+    public HttpResponse<AccessControlRoleDto> saveAdmin(Authentication authentication, @Valid @Body AccessControlRoleDto user) {
+        LOGGER.info("Save Role For {} - {}", user.getEmail(), user.getAccessControlRoles());
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         AccessControlRoles accessControlRoles = userAuthService.getLoggedInUserRole(loggedInUser);
         try {
-            adminService.saveRole(user, accessControlRoles);
+            userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
+            adminService.saveRole(user, accessControlRoles, loggedInUser);
             return HttpResponse.created(user);
-        }catch(UnauthorisedUserException e){
+        } catch (UnauthorisedUserException e) {
             return HttpResponse.unauthorized();
         }
     }
+
     @Get
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<List<AccessControlResponse>> getAllAccessControlRoles(Authentication authentication){
+    public HttpResponse<List<AccessControlResponse>> getAllAccessControlRoles(Authentication authentication) {
         LOGGER.info("Get all access control roles");
         try {
             userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
             List<AccessControlResponse> accessControlList = adminService.getAllAccessControlRoles();
             return HttpResponse.ok(accessControlList);
-        }catch (UnauthorisedUserException e){
+        } catch (UnauthorisedUserException e) {
             return HttpResponse.unauthorized();
         }
     }
+
     @Delete("/user{?email}")
     @Secured(SecurityRule.IS_AUTHENTICATED)
-    public HttpResponse<AccessControlRoleDto> deleteUser(Authentication authentication, @QueryValue String email){
+    public HttpResponse<AccessControlRoleDto> deleteUser(Authentication authentication, @QueryValue String email) {
         LOGGER.info("Remove user role for : {}", email);
         try {
+            User loggedInUser = userAuthService.getCurrentUser(authentication);
             userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
-            adminService.deleteUserRole(email);
+            adminService.deleteUserRole(email, loggedInUser);
             return HttpResponse.ok();
-        }catch (UnauthorisedUserException e){
+        } catch (UnauthorisedUserException e) {
             return HttpResponse.unauthorized();
         }
     }

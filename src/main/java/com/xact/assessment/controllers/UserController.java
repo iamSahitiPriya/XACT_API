@@ -42,6 +42,7 @@ public class UserController {
     @Get(value = "/roles")
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Set<AccessControlRoles>> getRole(Authentication authentication) {
+        LOGGER.info("Getting role for the user: {}", authentication.getName());
         Set<AccessControlRoles> roles = new HashSet<>();
         User loggedInUser = userAuthService.getCurrentUser(authentication);
         Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
@@ -63,8 +64,7 @@ public class UserController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<List<UserInfoDto>> getUsers(Authentication authentication) {
         LOGGER.info("Fetching all user details");
-        User currentUser = userAuthService.getCurrentUser(authentication);
-        List<UserInfo> users = userAuthService.getUsers(currentUser);
+        List<UserInfo> users = userAuthService.getUsers();
         List<UserInfoDto> userInfoResponse = new ArrayList<>();
         users.forEach(userInfo -> userInfoResponse.add(modelMapper.map(userInfo, UserInfoDto.class)));
         return HttpResponse.ok(userInfoResponse);

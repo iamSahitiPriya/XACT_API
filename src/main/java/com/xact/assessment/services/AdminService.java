@@ -12,6 +12,7 @@ import jakarta.inject.Singleton;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Singleton
@@ -61,10 +62,10 @@ public class AdminService {
         return assessmentMasterDataService.getCategory(categoryId);
     }
 
-    public void saveRole(AccessControlRoleDto user, AccessControlRoles accessControlRoles) {
-        if ((accessControlRoles.equals(AccessControlRoles.PRIMARY_ADMIN))) {
+    public void saveRole(AccessControlRoleDto user, AccessControlRoles accessControlRoles, User loggedInUser) {
+        if ((accessControlRoles.equals(AccessControlRoles.PRIMARY_ADMIN)) && !user.getEmail().equals(loggedInUser.getUserEmail())) {
             accessControlService.saveRole(user);
-        }else{
+        } else {
             throw new UnauthorisedUserException("User not authorised.");
         }
     }
@@ -87,7 +88,11 @@ public class AdminService {
         return accessControlResponses;
     }
 
-    public void deleteUserRole(String email) {
-        accessControlService.deleteUserRole(email);
+    public void deleteUserRole(String email, User loggedInUser) {
+        if (!Objects.equals(email, loggedInUser.getUserEmail())) {
+            accessControlService.deleteUserRole(email);
+        } else {
+            throw new UnauthorisedUserException("");
+        }
     }
 }

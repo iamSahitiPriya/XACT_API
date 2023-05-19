@@ -114,6 +114,10 @@ public class QuestionService {
         return question;
     }
 
+    public void deleteRejectedQuestions(Date expiryDate) {
+        questionRepository.deleteRejectedQuestions(expiryDate);
+    }
+
     private boolean isUpdateAllowed(Question question) {
         return question.getQuestionStatus() == DRAFT || question.getQuestionStatus() == REQUESTED_FOR_CHANGE;
     }
@@ -212,8 +216,6 @@ public class QuestionService {
         return questionStatusUpdateResponse;
     }
 
-    public void deleteRejectedQuestions(Date expiryDate) {
-        questionRepository.deleteRejectedQuestions(expiryDate);
-    }
+
 }
 

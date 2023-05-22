@@ -37,9 +37,7 @@ public class AccessControlService {
     }
 
     public void deleteUserRole(String email) {
-        AccessControlList accessControlList = accessControlRepository.findById(email).orElse(new AccessControlList());
-        if(accessControlList.getAccessControlRoles() != null) {
-            accessControlRepository.delete(accessControlList);
-        }
+        Optional<AccessControlList> accessControlList = accessControlRepository.findById(email);
+        accessControlList.ifPresent(accessControlRepository::delete);
     }
 }

@@ -122,7 +122,7 @@ public class AdminController {
         AccessControlRoles accessControlRoles = userAuthService.getLoggedInUserRole(loggedInUser);
         try {
             userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
-            adminService.saveRole(user, accessControlRoles, loggedInUser);
+            adminService.saveRole(user);
             return HttpResponse.created(user);
         } catch (UnauthorisedUserException e) {
             return HttpResponse.unauthorized();

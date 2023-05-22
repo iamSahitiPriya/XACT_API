@@ -87,7 +87,7 @@ class AdminServiceTest {
         loggedInUser.setUserInfo(userInfo);
 
         doNothing().when(accessControlService).saveRole(roleDto);
-        adminService.saveRole(roleDto, AccessControlRoles.PRIMARY_ADMIN,loggedInUser);
+        adminService.saveRole(roleDto);
 
         verify(accessControlService).saveRole(roleDto);
     }

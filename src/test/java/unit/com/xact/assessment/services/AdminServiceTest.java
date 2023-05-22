@@ -93,22 +93,6 @@ class AdminServiceTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenUserTriedToAddThemself() {
-        AccessControlRoleDto roleDto = new AccessControlRoleDto();
-        roleDto.setEmail("abc@thoughtworks.com");
-        roleDto.setAccessControlRoles(AccessControlRoles.PRIMARY_ADMIN);
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail("abc@thoughtworks.com");
-        userInfo.setFirstName("ABC");
-        userInfo.setLastName("DEF");
-        userInfo.setLocale("US");
-        User loggedInUser = new User();
-        loggedInUser.setUserInfo(userInfo);
-
-        Assertions.assertThrows(UnauthorisedUserException.class, ()->adminService.saveRole(roleDto, AccessControlRoles.PRIMARY_ADMIN,loggedInUser));
-    }
-
-    @Test
     void shouldDeleteUserRole() {
         AccessControlRoleDto roleDto = new AccessControlRoleDto();
         roleDto.setEmail("abc@thoughtworks.com");

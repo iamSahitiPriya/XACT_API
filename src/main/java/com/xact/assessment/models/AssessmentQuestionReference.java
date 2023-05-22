@@ -5,6 +5,7 @@
 package com.xact.assessment.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
 @Table(name = "tbm_assessment_question_reference")
 public class AssessmentQuestionReference  extends Reference{
     @NotNull

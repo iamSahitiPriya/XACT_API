@@ -118,8 +118,6 @@ public class AdminController {
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AccessControlRoleDto> saveAdmin(Authentication authentication, @Valid @Body AccessControlRoleDto user) {
         LOGGER.info("Save Role For {} - {}", user.getEmail(), user.getAccessControlRoles());
-        User loggedInUser = userAuthService.getCurrentUser(authentication);
-        AccessControlRoles accessControlRoles = userAuthService.getLoggedInUserRole(loggedInUser);
         try {
             userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
             adminService.saveRole(user);

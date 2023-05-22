@@ -6,6 +6,7 @@ package com.xact.assessment.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Entity
+@AllArgsConstructor
 @Table(name = "tbm_assessment_topic_reference")
 public class AssessmentTopicReference extends Reference implements Serializable {
     @NotNull

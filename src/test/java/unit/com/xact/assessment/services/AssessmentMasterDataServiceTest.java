@@ -20,7 +20,7 @@ import java.util.*;
 import static com.xact.assessment.dtos.ContributorQuestionStatus.DRAFT;
 import static com.xact.assessment.dtos.ContributorQuestionStatus.PUBLISHED;
 import static com.xact.assessment.models.AccessControlRoles.AUTHOR;
-import static com.xact.assessment.models.AccessControlRoles.Admin;
+import static com.xact.assessment.models.AccessControlRoles.PRIMARY_ADMIN;
 import static com.xact.assessment.models.AssessmentStatus.Active;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -129,7 +129,7 @@ class AssessmentMasterDataServiceTest {
         moduleContributor2.setContributorRole(ContributorRole.REVIEWER);
 
         when(moduleContributorService.getContributorsByEmail("hello@thoughtworks.com")).thenReturn(Set.of(moduleContributor1, moduleContributor2));
-        when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
+        when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(PRIMARY_ADMIN));
 
         List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user,AUTHOR.toString());
         assertEquals(1,categoryDtoList.size());
@@ -175,10 +175,10 @@ class AssessmentMasterDataServiceTest {
 
         ModuleContributor moduleContributor = new ModuleContributor();
         when(moduleContributorService.getContributorsByEmail("hello@thoughtworks.com")).thenReturn(Collections.singleton(moduleContributor));
-        when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(Admin));
+        when(accessControlService.getAccessControlRolesByEmail("hello@thoughtworks.com")).thenReturn(Optional.of(PRIMARY_ADMIN));
         when(categoryService.getCategoriesSortedByUpdatedDate()).thenReturn(Collections.singletonList(category));
 
-        List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user,Admin.toString());
+        List<CategoryDto> categoryDtoList =assessmentMasterDataService.getMasterDataByRole(user, PRIMARY_ADMIN.toString());
         assertEquals(1,categoryDtoList.size());
 
     }

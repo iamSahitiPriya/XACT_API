@@ -6,6 +6,8 @@ package com.xact.assessment.services;
 
 import com.xact.assessment.client.UserInfoClient;
 import com.xact.assessment.dtos.UserInfoDto;
+import com.xact.assessment.exceptions.UnauthorisedUserException;
+import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
 import com.xact.assessment.models.UserInfo;
@@ -31,13 +33,15 @@ public class UserAuthService {
     private final UserInfoClient userInfoClient;
     private final UserRepository userRepository;
     private final ModuleContributorService moduleContributorService;
+    private final AccessControlService accessControlService;
     public static final String ACTIVE = "Active";
 
 
-    public UserAuthService(UserInfoClient userInfoClient, UserRepository userRepository, ModuleContributorService moduleContributorService) {
+    public UserAuthService(UserInfoClient userInfoClient, UserRepository userRepository, ModuleContributorService moduleContributorService, AccessControlService accessControlService) {
         this.userInfoClient = userInfoClient;
         this.userRepository = userRepository;
         this.moduleContributorService = moduleContributorService;
+        this.accessControlService = accessControlService;
     }
 
 
@@ -72,4 +76,19 @@ public class UserAuthService {
         return moduleContributorService.getContributorsByEmail(userEmail);
     }
 
+    public List<UserInfo> getUsers() {
+         return userRepository.findAllUsers();
+    }
+
+    public void validateUser(Authentication authentication, AccessControlRoles role) {
+        User currentUser = getCurrentUser(authentication);
+        AccessControlRoles loggedInUserRole = getLoggedInUserRole(currentUser);
+        if (!loggedInUserRole.equals(role)){
+            throw new UnauthorisedUserException("User not allowed");
+        }
+    }
+
+    public AccessControlRoles getLoggedInUserRole(User currentUser) {
+        return accessControlService.getAccessControlRolesByEmail(currentUser.getUserEmail()).orElseThrow();
+    }
 }

@@ -182,12 +182,10 @@ public class AssessmentMasterDataService {
     public List<CategoryDto> getMasterDataByRole(User loggedInUser, String role) {
         Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
         Set<ModuleContributor> contributorRoles = moduleContributorService.getContributorsByEmail(loggedInUser.getUserEmail());
-
-        if (accessControlRoles.isPresent() && accessControlRoles.get().toString().equalsIgnoreCase(role))
-            return getAdminMasterData(accessControlRoles);
+        if (accessControlRoles.isPresent() && accessControlRoles.get().toString().toLowerCase().contains(role.toLowerCase()))
+                return getAdminMasterData(accessControlRoles);
         else
             return getContributorMasterData(contributorRoles);
-
     }
 
     private List<CategoryDto> getContributorMasterData(Set<ModuleContributor> contributorRoles) {
@@ -293,7 +291,7 @@ public class AssessmentMasterDataService {
         QuestionDto questionDto = masterDataMapper.mapQuestion(question);
         if (role == AccessControlRoles.AUTHOR ||
                 (role == AccessControlRoles.REVIEWER && (question.getQuestionStatus() != ContributorQuestionStatus.DRAFT)) ||
-                (role == AccessControlRoles.Admin && question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED))
+                (role == AccessControlRoles.PRIMARY_ADMIN && question.getQuestionStatus() == ContributorQuestionStatus.PUBLISHED))
             questions.add(questionDto);
     }
 }

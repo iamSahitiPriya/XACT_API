@@ -6,12 +6,11 @@ package com.xact.assessment.controllers;
 
 import com.xact.assessment.annotations.AdminAuth;
 import com.xact.assessment.dtos.*;
+import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.mappers.MasterDataMapper;
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.AssessmentModule;
-import com.xact.assessment.models.AssessmentStatus;
+import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.http.HttpResponse;
@@ -38,12 +37,14 @@ public class AdminController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
     private static final ModelMapper mapper = new ModelMapper();
     private final MasterDataMapper masterDataMapper = new MasterDataMapper();
+    private final UserAuthService userAuthService;
     private final AdminService adminService;
 
     @Value("${validation.email:^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$}")
     private String emailPattern = "^([_A-Za-z0-9-+]+\\.?[_A-Za-z0-9-+]+@(thoughtworks.com))$";
 
-    public AdminController(AdminService adminService) {
+    public AdminController(UserAuthService userAuthService, AdminService adminService) {
+        this.userAuthService = userAuthService;
         this.adminService = adminService;
     }
 
@@ -111,6 +112,48 @@ public class AdminController {
         contributorRequest.validate(emailPattern);
         adminService.saveContributors(moduleId, contributorRequest.getContributors());
         return HttpResponse.ok();
+    }
+
+    @Post(value = "/user")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AccessControlRoleDto> saveAdmin(Authentication authentication, @Valid @Body AccessControlRoleDto user) {
+        LOGGER.info("Save Role For {} - {}", user.getEmail(), user.getAccessControlRoles());
+        User loggedInUser = userAuthService.getCurrentUser(authentication);
+        AccessControlRoles accessControlRoles = userAuthService.getLoggedInUserRole(loggedInUser);
+        try {
+            userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
+            adminService.saveRole(user, accessControlRoles, loggedInUser);
+            return HttpResponse.created(user);
+        } catch (UnauthorisedUserException e) {
+            return HttpResponse.unauthorized();
+        }
+    }
+
+    @Get
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<List<AccessControlResponse>> getAllAccessControlRoles(Authentication authentication) {
+        LOGGER.info("Get all access control roles");
+        try {
+            userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
+            List<AccessControlResponse> accessControlList = adminService.getAllAccessControlRoles();
+            return HttpResponse.ok(accessControlList);
+        } catch (UnauthorisedUserException e) {
+            return HttpResponse.unauthorized();
+        }
+    }
+
+    @Delete("/user{?email}")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<AccessControlRoleDto> deleteUser(Authentication authentication, @QueryValue String email) {
+        LOGGER.info("Remove user role for : {}", email);
+        try {
+            User loggedInUser = userAuthService.getCurrentUser(authentication);
+            userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
+            adminService.deleteUserRole(email, loggedInUser);
+            return HttpResponse.ok();
+        } catch (UnauthorisedUserException e) {
+            return HttpResponse.unauthorized();
+        }
     }
 
     private AssessmentCategory getCategory(Integer categoryId) {

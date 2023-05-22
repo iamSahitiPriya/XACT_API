@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.xact.assessment.models.AccessControlRoles.Admin;
+import static com.xact.assessment.models.AccessControlRoles.PRIMARY_ADMIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -58,9 +58,9 @@ class AssessmentMasterDataControllerTest {
         List<CategoryDto> assessmentCategoriesResponse = new ArrayList<>();
         assessmentCategoriesResponse.add(categoryDto);
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        when(assessmentMasterDataService.getMasterDataByRole(user, String.valueOf(Admin))).thenReturn(assessmentCategoriesResponse);
+        when(assessmentMasterDataService.getMasterDataByRole(user, String.valueOf(PRIMARY_ADMIN))).thenReturn(assessmentCategoriesResponse);
 
-        HttpResponse<List<CategoryDto>> actualResponse = assessmentMasterDataController.getMasterData(authentication,Admin.toString());
+        HttpResponse<List<CategoryDto>> actualResponse = assessmentMasterDataController.getMasterData(authentication, PRIMARY_ADMIN.toString());
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
         assertEquals("category",actualResponse.body().get(0).getCategoryName());

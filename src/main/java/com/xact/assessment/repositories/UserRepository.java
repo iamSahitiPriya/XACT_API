@@ -20,4 +20,7 @@ public interface UserRepository extends CrudRepository<UserInfo, String> {
     @Query("select tlu from UserInfo tlu where tlu.email in :users ")
     List<UserInfo> findByUsers(Set<String> users);
 
+    @Executable
+    @Query("select tlu  from UserInfo tlu")
+    List<UserInfo> findAllUsers();
 }

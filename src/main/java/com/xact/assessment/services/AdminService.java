@@ -63,11 +63,7 @@ public class AdminService {
     }
 
     public void saveRole(AccessControlRoleDto user, AccessControlRoles accessControlRoles, User loggedInUser) {
-        if ((accessControlRoles.equals(AccessControlRoles.PRIMARY_ADMIN)) && !user.getEmail().equals(loggedInUser.getUserEmail())) {
-            accessControlService.saveRole(user);
-        } else {
-            throw new UnauthorisedUserException("User not authorised.");
-        }
+        accessControlService.saveRole(user);
     }
 
     public List<AccessControlResponse> getAllAccessControlRoles() {

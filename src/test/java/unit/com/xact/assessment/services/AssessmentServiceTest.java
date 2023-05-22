@@ -564,7 +564,7 @@ class AssessmentServiceTest {
         AssessmentUser assessmentUser = new AssessmentUser(new UserId("",assessment),AssessmentRole.Owner);
         assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
         assessment.setOrganisation(new Organisation(1,"","","",1));
-        Answer answer = new Answer(new AnswerId(assessment,new Question()),"",new Date(),new Date());
+        Answer answer = new Answer(new AnswerId(assessment,new Question()),"",new Date(),new Date(),5);
         UserQuestion userQuestion = new UserQuestion(1,new Assessment(),new AssessmentParameter(),"","",new Date(),new Date(),false);
         AssessmentTopic assessmentTopic = new AssessmentTopic();
         assessmentTopic.setTopicId(1);

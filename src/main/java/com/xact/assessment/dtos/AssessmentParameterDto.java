@@ -25,6 +25,7 @@ public class AssessmentParameterDto implements Comparable<AssessmentParameterDto
     private boolean isActive;
     private Date updatedAt;
     private String comments;
+    private boolean parameterLevelReference;
     private SortedSet<QuestionDto> questions;
     private SortedSet<AssessmentParameterReferenceDto> references;
 

@@ -14,12 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Singleton
 public class ModuleContributorService {
     private final QuestionService questionService;
-    private final  ParameterService parameterService;
+    private final ParameterService parameterService;
     private final TopicService topicService;
+    private final AssessmentQuestionReferenceService assessmentQuestionReferenceService;
     private final ModuleContributorRepository moduleContributorRepository;
     private final ModuleService moduleService;
     private static final String DUPLICATE_RECORDS_ARE_NOT_ALLOWED = "Duplicate records are not allowed";
@@ -27,11 +29,11 @@ public class ModuleContributorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ModuleContributorService.class);
 
 
-
-    public ModuleContributorService(QuestionService questionService, ParameterService parameterService, TopicService topicService, ModuleContributorRepository moduleContributorRepository, ModuleService moduleService) {
+    public ModuleContributorService(QuestionService questionService, ParameterService parameterService, TopicService topicService, AssessmentQuestionReferenceService assessmentQuestionReferenceService, ModuleContributorRepository moduleContributorRepository, ModuleService moduleService) {
         this.questionService = questionService;
         this.parameterService = parameterService;
         this.topicService = topicService;
+        this.assessmentQuestionReferenceService = assessmentQuestionReferenceService;
         this.moduleService = moduleService;
         this.moduleContributorRepository = moduleContributorRepository;
     }
@@ -51,7 +53,7 @@ public class ModuleContributorService {
 
     public ContributorResponse getContributorResponse(ContributorRole role, String userEmail) {
         List<AssessmentModule> assessmentModules = getModulesByRole(userEmail, role);
-        return questionService.getContributorResponse(role,assessmentModules);
+        return questionService.getContributorResponse(role, assessmentModules);
     }
 
     public Question createAssessmentQuestion(String userEmail, QuestionRequest questionRequest) {
@@ -63,13 +65,14 @@ public class ModuleContributorService {
 
     public QuestionStatusUpdateResponse updateContributorQuestionsStatus(Integer moduleId, ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, String userEmail) {
         Optional<ContributorRole> contributorRole = getRole(moduleId, userEmail);
-        return  questionService.updateContributorQuestionsStatus(status, questionStatusUpdateRequest, contributorRole);
+        return questionService.updateContributorQuestionsStatus(status, questionStatusUpdateRequest, contributorRole);
     }
 
     public void deleteQuestion(Integer questionId, String userEmail) {
         Question question = questionService.getQuestionById(questionId);
         Integer moduleId = question.getParameter().getTopic().getModule().getModuleId();
         Optional<ContributorRole> contributorRole = getRole(moduleId, userEmail);
+        assessmentQuestionReferenceService.deleteByQuestionId(questionId);
         questionService.deleteQuestion(question, contributorRole);
     }
 
@@ -89,15 +92,8 @@ public class ModuleContributorService {
         moduleContributorRepository.deleteByModuleId(moduleId);
         moduleContributorRepository.saveAll(moduleContributors);
     }
-    private ModuleContributor getModuleContributor(Integer moduleId, ContributorDto contributorDto) {
-        ContributorId contributorId = new ContributorId();
-        contributorId.setModule(moduleService.getModule(moduleId));
-        contributorId.setUserEmail(contributorDto.getUserEmail());
-        ModuleContributor moduleContributor = new ModuleContributor();
-        moduleContributor.setContributorId(contributorId);
-        moduleContributor.setContributorRole(contributorDto.getRole());
-        return moduleContributor;
-    }
+
+
     public AssessmentTopic updateTopic(Integer topicId, AssessmentTopicRequest assessmentTopicRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicId).orElseThrow();
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
@@ -132,15 +128,8 @@ public class ModuleContributorService {
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
-    private boolean isUnique(String parameterName, String parameterName2, boolean isOtherDataUnique) {
-        return removeWhiteSpaces(parameterName).equals(removeWhiteSpaces(parameterName2)) || isOtherDataUnique;
-    }
-    private boolean isUnique(List<String> actualList, String name) {
-        List<String> result = actualList.stream()
-                .map(String::toLowerCase).map(option -> option.replaceAll("\\s", ""))
-                .toList();
-        return !(result.contains(name.toLowerCase().replaceAll("\\s", "")));
-    }
+
+
 
     public Question updateQuestion(Integer questionId, QuestionRequest questionRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(questionRequest.getParameter()).orElseThrow();
@@ -157,7 +146,7 @@ public class ModuleContributorService {
     public AssessmentTopicReference updateTopicReference(Integer referenceId, TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         AssessmentTopicReference assessmentTopicReference = topicService.getAssessmentTopicReference(referenceId);
-        Set<AssessmentTopicReference> assessmentTopicReferences = new HashSet<>(assessmentTopic.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentTopicReference.getReferenceId())).toList());
+        Set<AssessmentTopicReference> assessmentTopicReferences = assessmentTopic.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentTopicReference.getReferenceId())).collect(Collectors.toSet());
         if (isTopicRatingUnique(assessmentTopicReferences, topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopicReferences, topicReferencesRequest.getReference())) {
             assessmentTopicReference.setReference(topicReferencesRequest.getReference());
             assessmentTopicReference.setTopic(assessmentTopic);
@@ -170,7 +159,7 @@ public class ModuleContributorService {
     public AssessmentParameterReference updateParameterReference(Integer referenceId, ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         AssessmentParameterReference assessmentParameterReference = parameterService.getAssessmentParameterReference(referenceId);
-        Set<AssessmentParameterReference> assessmentParameterReferences = new HashSet<>(assessmentParameter.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentParameterReference.getReferenceId())).toList());
+        Set<AssessmentParameterReference> assessmentParameterReferences = assessmentParameter.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentParameterReference.getReferenceId())).collect(Collectors.toSet());
         if (isParameterRatingUnique(assessmentParameterReferences, parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameterReferences, parameterReferencesRequest.getReference())) {
             assessmentParameterReference.setParameter(assessmentParameter);
             assessmentParameterReference.setReference(parameterReferencesRequest.getReference());
@@ -182,6 +171,20 @@ public class ModuleContributorService {
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
+    public AssessmentQuestionReference updateQuestionReference(Integer referenceId, QuestionReferenceRequest questionReferenceRequest, Question question) {
+        AssessmentQuestionReference assessmentQuestionReference=assessmentQuestionReferenceService.getReferenceById(referenceId);
+        Set<AssessmentQuestionReference> assessmentQuestionReferences= question.getReferences().stream().filter(reference -> !Objects.equals(reference.getReferenceId(), assessmentQuestionReference.getReferenceId())).collect(Collectors.toSet());
+        if(isQuestionRatingUnique(assessmentQuestionReferences,questionReferenceRequest.getRating()) && isQuestionReferenceUnique(assessmentQuestionReferences, questionReferenceRequest.getReference())){
+            assessmentQuestionReference.setQuestion(question);
+            assessmentQuestionReference.setReference(questionReferenceRequest.getReference());
+            assessmentQuestionReference.setRating(questionReferenceRequest.getRating());
+
+            assessmentQuestionReferenceService.updateQuestionReference(assessmentQuestionReference);
+            return assessmentQuestionReference;
+        } else
+            throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
+        
+    }
     public void deleteTopicReference(Integer referenceId) {
         topicService.deleteTopicReference(referenceId);
     }
@@ -189,10 +192,12 @@ public class ModuleContributorService {
     public void deleteParameterReference(Integer referenceId) {
         parameterService.deleteParameterReference(referenceId);
     }
+
     public AssessmentTopic createAssessmentTopics(AssessmentTopicRequest assessmentTopicRequest) {
         AssessmentModule assessmentModule = moduleService.getModule(assessmentTopicRequest.getModule());
         if (isTopicUnique(assessmentTopicRequest.getTopicName(), assessmentModule)) {
             AssessmentTopic assessmentTopic = new AssessmentTopic(assessmentTopicRequest.getTopicName(), assessmentModule, assessmentTopicRequest.isActive(), assessmentTopicRequest.getComments());
+            assessmentTopic.setTopicLevelReference(assessmentTopicRequest.isTopicLevelReference());
             topicService.createTopic(assessmentTopic);
             return assessmentTopic;
         } else {
@@ -200,17 +205,13 @@ public class ModuleContributorService {
         }
     }
 
-    private boolean isTopicUnique(String topicName, AssessmentModule assessmentModule) {
-        List<String> topics = assessmentModule.getTopics().stream().map(AssessmentTopic::getTopicName).toList();
-        return isUnique(topics, topicName);
-    }
 
 
     public AssessmentParameter createAssessmentParameter(AssessmentParameterRequest assessmentParameter) {
         AssessmentTopic assessmentTopic = topicService.getTopic(assessmentParameter.getTopic()).orElseThrow();
         if (isParameterUnique(assessmentParameter.getParameterName(), assessmentTopic)) {
             AssessmentParameter assessmentParameter1 = AssessmentParameter.builder().parameterName(assessmentParameter.getParameterName()).topic(assessmentTopic)
-                    .isActive(assessmentParameter.isActive()).comments(assessmentParameter.getComments()).build();
+                    .isActive(assessmentParameter.isActive()).comments(assessmentParameter.getComments()).isParameterLevelReference(assessmentParameter.isParameterLevelReference()).build();
 
             parameterService.createParameter(assessmentParameter1);
             return assessmentParameter1;
@@ -219,58 +220,39 @@ public class ModuleContributorService {
         }
 
     }
-    private boolean isParameterUnique(String parameterName, AssessmentTopic assessmentTopic) {
-        List<String> parameters = assessmentTopic.getParameters().stream().map(AssessmentParameter::getParameterName).toList();
-        return isUnique(parameters, parameterName);
-    }
+
+
 
     public AssessmentTopicReference createAssessmentTopicReference(TopicReferencesRequest topicReferencesRequest) {
         AssessmentTopic assessmentTopic = topicService.getTopic(topicReferencesRequest.getTopic()).orElseThrow();
         if (isTopicRatingUnique(assessmentTopic.getReferences(), topicReferencesRequest.getRating()) && isTopicReferenceUnique(assessmentTopic.getReferences(), topicReferencesRequest.getReference())) {
-            AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(assessmentTopic, topicReferencesRequest.getRating(), topicReferencesRequest.getReference());
+            AssessmentTopicReference assessmentTopicReference = new AssessmentTopicReference(topicReferencesRequest.getRating(), topicReferencesRequest.getReference(), assessmentTopic);
             topicService.saveTopicReference(assessmentTopicReference);
             return assessmentTopicReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
-    private boolean isTopicRatingUnique(Set<AssessmentTopicReference> references, Rating rating) {
-        if (references != null) {
-            List<Rating> ratings = references.stream().map(AssessmentTopicReference::getRating).toList();
-            return !ratings.contains(rating);
-        } else return true;
-    }
+
 
     public AssessmentParameterReference createAssessmentParameterReference(ParameterReferencesRequest parameterReferencesRequest) {
         AssessmentParameter assessmentParameter = parameterService.getParameter(parameterReferencesRequest.getParameter()).orElseThrow();
         if (isParameterRatingUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getRating()) && isParameterReferenceUnique(assessmentParameter.getReferences(), parameterReferencesRequest.getReference())) {
-            AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(assessmentParameter, parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference());
+            AssessmentParameterReference assessmentParameterReference = new AssessmentParameterReference(parameterReferencesRequest.getRating(), parameterReferencesRequest.getReference(), assessmentParameter);
             parameterService.saveParameterReference(assessmentParameterReference);
             return assessmentParameterReference;
         } else
             throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
-    private boolean isParameterReferenceUnique(Set<AssessmentParameterReference> references, String reference) {
-        if (references != null) {
-            List<String> parameterReferences = references.stream().map(AssessmentParameterReference::getReference).toList();
-            return isUnique(parameterReferences, reference);
-        } else return true;
-    }
 
-    private boolean isParameterRatingUnique(Set<AssessmentParameterReference> references, Rating rating) {
-        if (references != null) {
-            List<Rating> ratings = references.stream().map(AssessmentParameterReference::getRating).toList();
-            return !ratings.contains(rating);
-        } else return true;
-    }
-    private String removeWhiteSpaces(String name) {
-        return name.toLowerCase().replaceAll("\\s", "");
-    }
-    private boolean isTopicReferenceUnique(Set<AssessmentTopicReference> references, String reference) {
-        if (references != null) {
-            List<String> topicReferences = references.stream().map(AssessmentTopicReference::getReference).toList();
-            return isUnique(topicReferences, reference);
-        } else return true;
+    public AssessmentQuestionReference createAssessmentQuestionReference(QuestionReferenceRequest questionReferenceRequest) {
+        Question question = questionService.getQuestionById(questionReferenceRequest.getQuestion());
+        if (isQuestionRatingUnique(question.getReferences(), questionReferenceRequest.getRating()) && isQuestionReferenceUnique(question.getReferences(), questionReferenceRequest.getReference())) {
+            AssessmentQuestionReference assessmentQuestionReference = new AssessmentQuestionReference(questionReferenceRequest.getRating(), questionReferenceRequest.getReference(), question);
+            assessmentQuestionReferenceService.saveQuestionReference(assessmentQuestionReference);
+            return assessmentQuestionReference;
+        } else
+            throw new DuplicateRecordException(DUPLICATE_RECORDS_ARE_NOT_ALLOWED);
     }
 
     public boolean validate(User loggedInUser, AssessmentModule module) {
@@ -288,8 +270,8 @@ public class ModuleContributorService {
     }
 
     public AssessmentModule getModuleByParameter(Integer parameterId) {
-        Optional<AssessmentParameter> parameter =  parameterService.getParameter(parameterId);
-        return parameter.isPresent()? parameter.get().getTopic().getModule():new AssessmentModule();
+        Optional<AssessmentParameter> parameter = parameterService.getParameter(parameterId);
+        return parameter.isPresent() ? parameter.get().getTopic().getModule() : new AssessmentModule();
     }
 
     public AssessmentModule getModuleByTopicReference(Integer referenceId) {
@@ -300,5 +282,94 @@ public class ModuleContributorService {
     public AssessmentModule getModuleByParameterReference(Integer referenceId) {
         AssessmentParameterReference assessmentParameterReference = parameterService.getAssessmentParameterReference(referenceId);
         return assessmentParameterReference.getParameter().getTopic().getModule();
+    }
+
+    public Question getQuestionById(Integer questionId) {
+        return questionService.getQuestionById(questionId);
+    }
+
+
+    public AssessmentModule getModuleByQuestionReference(Integer referenceId) {
+        return assessmentQuestionReferenceService.getReferenceById(referenceId).getQuestion().getParameter().getTopic().getModule();
+    }
+
+    public void deleteQuestionReference(Integer referenceId) {
+        assessmentQuestionReferenceService.delete(referenceId);
+    }
+
+    private ModuleContributor getModuleContributor(Integer moduleId, ContributorDto contributorDto) {
+        ContributorId contributorId = new ContributorId();
+        contributorId.setModule(moduleService.getModule(moduleId));
+        contributorId.setUserEmail(contributorDto.getUserEmail());
+        ModuleContributor moduleContributor = new ModuleContributor();
+        moduleContributor.setContributorId(contributorId);
+        moduleContributor.setContributorRole(contributorDto.getRole());
+        return moduleContributor;
+    }
+
+
+    private boolean isUnique(String parameterName, String parameterName2, boolean isOtherDataUnique) {
+        return removeWhiteSpaces(parameterName).equals(removeWhiteSpaces(parameterName2)) || isOtherDataUnique;
+    }
+
+    private boolean isUnique(List<String> actualList, String name) {
+        List<String> result = actualList.stream()
+                .map(String::toLowerCase).map(option -> option.replaceAll("\\s", ""))
+                .toList();
+        return !(result.contains(name.toLowerCase().replaceAll("\\s", "")));
+    }
+
+    private boolean isParameterReferenceUnique(Set<AssessmentParameterReference> references, String reference) {
+        if (references != null) {
+            List<String> parameterReferences = references.stream().map(AssessmentParameterReference::getReference).toList();
+            return isUnique(parameterReferences, reference);
+        } else return true;
+    }
+
+    private boolean isParameterRatingUnique(Set<AssessmentParameterReference> references, Rating rating) {
+        if (references != null) {
+            List<Rating> ratings = references.stream().map(AssessmentParameterReference::getRating).toList();
+            return !ratings.contains(rating);
+        } else return true;
+    }
+
+    private boolean isQuestionReferenceUnique(Set<AssessmentQuestionReference> references, String reference) {
+        if (references != null) {
+            List<String> questionReferences = references.stream().map(AssessmentQuestionReference::getReference).toList();
+            return isUnique(questionReferences, reference);
+        } else return true;
+    }
+
+    private boolean isQuestionRatingUnique(Set<AssessmentQuestionReference> references, Rating rating) {
+        if (references != null) {
+            List<Rating> ratings = references.stream().map(AssessmentQuestionReference::getRating).toList();
+            return !ratings.contains(rating);
+        } else return true;
+    }
+
+    private String removeWhiteSpaces(String name) {
+        return name.toLowerCase().replaceAll("\\s", "");
+    }
+
+    private boolean isTopicReferenceUnique(Set<AssessmentTopicReference> references, String reference) {
+        if (references != null) {
+            List<String> topicReferences = references.stream().map(AssessmentTopicReference::getReference).toList();
+            return isUnique(topicReferences, reference);
+        } else return true;
+    }
+
+    private boolean isTopicRatingUnique(Set<AssessmentTopicReference> references, Rating rating) {
+        if (references != null) {
+            List<Rating> ratings = references.stream().map(AssessmentTopicReference::getRating).toList();
+            return !ratings.contains(rating);
+        } else return true;
+    }
+    private boolean isTopicUnique(String topicName, AssessmentModule assessmentModule) {
+        List<String> topics = assessmentModule.getTopics().stream().map(AssessmentTopic::getTopicName).toList();
+        return isUnique(topics, topicName);
+    }
+    private boolean isParameterUnique(String parameterName, AssessmentTopic assessmentTopic) {
+        List<String> parameters = assessmentTopic.getParameters().stream().map(AssessmentParameter::getParameterName).toList();
+        return isUnique(parameters, parameterName);
     }
 }

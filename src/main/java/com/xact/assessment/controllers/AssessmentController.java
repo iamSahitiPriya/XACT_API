@@ -235,6 +235,18 @@ public class AssessmentController {
         return HttpResponse.ok();
     }
 
+    @Patch(value = "/{assessmentId}/questions/{questionId}/ratings")
+    @Secured(SecurityRule.IS_AUTHENTICATED)
+    public HttpResponse<Answer> saveQuestionRating(@PathVariable("assessmentId") Integer assessmentId, @PathVariable("questionId") Integer questionId, @Body @Nullable String rating, Authentication authentication) {
+        LOGGER.info("Update individual parameter maturity rating. assessment: {}, question: {}", assessmentId, questionId);
+        Assessment assessment = getAuthenticatedAssessment(assessmentId, authentication);
+        if (assessment.isEditable()) {
+            assessmentService.saveQuestionRating(questionId, assessment, rating);
+            assessmentService.updateAssessment(assessment);
+        }
+        return HttpResponse.ok();
+    }
+
     @Post(value = "/{assessmentId}/modules", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<Assessment> saveModules(@PathVariable("assessmentId") Integer assessmentId, @Body List<ModuleRequest> moduleRequests, Authentication authentication) {

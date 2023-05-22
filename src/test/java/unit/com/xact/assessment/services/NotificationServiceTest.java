@@ -294,4 +294,22 @@ class NotificationServiceTest {
 
         verify(notificationRepository).deleteSentNotifications(any(Date.class));
     }
+
+    @Test
+    void shouldSendNotificationWhileReopeningAssessment() {
+        Assessment assessment = new Assessment();
+        assessment.setAssessmentId(1);
+        assessment.setAssessmentStatus(AssessmentStatus.Active);
+        assessment.setAssessmentName("name");
+        UserId userId = new UserId("abc@thoughtworks.com",assessment);
+        AssessmentUser assessmentUser = new AssessmentUser(userId,AssessmentRole.Owner);
+        assessment.setAssessmentUsers(Collections.singleton(assessmentUser));
+        assessment.setOrganisation(new Organisation(1,"organisation","","",5));
+        assessment.setUpdatedAt(new Date());
+        assessment.setCreatedAt(new Date());
+
+        notificationService.setNotificationForReopenAssessment(assessment);
+
+        verify(notificationRepository).save(any(Notification.class));
+    }
 }

@@ -269,6 +269,16 @@ public class AssessmentService {
         topicAndParameterLevelAssessmentService.saveParameterRating(parameterLevelRating);
     }
 
+    public void saveQuestionRating(Integer questionId, Assessment assessment, String rating) {
+        Question question = topicAndParameterLevelAssessmentService.getQuestion(questionId).orElseThrow();
+        AnswerId answerId = new AnswerId(assessment,question);
+        Answer answer = topicAndParameterLevelAssessmentService.getAnswer(answerId).orElse(new Answer());
+        answer.setAnswerId(answerId);
+        Integer questionRating = rating != null ? Integer.valueOf(rating) : null;
+        answer.setRating(questionRating);
+        topicAndParameterLevelAssessmentService.saveQuestionRating(answer);
+    }
+
 
     public AssessmentTopic getTopicByQuestionId(Integer questionId) {
         return topicAndParameterLevelAssessmentService.getTopicByQuestionId(questionId);
@@ -496,5 +506,5 @@ public class AssessmentService {
             }
             return parameterLevelRecommendation;
         }
-    }
+}
 

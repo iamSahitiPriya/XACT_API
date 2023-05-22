@@ -26,4 +26,5 @@ public class ParameterResponse {
     private Date updatedAt;
     private String comments;
     private boolean active;
+    private boolean parameterLevelReference;
 }

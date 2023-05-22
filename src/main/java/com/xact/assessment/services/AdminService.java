@@ -62,7 +62,7 @@ public class AdminService {
         return assessmentMasterDataService.getCategory(categoryId);
     }
 
-    public void saveRole(AccessControlRoleDto user, AccessControlRoles accessControlRoles, User loggedInUser) {
+    public void saveRole(AccessControlRoleDto user) {
         accessControlService.saveRole(user);
     }
 

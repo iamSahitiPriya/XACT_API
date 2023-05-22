@@ -67,6 +67,9 @@ public class AssessmentParameter implements Serializable {
     @Column(name = "comments")
     private String comments;
 
+    @Column(name="has_reference")
+    private boolean isParameterLevelReference;
+
     public boolean getIsActive() {
         return isActive;
     }
@@ -80,5 +83,26 @@ public class AssessmentParameter implements Serializable {
 
     public boolean hasReferences() {
         return references != null && !references.isEmpty();
+    }
+
+    public double getQuestionAverage() {
+        double questionSum = 0;
+        int questionCount = 0;
+        double averageRating=0;
+        for (Question question : this.questions) {
+            if (question.hasReferences()) {
+                double questionAverageScore = question.getRating();
+                if (questionAverageScore != 0) {
+                    questionSum += questionAverageScore;
+                    questionCount+= 1;
+                }
+
+            }
+        }
+        if (questionSum == 0 && questionCount == 0) {
+            return averageRating;
+        }
+        averageRating = questionSum / questionCount;
+        return averageRating;
     }
 }

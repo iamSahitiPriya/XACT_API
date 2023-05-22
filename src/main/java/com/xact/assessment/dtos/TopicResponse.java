@@ -22,4 +22,5 @@ public class TopicResponse {
     private Date updatedAt;
     private String comments;
     private boolean active;
+    private boolean isTopicLevelReference;
 }

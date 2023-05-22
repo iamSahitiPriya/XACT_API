@@ -20,4 +20,5 @@ public class AnswerResponse {
     private Integer questionId;
     @JsonProperty("answer")
     private String answerNote;
+    private Integer rating;
 }

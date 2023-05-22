@@ -19,6 +19,7 @@ public class ParameterDto implements  Comparable<ParameterDto>{
     private boolean isActive;
     private Date updatedAt;
     private String comments;
+    private boolean isParameterLevelReference;
 
     @Override
     public int compareTo(ParameterDto parameterDto) {

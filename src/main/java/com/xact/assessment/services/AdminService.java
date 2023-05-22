@@ -4,16 +4,15 @@
 
 package com.xact.assessment.services;
 
-import com.xact.assessment.dtos.AssessmentCategoryRequest;
-import com.xact.assessment.dtos.AssessmentModuleRequest;
-import com.xact.assessment.dtos.ContributorDto;
-import com.xact.assessment.models.Assessment;
-import com.xact.assessment.models.AssessmentCategory;
-import com.xact.assessment.models.AssessmentModule;
+import com.xact.assessment.dtos.*;
+import com.xact.assessment.exceptions.UnauthorisedUserException;
+import com.xact.assessment.models.*;
 import jakarta.inject.Singleton;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @Singleton
@@ -21,18 +20,22 @@ public class AdminService {
     private final ModuleContributorService moduleContributorService;
 
     private final AssessmentMasterDataService assessmentMasterDataService;
+    private final UserAuthService userAuthService;
 
     private final AssessmentService assessmentService;
+    private final AccessControlService accessControlService;
 
 
-    public AdminService(ModuleContributorService moduleContributorService, AssessmentMasterDataService assessmentMasterDataService, AssessmentService assessmentService) {
+    public AdminService(ModuleContributorService moduleContributorService, AssessmentMasterDataService assessmentMasterDataService, UserAuthService userAuthService, AssessmentService assessmentService, AccessControlService accessControlService) {
         this.moduleContributorService = moduleContributorService;
         this.assessmentMasterDataService = assessmentMasterDataService;
+        this.userAuthService = userAuthService;
         this.assessmentService = assessmentService;
+        this.accessControlService = accessControlService;
     }
 
     public void saveContributors(Integer moduleId, List<ContributorDto> contributors) {
-        moduleContributorService.saveContributors(moduleId,contributors);
+        moduleContributorService.saveContributors(moduleId, contributors);
     }
 
     public AssessmentCategory createAssessmentCategory(AssessmentCategoryRequest assessmentCategory) {
@@ -44,11 +47,11 @@ public class AdminService {
     }
 
     public AssessmentCategory updateCategory(AssessmentCategory assessmentCategory, AssessmentCategoryRequest assessmentCategoryRequest) {
-        return assessmentMasterDataService.updateCategory(assessmentCategory,assessmentCategoryRequest);
+        return assessmentMasterDataService.updateCategory(assessmentCategory, assessmentCategoryRequest);
     }
 
     public AssessmentModule updateModule(Integer moduleId, AssessmentModuleRequest assessmentModuleRequest) {
-        return assessmentMasterDataService.updateModule(moduleId,assessmentModuleRequest);
+        return assessmentMasterDataService.updateModule(moduleId, assessmentModuleRequest);
     }
 
     public List<Assessment> getTotalAssessments(String startDate, String endDate) throws ParseException {
@@ -57,5 +60,35 @@ public class AdminService {
 
     public AssessmentCategory getCategory(Integer categoryId) {
         return assessmentMasterDataService.getCategory(categoryId);
+    }
+
+    public void saveRole(AccessControlRoleDto user, AccessControlRoles accessControlRoles, User loggedInUser) {
+        accessControlService.saveRole(user);
+    }
+
+    public List<AccessControlResponse> getAllAccessControlRoles() {
+        List<AccessControlList> accessControlLists = accessControlService.getAllAccessControlRoles();
+        List<AccessControlResponse> accessControlResponses = new ArrayList<>();
+        for (AccessControlList user : accessControlLists) {
+            UserInfo userInfo = userAuthService.getUserInfo(user.getEmail());
+            AccessControlResponse accessControlResponse = new AccessControlResponse();
+            if (userInfo != null) {
+                accessControlResponse.setUsername(userInfo.getFirstName() + ' ' + userInfo.getLastName());
+            } else {
+                accessControlResponse.setUsername(user.getEmail());
+            }
+            accessControlResponse.setEmail(user.getEmail());
+            accessControlResponse.setAccessControlRoles(user.getAccessControlRoles());
+            accessControlResponses.add(accessControlResponse);
+        }
+        return accessControlResponses;
+    }
+
+    public void deleteUserRole(String email, User loggedInUser) {
+        if (!Objects.equals(email, loggedInUser.getUserEmail())) {
+            accessControlService.deleteUserRole(email);
+        } else {
+            throw new UnauthorisedUserException("");
+        }
     }
 }

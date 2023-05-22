@@ -524,7 +524,7 @@ class AssessmentControllerTest {
 
         assessmentUser.setUserId(userId);
         assessmentUser.setRole(AssessmentRole.Owner);
-        AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.Admin);
+        AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.PRIMARY_ADMIN);
 
         assessmentRepository.save(assessment);
         accessControlRepository.save(accessControlList);

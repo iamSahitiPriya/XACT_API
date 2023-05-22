@@ -8,6 +8,7 @@ import com.xact.assessment.controllers.AdminController;
 import com.xact.assessment.dtos.*;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.AdminService;
+import com.xact.assessment.services.UserAuthService;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.security.authentication.Authentication;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,8 @@ class AdminControllerTest {
     private final Authentication authentication = Mockito.mock(Authentication.class);
 
     AdminService adminService = Mockito.mock(AdminService.class);
-    AdminController adminController = new AdminController(adminService);
+    UserAuthService userAuthService = Mockito.mock(UserAuthService.class);
+    AdminController adminController = new AdminController(userAuthService, adminService);
 
     @Test
     void createAssessmentCategory() {
@@ -182,4 +184,49 @@ class AdminControllerTest {
 
         assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
+
+    @Test
+    void shouldSaveAdmin() {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("def@thoughtworks.com");
+        userInfo.setFirstName("ABC");
+        userInfo.setLastName("DEF");
+        userInfo.setLocale("US");
+        User loggedInUser = new User();
+        loggedInUser.setUserInfo(userInfo);
+
+        AccessControlRoleDto roleDto = new AccessControlRoleDto();
+        roleDto.setEmail("abc@thoughtworks.com");
+        roleDto.setAccessControlRoles(AccessControlRoles.PRIMARY_ADMIN);
+
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(loggedInUser);
+        when(userAuthService.getLoggedInUserRole(loggedInUser)).thenReturn(AccessControlRoles.PRIMARY_ADMIN);
+
+        HttpResponse<AccessControlRoleDto> actualResponse = adminController.saveAdmin(authentication, roleDto);
+
+        assertEquals(HttpResponse.created("").getStatus(), actualResponse.getStatus());
+    }
+
+    @Test
+    void shouldDeleteRoleForTheUser() {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("def@thoughtworks.com");
+        userInfo.setFirstName("ABC");
+        userInfo.setLastName("DEF");
+        userInfo.setLocale("US");
+        User loggedInUser = new User();
+        loggedInUser.setUserInfo(userInfo);
+
+        AccessControlRoleDto roleDto = new AccessControlRoleDto();
+        roleDto.setEmail("abc@thoughtworks.com");
+        roleDto.setAccessControlRoles(AccessControlRoles.PRIMARY_ADMIN);
+
+        when(userAuthService.getCurrentUser(authentication)).thenReturn(loggedInUser);
+        when(userAuthService.getLoggedInUserRole(loggedInUser)).thenReturn(AccessControlRoles.PRIMARY_ADMIN);
+        HttpResponse<AccessControlRoleDto> actualResponse = adminController.deleteUser(authentication, roleDto.getEmail());
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
+    }
+
 }

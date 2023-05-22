@@ -10,11 +10,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 @MappedSuperclass
 public class Reference {
     @Id
@@ -33,5 +31,9 @@ public class Reference {
     public Reference(Rating rating, String reference) {
         this.rating = rating;
         this.reference = reference;
+    }
+
+    public Reference() {
+
     }
 }

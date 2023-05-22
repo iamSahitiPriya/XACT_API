@@ -111,7 +111,7 @@ class AdminServiceTest {
         verify(accessControlService).deleteUserRole(roleDto.getEmail());
     }
     @Test
-    void shouldThrowExceptionWhenUserTriedToDeleteThemself() {
+    void shouldThrowExceptionWhenUserTriedToDeleteThemself() throws RuntimeException {
         AccessControlRoleDto roleDto = new AccessControlRoleDto();
         roleDto.setEmail("abc@thoughtworks.com");
         roleDto.setAccessControlRoles(AccessControlRoles.PRIMARY_ADMIN);

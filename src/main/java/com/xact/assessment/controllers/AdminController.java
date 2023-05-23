@@ -119,6 +119,7 @@ public class AdminController {
     public HttpResponse<AccessControlRoleDto> saveAdmin(Authentication authentication, @Valid @Body AccessControlRoleDto user) {
         LOGGER.info("Save Role For {} - {}", user.getEmail(), user.getAccessControlRoles());
         try {
+            user.validate(emailPattern);
             userAuthService.validateUser(authentication, AccessControlRoles.PRIMARY_ADMIN);
             adminService.saveRole(user);
             return HttpResponse.created(user);

@@ -361,7 +361,7 @@ class ContributorControllerTest {
 
         String dataRequest = "[{" + "\"question\"" + ":" + question.getQuestionId() + "," + "\"rating\"" + ":" + "\"TWO\"" + "," + "\"reference\"" + ":" + "\"This is a reference\"" + "}]";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/contributor/question-references", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/contributor/question/references", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

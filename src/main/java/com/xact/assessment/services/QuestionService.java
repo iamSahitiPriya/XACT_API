@@ -22,6 +22,7 @@ public class QuestionService {
 
     private final UserQuestionService userQuestionService;
 
+
     private static final ModelMapper modelMapper = new ModelMapper();
 
     public QuestionService(QuestionRepository questionRepository, UserQuestionService userQuestionService) {
@@ -72,7 +73,7 @@ public class QuestionService {
         }
     }
 
-    public ContributorResponse getContributorResponse(ContributorRole contributorRole,List<AssessmentModule> assessmentModules) {
+    public ContributorResponse getContributorResponse(ContributorRole contributorRole, List<AssessmentModule> assessmentModules) {
         ContributorResponse contributorResponse = new ContributorResponse();
         List<ContributorModuleData> contributorModuleDataList = getContributorModuleData(contributorRole, assessmentModules);
         contributorResponse.setContributorModuleData(contributorModuleDataList);
@@ -80,7 +81,7 @@ public class QuestionService {
     }
 
 
-    public QuestionStatusUpdateResponse updateContributorQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest,Optional<ContributorRole> contributorRole) {
+    public QuestionStatusUpdateResponse updateContributorQuestionsStatus(ContributorQuestionStatus status, QuestionStatusUpdateRequest questionStatusUpdateRequest, Optional<ContributorRole> contributorRole) {
         QuestionStatusUpdateResponse questionStatusUpdateResponse = new QuestionStatusUpdateResponse();
         if (contributorRole.isPresent() && contributorRole.get().isStatusValid(status)) {
             questionStatusUpdateResponse = updateContributorQuestion(status, questionStatusUpdateRequest);
@@ -111,6 +112,10 @@ public class QuestionService {
             question = updateQuestion(question);
         }
         return question;
+    }
+
+    public void deleteRejectedQuestions(Date expiryDate) {
+        questionRepository.deleteRejectedQuestions(expiryDate);
     }
 
     private boolean isUpdateAllowed(Question question) {
@@ -211,8 +216,6 @@ public class QuestionService {
         return questionStatusUpdateResponse;
     }
 
-    public void deleteRejectedQuestions(Date expiryDate) {
-        questionRepository.deleteRejectedQuestions(expiryDate);
-    }
+
 }
 

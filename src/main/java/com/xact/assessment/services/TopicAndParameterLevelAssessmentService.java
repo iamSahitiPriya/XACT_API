@@ -38,6 +38,10 @@ public class TopicAndParameterLevelAssessmentService {
         return parameterService.saveParameterRating(parameterLevelRating);
     }
 
+    public Answer saveQuestionRating(Answer answer) {
+        return answerService.saveAnswer(answer);
+    }
+
 
     public List<ParameterLevelRating> getParameterRatings(Integer assessmentId) {
         return parameterService.getParameterLevelRatings(assessmentId);
@@ -124,6 +128,14 @@ public class TopicAndParameterLevelAssessmentService {
 
     public ParameterLevelRecommendation saveParameterRecommendation(RecommendationRequest parameterLevelRecommendationRequest, Assessment assessment, Integer parameterId) {
         return parameterService.saveParameterRecommendation(parameterLevelRecommendationRequest, assessment, parameterId);
+    }
+
+    public Optional<Question> getQuestion(Integer questionId) {
+        return questionService.getQuestion(questionId);
+    }
+
+    public Optional<Answer> getAnswer(AnswerId answerId) {
+        return answerService.getAnswer(answerId);
     }
 
 }

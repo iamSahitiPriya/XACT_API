@@ -11,6 +11,8 @@ import io.micronaut.data.annotation.Query;
 import io.micronaut.data.annotation.Repository;
 import io.micronaut.data.repository.CrudRepository;
 
+import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,5 +20,10 @@ public interface AccessControlRepository extends CrudRepository<AccessControlLis
     @Executable
     @Query("SELECT acl.accessControlRoles FROM AccessControlList acl WHERE acl.email=:email")
     Optional<AccessControlRoles> getAccessControlRolesByEmail(String email);
+
+    @Executable
+    @NotNull
+    @Query("SELECT acl FROM AccessControlList acl")
+    List<AccessControlList> findAll();
 
 }

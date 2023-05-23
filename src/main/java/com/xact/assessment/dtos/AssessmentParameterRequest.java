@@ -28,4 +28,6 @@ public class AssessmentParameterRequest {
     private boolean isActive;
     @JsonProperty
     private String comments;
+    @JsonProperty
+    private boolean parameterLevelReference;
 }

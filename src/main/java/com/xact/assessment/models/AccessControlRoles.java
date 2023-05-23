@@ -5,5 +5,5 @@
 package com.xact.assessment.models;
 
 public enum AccessControlRoles {
-    Admin , AUTHOR, REVIEWER
+    PRIMARY_ADMIN,AUTHOR,REVIEWER,SECONDARY_ADMIN
 }

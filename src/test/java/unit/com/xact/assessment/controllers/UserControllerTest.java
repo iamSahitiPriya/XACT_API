@@ -6,6 +6,7 @@ package unit.com.xact.assessment.controllers;
 
 import com.xact.assessment.controllers.UserController;
 import com.xact.assessment.dtos.ContributorRole;
+import com.xact.assessment.dtos.UserInfoDto;
 import com.xact.assessment.models.AccessControlRoles;
 import com.xact.assessment.models.ModuleContributor;
 import com.xact.assessment.models.User;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -42,7 +44,7 @@ class UserControllerTest {
         ModuleContributor moduleContributor = new ModuleContributor();
         moduleContributor.setContributorRole(ContributorRole.AUTHOR);
         when(userAuthService.getCurrentUser(authentication)).thenReturn(user);
-        when(accessControlService.getAccessControlRolesByEmail(userEmail)).thenReturn(Optional.of(AccessControlRoles.valueOf("Admin")));
+        when(accessControlService.getAccessControlRolesByEmail(userEmail)).thenReturn(Optional.of(AccessControlRoles.valueOf("PRIMARY_ADMIN")));
 
         when(userAuthService.getContributorRoles(userEmail)).thenReturn(Collections.singleton(moduleContributor));
 
@@ -64,5 +66,19 @@ class UserControllerTest {
         doNothing().when(userAuthService).login("someHeader", user);
 
         assertDoesNotThrow(() -> userController.login("someHeader", authentication));
+    }
+
+    @Test
+    void shouldGetUserLoginRoles() {
+        UserInfo userInfo = new UserInfo();
+        userInfo.setEmail("def@thoughtworks.com");
+        userInfo.setFirstName("ABC");
+        userInfo.setLastName("DEF");
+        userInfo.setLocale("US");
+
+        when(userAuthService.getUsers()).thenReturn(Collections.singletonList(userInfo));
+        HttpResponse<List<UserInfoDto>> actualResponse = userController.getUsers(authentication);
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
     }
 }

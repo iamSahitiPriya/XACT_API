@@ -4,21 +4,19 @@
 
 package com.xact.assessment.dtos;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.xact.assessment.models.AccessControlRoles;
 import io.micronaut.core.annotation.Introspected;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Introspected
-@NoArgsConstructor
-@Getter
-@Setter
 @AllArgsConstructor
-public class AnswerResponse {
-    private Integer questionId;
-    @JsonProperty("answer")
-    private String answerNote;
-    private Integer rating;
+@Getter
+@Introspected
+@Setter
+@NoArgsConstructor
+public class AccessControlRoleDto {
+    private String email;
+    private AccessControlRoles accessControlRoles;
 }

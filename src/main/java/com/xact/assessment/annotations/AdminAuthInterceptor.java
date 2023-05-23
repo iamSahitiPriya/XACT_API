@@ -36,7 +36,7 @@ public class AdminAuthInterceptor implements MethodInterceptor<Authentication, O
                 Authentication authentication = (Authentication) value;
                 User loggedInUser = userAuthService.getCurrentUser(authentication);
                 Optional<AccessControlRoles> accessControlRoles = accessControlService.getAccessControlRolesByEmail(loggedInUser.getUserEmail());
-                if (!(accessControlRoles.isPresent() && accessControlRoles.get() == AccessControlRoles.Admin)) {
+                if (!(accessControlRoles.isPresent() && (accessControlRoles.get() == AccessControlRoles.PRIMARY_ADMIN || accessControlRoles.get() == AccessControlRoles.SECONDARY_ADMIN))) {
                     throw new UnauthorisedUserException("User not Authorised");
                 }
             }

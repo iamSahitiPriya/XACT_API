@@ -4,7 +4,6 @@
 
 package com.xact.assessment.models;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,23 +15,22 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
 @AllArgsConstructor
-@Table(name = "tbm_assessment_topic_reference")
-public class AssessmentTopicReference extends Reference implements Serializable {
+@Table(name = "tbm_assessment_question_reference")
+public class AssessmentQuestionReference  extends Reference{
     @NotNull
     @ManyToOne()
     @JsonIgnore
-    @JoinColumn(name = "topic", referencedColumnName = "topic_id")
-    private AssessmentTopic topic;
+    @JoinColumn(name = "question", referencedColumnName = "question_id")
+    private Question question;
 
-    public AssessmentTopicReference(Rating rating, String reference, AssessmentTopic topic) {
+    public AssessmentQuestionReference(Rating rating, String reference, Question question) {
         super(rating, reference);
-        this.topic = topic;
+        this.question = question;
     }
 }

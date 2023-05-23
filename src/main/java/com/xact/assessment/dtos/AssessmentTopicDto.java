@@ -25,6 +25,7 @@ public class AssessmentTopicDto implements Comparable<AssessmentTopicDto> {
     private Date updatedAt;
     private String comments;
     private boolean active;
+    private boolean isTopicLevelReference;
     private SortedSet<AssessmentParameterDto> parameters;
     private SortedSet<AssessmentTopicReferenceDto> references;
 

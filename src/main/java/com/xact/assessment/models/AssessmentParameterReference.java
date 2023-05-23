@@ -6,27 +6,25 @@ package com.xact.assessment.models;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.EqualsAndHashCode;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @NoArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode
 @Entity
+@AllArgsConstructor
 @Table(name = "tbm_assessment_param_reference")
-public class AssessmentParameterReference implements Serializable {
-
-    @Id
-    @Column(name = "reference_id", nullable = false, unique = true)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer referenceId;
+public class AssessmentParameterReference extends Reference implements Serializable {
 
     @NotNull
     @ManyToOne()
@@ -34,16 +32,8 @@ public class AssessmentParameterReference implements Serializable {
     @JoinColumn(name = "parameter", referencedColumnName = "parameter_id")
     private AssessmentParameter parameter;
 
-    @Column(name = "rating")
-    @Enumerated(EnumType.STRING)
-    private Rating rating;
-
-    @Column(name = "reference")
-    private String reference;
-
-    public AssessmentParameterReference(AssessmentParameter parameter, Rating rating, String reference) {
+    public AssessmentParameterReference(Rating rating, String reference, AssessmentParameter parameter) {
+        super(rating, reference);
         this.parameter = parameter;
-        this.rating = rating;
-        this.reference = reference;
     }
 }

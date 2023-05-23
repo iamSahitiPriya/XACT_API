@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.SortedSet;
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -21,6 +23,7 @@ public class QuestionDto implements Comparable<QuestionDto> {
     private Integer parameter;
     private ContributorQuestionStatus status;
     private String comments;
+    private SortedSet<AssessmentQuestionReferenceDto> references;
 
     @Override
     public int compareTo(QuestionDto currentQuestion) {

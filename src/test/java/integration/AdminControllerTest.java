@@ -4,6 +4,7 @@
 
 package integration;
 
+import com.xact.assessment.dtos.AccessControlRoleDto;
 import com.xact.assessment.dtos.ContributorDto;
 import com.xact.assessment.dtos.ContributorRequest;
 import com.xact.assessment.dtos.ContributorRole;
@@ -70,8 +71,12 @@ class AdminControllerTest {
     @BeforeEach
     public void beforeEach() {
         String userEmail = "dummy@test.com";
-        AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.Admin);
+        AccessControlList accessControlList = new AccessControlList(userEmail, AccessControlRoles.PRIMARY_ADMIN);
+        AccessControlList accessControlList1 = new AccessControlList("abc@thoughtworks.com", AccessControlRoles.PRIMARY_ADMIN);
+
         accessControlRepository.save(accessControlList);
+        accessControlRepository.save(accessControlList1);
+
     }
 
     @AfterEach
@@ -197,5 +202,25 @@ class AdminControllerTest {
         HttpResponse<ContributorDto> actualResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/modules/" + moduleId + "/contributors",contributorRequest ).bearerAuth("anything"));
 
         assertEquals(actualResponse.getStatus(),HttpResponse.ok().getStatus());
+    }
+
+    @Test
+    void shouldSaveAccessControlRole() {
+        AccessControlRoleDto accessControlRoleDto = new AccessControlRoleDto();
+        accessControlRoleDto.setEmail("def@thoughtworks.com");
+        accessControlRoleDto.setAccessControlRoles(AccessControlRoles.PRIMARY_ADMIN);
+
+        HttpResponse<AccessControlRoleDto> actualResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/admin/user" ,accessControlRoleDto ).bearerAuth("anything"));
+
+        assertEquals(HttpResponse.created("any body").getStatus(), actualResponse.getStatus());
+
+    }
+
+    @Test
+    void shouldDeleteAccessControlRoleForTheUser() {
+        HttpResponse<AccessControlRoleDto> actualResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/admin/user?email=abc@thoughtworks.com").bearerAuth("anything"));
+
+        assertEquals(HttpResponse.ok().getStatus(), actualResponse.getStatus());
+
     }
 }

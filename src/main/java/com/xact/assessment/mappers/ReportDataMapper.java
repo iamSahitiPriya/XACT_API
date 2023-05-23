@@ -48,7 +48,11 @@ public class ReportDataMapper {
     private ReportParameterResponse mapReportParameterResponse(AssessmentParameter assessmentParameter) {
         ReportParameterResponse reportParameterResponse = new ReportParameterResponse();
         reportParameterResponse.setName(assessmentParameter.getParameterName());
-        reportParameterResponse.setValue(assessmentParameter.getRating());
+        if(assessmentParameter.hasReferences()) {
+            reportParameterResponse.setValue(assessmentParameter.getRating());
+        }else{
+            reportParameterResponse.setValue((int) assessmentParameter.getQuestionAverage());
+        }
         return reportParameterResponse;
     }
 

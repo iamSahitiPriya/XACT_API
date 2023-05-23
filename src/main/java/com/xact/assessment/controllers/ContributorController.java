@@ -166,7 +166,7 @@ public class ContributorController {
         }
     }
 
-    @Post(value = "/question-references", produces = MediaType.APPLICATION_JSON)
+    @Post(value = "/question/references", produces = MediaType.APPLICATION_JSON)
     @Secured(SecurityRule.IS_AUTHENTICATED)
     public HttpResponse<AssessmentQuestionReferenceDto> createQuestionReference(@Body QuestionReferenceRequest questionReferenceRequest, Authentication authentication) {
         LOGGER.info("{}: Create question reference - {}", authentication.getName(), questionReferenceRequest.getQuestion());

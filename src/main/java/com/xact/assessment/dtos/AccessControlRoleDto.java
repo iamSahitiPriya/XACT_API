@@ -4,7 +4,6 @@
 
 package com.xact.assessment.dtos;
 
-import com.xact.assessment.exceptions.InvalidEmailException;
 import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.AccessControlRoles;
 import io.micronaut.core.annotation.Introspected;
@@ -24,11 +23,9 @@ public class AccessControlRoleDto {
     private String email;
     private AccessControlRoles accessControlRoles;
     public void validate(String pattern) {
-        if (email != null) {
-            if (!Pattern.matches(pattern,email)) {
+        if (email != null && !Pattern.matches(pattern,email) ) {
                 throw new UnauthorisedUserException("Invalid email of user : " + email);
             }
 
         }
-    }
 }

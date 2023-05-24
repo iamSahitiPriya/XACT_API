@@ -46,6 +46,112 @@ public class NotificationService {
         this.userAuthService = userAuthService;
     }
 
+    public void saveFeedbackNotificationForFinishedAssessments(Assessment assessment, List<Notification> notifications) {
+        try {
+            Notification notification = getNotificationForFeedback(assessment);
+            if (!isNotificationSent(assessment, notifications)) {
+                LOGGER.info("Save notifications for feedback ...");
+                saveNotification(notification);
+            }
+        } catch (JsonProcessingException e) {
+            LOGGER.error("JsonProcessingException");
+        }
+    }
+
+    @SneakyThrows
+    public Notification setNotificationForCompleteAssessment(Assessment assessment) {
+        Set<String> users = assessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
+        Notification notification = getNotification(users);
+        notification.setTemplateName(NotificationType.COMPLETED_V1);
+        Map<String, String> payload = getAssessmentCommonPayload(assessment);
+        ObjectMapper objectMapper = new ObjectMapper();
+        notification.setPayload(objectMapper.writeValueAsString(payload));
+
+        saveNotification(notification);
+        return notification;
+    }
+
+    @SneakyThrows
+    public Notification setNotificationForDeleteUser(Assessment assessment, Set<String> assessmentUsers) {
+        if (!assessmentUsers.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Notification notification = getNotification(assessmentUsers);
+            notification.setTemplateName(NotificationType.DELETE_USER_V1);
+            Map<String, String> payload = getAssessmentCommonPayload(assessment);
+            notification.setPayload(objectMapper.writeValueAsString(payload));
+
+            saveNotification(notification);
+            return notification;
+        }
+        return null;
+    }
+
+    @SneakyThrows
+    public Notification setNotificationForAddUser(Assessment assessment, Set<String> assessmentUsers) {
+        if (!assessmentUsers.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Notification notification = getNotification(assessmentUsers);
+            notification.setTemplateName(NotificationType.ADD_USER_V1);
+            Map<String, String> payload = getAssessmentCommonPayload(assessment);
+            notification.setPayload(objectMapper.writeValueAsString(payload));
+
+            saveNotification(notification);
+            return notification;
+        }
+        return null;
+    }
+
+    @SneakyThrows
+    public Notification setNotificationForReopenAssessment(Assessment assessment) {
+        Set<String> users = assessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
+        Notification notification = getNotification(users);
+        notification.setTemplateName(NotificationType.REOPENED_V1);
+        Map<String, String> payload = getAssessmentCommonPayload(assessment);
+        ObjectMapper objectMapper = new ObjectMapper();
+        notification.setPayload(objectMapper.writeValueAsString(payload));
+
+        saveNotification(notification);
+        return notification;
+    }
+
+    public Notification setNotificationForDeleteAssessment(Assessment assessment) {
+        Set<String> users = assessment.getAssessmentUsers().stream().map(user -> user.getUserId().getUserEmail()).collect(Collectors.toSet());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> payload;
+        Notification notification = getNotification(users);
+        notification.setTemplateName(NotificationType.DELETE_ASSESSMENT_V1);
+        payload = getPayloadForDeleteAssessment(assessment);
+
+        try {
+            notification.setPayload(objectMapper.writeValueAsString(payload));
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Error while parsing JSON");
+        }
+        saveNotification(notification);
+        return notification;
+    }
+
+    public Notification setNotificationForCreateAssessment(Assessment assessment) {
+        Map<NotificationType, Set<String>> notificationsType = getNotificationTypeByUserRole(assessment.getAssessmentUsers(), AssessmentAction.CREATE);
+
+        notificationsType.forEach((notificationType, users) -> {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, String> payload;
+            Notification notification = getNotification(users);
+            notification.setTemplateName(notificationType);
+            payload = getAssessmentCommonPayload(assessment);
+
+            try {
+                notification.setPayload(objectMapper.writeValueAsString(payload));
+            } catch (JsonProcessingException e) {
+                LOGGER.error("Error while parsing JSON");
+            }
+
+            saveNotification(notification);
+        });
+        return null;
+    }
 
     @SneakyThrows
     private boolean isNotificationSent(Assessment assessment, List<Notification> notifications) {
@@ -106,81 +212,16 @@ public class NotificationService {
         notificationRepository.update(notification);
     }
 
-    @SneakyThrows
-    public Notification setNotificationForCompleteAssessment(Assessment assessment) {
-        Set<String> users = assessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
-        Notification notification = getNotification(users);
-        notification.setTemplateName(NotificationType.COMPLETED_V1);
-        Map<String, String> payload = getAssessmentCommonPayload(assessment);
-        ObjectMapper objectMapper = new ObjectMapper();
-        notification.setPayload(objectMapper.writeValueAsString(payload));
-
-        saveNotification(notification);
-        return notification;
+    public List<Notification> getTop50ByStatusAndRetriesLessThan(Integer maximumRetries) {
+        return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
     }
 
-    @SneakyThrows
-    public Notification setNotificationForDeleteUser(Assessment assessment, Set<String> assessmentUsers) {
-        if (!assessmentUsers.isEmpty()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Notification notification = getNotification(assessmentUsers);
-            notification.setTemplateName(NotificationType.DELETE_USER_V1);
-            Map<String, String> payload = getAssessmentCommonPayload(assessment);
-            notification.setPayload(objectMapper.writeValueAsString(payload));
-
-            saveNotification(notification);
-            return notification;
-        }
-        return null;
+    public List<Notification> findByType(NotificationType notificationType) {
+        return notificationRepository.findByType(notificationType);
     }
 
-    @SneakyThrows
-    public Notification setNotificationForAddUser(Assessment assessment, Set<String> assessmentUsers) {
-        if (!assessmentUsers.isEmpty()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Notification notification = getNotification(assessmentUsers);
-            notification.setTemplateName(NotificationType.ADD_USER_V1);
-            Map<String, String> payload = getAssessmentCommonPayload(assessment);
-            notification.setPayload(objectMapper.writeValueAsString(payload));
-
-            saveNotification(notification);
-            return notification;
-        }
-        return null;
-    }
-
-    @SneakyThrows
-    public Notification setNotificationForReopenAssessment(Assessment assessment) {
-        Set<String> users = assessment.getAssessmentUsers().stream().map(assessmentUsers -> assessmentUsers.getUserId().getUserEmail()).collect(Collectors.toSet());
-        Notification notification = getNotification(users);
-        notification.setTemplateName(NotificationType.REOPENED_V1);
-        Map<String, String> payload = getAssessmentCommonPayload(assessment);
-        ObjectMapper objectMapper = new ObjectMapper();
-        notification.setPayload(objectMapper.writeValueAsString(payload));
-
-        saveNotification(notification);
-        return notification;
-    }
-
-    public Notification setNotificationForCreateAssessment(Assessment assessment) {
-        Map<NotificationType, Set<String>> notificationsType = getNotificationTypeByUserRole(assessment.getAssessmentUsers(), AssessmentAction.CREATE);
-
-        notificationsType.forEach((notificationType, users) -> {
-            ObjectMapper objectMapper = new ObjectMapper();
-            Map<String, String> payload;
-            Notification notification = getNotification(users);
-            notification.setTemplateName(notificationType);
-            payload = getAssessmentCommonPayload(assessment);
-
-            try {
-                notification.setPayload(objectMapper.writeValueAsString(payload));
-            } catch (JsonProcessingException e) {
-                LOGGER.error("Error while parsing JSON");
-            }
-
-            saveNotification(notification);
-        });
-        return null;
+    public void deleteSentNotifications(Date expiryDate) {
+        notificationRepository.deleteSentNotifications(expiryDate);
     }
 
     private Map<String, String> getAssessmentCommonPayload(Assessment assessment) {
@@ -208,24 +249,6 @@ public class NotificationService {
     private String getAssessmentOwner(Assessment assessment) {
         Optional<AssessmentUser> owner = assessment.getOwner();
         return owner.get().getUserId().getUserEmail();
-    }
-
-    public Notification setNotificationForDeleteAssessment(Assessment assessment) {
-        Set<String> users = assessment.getAssessmentUsers().stream().map(user -> user.getUserId().getUserEmail()).collect(Collectors.toSet());
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, String> payload;
-        Notification notification = getNotification(users);
-        notification.setTemplateName(NotificationType.DELETE_ASSESSMENT_V1);
-        payload = getPayloadForDeleteAssessment(assessment);
-
-        try {
-            notification.setPayload(objectMapper.writeValueAsString(payload));
-        } catch (JsonProcessingException e) {
-            LOGGER.error("Error while parsing JSON");
-        }
-        saveNotification(notification);
-        return notification;
     }
 
     private Map<NotificationType, Set<String>> getNotificationTypeByUserRole(Set<AssessmentUser> assessmentUsers, AssessmentAction action) {
@@ -269,31 +292,6 @@ public class NotificationService {
         } catch (Exception exception) {
             LOGGER.error("Notification not saved");
         }
-    }
-
-
-    public List<Notification> getTop50ByStatusAndRetriesLessThan(Integer maximumRetries) {
-        return notificationRepository.findTop50ByStatusAndRetriesLessThan(NotificationStatus.N, maximumRetries);
-    }
-
-    public List<Notification> findByType(NotificationType notificationType) {
-        return notificationRepository.findByType(notificationType);
-    }
-
-    public void saveFeedbackNotificationForFinishedAssessments(Assessment assessment, List<Notification> notifications) {
-        try {
-            Notification notification = getNotificationForFeedback(assessment);
-            if (!isNotificationSent(assessment, notifications)) {
-                LOGGER.info("Save notifications for feedback ...");
-                saveNotification(notification);
-            }
-        } catch (JsonProcessingException e) {
-            LOGGER.error("JsonProcessingException");
-        }
-    }
-
-    public void deleteSentNotifications(Date expiryDate) {
-       notificationRepository.deleteSentNotifications(expiryDate);
     }
 }
 

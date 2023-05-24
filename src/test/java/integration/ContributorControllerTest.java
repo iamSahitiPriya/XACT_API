@@ -249,7 +249,7 @@ class ContributorControllerTest {
 
         String dataRequest = "[{" + "\"topic\"" + ":" + assessmentTopic.getTopicId() + "," + "\"rating\"" + ":" + "\"TWO\"" + "," + "\"reference\"" + ":" + "\"This is a reference\"" + "}]";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/contributor/topic-references", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/contributor/topic/references", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -302,7 +302,7 @@ class ContributorControllerTest {
 
         String dataRequest = "[{" + "\"parameter\"" + ":" + assessmentParameter.getParameterId() + "," + "\"rating\"" + ":" + "\"TWO\"" + "," + "\"reference\"" + ":" + "\"This is a reference\"" + "}]";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/contributor/parameter-references", dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.POST("/v1/contributor/parameter/references", dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -452,7 +452,7 @@ class ContributorControllerTest {
 
         String dataRequest = "{" + "\"referenceId\"" + ":" + assessmentTopicReference1.getReferenceId() + "," + "\"reference\"" + ":" + "\"Updated Reference\"" + "," + "\"topic\"" + ":" + assessmentTopicReference1.getTopic().getTopicId() + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/contributor/topic-references/" + assessmentTopicReference1.getReferenceId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/contributor/topic/references/" + assessmentTopicReference1.getReferenceId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -484,7 +484,7 @@ class ContributorControllerTest {
 
         String dataRequest = "{" + "\"referenceId\"" + ":" + assessmentParameterReference1.getReferenceId() + "," + "\"reference\"" + ":" + "\"Updated Reference\"" + "," + "\"parameter\"" + ":" + assessmentParameterReference1.getParameter().getParameterId() + "}";
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/contributor/parameter-references/" + assessmentParameterReference1.getReferenceId(), dataRequest)
+        var saveResponse = client.toBlocking().exchange(HttpRequest.PUT("/v1/contributor/parameter/references/" + assessmentParameterReference1.getReferenceId(), dataRequest)
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -528,7 +528,7 @@ class ContributorControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/contributor/topic-references/" + assessmentTopicReference.getReferenceId())
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/contributor/topic/references/" + assessmentTopicReference.getReferenceId())
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());
@@ -579,7 +579,7 @@ class ContributorControllerTest {
         entityManager.clear();
         entityManager.close();
 
-        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/contributor/parameter-references/" + assessmentParameterReference.getReferenceId())
+        var saveResponse = client.toBlocking().exchange(HttpRequest.DELETE("/v1/contributor/parameter/references/" + assessmentParameterReference.getReferenceId())
                 .bearerAuth("anything"));
 
         assertEquals(HttpResponse.ok().getStatus(), saveResponse.getStatus());

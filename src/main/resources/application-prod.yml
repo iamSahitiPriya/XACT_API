@@ -69,7 +69,7 @@ notification:
   feedback:
     initialDelay: "1m"
     delay : "1d"
-    durationInDays: 29
+    durationInDays: 2
 
 userQuestion:
   fixedDelay : "1d"

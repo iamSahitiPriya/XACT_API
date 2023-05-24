@@ -8,7 +8,6 @@ import com.xact.assessment.dtos.AccessControlResponse;
 import com.xact.assessment.dtos.AccessControlRoleDto;
 import com.xact.assessment.dtos.ContributorDto;
 import com.xact.assessment.dtos.ContributorRole;
-import com.xact.assessment.exceptions.UnauthorisedUserException;
 import com.xact.assessment.models.*;
 import com.xact.assessment.services.*;
 import org.junit.jupiter.api.Assertions;
